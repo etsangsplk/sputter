@@ -19,10 +19,8 @@ func (e *Executor) Exec(c *Context) Value {
 
 // Evaluate a Value against a Context
 func Evaluate(c *Context, v Value) Value {
-	if list, ok := v.(*List); ok {
-		if function, ok := list.value.(*Function); ok {
-			return function.exec(c, list.rest)
-		}
+	if eval, ok := v.(Evaluable); ok {
+		return eval.Evaluate(c)
 	}
 	return v
 }

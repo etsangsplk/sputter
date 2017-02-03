@@ -16,8 +16,3 @@ type Iterator func() (Value, bool)
 type Literal struct {
 	value Value
 }
-
-// Resolvable is an Identifier that can be resolved against a Context
-type Resolvable struct {
-	name string
-}

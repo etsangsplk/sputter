@@ -35,3 +35,8 @@ func (c *Context) Get(name string) (Value, bool) {
 func (c *Context) Put(name string, value Value) {
 	c.vars[name] = value
 }
+
+// Evaluable can be evaluated against a Context
+type Evaluable interface {
+	Evaluate(c *Context) Value
+}

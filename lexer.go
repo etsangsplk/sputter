@@ -72,7 +72,7 @@ func init() {
 		{regexp.MustCompile(`^[1-9]\d*/[1-9]\d*`), ratioState},
 		{regexp.MustCompile(`^(0|[1-9]\d*(\.\d+)?([eE][+-]?\d+)?)`), numberState},
 
-		{regexp.MustCompile(`^\S+`), tokenState(Identifier)},
+		{regexp.MustCompile(`^[^()\s]+`), tokenState(Identifier)},
 		{regexp.MustCompile(`^.`), endState(Error)},
 	}
 }

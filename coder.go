@@ -26,7 +26,7 @@ func (c *Coder) token(t *Token) Value {
 	case ListStart:
 		return c.list()
 	case Identifier:
-		return &Resolvable{t.Value.(string)}
+		return &Symbol{t.Value.(string)}
 	default:
 		return t.Value
 	}

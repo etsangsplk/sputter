@@ -34,21 +34,26 @@ func TestBasics(t *testing.T) {
 func TestNested(t *testing.T) {
 	a := assert.New(t)
 	testCode(a, "(/ 10 (- 5 3))", big.NewFloat(5.0))
+	testCode(a, "(* 5 (- 5 3))", big.NewFloat(10.0))
+	testCode(a, "(/ 10 (/ 6 3))", big.NewFloat(5.0))
 }
 
-func TestResolvable(t *testing.T) {
+func TestEvaluable(t *testing.T) {
 	a := assert.New(t)
 	c := Builtins.Child()
 
 	hello := &Function{func(c *Context, args *List) Value {
-		value := args.value.(string)
+		value := Evaluate(c, args.value).(string)
 		return "Hello, " + value + "!"
 	}}
 
 	c.Put("hello", hello)
-	testCodeWithContext(a, `(hello "World")`, "Hello, World!", c)
-}
+	c.Put("name", "Bob")
 
+	testCodeWithContext(a, `(hello "World")`, "Hello, World!", c)
+	testCodeWithContext(a, `(hello name)`, "Hello, Bob!", c)
+}
+ 
 func TestEvaluate(t *testing.T) {
 	a := assert.New(t)
 

@@ -63,3 +63,10 @@ func (l *List) Iterate() Iterator {
 		return result, true
 	}
 }
+
+func (l *List) Evaluate(c *Context) Value {
+	if function, ok := l.value.(*Function); ok {
+		return function.exec(c, l.rest)
+	}
+	return l
+}
