@@ -40,7 +40,7 @@ func division(c *Context, l *List) Value {
 
 func puts(c *Context, l *List) Value {
 	for current := l; current != EmptyList; current = current.rest {
-		fmt.Println(Evaluate(c, current.value).(*big.Float).String())
+		fmt.Println(EvaluateToString(c, current.value))
 	}
 	return nil
 }

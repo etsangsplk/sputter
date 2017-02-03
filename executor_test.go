@@ -43,7 +43,7 @@ func TestEvaluable(t *testing.T) {
 	c := Builtins.Child()
 
 	hello := &Function{func(c *Context, args *List) Value {
-		value := Evaluate(c, args.value).(string)
+		value := EvaluateToString(c, args.value)
 		return "Hello, " + value + "!"
 	}}
 
@@ -58,7 +58,7 @@ func TestEvaluate(t *testing.T) {
 	a := assert.New(t)
 
 	hello := &Function{func(c *Context, args *List) Value {
-		value := args.value.(string)
+		value := EvaluateToString(c, args.value)
 		return "Hello, " + value + "!"
 	}}
 
