@@ -3,6 +3,9 @@ package sputter
 // ListNotClosed is the error returned when EOF is reached inside a List
 const ListNotClosed = "End of file reached with open list"
 
+// EndOfCoder represents the end of a Coder stream
+var EndOfCoder = struct{}{}
+
 // Coder is responsible for taking a stream of Tokens and converting them
 // into Lists for evaluation
 type Coder struct {
@@ -27,6 +30,8 @@ func (c *Coder) token(t *Token) Value {
 		return c.list()
 	case Identifier:
 		return &Symbol{t.Value.(string)}
+	case EndOfFile:
+		return EndOfCoder
 	default:
 		return t.Value
 	}

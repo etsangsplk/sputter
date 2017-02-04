@@ -13,8 +13,11 @@ func NewExecutor(c *Coder) *Executor {
 
 // Exec invokes an Executor
 func (e *Executor) Exec(c *Context) Value {
-	v := e.coder.Next()
-	return Evaluate(c, v)
+	var last Value
+	for v := e.coder.Next(); v != EndOfCoder; v = e.coder.Next() {
+		last = Evaluate(c, v)
+	}
+	return last
 }
 
 // Evaluate a Value against a Context

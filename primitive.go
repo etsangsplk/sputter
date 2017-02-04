@@ -19,6 +19,10 @@ type Literal struct {
 	value Value
 }
 
+func (l *Literal) Evaluate(c *Context) Value {
+	return l.value	
+}
+
 func (l *Literal) String() string {
 	if str, ok := l.value.(fmt.Stringer); ok {
 		return str.String()

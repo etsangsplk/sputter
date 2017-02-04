@@ -46,6 +46,7 @@ func puts(c *Context, l *List) Value {
 			fmt.Print(" ")
 		}
 	}
+	fmt.Println("")
 	return nil
 }
 
