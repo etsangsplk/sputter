@@ -6,43 +6,51 @@ import "fmt"
 // Builtins are the Context of built-in identifiers
 var Builtins *Context
 
-func addition(c *Context, l *List) Value {
+func addition(c *Context, args Iterable) Value {
 	sum := big.NewFloat(0)
-	for current := l; current != EmptyList; current = current.rest {
-		sum.Add(sum, Evaluate(c, current.value).(*big.Float))
+	next := args.Iterate()
+	for value, found := next(); found; value, found = next() {
+		sum.Add(sum, Evaluate(c, value).(*big.Float))
 	}
 	return sum
 }
 
-func subtraction(c *Context, l *List) Value {
-	diff := Evaluate(c, l.value).(*big.Float)
-	for current := l.rest; current != EmptyList; current = current.rest {
-		diff.Sub(diff, Evaluate(c, current.value).(*big.Float))
+func subtraction(c *Context, args Iterable) Value {
+	next := args.Iterate()
+	value, found := next()
+	diff := Evaluate(c, value).(*big.Float)
+	for value, found = next(); found; value, found = next() {
+		diff.Sub(diff, Evaluate(c, value).(*big.Float))
 	}
 	return diff
 }
 
-func multiplication(c *Context, l *List) Value {
+func multiplication(c *Context, args Iterable) Value {
 	prod := big.NewFloat(1)
-	for current := l; current != EmptyList; current = current.rest {
-		prod.Mul(prod, Evaluate(c, current.value).(*big.Float))
+	next := args.Iterate()
+	for value, found := next(); found; value, found = next() {
+		prod.Mul(prod, Evaluate(c, value).(*big.Float))
 	}
 	return prod
 }
 
-func division(c *Context, l *List) Value {
-	quotient := Evaluate(c, l.value).(*big.Float)
-	for current := l.rest; current != EmptyList; current = current.rest {
-		quotient.Quo(quotient, Evaluate(c, current.value).(*big.Float))
+func division(c *Context, args Iterable) Value {
+	next := args.Iterate()
+	value, found := next()
+	quotient := Evaluate(c, value).(*big.Float)
+	for value, found = next(); found; value, found = next() {
+		quotient.Quo(quotient, Evaluate(c, value).(*big.Float))
 	}
 	return quotient
 }
 
-func puts(c *Context, l *List) Value {
-	for current := l; current != EmptyList; current = current.rest {
-		result := Evaluate(c, current.value)
+func puts(c *Context, args Iterable) Value {
+	next := args.Iterate()
+	for value, found := next(); found; {
+		result := Evaluate(c, value)
 		fmt.Print(result)
-		if current.rest != EmptyList {
+		value, found = next()
+		if found {
 			fmt.Print(" ")
 		}
 	}

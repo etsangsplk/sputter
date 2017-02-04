@@ -3,6 +3,9 @@ package sputter
 // ListNotClosed is the error returned when EOF is reached inside a List
 const ListNotClosed = "End of file reached with open list"
 
+// NonFunction is the error returned when a non-Function is invoked
+const NonFunction = "first element of list is not a function"
+
 // EndOfCoder represents the end of a Coder stream
 var EndOfCoder = struct{}{}
 
@@ -80,13 +83,13 @@ func (c *Coder) function(t *Token) *Function {
 	var wrapper *Function
 	name := t.Value.(string)
 
-	wrapper = &Function{name, func(context *Context, list *List) Value {
+	wrapper = &Function{name, func(context *Context, args Iterable) Value {
 		if v, f := context.Get(name); f {
 			if entry, ok := v.(*Function); ok {
 				// swap the exec function into the wrapper
 				wrapper.name = entry.name
 				wrapper.exec = entry.exec
-				return entry.exec(context, list)
+				return entry.exec(context, args)
 			}
 		}
 		panic(NonFunction)

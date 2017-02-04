@@ -5,17 +5,11 @@ import (
 	"fmt"
 )
 
-// NonFunction is the error returned when a non-Function is invoked
-const NonFunction = "first element of list is not a function"
-
 // List is a Value that maintains a singly-linked list of Values
 type List struct {
 	value Value
 	rest  *List
 }
-
-// ListProcessor is the standard signature for a function that processes lists
-type ListProcessor func(*Context, *List) Value
 
 // EmptyList represents the empty list and the terminal 'rest' of a List
 var EmptyList = &List{nil, nil}
@@ -89,11 +83,14 @@ func (l *List) String() string {
 	return buffer.String()
 }
 
+// ArgumentProcessor is the standard signature for a function that is
+// capable of processing an Iterable (like Lists)
+type ArgumentProcessor func(*Context, Iterable) Value
 
 // Function is a Value that can be invoked
 type Function struct {
 	name string
-	exec ListProcessor
+	exec ArgumentProcessor
 }
 
 func (f *Function) String() string {
