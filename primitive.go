@@ -1,5 +1,7 @@
 package sputter
 
+import "fmt"
+
 // Value is the generic interface for all 'Values' in the VM
 type Value interface{
 }
@@ -15,4 +17,11 @@ type Iterator func() (Value, bool)
 // Literal identifies a Value as being a literal reference
 type Literal struct {
 	value Value
+}
+
+func (l *Literal) String() string {
+	if str, ok := l.value.(fmt.Stringer); ok {
+		return str.String()
+	}
+	return l.value.(string)
 }

@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"fmt"
 )
 
 func testCodeWithContext(a *assert.Assertions, code string,
@@ -17,6 +18,14 @@ func testCodeWithContext(a *assert.Assertions, code string,
 
 func testCode(a *assert.Assertions, code string, expect Value) {
 	testCodeWithContext(a, code, expect, Builtins)
+}
+
+func evaluateToString(c *Context, v Value) string {
+	result := Evaluate(c, v)
+	if str, ok := result.(fmt.Stringer); ok {
+		return str.String()
+	}
+	return result.(string)
 }
 
 func TestBasics(t *testing.T) {
@@ -42,8 +51,8 @@ func TestEvaluable(t *testing.T) {
 	a := assert.New(t)
 	c := Builtins.Child()
 
-	hello := &Function{func(c *Context, args *List) Value {
-		value := EvaluateToString(c, args.value)
+	hello := &Function{"hello", func(c *Context, args *List) Value {
+		value := evaluateToString(c, args.value)
 		return "Hello, " + value + "!"
 	}}
 
@@ -57,8 +66,8 @@ func TestEvaluable(t *testing.T) {
 func TestEvaluate(t *testing.T) {
 	a := assert.New(t)
 
-	hello := &Function{func(c *Context, args *List) Value {
-		value := EvaluateToString(c, args.value)
+	hello := &Function{"hello", func(c *Context, args *List) Value {
+		value := evaluateToString(c, args.value)
 		return "Hello, " + value + "!"
 	}}
 

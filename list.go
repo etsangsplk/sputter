@@ -1,5 +1,10 @@
 package sputter
 
+import (
+	"bytes"
+	"fmt"
+)
+
 // NonFunction is the error returned when a non-Function is invoked
 const NonFunction = "first element of list is not a function"
 
@@ -11,11 +16,6 @@ type List struct {
 
 // ListProcessor is the standard signature for a function that processes lists
 type ListProcessor func(*Context, *List) Value
-
-// Function is a Value that can be invoked
-type Function struct {
-	exec ListProcessor
-}
 
 // EmptyList represents the empty list and the terminal 'rest' of a List
 var EmptyList = &List{nil, nil}
@@ -69,4 +69,33 @@ func (l *List) Evaluate(c *Context) Value {
 		return function.exec(c, l.rest)
 	}
 	return l
+}
+
+func (l *List) String() string {
+	var buffer bytes.Buffer
+
+	buffer.WriteString("(")
+	for current := l; current != EmptyList; current = current.rest {
+		if str, ok := current.value.(fmt.Stringer); ok {
+			buffer.WriteString(str.String())
+		} else {
+			buffer.WriteString(current.value.(string))
+		}
+		if current.rest != EmptyList {
+			buffer.WriteString(" ")
+		}		
+	}
+	buffer.WriteString(")")
+	return buffer.String()
+}
+
+
+// Function is a Value that can be invoked
+type Function struct {
+	name string
+	exec ListProcessor
+}
+
+func (f *Function) String() string {
+	return f.name
 }

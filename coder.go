@@ -75,10 +75,11 @@ func (c *Coder) function(t *Token) *Function {
 	var wrapper *Function
 	name := t.Value.(string)
 
-	wrapper = &Function{func(context *Context, list *List) Value {
+	wrapper = &Function{name, func(context *Context, list *List) Value {
 		if v, f := context.Get(name); f {
 			if entry, ok := v.(*Function); ok {
 				// swap the exec function into the wrapper
+				wrapper.name = entry.name
 				wrapper.exec = entry.exec
 				return entry.exec(context, list)
 			}

@@ -36,6 +36,10 @@ func (c *Context) Put(name string, value Value) {
 	c.vars[name] = value
 }
 
+func (c *Context) PutFunction(f *Function) {
+	c.vars[f.name] = f
+}
+
 // Evaluable can be evaluated against a Context
 type Evaluable interface {
 	Evaluate(c *Context) Value

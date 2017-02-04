@@ -40,16 +40,20 @@ func division(c *Context, l *List) Value {
 
 func puts(c *Context, l *List) Value {
 	for current := l; current != EmptyList; current = current.rest {
-		fmt.Println(EvaluateToString(c, current.value))
+		result := Evaluate(c, current.value)
+		fmt.Print(result)
+		if current.rest != EmptyList {
+			fmt.Print(" ")
+		}
 	}
 	return nil
 }
 
 func init() {
 	Builtins = NewContext()
-	Builtins.Put("+", &Function{addition})
-	Builtins.Put("-", &Function{subtraction})
-	Builtins.Put("*", &Function{multiplication})
-	Builtins.Put("/", &Function{division})
-	Builtins.Put("puts", &Function{puts})
+	Builtins.PutFunction(&Function{"+", addition})
+	Builtins.PutFunction(&Function{"-", subtraction})
+	Builtins.PutFunction(&Function{"*", multiplication})
+	Builtins.PutFunction(&Function{"/", division, })
+	Builtins.PutFunction(&Function{"puts", puts})
 }
