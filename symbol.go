@@ -8,12 +8,12 @@ type Symbol struct {
 	name string
 }
 
+// Evaluate makes a Symbol Evaluable
 func (s *Symbol) Evaluate(c *Context) Value {
 	if resolved, ok := c.Get(s.name); ok {
 		return resolved
-	} else {
-		panic(UnknownSymbol)
 	}
+	panic(UnknownSymbol)
 }
 
 func (s *Symbol) String() string {

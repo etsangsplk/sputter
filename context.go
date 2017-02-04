@@ -36,6 +36,7 @@ func (c *Context) Put(name string, value Value) {
 	c.vars[name] = value
 }
 
+// PutFunction puts a Function into the immediate Context by its name
 func (c *Context) PutFunction(f *Function) {
 	c.vars[f.name] = f
 }

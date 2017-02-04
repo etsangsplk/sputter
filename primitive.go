@@ -3,7 +3,7 @@ package sputter
 import "fmt"
 
 // Value is the generic interface for all 'Values' in the VM
-type Value interface{
+type Value interface {
 }
 
 // Iterable values can be used in loops and comprehensions
@@ -19,8 +19,9 @@ type Literal struct {
 	value Value
 }
 
+// Evaluate makes a Literal Evaluable
 func (l *Literal) Evaluate(c *Context) Value {
-	return l.value	
+	return l.value
 }
 
 func (l *Literal) String() string {

@@ -58,6 +58,7 @@ func (l *List) Iterate() Iterator {
 	}
 }
 
+// Evaluate makes a List Evaluable
 func (l *List) Evaluate(c *Context) Value {
 	if function, ok := l.value.(*Function); ok {
 		return function.exec(c, l.rest)
@@ -77,22 +78,8 @@ func (l *List) String() string {
 		}
 		if current.rest != EmptyList {
 			buffer.WriteString(" ")
-		}		
+		}
 	}
 	buffer.WriteString(")")
 	return buffer.String()
-}
-
-// ArgumentProcessor is the standard signature for a function that is
-// capable of processing an Iterable (like Lists)
-type ArgumentProcessor func(*Context, Iterable) Value
-
-// Function is a Value that can be invoked
-type Function struct {
-	name string
-	exec ArgumentProcessor
-}
-
-func (f *Function) String() string {
-	return f.name
 }
