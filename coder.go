@@ -30,7 +30,9 @@ func (c *Coder) token(t *Token) Value {
 	case LiteralMarker:
 		return c.literal()
 	case ListStart:
-		return c.list()
+		return c.list(ListEnd)
+	case ArgsStart:
+		return c.list(ArgsEnd)
 	case Identifier:
 		return &Symbol{t.Value.(string)}
 	case EndOfFile:
@@ -44,14 +46,14 @@ func (c *Coder) literal() *Literal {
 	return &Literal{c.Next()}
 }
 
-func (c *Coder) list() *List {
+func (c *Coder) list(endToken TokenType) *List {
 	var handle func(token *Token) *List
 	var first func() *List
 	var next func() *List
 
 	handle = func(token *Token) *List {
 		switch token.Type {
-		case ListEnd:
+		case endToken:
 			return EmptyList
 		case EndOfFile:
 			panic(ListNotClosed)

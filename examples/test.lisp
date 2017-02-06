@@ -1,6 +1,6 @@
 (defvar blah "blah is stored")
 
-(defun say-hello (name)
+(defun say-hello [name]
   (print "Hello there," name "!")
 )
 

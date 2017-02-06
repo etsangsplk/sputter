@@ -23,6 +23,8 @@ const (
 	Ratio
 	ListStart
 	ListEnd
+	ArgsStart
+	ArgsEnd
 	LiteralMarker
 	EndOfFile
 	Whitespace
@@ -66,13 +68,15 @@ func init() {
 		{regexp.MustCompile(`^\s+`), tokenState(Whitespace)},
 		{regexp.MustCompile(`^\(`), tokenState(ListStart)},
 		{regexp.MustCompile(`^\)`), tokenState(ListEnd)},
+		{regexp.MustCompile(`^\[`), tokenState(ArgsStart)},
+		{regexp.MustCompile(`^]`), tokenState(ArgsEnd)},
 		{regexp.MustCompile(`^'`), tokenState(LiteralMarker)},
 
 		{regexp.MustCompile(`^"(\\.|[^"])*"`), stringState},
 		{regexp.MustCompile(`^[1-9]\d*/[1-9]\d*`), ratioState},
 		{regexp.MustCompile(`^(0|[1-9]\d*(\.\d+)?([eE][+-]?\d+)?)`), numberState},
 
-		{regexp.MustCompile(`^[^()\s]+`), tokenState(Identifier)},
+		{regexp.MustCompile(`^[^()\[\]\s]+`), tokenState(Identifier)},
 		{regexp.MustCompile(`^.`), endState(Error)},
 	}
 }
