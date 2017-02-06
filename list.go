@@ -45,8 +45,9 @@ func (l *List) Conj(tail Value) *List {
 	return first
 }
 
+// ListIterator is an Iterator implementation for the List type
 type ListIterator struct {
-	current *List	
+	current *List
 }
 
 // Iterate creates a new Iterator instance for the List
@@ -66,7 +67,7 @@ func (l *ListIterator) Next() (Value, bool) {
 
 // Iterable returns a new Iterable from the Iterator's current state
 func (l *ListIterator) Iterable() Iterable {
-	return l.current	
+	return l.current
 }
 
 // Evaluate makes a List Evaluable
@@ -81,7 +82,7 @@ func (l *List) Evaluate(c *Context) Value {
 			}
 		}
 	}
-	panic(NonFunction)	
+	panic(NonFunction)
 }
 
 func (l *List) String() string {
