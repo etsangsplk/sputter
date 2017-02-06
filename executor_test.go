@@ -4,8 +4,9 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
 	"fmt"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func testCodeWithContext(a *assert.Assertions, code string,
@@ -17,7 +18,8 @@ func testCodeWithContext(a *assert.Assertions, code string,
 }
 
 func testCode(a *assert.Assertions, code string, expect Value) {
-	testCodeWithContext(a, code, expect, Builtins)
+	c := Builtins.Child()
+	testCodeWithContext(a, code, expect, c)
 }
 
 func evaluateToString(c *Context, v Value) string {
@@ -64,7 +66,7 @@ func TestEvaluable(t *testing.T) {
 	testCodeWithContext(a, `(hello "World")`, "Hello, World!", c)
 	testCodeWithContext(a, `(hello name)`, "Hello, Bob!", c)
 }
- 
+
 func TestEvaluate(t *testing.T) {
 	a := assert.New(t)
 
@@ -79,4 +81,39 @@ func TestEvaluate(t *testing.T) {
 	result := Evaluate(Builtins, list)
 
 	a.Equal("Hello, World!", result.(string), "good hello")
+}
+
+func TestFunction(t *testing.T) {
+	a := assert.New(t)
+
+	testCode(a, `
+		(defun say-hello [] "Hello, World!")
+		(say-hello)
+	`, "Hello, World!")
+
+	testCode(a, `
+		(defun identity [value] value)
+		(identity "foo")
+	`, "foo")
+
+	testCode(a, `
+	  (defun identity [value] value)
+		(print identity)
+		(identity)
+	`, EmptyList)
+}
+
+func TestVariables(t *testing.T) {
+	a := assert.New(t)
+
+	testCode(a, `
+		(defvar foo "bar")
+		foo
+	`, "bar")
+
+	testCode(a, `
+		(defun return-local []
+			(let [foo "local"] foo))
+		(return-local)
+	`, "local")
 }

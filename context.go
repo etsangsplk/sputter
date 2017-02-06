@@ -28,14 +28,15 @@ func (c *Context) Get(name string) (Value, bool) {
 	} else if c.parent != nil {
 		return c.parent.Get(name)
 	}
-	return nil, false
+	return EmptyList, false
 }
 
-// Global retrieves the global (root) Context
-func (c *Context) Global() *Context {
+// Globals retrieves the Root Context. This is the Context who either
+// has no parent or whose parent is the Builtins Context
+func (c *Context) Globals() *Context {
 	current := c
-	for current.parent != nil {
-		current = c.parent
+	for current.parent != nil && current.parent != Builtins {
+		current = current.parent
 	}
 	return current
 }

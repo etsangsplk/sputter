@@ -31,7 +31,7 @@ func Evaluate(c *Context, v Value) Value {
 // EvaluateIterator evaluates each element of the provided Iterator
 func EvaluateIterator(c *Context, iter Iterator) Value {
 	var lastEval Value = EmptyList
-	for val, found := iter.Next(); found; val, found = iter.Next() {
+	for val, ok := iter.Next(); ok; val, ok = iter.Next() {
 		lastEval = Evaluate(c, val)
 	}
 	return lastEval

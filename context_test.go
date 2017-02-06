@@ -15,7 +15,7 @@ func assertGet(a *assert.Assertions, c *Context, key string, value Value) {
 func assertMissing(a *assert.Assertions, c *Context, key string) {
 	v, ok := c.Get(key)
 	a.False(ok)
-	a.Nil(v)
+	a.Equal(EmptyList, v)
 }
 
 func TestCreateContext(t *testing.T) {
@@ -49,4 +49,18 @@ func TestNestedContext(t *testing.T) {
 	assertGet(a, c2, "hello", "you")
 	assertGet(a, c2, "howdy", "ho")
 	assertGet(a, c2, "foo", "bar")
+}
+
+func TestGlobalContext(t *testing.T) {
+	a := assert.New(t)
+
+	bg1 := Builtins.Child()
+	bg2 := bg1.Child()
+
+	sg1 := NewContext()
+	sg2 := sg1.Child()
+	sg3 := sg2.Child()
+
+	a.Equal(bg1, bg2.Globals())
+	a.Equal(sg1, sg3.Globals())
 }

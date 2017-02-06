@@ -58,7 +58,7 @@ func (l *List) Iterate() Iterator {
 // Next returns the next Value from the Iterator
 func (l *ListIterator) Next() (Value, bool) {
 	if l.current == EmptyList {
-		return nil, false
+		return EmptyList, false
 	}
 	result := l.current.value
 	l.current = l.current.rest

@@ -43,8 +43,8 @@ func TestIterator(t *testing.T) {
 	sum := big.NewFloat(0.0)
 	iter := list2.Iterate()
 	for {
-		value, found := iter.Next()
-		if !found {
+		value, ok := iter.Next()
+		if !ok {
 			break
 		}
 		fv := value.(*big.Float)
