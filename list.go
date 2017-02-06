@@ -45,17 +45,28 @@ func (l *List) Conj(tail Value) *List {
 	return first
 }
 
+type ListIterator struct {
+	current *List	
+}
+
 // Iterate creates a new Iterator instance for the List
 func (l *List) Iterate() Iterator {
-	current := l
-	return func() (Value, bool) {
-		if current == EmptyList {
-			return nil, false
-		}
-		result := current.value
-		current = current.rest
-		return result, true
+	return &ListIterator{l}
+}
+
+// Next returns the next Value from the Iterator
+func (l *ListIterator) Next() (Value, bool) {
+	if l.current == EmptyList {
+		return nil, false
 	}
+	result := l.current.value
+	l.current = l.current.rest
+	return result, true
+}
+
+// Iterable returns a new Iterable from the Iterator's current state
+func (l *ListIterator) Iterable() Iterable {
+	return l.current	
 }
 
 // Evaluate makes a List Evaluable
@@ -63,7 +74,14 @@ func (l *List) Evaluate(c *Context) Value {
 	if function, ok := l.value.(*Function); ok {
 		return function.exec(c, l.rest)
 	}
-	return l
+	if sym, ok := l.value.(*Symbol); ok {
+		if v, ok := c.Get(sym.name); ok {
+			if entry, ok := v.(*Function); ok {
+				return entry.exec(c, l.rest)
+			}
+		}
+	}
+	panic(NonFunction)	
 }
 
 func (l *List) String() string {

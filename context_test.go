@@ -7,14 +7,14 @@ import (
 )
 
 func assertGet(a *assert.Assertions, c *Context, key string, value Value) {
-	v, f := c.Get(key)
-	a.True(f)
+	v, ok := c.Get(key)
+	a.True(ok)
 	a.Equal(value, v)
 }
 
 func assertMissing(a *assert.Assertions, c *Context, key string) {
-	v, f := c.Get(key)
-	a.False(f)
+	v, ok := c.Get(key)
+	a.False(ok)
 	a.Nil(v)
 }
 

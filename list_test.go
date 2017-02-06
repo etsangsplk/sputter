@@ -41,9 +41,9 @@ func TestIterator(t *testing.T) {
 	a.Equal(list1, list2.rest, "2nd tail is populated correctly")
 
 	sum := big.NewFloat(0.0)
-	next := list2.Iterate()
+	iter := list2.Iterate()
 	for {
-		value, found := next()
+		value, found := iter.Next()
 		if !found {
 			break
 		}

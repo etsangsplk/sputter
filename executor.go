@@ -13,11 +13,11 @@ func NewExecutor(c *Coder) *Executor {
 
 // Exec invokes an Executor
 func (e *Executor) Exec(c *Context) Value {
-	var last Value
+	var lastEval Value
 	for v := e.coder.Next(); v != EndOfCoder; v = e.coder.Next() {
-		last = Evaluate(c, v)
+		lastEval = Evaluate(c, v)
 	}
-	return last
+	return lastEval
 }
 
 // Evaluate a Value against a Context
@@ -26,4 +26,13 @@ func Evaluate(c *Context, v Value) Value {
 		return eval.Evaluate(c)
 	}
 	return v
+}
+
+// EvaluateIterator evaluates each element of the provided Iterator
+func EvaluateIterator(c *Context, iter Iterator) Value {
+	var lastEval Value = EmptyList
+	for val, found := iter.Next(); found; val, found = iter.Next() {
+		lastEval = Evaluate(c, val)
+	}
+	return lastEval
 }

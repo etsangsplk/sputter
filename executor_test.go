@@ -52,8 +52,8 @@ func TestEvaluable(t *testing.T) {
 	c := Builtins.Child()
 
 	hello := &Function{"hello", func(c *Context, args Iterable) Value {
-		next := args.Iterate()
-		arg, _ := next()
+		iter := args.Iterate()
+		arg, _ := iter.Next()
 		value := evaluateToString(c, arg)
 		return "Hello, " + value + "!"
 	}}
@@ -69,8 +69,8 @@ func TestEvaluate(t *testing.T) {
 	a := assert.New(t)
 
 	hello := &Function{"hello", func(c *Context, args Iterable) Value {
-		next := args.Iterate()
-		arg, _ := next()
+		iter := args.Iterate()
+		arg, _ := iter.Next()
 		value := evaluateToString(c, arg)
 		return "Hello, " + value + "!"
 	}}

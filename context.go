@@ -31,14 +31,25 @@ func (c *Context) Get(name string) (Value, bool) {
 	return nil, false
 }
 
+// Global retrieves the global (root) Context
+func (c *Context) Global() *Context {
+	current := c
+	for current.parent != nil {
+		current = c.parent
+	}
+	return current
+}
+
 // Put puts a value into the immediate Context
-func (c *Context) Put(name string, value Value) {
+func (c *Context) Put(name string, value Value) *Context {
 	c.vars[name] = value
+	return c
 }
 
 // PutFunction puts a Function into the immediate Context by its name
-func (c *Context) PutFunction(f *Function) {
+func (c *Context) PutFunction(f *Function) *Context {
 	c.vars[f.name] = f
+	return c
 }
 
 // Evaluable can be evaluated against a Context

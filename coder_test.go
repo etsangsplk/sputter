@@ -32,20 +32,20 @@ func TestCodeList(t *testing.T) {
 	list, ok := v.(*List)
 	a.True(ok)
 
-	next := list.Iterate()
-	value, found := next()
+	iter := list.Iterate()
+	value, found := iter.Next()
 	a.True(found)
 	a.Equal(0, big.NewFloat(99).Cmp(value.(*big.Float)))
 
-	value, found = next()
+	value, found = iter.Next()
 	a.True(found)
 	a.Equal("hello", value)
 
-	value, found = next()
+	value, found = iter.Next()
 	a.True(found)
 	a.Equal(0, big.NewFloat(55.12).Cmp(value.(*big.Float)))
 
-	value, found = next()
+	value, found = iter.Next()
 	a.False(found)
 }
 
@@ -57,36 +57,36 @@ func TestCodeNestedList(t *testing.T) {
 	list, ok := v.(*List)
 	a.True(ok)
 
-	next1 := list.Iterate()
-	value, found := next1()
+	iter1 := list.Iterate()
+	value, found := iter1.Next()
 	a.True(found)
 	a.Equal(0, big.NewFloat(99).Cmp(value.(*big.Float)))
 
 	// get nested list
-	value, found = next1()
+	value, found = iter1.Next()
 	a.True(found)
 	list2, ok := value.(*List)
 	a.True(ok)
 
 	// iterate over the rest of top-level list
-	value, found = next1()
+	value, found = iter1.Next()
 	a.True(found)
 	a.Equal(0, big.NewFloat(55.12).Cmp(value.(*big.Float)))
 
-	value, found = next1()
+	value, found = iter1.Next()
 	a.False(found)
 
 	// iterate over the nested list
-	next2 := list2.Iterate()
-	value, found = next2()
+	iter2 := list2.Iterate()
+	value, found = iter2.Next()
 	a.True(found)
 	a.Equal("hello", value)
 
-	value, found = next2()
+	value, found = iter2.Next()
 	a.True(found)
 	a.Equal("there", value)
 
-	value, found = next2()
+	value, found = iter2.Next()
 	a.False(found)
 }
 

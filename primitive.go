@@ -11,8 +11,11 @@ type Iterable interface {
 	Iterate() Iterator
 }
 
-// Iterator functions are ones that return the next Value of an Iterable
-type Iterator func() (Value, bool)
+// Iterator interfaces are stateful iteration interfaces
+type Iterator interface {
+	Next() (Value, bool)
+	Iterable() Iterable
+}
 
 // Literal identifies a Value as being a literal reference
 type Literal struct {

@@ -65,8 +65,11 @@ func (c *Coder) list() *List {
 	first = func() *List {
 		token := c.reader.Next()
 		if token.Type == Identifier {
-			list := next()
-			return list.Cons(c.function(token))
+			name := token.Value.(string)
+			if function, ok := Builtins.Get(name); ok {
+				list := next()
+				return list.Cons(function)
+			}
 		}
 		return handle(token)
 	}
@@ -77,23 +80,4 @@ func (c *Coder) list() *List {
 	}
 
 	return first()
-}
-
-func (c *Coder) function(t *Token) *Function {
-	var wrapper *Function
-	name := t.Value.(string)
-
-	wrapper = &Function{name, func(context *Context, args Iterable) Value {
-		if v, f := context.Get(name); f {
-			if entry, ok := v.(*Function); ok {
-				// swap the exec function into the wrapper
-				wrapper.name = entry.name
-				wrapper.exec = entry.exec
-				return entry.exec(context, args)
-			}
-		}
-		panic(NonFunction)
-	}}
-
-	return wrapper
 }
