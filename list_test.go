@@ -1,4 +1,4 @@
-package sputter
+package main
 
 import (
 	"math/big"

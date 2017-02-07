@@ -1,4 +1,4 @@
-package sputter
+package main
 
 import (
 	"math/big"
@@ -116,7 +116,7 @@ func TestLiteral(t *testing.T) {
 	literal, ok := v.(*Literal)
 	a.True(ok)
 
-	value, ok := literal.value.(*big.Float)
+	value, ok := literal.Value.(*big.Float)
 	a.True(ok)
 	a.Equal(0, big.NewFloat(99).Cmp(value))
 }

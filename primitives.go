@@ -1,4 +1,4 @@
-package sputter
+package main
 
 import "fmt"
 
@@ -22,36 +22,36 @@ type Iterator interface {
 
 // Literal identifies a Value as being a literal reference
 type Literal struct {
-	value Value
+	Value Value
 }
 
 // Evaluate makes a Literal Evaluable
 func (l *Literal) Evaluate(c *Context) Value {
-	return l.value
+	return l.Value
 }
 
 func (l *Literal) String() string {
-	if str, ok := l.value.(fmt.Stringer); ok {
+	if str, ok := l.Value.(fmt.Stringer); ok {
 		return str.String()
 	}
-	return l.value.(string)
+	return l.Value.(string)
 }
 
 // Symbol is an Identifier that can be resolved
 type Symbol struct {
-	name string
+	Name string
 }
 
 // Evaluate makes a Symbol Evaluable
 func (s *Symbol) Evaluate(c *Context) Value {
-	if resolved, ok := c.Get(s.name); ok {
+	if resolved, ok := c.Get(s.Name); ok {
 		return resolved
 	}
 	panic(UnknownSymbol)
 }
 
 func (s *Symbol) String() string {
-	return s.name
+	return s.Name
 }
 
 // ArgumentProcessor is the standard signature for a function that is
@@ -60,10 +60,10 @@ type ArgumentProcessor func(*Context, Iterable) Value
 
 // Function is a Value that can be invoked
 type Function struct {
-	name string
-	exec ArgumentProcessor
+	Name string
+	Exec ArgumentProcessor
 }
 
 func (f *Function) String() string {
-	return f.name
+	return f.Name
 }

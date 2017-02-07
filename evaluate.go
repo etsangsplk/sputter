@@ -1,4 +1,4 @@
-package sputter
+package main
 
 // Evaluate a Value against a Context
 func Evaluate(c *Context, v Value) Value {
@@ -8,7 +8,7 @@ func Evaluate(c *Context, v Value) Value {
 	return v
 }
 
-// EvaluateCoder evaluates a Coder (different interface than Iterator)
+// EvaluateCoder evaluates each element of the provided Coder
 func EvaluateCoder(c *Context, coder *Coder) Value {
 	var lastEval Value
 	for v := coder.Next(); v != EndOfCoder; v = coder.Next() {

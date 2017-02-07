@@ -3,18 +3,20 @@ package main
 import (
 	"io/ioutil"
 	"os"
-
-	"github.com/kode4food/sputter"
 	"fmt"
 )
 
 func main() {
+	if len(os.Args) < 2 {
+		fmt.Println("No file specified")
+		os.Exit(-2)
+	}
 	filename := os.Args[1]
 	if buffer, err := ioutil.ReadFile(filename); err == nil {
-		context := sputter.Builtins.Child()
-		l := sputter.NewLexer(string(buffer))
-		c := sputter.NewCoder(l)
-		sputter.EvaluateCoder(context, c)
+		context := Builtins.Child()
+		l := NewLexer(string(buffer))
+		c := NewCoder(l)
+		EvaluateCoder(context, c)
 	} else {
 		fmt.Println("File not found:", filename)
 		os.Exit(-1)

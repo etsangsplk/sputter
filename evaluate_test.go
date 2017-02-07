@@ -1,4 +1,4 @@
-package sputter
+package main
 
 import (
 	"math/big"
@@ -97,7 +97,7 @@ func TestFunction(t *testing.T) {
 
 	testCode(a, `
 	  (defun identity [value] value)
-		(print identity)
+		(print '(identity "hello"))
 		(identity)
 	`, EmptyList)
 }

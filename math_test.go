@@ -1,4 +1,4 @@
-package sputter
+package main
 
 import (
 	"math/big"
@@ -11,7 +11,7 @@ func TestAdd(t *testing.T) {
 	a := assert.New(t)
 	l := NewList(big.NewFloat(1)).Cons(big.NewFloat(2)).Cons(big.NewFloat(10))
 	f, _ := Builtins.Get("+")
-	r := f.(*Function).exec(Builtins, l)
+	r := f.(*Function).Exec(Builtins, l)
 	a.Equal(big.NewFloat(13.0), r)
 }
 
@@ -19,7 +19,7 @@ func TestSubtract(t *testing.T) {
 	a := assert.New(t)
 	l := NewList(big.NewFloat(1)).Cons(big.NewFloat(3)).Cons(big.NewFloat(7))
 	f, _ := Builtins.Get("-")
-	r := f.(*Function).exec(Builtins, l)
+	r := f.(*Function).Exec(Builtins, l)
 	a.Equal(big.NewFloat(3.0), r)
 }
 
@@ -27,7 +27,7 @@ func TestMultiply(t *testing.T) {
 	a := assert.New(t)
 	l := NewList(big.NewFloat(12)).Cons(big.NewFloat(2)).Cons(big.NewFloat(5))
 	f, _ := Builtins.Get("*")
-	r := f.(*Function).exec(Builtins, l)
+	r := f.(*Function).Exec(Builtins, l)
 	a.Equal(big.NewFloat(120), r)
 }
 
@@ -35,6 +35,6 @@ func TestDivide(t *testing.T) {
 	a := assert.New(t)
 	l := NewList(big.NewFloat(5)).Cons(big.NewFloat(2)).Cons(big.NewFloat(10))
 	f, _ := Builtins.Get("/")
-	r := f.(*Function).exec(Builtins, l)
+	r := f.(*Function).Exec(Builtins, l)
 	a.Equal(big.NewFloat(1.0), r)
 }

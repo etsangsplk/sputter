@@ -1,4 +1,4 @@
-package sputter
+package main
 
 // ListNotClosed is the error returned when EOF is reached inside a List
 const ListNotClosed = "End of file reached with open list"

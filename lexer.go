@@ -1,4 +1,4 @@
-package sputter
+package main
 
 import (
 	"math/big"
@@ -41,10 +41,11 @@ type TokenReader interface {
 	Next() *Token
 }
 
+// EOFToken marks the end of a TokenReader stream
+var EOFToken = &Token{EndOfFile, ""}
+
 // Lexer is the lexer interface
 type Lexer struct {
-	EOFToken *Token
-
 	input  string
 	start  int
 	pos    int
@@ -84,9 +85,8 @@ func init() {
 // NewLexer instantiates a new Lexer instance
 func NewLexer(source string) *Lexer {
 	lexer := &Lexer{
-		EOFToken: &Token{EndOfFile, ""},
-		input:    source,
-		tokens:   make(chan *Token),
+		input:  source,
+		tokens: make(chan *Token),
 	}
 
 	go lexer.run()

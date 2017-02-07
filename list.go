@@ -1,4 +1,4 @@
-package sputter
+package main
 
 import (
 	"bytes"
@@ -73,12 +73,12 @@ func (l *ListIterator) Iterable() Iterable {
 // Evaluate makes a List Evaluable
 func (l *List) Evaluate(c *Context) Value {
 	if function, ok := l.value.(*Function); ok {
-		return function.exec(c, l.rest)
+		return function.Exec(c, l.rest)
 	}
 	if sym, ok := l.value.(*Symbol); ok {
-		if v, ok := c.Get(sym.name); ok {
+		if v, ok := c.Get(sym.Name); ok {
 			if entry, ok := v.(*Function); ok {
-				return entry.exec(c, l.rest)
+				return entry.Exec(c, l.rest)
 			}
 		}
 	}

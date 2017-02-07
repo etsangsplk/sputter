@@ -1,4 +1,4 @@
-package sputter
+package main
 
 import (
 	"math/big"
@@ -28,7 +28,7 @@ func TestCreateLexer(t *testing.T) {
 func TestWhitespace(t *testing.T) {
 	a := assert.New(t)
 	lexer := NewLexer("   \t ")
-	assertToken(a, lexer.EOFToken, lexer.Next())
+	assertToken(a, EOFToken, lexer.Next())
 }
 
 func TestEmptyList(t *testing.T) {
@@ -36,7 +36,7 @@ func TestEmptyList(t *testing.T) {
 	lexer := NewLexer(" ( \t ) ")
 	assertToken(a, &Token{ListStart, "("}, lexer.Next())
 	assertToken(a, &Token{ListEnd, ")"}, lexer.Next())
-	assertToken(a, lexer.EOFToken, lexer.Next())
+	assertToken(a, EOFToken, lexer.Next())
 }
 
 func TestNumbers(t *testing.T) {
@@ -48,7 +48,7 @@ func TestNumbers(t *testing.T) {
 	assertToken(a, &Token{Number, big.NewFloat(99.598e+10)}, lexer.Next())
 	assertToken(a, &Token{Number, big.NewFloat(54e+12)}, lexer.Next())
 	assertToken(a, &Token{Ratio, big.NewRat(1, 2)}, lexer.Next())
-	assertToken(a, lexer.EOFToken, lexer.Next())
+	assertToken(a, EOFToken, lexer.Next())
 }
 
 func TestStrings(t *testing.T) {
@@ -56,7 +56,7 @@ func TestStrings(t *testing.T) {
 	lexer := NewLexer(` "hello there" "how's \"life\"?"  `)
 	assertToken(a, &Token{String, `hello there`}, lexer.Next())
 	assertToken(a, &Token{String, `how's \"life\"?`}, lexer.Next())
-	assertToken(a, lexer.EOFToken, lexer.Next())
+	assertToken(a, EOFToken, lexer.Next())
 }
 
 func TestMultiline(t *testing.T) {
@@ -68,5 +68,5 @@ func TestMultiline(t *testing.T) {
 	assertToken(a, &Token{String, `hello there`}, lexer.Next())
 	assertToken(a, &Token{String, `how's life?`}, lexer.Next())
 	assertToken(a, &Token{Number, big.NewFloat(99)}, lexer.Next())
-	assertToken(a, lexer.EOFToken, lexer.Next())
+	assertToken(a, EOFToken, lexer.Next())
 }

@@ -1,4 +1,4 @@
-package sputter
+package main
 
 const defaultVarSize = 16
 
@@ -49,7 +49,7 @@ func (c *Context) Put(name string, value Value) *Context {
 
 // PutFunction puts a Function into the immediate Context by its name
 func (c *Context) PutFunction(f *Function) *Context {
-	c.vars[f.name] = f
+	c.vars[f.Name] = f
 	return c
 }
 

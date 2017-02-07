@@ -1,9 +1,9 @@
-package sputter
+package main
 
 import "fmt"
 
 // Builtins are the Context of built-in identifiers
-var Builtins *Context
+var Builtins = NewContext()
 
 func print(c *Context, args Iterable) Value {
 	iter := args.Iterate()
@@ -19,7 +19,7 @@ func defvar(c *Context, args Iterable) Value {
 	globals := c.Globals()
 	iter := args.Iterate()
 	sym, _ := iter.Next()
-	name := sym.(*Symbol).name
+	name := sym.(*Symbol).Name
 	_, bound := globals.Get(name)
 	if !bound {
 		val, _ := iter.Next()
@@ -35,12 +35,12 @@ func let(c *Context, args Iterable) Value {
 
 	bindIter := bindings.(Iterable).Iterate()
 	for sym, ok := bindIter.Next(); ok; sym, ok = bindIter.Next() {
-		name := sym.(*Symbol).name
+		name := sym.(*Symbol).Name
 		if val, ok := bindIter.Next(); ok {
 			locals.Put(name, Evaluate(locals, val))
 		}
 	}
-	
+
 	return EvaluateIterator(locals, iter)
 }
 
@@ -48,7 +48,7 @@ func defun(c *Context, args Iterable) Value {
 	iter := args.Iterate()
 
 	funcNameValue, _ := iter.Next()
-	funcName := funcNameValue.(*Symbol).name
+	funcName := funcNameValue.(*Symbol).Name
 
 	symsValue, _ := iter.Next()
 	syms := symsValue.(Iterable)
@@ -60,7 +60,7 @@ func defun(c *Context, args Iterable) Value {
 		symIter := syms.Iterate()
 		argIter := args.Iterate()
 		for argSymbol, symFound := symIter.Next(); symFound; {
-			argName := argSymbol.(*Symbol).name
+			argName := argSymbol.(*Symbol).Name
 			argValue, argFound := argIter.Next()
 			if argFound {
 				locals.Put(argName, argValue)
@@ -77,7 +77,6 @@ func defun(c *Context, args Iterable) Value {
 }
 
 func init() {
-	Builtins = NewContext()
 	Builtins.Put("T", &Literal{true})
 	Builtins.Put("nil", EmptyList)
 	Builtins.Put("true", &Literal{true})
