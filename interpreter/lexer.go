@@ -8,10 +8,10 @@ import (
 )
 
 // UnexpectedEndOfFile is the error returned when EOF is unexpectedly reached
-const UnexpectedEndOfFile = "End of file reached unexpectedly"
+const UnexpectedEndOfFile = "end of file reached unexpectedly"
 
 // UnmatchedState is the error returned when the lexing state is invalid
-const UnmatchedState = "Unmatched lexing state"
+const UnmatchedState = "unmatched lexing state"
 
 // TokenType is an opaque type for lexer tokens
 type TokenType int

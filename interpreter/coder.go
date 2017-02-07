@@ -5,7 +5,7 @@ import (
 )
 
 // ListNotClosed is the error returned when EOF is reached inside a List
-const ListNotClosed = "End of file reached with open list"
+const ListNotClosed = "end of file reached with open list"
 
 // EndOfCoder represents the end of a Coder stream
 var EndOfCoder = struct{}{}

@@ -1,7 +1,7 @@
 package api
 
 // UnknownSymbol is thrown if a symbol cannot be resolved
-const UnknownSymbol = "Symbol has not been defined"
+const UnknownSymbol = "symbol has not been defined"
 
 // Symbol is an Identifier that can be resolved
 type Symbol struct {
