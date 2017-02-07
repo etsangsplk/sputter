@@ -1,23 +1,24 @@
-package main
+package main_test
 
 import (
 	"math/big"
 	"testing"
 
+	s "github.com/kode4food/sputter"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestCreateCoder(t *testing.T) {
 	a := assert.New(t)
-	l := NewLexer("99")
-	c := NewCoder(BuiltIns, l)
+	l := s.NewLexer("99")
+	c := s.NewCoder(s.BuiltIns, l)
 	a.NotNil(c)
 }
 
 func TestCodeInteger(t *testing.T) {
 	a := assert.New(t)
-	l := NewLexer("99")
-	c := NewCoder(BuiltIns, l)
+	l := s.NewLexer("99")
+	c := s.NewCoder(s.BuiltIns, l)
 	v := c.Next()
 	f, ok := v.(*big.Float)
 	a.True(ok)
@@ -26,10 +27,10 @@ func TestCodeInteger(t *testing.T) {
 
 func TestCodeList(t *testing.T) {
 	a := assert.New(t)
-	l := NewLexer(`(99 "hello" 55.12)`)
-	c := NewCoder(BuiltIns, l)
+	l := s.NewLexer(`(99 "hello" 55.12)`)
+	c := s.NewCoder(s.BuiltIns, l)
 	v := c.Next()
-	list, ok := v.(*List)
+	list, ok := v.(*s.List)
 	a.True(ok)
 
 	iter := list.Iterate()
@@ -51,10 +52,10 @@ func TestCodeList(t *testing.T) {
 
 func TestCodeNestedList(t *testing.T) {
 	a := assert.New(t)
-	l := NewLexer(`(99 ("hello" "there") 55.12)`)
-	c := NewCoder(BuiltIns, l)
+	l := s.NewLexer(`(99 ("hello" "there") 55.12)`)
+	c := s.NewCoder(s.BuiltIns, l)
 	v := c.Next()
-	list, ok := v.(*List)
+	list, ok := v.(*s.List)
 	a.True(ok)
 
 	iter1 := list.Iterate()
@@ -65,7 +66,7 @@ func TestCodeNestedList(t *testing.T) {
 	// get nested list
 	value, ok = iter1.Next()
 	a.True(ok)
-	list2, ok := value.(*List)
+	list2, ok := value.(*s.List)
 	a.True(ok)
 
 	// iterate over the rest of top-level list
@@ -95,25 +96,25 @@ func TestUnclosedList(t *testing.T) {
 
 	defer func() {
 		if r := recover(); r != nil {
-			a.Equal(r, ListNotClosed, "unclosed list")
+			a.Equal(r, s.ListNotClosed, "unclosed list")
 			return
 		}
 		a.Fail("unclosed list didn't panic")
 	}()
 
-	l := NewLexer(`(99 ("hello" "there") 55.12`)
-	c := NewCoder(BuiltIns, l)
+	l := s.NewLexer(`(99 ("hello" "there") 55.12`)
+	c := s.NewCoder(s.BuiltIns, l)
 	c.Next()
 }
 
 func TestLiteral(t *testing.T) {
 	a := assert.New(t)
 
-	l := NewLexer(`'99`)
-	c := NewCoder(BuiltIns, l)
+	l := s.NewLexer(`'99`)
+	c := s.NewCoder(s.BuiltIns, l)
 	v := c.Next()
 
-	literal, ok := v.(*Literal)
+	literal, ok := v.(*s.Literal)
 	a.True(ok)
 
 	value, ok := literal.Value.(*big.Float)

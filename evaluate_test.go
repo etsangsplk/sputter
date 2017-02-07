@@ -1,4 +1,4 @@
-package main
+package main_test
 
 import (
 	"math/big"
@@ -6,23 +6,24 @@ import (
 
 	"fmt"
 
+	s "github.com/kode4food/sputter"
 	"github.com/stretchr/testify/assert"
 )
 
 func testCodeWithContext(a *assert.Assertions, code string,
-	expect Value, context *Context) {
-	l := NewLexer(code)
-	c := NewCoder(BuiltIns, l)
-	a.Equal(expect, EvaluateCoder(context, c), code)
+	expect s.Value, context *s.Context) {
+	l := s.NewLexer(code)
+	c := s.NewCoder(s.BuiltIns, l)
+	a.Equal(expect, s.EvaluateCoder(context, c), code)
 }
 
-func testCode(a *assert.Assertions, code string, expect Value) {
-	c := NewContext()
+func testCode(a *assert.Assertions, code string, expect s.Value) {
+	c := s.NewContext()
 	testCodeWithContext(a, code, expect, c)
 }
 
-func evaluateToString(c *Context, v Value) string {
-	result := Evaluate(c, v)
+func evaluateToString(c *s.Context, v s.Value) string {
+	result := s.Evaluate(c, v)
 	if str, ok := result.(fmt.Stringer); ok {
 		return str.String()
 	}
@@ -50,14 +51,17 @@ func TestNested(t *testing.T) {
 
 func TestEvaluable(t *testing.T) {
 	a := assert.New(t)
-	c := NewContext()
+	c := s.NewContext()
 
-	hello := &Function{"hello", func(c *Context, args Iterable) Value {
-		iter := args.Iterate()
-		arg, _ := iter.Next()
-		value := evaluateToString(c, arg)
-		return "Hello, " + value + "!"
-	}}
+	hello := &s.Function{
+		Name: "hello",
+		Exec: func(c *s.Context, args s.Iterable) s.Value {
+			iter := args.Iterate()
+			arg, _ := iter.Next()
+			value := evaluateToString(c, arg)
+			return "Hello, " + value + "!"
+		},
+	}
 
 	c.Put("hello", hello)
 	c.Put("name", "Bob")
@@ -69,15 +73,18 @@ func TestEvaluable(t *testing.T) {
 func TestEvaluate(t *testing.T) {
 	a := assert.New(t)
 
-	hello := &Function{"hello", func(c *Context, args Iterable) Value {
-		iter := args.Iterate()
-		arg, _ := iter.Next()
-		value := evaluateToString(c, arg)
-		return "Hello, " + value + "!"
-	}}
+	hello := &s.Function{
+		Name: "hello",
+		Exec: func(c *s.Context, args s.Iterable) s.Value {
+			iter := args.Iterate()
+			arg, _ := iter.Next()
+			value := evaluateToString(c, arg)
+			return "Hello, " + value + "!"
+		},
+	}
 
-	list := NewList(hello).Conj("World")
-	result := Evaluate(NewContext(), list)
+	list := s.NewList(hello).Conj("World")
+	result := s.Evaluate(s.NewContext(), list)
 
 	a.Equal("Hello, World!", result.(string), "good hello")
 }
@@ -99,7 +106,7 @@ func TestFunction(t *testing.T) {
 	  (defun identity [value] value)
 		(print '(identity "hello"))
 		(identity)
-	`, EmptyList)
+	`, s.EmptyList)
 }
 
 func TestVariables(t *testing.T) {

@@ -30,7 +30,7 @@ const (
 	Whitespace
 )
 
-// Token is a lexer token
+// Token is a Lexer token
 type Token struct {
 	Type  TokenType
 	Value Value

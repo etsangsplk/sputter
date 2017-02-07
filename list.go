@@ -7,8 +7,8 @@ import (
 
 // List is a Value that maintains a singly-linked list of Values
 type List struct {
-	value Value
-	rest  *List
+	Value Value
+	Rest  *List
 }
 
 // EmptyList represents the empty list and the terminal 'rest' of a List
@@ -29,11 +29,11 @@ func (l *List) duplicate() (*List, *List) {
 		return l, l
 	}
 
-	first := &List{l.value, EmptyList}
+	first := &List{l.Value, EmptyList}
 	last := first
-	for current := l.rest; current != EmptyList; current = current.rest {
-		last.rest = &List{current.value, EmptyList}
-		last = last.rest
+	for current := l.Rest; current != EmptyList; current = current.Rest {
+		last.Rest = &List{current.Value, EmptyList}
+		last = last.Rest
 	}
 	return first, last
 }
@@ -41,7 +41,7 @@ func (l *List) duplicate() (*List, *List) {
 // Conj constructs a new List by appending to the current List
 func (l *List) Conj(tail Value) *List {
 	first, last := l.duplicate()
-	last.rest = &List{tail, EmptyList}
+	last.Rest = &List{tail, EmptyList}
 	return first
 }
 
@@ -60,8 +60,8 @@ func (l *ListIterator) Next() (Value, bool) {
 	if l.current == EmptyList {
 		return EmptyList, false
 	}
-	result := l.current.value
-	l.current = l.current.rest
+	result := l.current.Value
+	l.current = l.current.Rest
 	return result, true
 }
 
@@ -72,13 +72,13 @@ func (l *ListIterator) Iterable() Iterable {
 
 // Evaluate makes a List Evaluable
 func (l *List) Evaluate(c *Context) Value {
-	if function, ok := l.value.(*Function); ok {
-		return function.Exec(c, l.rest)
+	if function, ok := l.Value.(*Function); ok {
+		return function.Exec(c, l.Rest)
 	}
-	if sym, ok := l.value.(*Symbol); ok {
+	if sym, ok := l.Value.(*Symbol); ok {
 		if v, ok := c.Get(sym.Name); ok {
 			if entry, ok := v.(*Function); ok {
-				return entry.Exec(c, l.rest)
+				return entry.Exec(c, l.Rest)
 			}
 		}
 	}
@@ -89,13 +89,13 @@ func (l *List) String() string {
 	var buffer bytes.Buffer
 
 	buffer.WriteString("(")
-	for current := l; current != EmptyList; current = current.rest {
-		if str, ok := current.value.(fmt.Stringer); ok {
+	for current := l; current != EmptyList; current = current.Rest {
+		if str, ok := current.Value.(fmt.Stringer); ok {
 			buffer.WriteString(str.String())
 		} else {
-			buffer.WriteString(current.value.(string))
+			buffer.WriteString(current.Value.(string))
 		}
-		if current.rest != EmptyList {
+		if current.Rest != EmptyList {
 			buffer.WriteString(" ")
 		}
 	}

@@ -13,7 +13,7 @@ var EndOfCoder = struct{}{}
 // into Lists for evaluation
 type Coder struct {
 	builtIns *Context
-	reader TokenReader
+	reader   TokenReader
 }
 
 // NewCoder instantiates a new Coder using the provided TokenReader
