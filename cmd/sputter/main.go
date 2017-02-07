@@ -14,8 +14,7 @@ func main() {
 		context := sputter.Builtins.Child()
 		l := sputter.NewLexer(string(buffer))
 		c := sputter.NewCoder(l)
-		e := sputter.NewExecutor(c)
-		e.Exec(context)
+		sputter.EvaluateCoder(context, c)
 	} else {
 		fmt.Println("File not found:", filename)
 		os.Exit(-1)

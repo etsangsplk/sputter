@@ -13,8 +13,7 @@ func testCodeWithContext(a *assert.Assertions, code string,
 	expect Value, context *Context) {
 	l := NewLexer(code)
 	c := NewCoder(l)
-	e := NewExecutor(c)
-	a.Equal(expect, e.Exec(context), code)
+	a.Equal(expect, EvaluateCoder(context, c), code)
 }
 
 func testCode(a *assert.Assertions, code string, expect Value) {
