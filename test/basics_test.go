@@ -1,10 +1,9 @@
 package sputter_test
 
 import (
+	"fmt"
 	"math/big"
 	"testing"
-
-	"fmt"
 
 	s "github.com/kode4food/sputter/api"
 	b "github.com/kode4food/sputter/builtins"

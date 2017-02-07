@@ -1,9 +1,8 @@
 package interpreter_test
 
 import (
-	"testing"
-
 	"fmt"
+	"testing"
 
 	s "github.com/kode4food/sputter/api"
 	i "github.com/kode4food/sputter/interpreter"
