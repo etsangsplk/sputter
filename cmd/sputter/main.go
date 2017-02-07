@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/kode4food/sputter"
+	"fmt"
 )
 
 func main() {
@@ -15,5 +16,8 @@ func main() {
 		c := sputter.NewCoder(l)
 		e := sputter.NewExecutor(c)
 		e.Exec(context)
+	} else {
+		fmt.Println("File not found:", filename)
+		os.Exit(-1)
 	}
 }
