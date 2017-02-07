@@ -54,13 +54,9 @@ func TestNestedContext(t *testing.T) {
 func TestGlobalContext(t *testing.T) {
 	a := assert.New(t)
 
-	bg1 := Builtins.Child()
-	bg2 := bg1.Child()
-
 	sg1 := NewContext()
 	sg2 := sg1.Child()
 	sg3 := sg2.Child()
 
-	a.Equal(bg1, bg2.Globals())
 	a.Equal(sg1, sg3.Globals())
 }

@@ -12,12 +12,13 @@ var EndOfCoder = struct{}{}
 // Coder is responsible for taking a stream of Tokens and converting them
 // into Lists for evaluation
 type Coder struct {
+	builtIns *Context
 	reader TokenReader
 }
 
 // NewCoder instantiates a new Coder using the provided TokenReader
-func NewCoder(reader TokenReader) *Coder {
-	return &Coder{reader}
+func NewCoder(builtIns *Context, reader TokenReader) *Coder {
+	return &Coder{builtIns, reader}
 }
 
 // Next returns the next value from the Coder
@@ -68,7 +69,7 @@ func (c *Coder) list(endToken TokenType) *List {
 		token := c.reader.Next()
 		if token.Type == Identifier {
 			name := token.Value.(string)
-			if function, ok := Builtins.Get(name); ok {
+			if function, ok := c.builtIns.Get(name); ok {
 				list := next()
 				return list.Cons(function)
 			}

@@ -10,14 +10,14 @@ import (
 func TestCreateCoder(t *testing.T) {
 	a := assert.New(t)
 	l := NewLexer("99")
-	c := NewCoder(l)
+	c := NewCoder(BuiltIns, l)
 	a.NotNil(c)
 }
 
 func TestCodeInteger(t *testing.T) {
 	a := assert.New(t)
 	l := NewLexer("99")
-	c := NewCoder(l)
+	c := NewCoder(BuiltIns, l)
 	v := c.Next()
 	f, ok := v.(*big.Float)
 	a.True(ok)
@@ -27,7 +27,7 @@ func TestCodeInteger(t *testing.T) {
 func TestCodeList(t *testing.T) {
 	a := assert.New(t)
 	l := NewLexer(`(99 "hello" 55.12)`)
-	c := NewCoder(l)
+	c := NewCoder(BuiltIns, l)
 	v := c.Next()
 	list, ok := v.(*List)
 	a.True(ok)
@@ -52,7 +52,7 @@ func TestCodeList(t *testing.T) {
 func TestCodeNestedList(t *testing.T) {
 	a := assert.New(t)
 	l := NewLexer(`(99 ("hello" "there") 55.12)`)
-	c := NewCoder(l)
+	c := NewCoder(BuiltIns, l)
 	v := c.Next()
 	list, ok := v.(*List)
 	a.True(ok)
@@ -102,7 +102,7 @@ func TestUnclosedList(t *testing.T) {
 	}()
 
 	l := NewLexer(`(99 ("hello" "there") 55.12`)
-	c := NewCoder(l)
+	c := NewCoder(BuiltIns, l)
 	c.Next()
 }
 
@@ -110,7 +110,7 @@ func TestLiteral(t *testing.T) {
 	a := assert.New(t)
 
 	l := NewLexer(`'99`)
-	c := NewCoder(l)
+	c := NewCoder(BuiltIns, l)
 	v := c.Next()
 
 	literal, ok := v.(*Literal)

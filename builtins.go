@@ -2,8 +2,8 @@ package main
 
 import "fmt"
 
-// Builtins are the Context of built-in identifiers
-var Builtins = NewContext()
+// BuiltIns is a special Context of built-in identifiers
+var BuiltIns = NewContext()
 
 func print(c *Context, args Iterable) Value {
 	iter := args.Iterate()
@@ -77,13 +77,13 @@ func defun(c *Context, args Iterable) Value {
 }
 
 func init() {
-	Builtins.Put("T", &Literal{true})
-	Builtins.Put("nil", EmptyList)
-	Builtins.Put("true", &Literal{true})
-	Builtins.Put("false", &Literal{false})
+	BuiltIns.Put("T", &Literal{true})
+	BuiltIns.Put("nil", EmptyList)
+	BuiltIns.Put("true", &Literal{true})
+	BuiltIns.Put("false", &Literal{false})
 
-	Builtins.PutFunction(&Function{"print", print})
-	Builtins.PutFunction(&Function{"defvar", defvar})
-	Builtins.PutFunction(&Function{"let", let})
-	Builtins.PutFunction(&Function{"defun", defun})
+	BuiltIns.PutFunction(&Function{"print", print})
+	BuiltIns.PutFunction(&Function{"defvar", defvar})
+	BuiltIns.PutFunction(&Function{"let", let})
+	BuiltIns.PutFunction(&Function{"defun", defun})
 }

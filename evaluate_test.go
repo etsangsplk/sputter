@@ -12,12 +12,12 @@ import (
 func testCodeWithContext(a *assert.Assertions, code string,
 	expect Value, context *Context) {
 	l := NewLexer(code)
-	c := NewCoder(l)
+	c := NewCoder(BuiltIns, l)
 	a.Equal(expect, EvaluateCoder(context, c), code)
 }
 
 func testCode(a *assert.Assertions, code string, expect Value) {
-	c := Builtins.Child()
+	c := NewContext()
 	testCodeWithContext(a, code, expect, c)
 }
 
@@ -50,7 +50,7 @@ func TestNested(t *testing.T) {
 
 func TestEvaluable(t *testing.T) {
 	a := assert.New(t)
-	c := Builtins.Child()
+	c := NewContext()
 
 	hello := &Function{"hello", func(c *Context, args Iterable) Value {
 		iter := args.Iterate()
@@ -77,7 +77,7 @@ func TestEvaluate(t *testing.T) {
 	}}
 
 	list := NewList(hello).Conj("World")
-	result := Evaluate(Builtins, list)
+	result := Evaluate(NewContext(), list)
 
 	a.Equal("Hello, World!", result.(string), "good hello")
 }

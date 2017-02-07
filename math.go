@@ -41,8 +41,8 @@ func division(c *Context, args Iterable) Value {
 }
 
 func init() {
-	Builtins.PutFunction(&Function{"+", addition})
-	Builtins.PutFunction(&Function{"-", subtraction})
-	Builtins.PutFunction(&Function{"*", multiplication})
-	Builtins.PutFunction(&Function{"/", division})
+	BuiltIns.PutFunction(&Function{"+", addition})
+	BuiltIns.PutFunction(&Function{"-", subtraction})
+	BuiltIns.PutFunction(&Function{"*", multiplication})
+	BuiltIns.PutFunction(&Function{"/", division})
 }

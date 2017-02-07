@@ -13,9 +13,9 @@ func main() {
 	}
 	filename := os.Args[1]
 	if buffer, err := ioutil.ReadFile(filename); err == nil {
-		context := Builtins.Child()
+		context := NewContext()
 		l := NewLexer(string(buffer))
-		c := NewCoder(l)
+		c := NewCoder(BuiltIns, l)
 		EvaluateCoder(context, c)
 	} else {
 		fmt.Println("File not found:", filename)
