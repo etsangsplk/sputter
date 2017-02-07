@@ -1,9 +1,12 @@
-package main
+package api
 
 import (
 	"bytes"
 	"fmt"
 )
+
+// NonFunction is the error returned when a non-Function is invoked
+const NonFunction = "first element of list is not a function"
 
 // List is a Value that maintains a singly-linked list of Values
 type List struct {

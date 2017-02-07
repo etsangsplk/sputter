@@ -1,4 +1,4 @@
-package main_test
+package sputter_test
 
 import (
 	"math/big"
@@ -6,15 +6,17 @@ import (
 
 	"fmt"
 
-	s "github.com/kode4food/sputter"
+	s "github.com/kode4food/sputter/api"
+	b "github.com/kode4food/sputter/builtins"
+	i "github.com/kode4food/sputter/interpreter"
 	"github.com/stretchr/testify/assert"
 )
 
 func testCodeWithContext(a *assert.Assertions, code string,
 	expect s.Value, context *s.Context) {
-	l := s.NewLexer(code)
-	c := s.NewCoder(s.BuiltIns, l)
-	a.Equal(expect, s.EvaluateCoder(context, c), code)
+	l := i.NewLexer(code)
+	c := i.NewCoder(b.BuiltIns, l)
+	a.Equal(expect, i.EvaluateCoder(context, c), code)
 }
 
 func testCode(a *assert.Assertions, code string, expect s.Value) {
@@ -23,7 +25,7 @@ func testCode(a *assert.Assertions, code string, expect s.Value) {
 }
 
 func evaluateToString(c *s.Context, v s.Value) string {
-	result := s.Evaluate(c, v)
+	result := i.Evaluate(c, v)
 	if str, ok := result.(fmt.Stringer); ok {
 		return str.String()
 	}
@@ -84,7 +86,7 @@ func TestEvaluate(t *testing.T) {
 	}
 
 	list := s.NewList(hello).Conj("World")
-	result := s.Evaluate(s.NewContext(), list)
+	result := i.Evaluate(s.NewContext(), list)
 
 	a.Equal("Hello, World!", result.(string), "good hello")
 }

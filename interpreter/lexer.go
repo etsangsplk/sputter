@@ -1,8 +1,10 @@
-package main
+package interpreter
 
 import (
 	"math/big"
 	"regexp"
+
+	a "github.com/kode4food/sputter/api"
 )
 
 // UnexpectedEndOfFile is the error returned when EOF is unexpectedly reached
@@ -33,7 +35,7 @@ const (
 // Token is a Lexer token
 type Token struct {
 	Type  TokenType
-	Value Value
+	Value a.Value
 }
 
 // TokenReader defines the one method that a Token processor must provide
@@ -113,7 +115,7 @@ func (l *Lexer) run() {
 	close(l.tokens)
 }
 
-func (l *Lexer) emitValue(t TokenType, v Value) {
+func (l *Lexer) emitValue(t TokenType, v a.Value) {
 	l.tokens <- &Token{t, v}
 	l.skip()
 }

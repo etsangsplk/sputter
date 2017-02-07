@@ -1,10 +1,10 @@
-package main_test
+package sputter_test
 
 import (
 	"math/big"
 	"testing"
 
-	s "github.com/kode4food/sputter"
+	s "github.com/kode4food/sputter/api"
 	"github.com/stretchr/testify/assert"
 )
 

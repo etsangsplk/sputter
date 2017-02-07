@@ -1,18 +1,18 @@
-package main_test
+package sputter_test
 
 import (
 	"testing"
 
-	s "github.com/kode4food/sputter"
+	b "github.com/kode4food/sputter/builtins"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestBuiltInsContext(t *testing.T) {
 	a := assert.New(t)
 
-	bg1 := s.BuiltIns.Child()
+	bg1 := b.BuiltIns.Child()
 	bg2 := bg1.Child()
 	bg3 := bg2.Child()
 
-	a.Equal(s.BuiltIns, bg3.Globals())
+	a.Equal(b.BuiltIns, bg3.Globals())
 }

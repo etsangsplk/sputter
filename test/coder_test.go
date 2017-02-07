@@ -1,24 +1,26 @@
-package main_test
+package sputter_test
 
 import (
 	"math/big"
 	"testing"
 
-	s "github.com/kode4food/sputter"
+	s "github.com/kode4food/sputter/api"
+	b "github.com/kode4food/sputter/builtins"
+	i "github.com/kode4food/sputter/interpreter"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestCreateCoder(t *testing.T) {
 	a := assert.New(t)
-	l := s.NewLexer("99")
-	c := s.NewCoder(s.BuiltIns, l)
+	l := i.NewLexer("99")
+	c := i.NewCoder(b.BuiltIns, l)
 	a.NotNil(c)
 }
 
 func TestCodeInteger(t *testing.T) {
 	a := assert.New(t)
-	l := s.NewLexer("99")
-	c := s.NewCoder(s.BuiltIns, l)
+	l := i.NewLexer("99")
+	c := i.NewCoder(b.BuiltIns, l)
 	v := c.Next()
 	f, ok := v.(*big.Float)
 	a.True(ok)
@@ -27,8 +29,8 @@ func TestCodeInteger(t *testing.T) {
 
 func TestCodeList(t *testing.T) {
 	a := assert.New(t)
-	l := s.NewLexer(`(99 "hello" 55.12)`)
-	c := s.NewCoder(s.BuiltIns, l)
+	l := i.NewLexer(`(99 "hello" 55.12)`)
+	c := i.NewCoder(b.BuiltIns, l)
 	v := c.Next()
 	list, ok := v.(*s.List)
 	a.True(ok)
@@ -52,8 +54,8 @@ func TestCodeList(t *testing.T) {
 
 func TestCodeNestedList(t *testing.T) {
 	a := assert.New(t)
-	l := s.NewLexer(`(99 ("hello" "there") 55.12)`)
-	c := s.NewCoder(s.BuiltIns, l)
+	l := i.NewLexer(`(99 ("hello" "there") 55.12)`)
+	c := i.NewCoder(b.BuiltIns, l)
 	v := c.Next()
 	list, ok := v.(*s.List)
 	a.True(ok)
@@ -96,22 +98,22 @@ func TestUnclosedList(t *testing.T) {
 
 	defer func() {
 		if r := recover(); r != nil {
-			a.Equal(r, s.ListNotClosed, "unclosed list")
+			a.Equal(r, i.ListNotClosed, "unclosed list")
 			return
 		}
 		a.Fail("unclosed list didn't panic")
 	}()
 
-	l := s.NewLexer(`(99 ("hello" "there") 55.12`)
-	c := s.NewCoder(s.BuiltIns, l)
+	l := i.NewLexer(`(99 ("hello" "there") 55.12`)
+	c := i.NewCoder(b.BuiltIns, l)
 	c.Next()
 }
 
 func TestLiteral(t *testing.T) {
 	a := assert.New(t)
 
-	l := s.NewLexer(`'99`)
-	c := s.NewCoder(s.BuiltIns, l)
+	l := i.NewLexer(`'99`)
+	c := i.NewCoder(b.BuiltIns, l)
 	v := c.Next()
 
 	literal, ok := v.(*s.Literal)
