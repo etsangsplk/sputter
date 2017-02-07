@@ -1,11 +1,10 @@
-package sputter_test
+package interpreter_test
 
 import (
 	"math/big"
 	"testing"
 
 	s "github.com/kode4food/sputter/api"
-	b "github.com/kode4food/sputter/builtins"
 	i "github.com/kode4food/sputter/interpreter"
 	"github.com/stretchr/testify/assert"
 )
@@ -13,14 +12,14 @@ import (
 func TestCreateCoder(t *testing.T) {
 	a := assert.New(t)
 	l := i.NewLexer("99")
-	c := i.NewCoder(b.BuiltIns, l)
+	c := i.NewCoder(s.NewContext(), l)
 	a.NotNil(c)
 }
 
 func TestCodeInteger(t *testing.T) {
 	a := assert.New(t)
 	l := i.NewLexer("99")
-	c := i.NewCoder(b.BuiltIns, l)
+	c := i.NewCoder(s.NewContext(), l)
 	v := c.Next()
 	f, ok := v.(*big.Float)
 	a.True(ok)
@@ -30,7 +29,7 @@ func TestCodeInteger(t *testing.T) {
 func TestCodeList(t *testing.T) {
 	a := assert.New(t)
 	l := i.NewLexer(`(99 "hello" 55.12)`)
-	c := i.NewCoder(b.BuiltIns, l)
+	c := i.NewCoder(s.NewContext(), l)
 	v := c.Next()
 	list, ok := v.(*s.List)
 	a.True(ok)
@@ -55,7 +54,7 @@ func TestCodeList(t *testing.T) {
 func TestCodeNestedList(t *testing.T) {
 	a := assert.New(t)
 	l := i.NewLexer(`(99 ("hello" "there") 55.12)`)
-	c := i.NewCoder(b.BuiltIns, l)
+	c := i.NewCoder(s.NewContext(), l)
 	v := c.Next()
 	list, ok := v.(*s.List)
 	a.True(ok)
@@ -105,7 +104,7 @@ func TestUnclosedList(t *testing.T) {
 	}()
 
 	l := i.NewLexer(`(99 ("hello" "there") 55.12`)
-	c := i.NewCoder(b.BuiltIns, l)
+	c := i.NewCoder(s.NewContext(), l)
 	c.Next()
 }
 
@@ -113,7 +112,7 @@ func TestLiteral(t *testing.T) {
 	a := assert.New(t)
 
 	l := i.NewLexer(`'99`)
-	c := i.NewCoder(b.BuiltIns, l)
+	c := i.NewCoder(s.NewContext(), l)
 	v := c.Next()
 
 	literal, ok := v.(*s.Literal)

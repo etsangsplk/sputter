@@ -1,4 +1,4 @@
-package sputter_test
+package api_test
 
 import (
 	"math/big"

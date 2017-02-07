@@ -51,46 +51,6 @@ func TestNested(t *testing.T) {
 	testCode(a, "(/ 10 (/ 6 3))", big.NewFloat(5.0))
 }
 
-func TestEvaluable(t *testing.T) {
-	a := assert.New(t)
-	c := s.NewContext()
-
-	hello := &s.Function{
-		Name: "hello",
-		Exec: func(c *s.Context, args s.Iterable) s.Value {
-			iter := args.Iterate()
-			arg, _ := iter.Next()
-			value := evaluateToString(c, arg)
-			return "Hello, " + value + "!"
-		},
-	}
-
-	c.Put("hello", hello)
-	c.Put("name", "Bob")
-
-	testCodeWithContext(a, `(hello "World")`, "Hello, World!", c)
-	testCodeWithContext(a, `(hello name)`, "Hello, Bob!", c)
-}
-
-func TestEvaluate(t *testing.T) {
-	a := assert.New(t)
-
-	hello := &s.Function{
-		Name: "hello",
-		Exec: func(c *s.Context, args s.Iterable) s.Value {
-			iter := args.Iterate()
-			arg, _ := iter.Next()
-			value := evaluateToString(c, arg)
-			return "Hello, " + value + "!"
-		},
-	}
-
-	list := s.NewList(hello).Conj("World")
-	result := i.Evaluate(s.NewContext(), list)
-
-	a.Equal("Hello, World!", result.(string), "good hello")
-}
-
 func TestFunction(t *testing.T) {
 	a := assert.New(t)
 
