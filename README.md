@@ -6,20 +6,22 @@ here.  On the other hand, if you want to join in on the fun, you're more than
 welcome to.
 
 ## How To Install
-Make sure your `GOPATH` is set.
+Make sure your `GOPATH` is set, then run `go get` to retrieve the package.
 
 ```bash
 go get github.com/kode4food/sputter
 ```
 
 ## How To Invoke The Interpreter
+Once you've installed the package, you can run it from `GOPATH/bin` like so.
+
 ```bash
-sputter some_file.lisp
+sputter ./examples/test.lisp
 ```
 
 ## Current Status
-Just started this thing and it's still pretty fragile,
-but that will change rapidly.  The current built-in forms are:
+I just started this thing and it's still pretty fragile, but
+that will change rapidly.  The current built-in forms are:
 `+`, `-`, `*`, `/`, `defvar`, `let`, `defun`, `print`.
 
 ## License (MIT License)
