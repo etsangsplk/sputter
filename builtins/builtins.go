@@ -50,6 +50,7 @@ func let(c *a.Context, args a.Iterable) a.Value {
 }
 
 func defun(c *a.Context, args a.Iterable) a.Value {
+	globals := c.Globals()
 	iter := args.Iterate()
 
 	funcNameValue, _ := iter.Next()
@@ -80,7 +81,7 @@ func defun(c *a.Context, args a.Iterable) a.Value {
 		},
 	}
 
-	c.PutFunction(defined)
+	globals.PutFunction(defined)
 	return defined
 }
 
