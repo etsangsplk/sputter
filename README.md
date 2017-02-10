@@ -22,7 +22,7 @@ sputter ./examples/test.lisp
 ## Current Status
 I just started this thing and it's still pretty fragile, but
 that will change rapidly.  The current built-in forms are:
-`+`, `-`, `*`, `/`, `defvar`, `let`, `defun`, `print`.
+`+`, `-`, `*`, `/`, `defvar`, `let`, `defun`, `print`, `if`, `list?`.
 
 ## License (MIT License)
 Copyright (c) 2017 Thomas S. Bradford
