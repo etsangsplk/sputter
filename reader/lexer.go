@@ -25,9 +25,9 @@ const (
 	Ratio
 	ListStart
 	ListEnd
-	ArgsStart
-	ArgsEnd
-	LiteralMarker
+	VectorStart
+	VectorEnd
+	DataMarker
 	EndOfFile
 	Whitespace
 )
@@ -38,12 +38,12 @@ type Token struct {
 	Value a.Value
 }
 
-// TokenReader defines the one method that a Token processor must provide
-type TokenReader interface {
+// Reader defines the one method that a Token processor must provide
+type Reader interface {
 	Next() *Token
 }
 
-// EOFToken marks the end of a TokenReader stream
+// EOFToken marks the end of a Reader stream
 var EOFToken = &Token{EndOfFile, ""}
 
 // Lexer is the lexer interface
@@ -71,9 +71,9 @@ func init() {
 		{regexp.MustCompile(`^\s+`), tokenState(Whitespace)},
 		{regexp.MustCompile(`^\(`), tokenState(ListStart)},
 		{regexp.MustCompile(`^\)`), tokenState(ListEnd)},
-		{regexp.MustCompile(`^\[`), tokenState(ArgsStart)},
-		{regexp.MustCompile(`^]`), tokenState(ArgsEnd)},
-		{regexp.MustCompile(`^'`), tokenState(LiteralMarker)},
+		{regexp.MustCompile(`^\[`), tokenState(VectorStart)},
+		{regexp.MustCompile(`^]`), tokenState(VectorEnd)},
+		{regexp.MustCompile(`^'`), tokenState(DataMarker)},
 
 		{regexp.MustCompile(`^"(\\.|[^"])*"`), stringState},
 		{regexp.MustCompile(`^[1-9]\d*/[1-9]\d*`), ratioState},

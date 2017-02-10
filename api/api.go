@@ -1,5 +1,13 @@
 package api
 
+var (
+	// True is literal value that represents any value other than False
+	True = &Data{Value: true}
+
+	// False is an alias for EmptyList or Nil
+	False = Nil
+)
+
 // Value is the generic interface for all 'Values' in the VM
 type Value interface {
 }
@@ -13,4 +21,24 @@ type Iterable interface {
 type Iterator interface {
 	Next() (Value, bool)
 	Iterable() Iterable
+}
+
+// Countable interfaces can return a Count of contained items
+type Countable interface {
+	Count() int
+}
+
+// Indexable interfaces can return an item by index
+type Indexable interface {
+	Get(index int) Value
+}
+
+// Truthy evaluates whether or not a Value is Truthy
+func Truthy(value Value) bool {
+	switch {
+	case value == EmptyList || value == False:
+		return false
+	default:
+		return true
+	}
 }

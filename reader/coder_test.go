@@ -1,25 +1,26 @@
 package interpreter_test
 
 import (
+	"fmt"
 	"math/big"
 	"testing"
 
 	s "github.com/kode4food/sputter/api"
-	i "github.com/kode4food/sputter/interpreter"
+	r "github.com/kode4food/sputter/reader"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestCreateCoder(t *testing.T) {
 	a := assert.New(t)
-	l := i.NewLexer("99")
-	c := i.NewCoder(s.NewContext(), l)
+	l := r.NewLexer("99")
+	c := r.NewCoder(s.NewContext(), l)
 	a.NotNil(c)
 }
 
 func TestCodeInteger(t *testing.T) {
 	a := assert.New(t)
-	l := i.NewLexer("99")
-	c := i.NewCoder(s.NewContext(), l)
+	l := r.NewLexer("99")
+	c := r.NewCoder(s.NewContext(), l)
 	v := c.Next()
 	f, ok := v.(*big.Float)
 	a.True(ok)
@@ -28,8 +29,8 @@ func TestCodeInteger(t *testing.T) {
 
 func TestCodeList(t *testing.T) {
 	a := assert.New(t)
-	l := i.NewLexer(`(99 "hello" 55.12)`)
-	c := i.NewCoder(s.NewContext(), l)
+	l := r.NewLexer(`(99 "hello" 55.12)`)
+	c := r.NewCoder(s.NewContext(), l)
 	v := c.Next()
 	list, ok := v.(*s.List)
 	a.True(ok)
@@ -53,8 +54,8 @@ func TestCodeList(t *testing.T) {
 
 func TestCodeNestedList(t *testing.T) {
 	a := assert.New(t)
-	l := i.NewLexer(`(99 ("hello" "there") 55.12)`)
-	c := i.NewCoder(s.NewContext(), l)
+	l := r.NewLexer(`(99 ("hello" "there") 55.12)`)
+	c := r.NewCoder(s.NewContext(), l)
 	v := c.Next()
 	list, ok := v.(*s.List)
 	a.True(ok)
@@ -96,29 +97,64 @@ func TestUnclosedList(t *testing.T) {
 	a := assert.New(t)
 
 	defer func() {
-		if r := recover(); r != nil {
-			a.Equal(r, i.ListNotClosed, "unclosed list")
+		if rec := recover(); rec != nil {
+			a.Equal(rec, r.ListNotClosed, "unclosed list")
 			return
 		}
 		a.Fail("unclosed list didn't panic")
 	}()
 
-	l := i.NewLexer(`(99 ("hello" "there") 55.12`)
-	c := i.NewCoder(s.NewContext(), l)
+	l := r.NewLexer(`(99 ("hello" "there") 55.12`)
+	c := r.NewCoder(s.NewContext(), l)
 	c.Next()
 }
 
 func TestLiteral(t *testing.T) {
 	a := assert.New(t)
 
-	l := i.NewLexer(`'99`)
-	c := i.NewCoder(s.NewContext(), l)
+	l := r.NewLexer(`'99`)
+	c := r.NewCoder(s.NewContext(), l)
 	v := c.Next()
 
-	literal, ok := v.(*s.Literal)
+	literal, ok := v.(*s.Data)
 	a.True(ok)
 
 	value, ok := literal.Value.(*big.Float)
 	a.True(ok)
 	a.Equal(0, big.NewFloat(99).Cmp(value))
+}
+
+func testCodeWithContext(a *assert.Assertions, code string, expect s.Value, context *s.Context) {
+	l := r.NewLexer(code)
+	c := r.NewCoder(s.NewContext(), l)
+	a.Equal(expect, r.EvaluateCoder(context, c), code)
+}
+
+func evaluateToString(c *s.Context, v s.Value) string {
+	result := s.Evaluate(c, v)
+	if str, ok := result.(fmt.Stringer); ok {
+		return str.String()
+	}
+	return result.(string)
+}
+
+func TestEvaluable(t *testing.T) {
+	a := assert.New(t)
+	c := s.NewContext()
+
+	hello := &s.Function{
+		Name: "hello",
+		Exec: func(c *s.Context, args s.Iterable) s.Value {
+			iter := args.Iterate()
+			arg, _ := iter.Next()
+			value := evaluateToString(c, arg)
+			return "Hello, " + value + "!"
+		},
+	}
+
+	c.Put("hello", hello)
+	c.Put("name", "Bob")
+
+	testCodeWithContext(a, `(hello "World")`, "Hello, World!", c)
+	testCodeWithContext(a, `(hello name)`, "Hello, Bob!", c)
 }

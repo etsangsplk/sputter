@@ -23,3 +23,9 @@
   "howdy "
   "ho "
   blah)
+
+(if (list? [1])
+  (print "yep")
+  (print "nope"))
+
+(print [1 2 3])

@@ -4,8 +4,13 @@ import (
 	a "github.com/kode4food/sputter/api"
 )
 
-// ListNotClosed is the error returned when EOF is reached inside a List
-const ListNotClosed = "end of file reached with open list"
+const (
+	// ListNotClosed is thrown when EOF is reached inside a List
+	ListNotClosed = "end of file reached with open list"
+
+	// VectorNotClosed is thrown when EOF is reached inside a Vector
+	VectorNotClosed = "end of file reached with open vector"
+)
 
 // EndOfCoder represents the end of a Coder stream
 var EndOfCoder = struct{}{}
@@ -14,11 +19,11 @@ var EndOfCoder = struct{}{}
 // into Lists for evaluation
 type Coder struct {
 	builtIns *a.Context
-	reader   TokenReader
+	reader   Reader
 }
 
-// NewCoder instantiates a new Coder using the provided TokenReader
-func NewCoder(builtIns *a.Context, reader TokenReader) *Coder {
+// NewCoder instantiates a new Coder using the provided Reader
+func NewCoder(builtIns *a.Context, reader Reader) *Coder {
 	return &Coder{builtIns, reader}
 }
 
@@ -29,12 +34,12 @@ func (c *Coder) Next() a.Value {
 
 func (c *Coder) token(t *Token) a.Value {
 	switch t.Type {
-	case LiteralMarker:
-		return c.literal()
+	case DataMarker:
+		return c.data()
 	case ListStart:
-		return c.list(ListEnd)
-	case ArgsStart:
-		return c.list(ArgsEnd)
+		return c.list()
+	case VectorStart:
+		return c.vector()
 	case Identifier:
 		return &a.Symbol{Name: t.Value.(string)}
 	case EndOfFile:
@@ -44,18 +49,18 @@ func (c *Coder) token(t *Token) a.Value {
 	}
 }
 
-func (c *Coder) literal() *a.Literal {
-	return &a.Literal{Value: c.Next()}
+func (c *Coder) data() *a.Data {
+	return &a.Data{Value: c.Next()}
 }
 
-func (c *Coder) list(endToken TokenType) *a.List {
+func (c *Coder) list() *a.List {
 	var handle func(token *Token) *a.List
 	var first func() *a.List
 	var next func() *a.List
 
 	handle = func(token *Token) *a.List {
 		switch token.Type {
-		case endToken:
+		case ListEnd:
 			return a.EmptyList
 		case EndOfFile:
 			panic(ListNotClosed)
@@ -84,4 +89,31 @@ func (c *Coder) list(endToken TokenType) *a.List {
 	}
 
 	return first()
+}
+
+func (c *Coder) vector() a.Vector {
+	var result a.Vector = make(a.Vector, 0)
+
+	for {
+		token := c.reader.Next()
+		switch token.Type {
+		case VectorEnd:
+			return result
+		case EndOfFile:
+			panic(VectorNotClosed)
+		default:
+			elem := c.token(token)
+			result = append(result, elem)
+		}
+	}
+	return result
+}
+
+// EvaluateCoder evaluates each element of the provided Coder
+func EvaluateCoder(c *a.Context, coder *Coder) a.Value {
+	var lastEval a.Value
+	for v := coder.Next(); v != EndOfCoder; v = coder.Next() {
+		lastEval = a.Evaluate(c, v)
+	}
+	return lastEval
 }

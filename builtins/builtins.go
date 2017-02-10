@@ -4,23 +4,22 @@ import (
 	"fmt"
 
 	a "github.com/kode4food/sputter/api"
-	i "github.com/kode4food/sputter/interpreter"
 )
 
 // BuiltIns is a special Context of built-in identifiers
 var BuiltIns = a.NewContext()
 
-func print(c *a.Context, args a.Iterable) a.Value {
+func printCommand(c *a.Context, args a.Iterable) a.Value {
 	iter := args.Iterate()
 	for value, ok := iter.Next(); ok; value, ok = iter.Next() {
-		result := i.Evaluate(c, value)
+		result := a.Evaluate(c, value)
 		fmt.Print(result)
 	}
 	fmt.Println("")
 	return a.EmptyList
 }
 
-func defvar(c *a.Context, args a.Iterable) a.Value {
+func defvarCommand(c *a.Context, args a.Iterable) a.Value {
 	globals := c.Globals()
 	iter := args.Iterate()
 	sym, _ := iter.Next()
@@ -28,12 +27,12 @@ func defvar(c *a.Context, args a.Iterable) a.Value {
 	_, bound := globals.Get(name)
 	if !bound {
 		val, _ := iter.Next()
-		globals.Put(name, i.Evaluate(c, val))
+		globals.Put(name, a.Evaluate(c, val))
 	}
 	return sym
 }
 
-func let(c *a.Context, args a.Iterable) a.Value {
+func letCommand(c *a.Context, args a.Iterable) a.Value {
 	locals := c.Child()
 	iter := args.Iterate()
 	bindings, _ := iter.Next()
@@ -42,14 +41,14 @@ func let(c *a.Context, args a.Iterable) a.Value {
 	for sym, ok := bindIter.Next(); ok; sym, ok = bindIter.Next() {
 		name := sym.(*a.Symbol).Name
 		if val, ok := bindIter.Next(); ok {
-			locals.Put(name, i.Evaluate(locals, val))
+			locals.Put(name, a.Evaluate(locals, val))
 		}
 	}
 
-	return i.EvaluateIterator(locals, iter)
+	return a.EvaluateIterator(locals, iter)
 }
 
-func defun(c *a.Context, args a.Iterable) a.Value {
+func defunCommand(c *a.Context, args a.Iterable) a.Value {
 	globals := c.Globals()
 	iter := args.Iterate()
 
@@ -77,7 +76,7 @@ func defun(c *a.Context, args a.Iterable) a.Value {
 				}
 				argSymbol, symFound = symIter.Next()
 			}
-			return i.EvaluateIterator(locals, body.Iterate())
+			return a.EvaluateIterator(locals, body.Iterate())
 		},
 	}
 
@@ -85,14 +84,37 @@ func defun(c *a.Context, args a.Iterable) a.Value {
 	return defined
 }
 
-func init() {
-	BuiltIns.Put("T", &a.Literal{Value: true})
-	BuiltIns.Put("nil", a.EmptyList)
-	BuiltIns.Put("true", &a.Literal{Value: true})
-	BuiltIns.Put("false", &a.Literal{Value: false})
+func ifCommand(c *a.Context, args a.Iterable) a.Value {
+	iter := args.Iterate()
+	condValue, _ := iter.Next()
+	cond := a.Evaluate(c, condValue)
+	if !a.Truthy(cond) {
+		iter.Next()
+	}
+	result, _ := iter.Next()
+	return a.Evaluate(c, result)
+}
 
-	BuiltIns.PutFunction(&a.Function{Name: "print", Exec: print})
-	BuiltIns.PutFunction(&a.Function{Name: "defvar", Exec: defvar})
-	BuiltIns.PutFunction(&a.Function{Name: "let", Exec: let})
-	BuiltIns.PutFunction(&a.Function{Name: "defun", Exec: defun})
+func isListCommand(c *a.Context, args a.Iterable) a.Value {
+	iter := args.Iterate()
+	if val, ok := iter.Next(); ok {
+		if _, ok := a.Evaluate(c, val).(*a.List); ok {
+			return a.True
+		}
+	}
+	return a.False
+}
+
+func init() {
+	BuiltIns.Put("T", a.True)
+	BuiltIns.Put("nil", a.Nil)
+	BuiltIns.Put("true", a.True)
+	BuiltIns.Put("false", a.False)
+
+	BuiltIns.PutFunction(&a.Function{Name: "print", Exec: printCommand})
+	BuiltIns.PutFunction(&a.Function{Name: "defvar", Exec: defvarCommand})
+	BuiltIns.PutFunction(&a.Function{Name: "let", Exec: letCommand})
+	BuiltIns.PutFunction(&a.Function{Name: "defun", Exec: defunCommand})
+	BuiltIns.PutFunction(&a.Function{Name: "if", Exec: ifCommand})
+	BuiltIns.PutFunction(&a.Function{Name: "list?", Exec: isListCommand})
 }

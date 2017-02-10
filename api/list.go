@@ -14,8 +14,13 @@ type List struct {
 	Rest  *List
 }
 
-// EmptyList represents the empty list and the terminal 'rest' of a List
-var EmptyList = &List{nil, nil}
+var (
+	// EmptyList represents the empty list and the terminal 'rest' of a List
+	EmptyList = &List{nil, nil}
+
+	// Nil is an alias for EmptyList
+	Nil = EmptyList
+)
 
 // NewList creates a new List instance
 func NewList(head Value) *List {
@@ -42,6 +47,7 @@ func (l *List) duplicate() (*List, *List) {
 }
 
 // Conj constructs a new List by appending to the current List
+// Very expensive operation because it performs duplication
 func (l *List) Conj(tail Value) *List {
 	first, last := l.duplicate()
 	last.Rest = &List{tail, EmptyList}
@@ -49,17 +55,17 @@ func (l *List) Conj(tail Value) *List {
 }
 
 // ListIterator is an Iterator implementation for the List type
-type ListIterator struct {
+type listIterator struct {
 	current *List
 }
 
 // Iterate creates a new Iterator instance for the List
 func (l *List) Iterate() Iterator {
-	return &ListIterator{l}
+	return &listIterator{l}
 }
 
 // Next returns the next Value from the Iterator
-func (l *ListIterator) Next() (Value, bool) {
+func (l *listIterator) Next() (Value, bool) {
 	if l.current == EmptyList {
 		return EmptyList, false
 	}
@@ -69,12 +75,24 @@ func (l *ListIterator) Next() (Value, bool) {
 }
 
 // Iterable returns a new Iterable from the Iterator's current state
-func (l *ListIterator) Iterable() Iterable {
+func (l *listIterator) Iterable() Iterable {
 	return l.current
+}
+
+// Count returns the length of the List
+func (l *List) Count() int {
+	count := 0
+	for current := l; current != EmptyList; current = current.Rest {
+		count++
+	}
+	return count
 }
 
 // Evaluate makes a List Evaluable
 func (l *List) Evaluate(c *Context) Value {
+	if l == EmptyList {
+		return EmptyList
+	}
 	if function, ok := l.Value.(*Function); ok {
 		return function.Exec(c, l.Rest)
 	}
