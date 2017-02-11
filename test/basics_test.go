@@ -56,7 +56,7 @@ func TestFunction(t *testing.T) {
 
 	testCode(a, `
 	  (defun identity [value] value)
-		(print '(identity "hello"))
+		(println '(identity "hello"))
 		(identity)
 	`, s.EmptyList)
 }

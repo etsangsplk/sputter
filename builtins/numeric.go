@@ -16,6 +16,7 @@ func addition(c *a.Context, args a.Iterable) a.Value {
 }
 
 func subtraction(c *a.Context, args a.Iterable) a.Value {
+	AssertMinimumArity(args, 1)
 	iter := args.Iterate()
 	value, ok := iter.Next()
 	diff := a.Evaluate(c, value).(*big.Float)
@@ -35,6 +36,7 @@ func multiplication(c *a.Context, args a.Iterable) a.Value {
 }
 
 func division(c *a.Context, args a.Iterable) a.Value {
+	AssertMinimumArity(args, 1)
 	iter := args.Iterate()
 	value, ok := iter.Next()
 	quotient := a.Evaluate(c, value).(*big.Float)
