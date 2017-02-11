@@ -8,8 +8,14 @@ const (
 	// ListNotClosed is thrown when EOF is reached inside a List
 	ListNotClosed = "end of file reached with open list"
 
+	// UnmatchedListEnd is thrown if a list is ended without being started
+	UnmatchedListEnd = "encountered ')' with no open list"
+	
 	// VectorNotClosed is thrown when EOF is reached inside a Vector
 	VectorNotClosed = "end of file reached with open vector"
+	
+	// UnmatchedVectorEnd is thrown if a vector is ended without being started
+	UnmatchedVectorEnd = "encountered ']' with no open vector"
 )
 
 // EndOfCoder represents the end of a Coder stream
@@ -42,6 +48,10 @@ func (c *Coder) token(t *Token) a.Value {
 		return c.vector()
 	case Identifier:
 		return &a.Symbol{Name: t.Value.(string)}
+	case ListEnd:
+		panic(UnmatchedListEnd)
+	case VectorEnd:
+		panic(UnmatchedVectorEnd)
 	case EndOfFile:
 		return EndOfCoder
 	default:
