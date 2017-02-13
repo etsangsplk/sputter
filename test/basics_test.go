@@ -10,16 +10,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func testCodeWithContext(a *assert.Assertions, code string,
-	expect s.Value, context *s.Context) {
+func testCode(a *assert.Assertions, code string, expect s.Value) {
+	context := s.NewContext()
 	l := r.NewLexer(code)
 	c := r.NewCoder(b.BuiltIns, l)
 	a.Equal(expect, r.EvaluateCoder(context, c), code)
-}
-
-func testCode(a *assert.Assertions, code string, expect s.Value) {
-	c := s.NewContext()
-	testCodeWithContext(a, code, expect, c)
 }
 
 func TestBasics(t *testing.T) {
@@ -53,10 +48,22 @@ func TestFunction(t *testing.T) {
 		(defun identity [value] value)
 		(identity "foo")
 	`, "foo")
+}
+
+func TestBadArity(t *testing.T) {
+	a := assert.New(t)
+
+	defer func() {
+		if rec := recover(); rec != nil {
+			errorStr := "wrong number of arguments passed (0)"
+			a.Equal(rec, errorStr, "bad arity")
+			return
+		}
+		a.Fail("bad arity didn't panic")
+	}()
 
 	testCode(a, `
-	  (defun identity [value] value)
-		(println '(identity "hello"))
+		(defun identity [value] value)
 		(identity)
 	`, s.EmptyList)
 }

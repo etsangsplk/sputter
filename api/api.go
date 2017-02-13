@@ -6,7 +6,7 @@ var (
 
 	// False is an alias for EmptyList or Nil
 	False = Nil
-)
+) 
 
 // Value is the generic interface for all 'Values' in the VM
 type Value interface {

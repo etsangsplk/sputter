@@ -15,6 +15,15 @@ func main() {
 		fmt.Println("No file specified")
 		os.Exit(-2)
 	}
+
+	defer func() {
+		if rec := recover(); rec != nil {
+			fmt.Println(rec)
+			os.Exit(-3)
+			return
+		}
+	}()
+	
 	filename := os.Args[1]
 	if buffer, err := ioutil.ReadFile(filename); err == nil {
 		context := a.NewContext()
