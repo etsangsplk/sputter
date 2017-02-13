@@ -4,7 +4,7 @@ import a "github.com/kode4food/sputter/api"
 
 func define(name string, argNames a.Iterable, body a.Iterable) *a.Function {
 	count := argCount(argNames)
-	
+
 	return &a.Function{
 		Name: name,
 		Exec: func(c *a.Context, args a.Iterable) a.Value {
@@ -24,7 +24,7 @@ func define(name string, argNames a.Iterable, body a.Iterable) *a.Function {
 			}
 			return a.EvaluateIterator(locals, body.Iterate())
 		},
-	}	
+	}
 }
 
 func defunCommand(c *a.Context, args a.Iterable) a.Value {

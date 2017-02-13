@@ -7,8 +7,8 @@ import (
 )
 
 const (
-	incorrectArity = "expected %d argument(s), got %d"
-	incorrectMinArity = "expected at least %d argument(s), got %d"
+	incorrectArity      = "expected %d argument(s), got %d"
+	incorrectMinArity   = "expected at least %d argument(s), got %d"
 	incorrectArityRange = "expected between %d and %d arguments, got %d"
 )
 
@@ -28,6 +28,7 @@ func argCount(args a.Iterable) int {
 	return count
 }
 
+// AssertArity explodes if the arg count doesn't match provided arity
 func AssertArity(args a.Iterable, arity int) {
 	count := argCount(args)
 	if count != arity {
@@ -35,6 +36,7 @@ func AssertArity(args a.Iterable, arity int) {
 	}
 }
 
+// AssertMinimumArity explodes if the arg count isn't at least arity
 func AssertMinimumArity(args a.Iterable, arity int) {
 	count := argCount(args)
 	if count < arity {
@@ -42,6 +44,7 @@ func AssertMinimumArity(args a.Iterable, arity int) {
 	}
 }
 
+// AssertArityRange explodes if the arg count isn't in the arity range
 func AssertArityRange(args a.Iterable, min int, max int) {
 	count := argCount(args)
 	if count < min || count > max {

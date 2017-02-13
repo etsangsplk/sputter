@@ -10,10 +10,10 @@ const (
 
 	// UnmatchedListEnd is thrown if a list is ended without being started
 	UnmatchedListEnd = "encountered ')' with no open list"
-	
+
 	// VectorNotClosed is thrown when EOF is reached inside a Vector
 	VectorNotClosed = "end of file reached with open vector"
-	
+
 	// UnmatchedVectorEnd is thrown if a vector is ended without being started
 	UnmatchedVectorEnd = "encountered ']' with no open vector"
 )
@@ -102,7 +102,7 @@ func (c *Coder) list() *a.List {
 }
 
 func (c *Coder) vector() a.Vector {
-	var result a.Vector = make(a.Vector, 0)
+	var result = make(a.Vector, 0)
 
 	for {
 		token := c.reader.Next()

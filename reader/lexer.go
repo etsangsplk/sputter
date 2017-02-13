@@ -30,6 +30,7 @@ const (
 	DataMarker
 	EndOfFile
 	Whitespace
+	Comment
 )
 
 // Token is a Lexer token
@@ -68,6 +69,7 @@ var states stateMap
 func init() {
 	states = stateMap{
 		{regexp.MustCompile(`^$`), endState(EndOfFile)},
+		{regexp.MustCompile(`^;[^\n]*[\n]`), tokenState(Comment)},
 		{regexp.MustCompile(`^\s+`), tokenState(Whitespace)},
 		{regexp.MustCompile(`^\(`), tokenState(ListStart)},
 		{regexp.MustCompile(`^\)`), tokenState(ListEnd)},

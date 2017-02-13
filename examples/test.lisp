@@ -1,9 +1,11 @@
+;;;; this is a comment at the top of the file
+
 (defvar blah "blah is stored")
 
 (defun say-hello [name]
   (println "Hello there, " name "!"))
 
-(let (a 10)
+(let (a 10)   ; this is an EOL comment
   (println "a = " a)
   (let (a 20)
     (println "a = " a))
