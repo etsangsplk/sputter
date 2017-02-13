@@ -6,7 +6,11 @@ import (
 	a "github.com/kode4food/sputter/api"
 )
 
-const incorrectArity = "wrong number of arguments passed (%d)"
+const (
+	incorrectArity = "expected %d argument(s), got %d"
+	incorrectMinArity = "expected at least %d argument(s), got %d"
+	incorrectArityRange = "expected between %d and %d arguments, got %d"
+)
 
 // BuiltIns is a special Context of built-in identifiers
 var BuiltIns = a.NewContext()
@@ -27,21 +31,21 @@ func argCount(args a.Iterable) int {
 func AssertArity(args a.Iterable, arity int) {
 	count := argCount(args)
 	if count != arity {
-		panic(fmt.Sprintf(incorrectArity, count))
+		panic(fmt.Sprintf(incorrectArity, arity, count))
 	}
 }
 
 func AssertMinimumArity(args a.Iterable, arity int) {
 	count := argCount(args)
 	if count < arity {
-		panic(fmt.Sprintf(incorrectArity, count))
+		panic(fmt.Sprintf(incorrectMinArity, arity, count))
 	}
 }
 
 func AssertArityRange(args a.Iterable, min int, max int) {
 	count := argCount(args)
 	if count < min || count > max {
-		panic(fmt.Sprintf(incorrectArity, count))
+		panic(fmt.Sprintf(incorrectArityRange, min, max, count))
 	}
 }
 

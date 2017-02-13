@@ -55,7 +55,7 @@ func TestBadArity(t *testing.T) {
 
 	defer func() {
 		if rec := recover(); rec != nil {
-			errorStr := "wrong number of arguments passed (0)"
+			errorStr := "expected 1 argument(s), got 0"
 			a.Equal(rec, errorStr, "bad arity")
 			return
 		}
