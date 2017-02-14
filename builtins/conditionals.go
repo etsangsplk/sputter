@@ -2,7 +2,7 @@ package builtins
 
 import a "github.com/kode4food/sputter/api"
 
-func ifCommand(c *a.Context, args a.Iterable) a.Value {
+func _if(c *a.Context, args a.Iterable) a.Value {
 	AssertArityRange(args, 2, 3)
 	i := args.Iterate()
 	condVal, _ := i.Next()
@@ -15,5 +15,5 @@ func ifCommand(c *a.Context, args a.Iterable) a.Value {
 }
 
 func init() {
-	BuiltIns.PutFunction(&a.Function{Name: "if", Exec: ifCommand})
+	Context.PutFunction(&a.Function{Name: "if", Exec: _if})
 }

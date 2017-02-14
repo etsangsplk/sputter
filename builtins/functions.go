@@ -27,7 +27,7 @@ func define(n a.Name, argNames a.Iterable, body a.Iterable) *a.Function {
 	}
 }
 
-func defunCommand(c *a.Context, args a.Iterable) a.Value {
+func defun(c *a.Context, args a.Iterable) a.Value {
 	AssertMinimumArity(args, 3)
 	g := c.Globals()
 	i := args.Iterate()
@@ -46,5 +46,5 @@ func defunCommand(c *a.Context, args a.Iterable) a.Value {
 }
 
 func init() {
-	BuiltIns.PutFunction(&a.Function{Name: "defun", Exec: defunCommand})
+	Context.PutFunction(&a.Function{Name: "defun", Exec: defun})
 }

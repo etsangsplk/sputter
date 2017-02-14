@@ -13,7 +13,7 @@ import (
 func testCode(a *assert.Assertions, src string, expect s.Value) {
 	ctx := s.NewContext()
 	l := r.NewLexer(src)
-	c := r.NewCoder(b.BuiltIns, l)
+	c := r.NewCoder(b.Context, l)
 	a.Equal(expect, r.EvaluateCoder(ctx, c), src)
 }
 

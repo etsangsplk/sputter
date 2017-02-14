@@ -2,7 +2,7 @@ package builtins
 
 import a "github.com/kode4food/sputter/api"
 
-func isListCommand(c *a.Context, args a.Iterable) a.Value {
+func isList(c *a.Context, args a.Iterable) a.Value {
 	AssertArity(args, 1)
 	i := args.Iterate()
 	if v, ok := i.Next(); ok {
@@ -14,5 +14,5 @@ func isListCommand(c *a.Context, args a.Iterable) a.Value {
 }
 
 func init() {
-	BuiltIns.PutFunction(&a.Function{Name: "list?", Exec: isListCommand})
+	Context.PutFunction(&a.Function{Name: "list?", Exec: isList})
 }

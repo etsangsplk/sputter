@@ -12,8 +12,8 @@ const (
 	badArityRange = "expected between %d and %d arguments, got %d"
 )
 
-// BuiltIns is a special Context of built-in identifiers
-var BuiltIns = a.NewContext()
+// Context is a special Context of built-in identifiers
+var Context = a.NewContext()
 
 func countIterator(i a.Iterator) int {
 	var c = 0
@@ -55,8 +55,8 @@ func AssertArityRange(args a.Iterable, min int, max int) {
 }
 
 func init() {
-	BuiltIns.Put("T", a.True)
-	BuiltIns.Put("nil", a.Nil)
-	BuiltIns.Put("true", a.True)
-	BuiltIns.Put("false", a.False)
+	Context.Put("T", a.True)
+	Context.Put("nil", a.Nil)
+	Context.Put("true", a.True)
+	Context.Put("false", a.False)
 }

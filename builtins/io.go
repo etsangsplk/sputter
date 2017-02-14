@@ -6,7 +6,7 @@ import (
 	a "github.com/kode4food/sputter/api"
 )
 
-func printCommand(c *a.Context, args a.Iterable) a.Value {
+func print(c *a.Context, args a.Iterable) a.Value {
 	i := args.Iterate()
 	for v, ok := i.Next(); ok; v, ok = i.Next() {
 		r := a.Evaluate(c, v)
@@ -15,13 +15,13 @@ func printCommand(c *a.Context, args a.Iterable) a.Value {
 	return a.Nil
 }
 
-func printlnCommand(c *a.Context, args a.Iterable) a.Value {
-	printCommand(c, args)
+func println(c *a.Context, args a.Iterable) a.Value {
+	print(c, args)
 	fmt.Println("")
 	return a.Nil
 }
 
 func init() {
-	BuiltIns.PutFunction(&a.Function{Name: "print", Exec: printCommand})
-	BuiltIns.PutFunction(&a.Function{Name: "println", Exec: printlnCommand})
+	Context.PutFunction(&a.Function{Name: "print", Exec: print})
+	Context.PutFunction(&a.Function{Name: "println", Exec: println})
 }

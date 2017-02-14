@@ -12,31 +12,31 @@ import (
 func TestAdd(t *testing.T) {
 	a := assert.New(t)
 	l := s.NewList(big.NewFloat(1)).Cons(big.NewFloat(2)).Cons(big.NewFloat(10))
-	f, _ := b.BuiltIns.Get("+")
-	r := f.(*s.Function).Exec(b.BuiltIns, l)
+	f, _ := b.Context.Get("+")
+	r := f.(*s.Function).Exec(b.Context, l)
 	a.Equal(big.NewFloat(13.0), r)
 }
 
-func TestSubtract(t *testing.T) {
+func TestSub(t *testing.T) {
 	a := assert.New(t)
 	l := &s.Vector{big.NewFloat(7), big.NewFloat(3), big.NewFloat(1)}
-	f, _ := b.BuiltIns.Get("-")
-	r := f.(*s.Function).Exec(b.BuiltIns, l)
+	f, _ := b.Context.Get("-")
+	r := f.(*s.Function).Exec(b.Context, l)
 	a.Equal(big.NewFloat(3.0), r)
 }
 
-func TestMultiply(t *testing.T) {
+func TestMul(t *testing.T) {
 	a := assert.New(t)
 	l := s.NewList(big.NewFloat(12)).Cons(big.NewFloat(2)).Cons(big.NewFloat(5))
-	f, _ := b.BuiltIns.Get("*")
-	r := f.(*s.Function).Exec(b.BuiltIns, l)
+	f, _ := b.Context.Get("*")
+	r := f.(*s.Function).Exec(b.Context, l)
 	a.Equal(big.NewFloat(120), r)
 }
 
-func TestDivide(t *testing.T) {
+func TestDiv(t *testing.T) {
 	a := assert.New(t)
 	l := &s.Vector{big.NewFloat(10), big.NewFloat(2), big.NewFloat(5)}
-	f, _ := b.BuiltIns.Get("/")
-	r := f.(*s.Function).Exec(b.BuiltIns, l)
+	f, _ := b.Context.Get("/")
+	r := f.(*s.Function).Exec(b.Context, l)
 	a.Equal(big.NewFloat(1.0), r)
 }

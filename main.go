@@ -23,12 +23,12 @@ func main() {
 			return
 		}
 	}()
-	
+
 	filename := os.Args[1]
 	if buffer, err := ioutil.ReadFile(filename); err == nil {
 		context := a.NewContext()
 		l := r.NewLexer(string(buffer))
-		c := r.NewCoder(b.BuiltIns, l)
+		c := r.NewCoder(b.Context, l)
 		r.EvaluateCoder(context, c)
 	} else {
 		fmt.Println("File not found:", filename)

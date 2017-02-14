@@ -6,7 +6,7 @@ import (
 	a "github.com/kode4food/sputter/api"
 )
 
-func addition(c *a.Context, args a.Iterable) a.Value {
+func add(c *a.Context, args a.Iterable) a.Value {
 	sum := big.NewFloat(0)
 	iter := args.Iterate()
 	for value, ok := iter.Next(); ok; value, ok = iter.Next() {
@@ -15,7 +15,7 @@ func addition(c *a.Context, args a.Iterable) a.Value {
 	return sum
 }
 
-func subtraction(c *a.Context, args a.Iterable) a.Value {
+func sub(c *a.Context, args a.Iterable) a.Value {
 	AssertMinimumArity(args, 1)
 	i := args.Iterate()
 	v, ok := i.Next()
@@ -26,7 +26,7 @@ func subtraction(c *a.Context, args a.Iterable) a.Value {
 	return r
 }
 
-func multiplication(c *a.Context, args a.Iterable) a.Value {
+func mul(c *a.Context, args a.Iterable) a.Value {
 	r := big.NewFloat(1)
 	i := args.Iterate()
 	for v, ok := i.Next(); ok; v, ok = i.Next() {
@@ -35,7 +35,7 @@ func multiplication(c *a.Context, args a.Iterable) a.Value {
 	return r
 }
 
-func division(c *a.Context, args a.Iterable) a.Value {
+func div(c *a.Context, args a.Iterable) a.Value {
 	AssertMinimumArity(args, 1)
 	i := args.Iterate()
 	v, ok := i.Next()
@@ -47,8 +47,8 @@ func division(c *a.Context, args a.Iterable) a.Value {
 }
 
 func init() {
-	BuiltIns.PutFunction(&a.Function{Name: "+", Exec: addition})
-	BuiltIns.PutFunction(&a.Function{Name: "-", Exec: subtraction})
-	BuiltIns.PutFunction(&a.Function{Name: "*", Exec: multiplication})
-	BuiltIns.PutFunction(&a.Function{Name: "/", Exec: division})
+	Context.PutFunction(&a.Function{Name: "+", Exec: add})
+	Context.PutFunction(&a.Function{Name: "-", Exec: sub})
+	Context.PutFunction(&a.Function{Name: "*", Exec: mul})
+	Context.PutFunction(&a.Function{Name: "/", Exec: div})
 }
