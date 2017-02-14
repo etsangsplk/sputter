@@ -87,32 +87,32 @@ func init() {
 }
 
 // NewLexer instantiates a new Lexer instance
-func NewLexer(source string) *Lexer {
-	lexer := &Lexer{
-		input:  source,
+func NewLexer(src string) *Lexer {
+	l := &Lexer{
+		input:  src,
 		tokens: make(chan *Token),
 	}
 
-	go lexer.run()
-	return lexer
+	go l.run()
+	return l
 }
 
 // Next returns the next Token from the lexer's Token channel
 func (l *Lexer) Next() *Token {
 	for {
-		token, ok := <-l.tokens
+		t, ok := <-l.tokens
 		if !ok {
 			panic(UnexpectedEndOfFile)
 		}
-		if token.Type != Whitespace {
-			return token
+		if t.Type != Whitespace {
+			return t
 		}
 	}
 }
 
 func (l *Lexer) run() {
-	for state := initState; state != nil; {
-		state = state(l)
+	for s := initState; s != nil; {
+		s = s(l)
 	}
 	close(l.tokens)
 }
@@ -135,12 +135,12 @@ func (l *Lexer) skip() {
 }
 
 func (l *Lexer) matchState() stateFunc {
-	str := l.input[l.pos:]
-	for _, entry := range states {
-		if match := entry.pattern.FindStringIndex(str); match != nil {
-			result := str[match[0]:match[1]]
-			l.pos += len(result)
-			return entry.function
+	src := l.input[l.pos:]
+	for _, s := range states {
+		if i := s.pattern.FindStringIndex(src); i != nil {
+			r := src[i[0]:i[1]]
+			l.pos += len(r)
+			return s.function
 		}
 	}
 	panic(UnmatchedState)

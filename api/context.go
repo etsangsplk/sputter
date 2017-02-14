@@ -22,7 +22,7 @@ func (c *Context) Child() *Context {
 }
 
 // Get retrieves a value from the Context chain
-func (c *Context) Get(n Name) (Value, bool) {
+func (c *Context) Get(n Name) (v Value, bound bool) {
 	if v, ok := c.vars[n]; ok {
 		return v, true
 	} else if c.parent != nil {

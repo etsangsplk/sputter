@@ -35,20 +35,20 @@ func TestCodeList(t *testing.T) {
 	list, ok := v.(*s.List)
 	a.True(ok)
 
-	iter := list.Iterate()
-	value, ok := iter.Next()
+	i := list.Iterate()
+	val, ok := i.Next()
 	a.True(ok)
-	a.Equal(0, big.NewFloat(99).Cmp(value.(*big.Float)))
+	a.Equal(0, big.NewFloat(99).Cmp(val.(*big.Float)))
 
-	value, ok = iter.Next()
+	val, ok = i.Next()
 	a.True(ok)
-	a.Equal("hello", value)
+	a.Equal("hello", val)
 
-	value, ok = iter.Next()
+	val, ok = i.Next()
 	a.True(ok)
-	a.Equal(0, big.NewFloat(55.12).Cmp(value.(*big.Float)))
+	a.Equal(0, big.NewFloat(55.12).Cmp(val.(*big.Float)))
 
-	value, ok = iter.Next()
+	val, ok = i.Next()
 	a.False(ok)
 }
 
@@ -60,36 +60,36 @@ func TestCodeNestedList(t *testing.T) {
 	list, ok := v.(*s.List)
 	a.True(ok)
 
-	iter1 := list.Iterate()
-	value, ok := iter1.Next()
+	i1 := list.Iterate()
+	val, ok := i1.Next()
 	a.True(ok)
-	a.Equal(0, big.NewFloat(99).Cmp(value.(*big.Float)))
+	a.Equal(0, big.NewFloat(99).Cmp(val.(*big.Float)))
 
 	// get nested list
-	value, ok = iter1.Next()
+	val, ok = i1.Next()
 	a.True(ok)
-	list2, ok := value.(*s.List)
+	list2, ok := val.(*s.List)
 	a.True(ok)
 
 	// iterate over the rest of top-level list
-	value, ok = iter1.Next()
+	val, ok = i1.Next()
 	a.True(ok)
-	a.Equal(0, big.NewFloat(55.12).Cmp(value.(*big.Float)))
+	a.Equal(0, big.NewFloat(55.12).Cmp(val.(*big.Float)))
 
-	value, ok = iter1.Next()
+	val, ok = i1.Next()
 	a.False(ok)
 
 	// iterate over the nested list
-	iter2 := list2.Iterate()
-	value, ok = iter2.Next()
+	i2 := list2.Iterate()
+	val, ok = i2.Next()
 	a.True(ok)
-	a.Equal("hello", value)
+	a.Equal("hello", val)
 
-	value, ok = iter2.Next()
+	val, ok = i2.Next()
 	a.True(ok)
-	a.Equal("there", value)
+	a.Equal("there", val)
 
-	value, ok = iter2.Next()
+	val, ok = i2.Next()
 	a.False(ok)
 }
 
@@ -109,17 +109,17 @@ func TestUnclosedList(t *testing.T) {
 	c.Next()
 }
 
-func TestLiteral(t *testing.T) {
+func TestData(t *testing.T) {
 	a := assert.New(t)
 
 	l := r.NewLexer(`'99`)
 	c := r.NewCoder(s.NewContext(), l)
 	v := c.Next()
 
-	literal, ok := v.(*s.Data)
+	d, ok := v.(*s.Data)
 	a.True(ok)
 
-	value, ok := literal.Value.(*big.Float)
+	value, ok := d.Value.(*big.Float)
 	a.True(ok)
 	a.Equal(0, big.NewFloat(99).Cmp(value))
 }
@@ -131,11 +131,11 @@ func testCodeWithContext(a *assert.Assertions, code string, expect s.Value, cont
 }
 
 func evaluateToString(c *s.Context, v s.Value) string {
-	result := s.Evaluate(c, v)
-	if str, ok := result.(fmt.Stringer); ok {
-		return str.String()
+	res := s.Evaluate(c, v)
+	if s, ok := res.(fmt.Stringer); ok {
+		return s.String()
 	}
-	return result.(string)
+	return res.(string)
 }
 
 func TestEvaluable(t *testing.T) {
@@ -145,10 +145,10 @@ func TestEvaluable(t *testing.T) {
 	hello := &s.Function{
 		Name: "hello",
 		Exec: func(c *s.Context, args s.Iterable) s.Value {
-			iter := args.Iterate()
-			arg, _ := iter.Next()
-			value := evaluateToString(c, arg)
-			return "Hello, " + value + "!"
+			i := args.Iterate()
+			arg, _ := i.Next()
+			v := evaluateToString(c, arg)
+			return "Hello, " + v + "!"
 		},
 	}
 

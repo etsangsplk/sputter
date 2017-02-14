@@ -32,7 +32,7 @@ func (l *List) Cons(v Value) *List {
 	return &List{v, l}
 }
 
-func (l *List) duplicate() (*List, *List) {
+func (l *List) duplicate() (head *List, tail *List) {
 	if l == EmptyList {
 		return l, l
 	}
@@ -65,7 +65,7 @@ func (l *List) Iterate() Iterator {
 }
 
 // Next returns the next Value from the Iterator
-func (l *listIterator) Next() (Value, bool) {
+func (l *listIterator) Next() (v Value, ok bool) {
 	if l.current == EmptyList {
 		return EmptyList, false
 	}

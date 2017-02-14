@@ -29,8 +29,8 @@ type Coder struct {
 }
 
 // NewCoder instantiates a new Coder using the provided Reader
-func NewCoder(builtIns *a.Context, reader Reader) *Coder {
-	return &Coder{builtIns, reader}
+func NewCoder(builtIns *a.Context, r Reader) *Coder {
+	return &Coder{builtIns, r}
 }
 
 // Next returns the next value from the Coder
@@ -68,61 +68,61 @@ func (c *Coder) list() *a.List {
 	var first func() *a.List
 	var next func() *a.List
 
-	handle = func(token *Token) *a.List {
-		switch token.Type {
+	handle = func(t *Token) *a.List {
+		switch t.Type {
 		case ListEnd:
 			return a.EmptyList
 		case EndOfFile:
 			panic(ListNotClosed)
 		default:
-			elem := c.token(token)
-			list := next()
-			return list.Cons(elem)
+			v := c.token(t)
+			l := next()
+			return l.Cons(v)
 		}
 	}
 
 	first = func() *a.List {
-		token := c.reader.Next()
-		if token.Type == Identifier {
-			name := a.Name(token.Value.(string))
-			if function, ok := c.builtIns.Get(name); ok {
-				list := next()
-				return list.Cons(function)
+		t := c.reader.Next()
+		if t.Type == Identifier {
+			n := a.Name(t.Value.(string))
+			if f, ok := c.builtIns.Get(n); ok {
+				l := next()
+				return l.Cons(f)
 			}
 		}
-		return handle(token)
+		return handle(t)
 	}
 
 	next = func() *a.List {
-		token := c.reader.Next()
-		return handle(token)
+		t := c.reader.Next()
+		return handle(t)
 	}
 
 	return first()
 }
 
 func (c *Coder) vector() a.Vector {
-	var result = make(a.Vector, 0)
+	var r = make(a.Vector, 0)
 
 	for {
-		token := c.reader.Next()
-		switch token.Type {
+		t := c.reader.Next()
+		switch t.Type {
 		case VectorEnd:
-			return result
+			return r
 		case EndOfFile:
 			panic(VectorNotClosed)
 		default:
-			elem := c.token(token)
-			result = append(result, elem)
+			v := c.token(t)
+			r = append(r, v)
 		}
 	}
 }
 
 // EvaluateCoder evaluates each element of the provided Coder
 func EvaluateCoder(c *a.Context, coder *Coder) a.Value {
-	var lastEval a.Value
+	var r a.Value
 	for v := coder.Next(); v != EndOfCoder; v = coder.Next() {
-		lastEval = a.Evaluate(c, v)
+		r = a.Evaluate(c, v)
 	}
-	return lastEval
+	return r
 }

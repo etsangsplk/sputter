@@ -16,6 +16,6 @@ func (s *Symbol) Evaluate(c *Context) Value {
 	panic(UnknownSymbol)
 }
 
-func (s *Symbol) String() Name {
-	return s.Name
+func (s *Symbol) String() string {
+	return string(s.Name)
 }

@@ -22,52 +22,52 @@ func assertToken(a *assert.Assertions, like *r.Token, value *r.Token) {
 
 func TestCreateLexer(t *testing.T) {
 	a := assert.New(t)
-	lexer := r.NewLexer("hello")
-	a.NotNil(lexer)
+	l := r.NewLexer("hello")
+	a.NotNil(l)
 }
 
 func TestWhitespace(t *testing.T) {
 	a := assert.New(t)
-	lexer := r.NewLexer("   \t ")
-	assertToken(a, r.EOFToken, lexer.Next())
+	l := r.NewLexer("   \t ")
+	assertToken(a, r.EOFToken, l.Next())
 }
 
 func TestEmptyList(t *testing.T) {
 	a := assert.New(t)
-	lexer := r.NewLexer(" ( \t ) ")
-	assertToken(a, &r.Token{r.ListStart, "("}, lexer.Next())
-	assertToken(a, &r.Token{r.ListEnd, ")"}, lexer.Next())
-	assertToken(a, r.EOFToken, lexer.Next())
+	l := r.NewLexer(" ( \t ) ")
+	assertToken(a, &r.Token{r.ListStart, "("}, l.Next())
+	assertToken(a, &r.Token{r.ListEnd, ")"}, l.Next())
+	assertToken(a, r.EOFToken, l.Next())
 }
 
 func TestNumbers(t *testing.T) {
 	a := assert.New(t)
-	lexer := r.NewLexer(" 10 12.8 8E+10 99.598e+10 54e+12 1/2")
-	assertToken(a, &r.Token{r.Number, big.NewFloat(10)}, lexer.Next())
-	assertToken(a, &r.Token{r.Number, big.NewFloat(12.8)}, lexer.Next())
-	assertToken(a, &r.Token{r.Number, big.NewFloat(8E+10)}, lexer.Next())
-	assertToken(a, &r.Token{r.Number, big.NewFloat(99.598e+10)}, lexer.Next())
-	assertToken(a, &r.Token{r.Number, big.NewFloat(54e+12)}, lexer.Next())
-	assertToken(a, &r.Token{r.Ratio, big.NewRat(1, 2)}, lexer.Next())
-	assertToken(a, r.EOFToken, lexer.Next())
+	l := r.NewLexer(" 10 12.8 8E+10 99.598e+10 54e+12 1/2")
+	assertToken(a, &r.Token{r.Number, big.NewFloat(10)}, l.Next())
+	assertToken(a, &r.Token{r.Number, big.NewFloat(12.8)}, l.Next())
+	assertToken(a, &r.Token{r.Number, big.NewFloat(8E+10)}, l.Next())
+	assertToken(a, &r.Token{r.Number, big.NewFloat(99.598e+10)}, l.Next())
+	assertToken(a, &r.Token{r.Number, big.NewFloat(54e+12)}, l.Next())
+	assertToken(a, &r.Token{r.Ratio, big.NewRat(1, 2)}, l.Next())
+	assertToken(a, r.EOFToken, l.Next())
 }
 
 func TestStrings(t *testing.T) {
 	a := assert.New(t)
-	lexer := r.NewLexer(` "hello there" "how's \"life\"?"  `)
-	assertToken(a, &r.Token{r.String, `hello there`}, lexer.Next())
-	assertToken(a, &r.Token{r.String, `how's \"life\"?`}, lexer.Next())
-	assertToken(a, r.EOFToken, lexer.Next())
+	l := r.NewLexer(` "hello there" "how's \"life\"?"  `)
+	assertToken(a, &r.Token{r.String, `hello there`}, l.Next())
+	assertToken(a, &r.Token{r.String, `how's \"life\"?`}, l.Next())
+	assertToken(a, r.EOFToken, l.Next())
 }
 
 func TestMultiline(t *testing.T) {
 	a := assert.New(t)
-	lexer := r.NewLexer(` "hello there"
+	l := r.NewLexer(` "hello there"
   "how's life?"
 99`)
 
-	assertToken(a, &r.Token{r.String, `hello there`}, lexer.Next())
-	assertToken(a, &r.Token{r.String, `how's life?`}, lexer.Next())
-	assertToken(a, &r.Token{r.Number, big.NewFloat(99)}, lexer.Next())
-	assertToken(a, r.EOFToken, lexer.Next())
+	assertToken(a, &r.Token{r.String, `hello there`}, l.Next())
+	assertToken(a, &r.Token{r.String, `how's life?`}, l.Next())
+	assertToken(a, &r.Token{r.Number, big.NewFloat(99)}, l.Next())
+	assertToken(a, r.EOFToken, l.Next())
 }
