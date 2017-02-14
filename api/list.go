@@ -54,7 +54,7 @@ func (l *List) Conj(v Value) *List {
 	return h
 }
 
-// ListIterator is an Iterator implementation for the List type
+// listIterator is an Iterator implementation for the List type
 type listIterator struct {
 	current *List
 }

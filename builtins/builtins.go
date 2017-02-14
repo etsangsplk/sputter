@@ -7,9 +7,9 @@ import (
 )
 
 const (
-	incorrectArity      = "expected %d argument(s), got %d"
-	incorrectMinArity   = "expected at least %d argument(s), got %d"
-	incorrectArityRange = "expected between %d and %d arguments, got %d"
+	badArity      = "expected %d argument(s), got %d"
+	badMinArity   = "expected at least %d argument(s), got %d"
+	badArityRange = "expected between %d and %d arguments, got %d"
 )
 
 // BuiltIns is a special Context of built-in identifiers
@@ -32,25 +32,25 @@ func argCount(args a.Iterable) int {
 
 // AssertArity explodes if the arg count doesn't match provided arity
 func AssertArity(args a.Iterable, arity int) {
-	count := argCount(args)
-	if count != arity {
-		panic(fmt.Sprintf(incorrectArity, arity, count))
+	c := argCount(args)
+	if c != arity {
+		panic(fmt.Sprintf(badArity, arity, c))
 	}
 }
 
 // AssertMinimumArity explodes if the arg count isn't at least arity
 func AssertMinimumArity(args a.Iterable, arity int) {
-	count := argCount(args)
-	if count < arity {
-		panic(fmt.Sprintf(incorrectMinArity, arity, count))
+	c := argCount(args)
+	if c < arity {
+		panic(fmt.Sprintf(badMinArity, arity, c))
 	}
 }
 
 // AssertArityRange explodes if the arg count isn't in the arity range
 func AssertArityRange(args a.Iterable, min int, max int) {
-	count := argCount(args)
-	if count < min || count > max {
-		panic(fmt.Sprintf(incorrectArityRange, min, max, count))
+	c := argCount(args)
+	if c < min || c > max {
+		panic(fmt.Sprintf(badArityRange, min, max, c))
 	}
 }
 
