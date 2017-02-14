@@ -2,11 +2,11 @@ package builtins
 
 import a "github.com/kode4food/sputter/api"
 
-func define(name a.Name, argNames a.Iterable, body a.Iterable) *a.Function {
+func define(n a.Name, argNames a.Iterable, body a.Iterable) *a.Function {
 	ac := argCount(argNames)
 
 	return &a.Function{
-		Name: name,
+		Name: n,
 		Exec: func(c *a.Context, args a.Iterable) a.Value {
 			AssertArity(args, ac)
 			l := c.Child()
