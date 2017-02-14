@@ -11,7 +11,7 @@ import (
 
 func TestAdd(t *testing.T) {
 	a := assert.New(t)
-	l := s.NewList(big.NewFloat(1)).Cons(big.NewFloat(2)).Cons(big.NewFloat(10))
+	l := &s.Vector{big.NewFloat(10), big.NewFloat(2), big.NewFloat(1)}
 	f, _ := b.Context.Get("+")
 	r := f.(*s.Function).Exec(b.Context, l)
 	a.Equal(big.NewFloat(13.0), r)
@@ -27,7 +27,7 @@ func TestSub(t *testing.T) {
 
 func TestMul(t *testing.T) {
 	a := assert.New(t)
-	l := s.NewList(big.NewFloat(12)).Cons(big.NewFloat(2)).Cons(big.NewFloat(5))
+	l := &s.Vector{big.NewFloat(5), big.NewFloat(2), big.NewFloat(12)}
 	f, _ := b.Context.Get("*")
 	r := f.(*s.Function).Exec(b.Context, l)
 	a.Equal(big.NewFloat(120), r)

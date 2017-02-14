@@ -18,7 +18,7 @@ func define(n a.Name, argNames a.Iterable, body a.Iterable) *a.Function {
 				if aok {
 					l.Put(an, av)
 				} else {
-					l.Put(an, a.EmptyList)
+					l.Put(an, a.Nil)
 				}
 				ns, nok = anIter.Next()
 			}

@@ -45,7 +45,7 @@ func (i *vectorIterator) Next() (v Value, ok bool) {
 		i.pos++
 		return r, true
 	}
-	return EmptyList, false
+	return Nil, false
 }
 
 // Iterable returns a new Iterable from the Iterator's current state

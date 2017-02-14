@@ -65,7 +65,7 @@ func TestBadArity(t *testing.T) {
 	testCode(a, `
 		(defun identity [value] value)
 		(identity)
-	`, s.EmptyList)
+	`, s.Nil)
 }
 
 func TestVariables(t *testing.T) {

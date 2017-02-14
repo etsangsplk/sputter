@@ -28,7 +28,7 @@ func (c *Context) Get(n Name) (v Value, bound bool) {
 	} else if c.parent != nil {
 		return c.parent.Get(n)
 	}
-	return EmptyList, false
+	return Nil, false
 }
 
 // Globals retrieves the Root Context (one with no parent)

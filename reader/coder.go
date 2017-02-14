@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	// ListNotClosed is thrown when EOF is reached inside a List
+	// ListNotClosed is thrown when EOF is reached inside a Cons
 	ListNotClosed = "end of file reached with open list"
 
 	// UnmatchedListEnd is thrown if a list is ended without being started
@@ -63,37 +63,37 @@ func (c *Coder) data() *a.Data {
 	return &a.Data{Value: c.Next()}
 }
 
-func (c *Coder) list() *a.List {
-	var handle func(token *Token) *a.List
-	var first func() *a.List
-	var next func() *a.List
+func (c *Coder) list() *a.Cons {
+	var handle func(token *Token) *a.Cons
+	var first func() *a.Cons
+	var next func() *a.Cons
 
-	handle = func(t *Token) *a.List {
+	handle = func(t *Token) *a.Cons {
 		switch t.Type {
 		case ListEnd:
-			return a.EmptyList
+			return a.Nil
 		case EndOfFile:
 			panic(ListNotClosed)
 		default:
 			v := c.token(t)
 			l := next()
-			return l.Cons(v)
+			return &a.Cons{Car: v, Cdr: l}
 		}
 	}
 
-	first = func() *a.List {
+	first = func() *a.Cons {
 		t := c.reader.Next()
 		if t.Type == Identifier {
 			n := a.Name(t.Value.(string))
 			if f, ok := c.builtIns.Get(n); ok {
 				l := next()
-				return l.Cons(f)
+				return &a.Cons{Car: f, Cdr: l}
 			}
 		}
 		return handle(t)
 	}
 
-	next = func() *a.List {
+	next = func() *a.Cons {
 		t := c.reader.Next()
 		return handle(t)
 	}

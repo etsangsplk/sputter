@@ -16,7 +16,7 @@ func assertGet(a *assert.Assertions, c *s.Context, n s.Name, cv s.Value) {
 func assertMissing(a *assert.Assertions, c *s.Context, n s.Name) {
 	v, ok := c.Get(n)
 	a.False(ok)
-	a.Equal(s.EmptyList, v)
+	a.Equal(s.Nil, v)
 }
 
 func TestCreateContext(t *testing.T) {

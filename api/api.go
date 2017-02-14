@@ -4,7 +4,7 @@ var (
 	// True is literal value that represents any value other than False
 	True = &Data{Value: true}
 
-	// False is an alias for EmptyList or Nil
+	// False is an alias for Nil or Nil
 	False = Nil
 )
 
@@ -39,7 +39,7 @@ type Indexable interface {
 // Truthy evaluates whether or not a Value is Truthy
 func Truthy(v Value) bool {
 	switch {
-	case v == EmptyList || v == False:
+	case v == Nil || v == False:
 		return false
 	default:
 		return true

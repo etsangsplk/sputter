@@ -10,7 +10,7 @@ func Evaluate(c *Context, v Value) Value {
 
 // EvaluateIterator evaluates each element of the provided Iterator
 func EvaluateIterator(c *Context, i Iterator) Value {
-	var r Value = EmptyList
+	var r Value = Nil
 	for v, ok := i.Next(); ok; v, ok = i.Next() {
 		r = Evaluate(c, v)
 	}

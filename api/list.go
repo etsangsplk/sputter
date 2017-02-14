@@ -8,118 +8,122 @@ import (
 // NonFunction is the error returned when a non-Function is invoked
 const NonFunction = "first element of list is not a function"
 
-// List is a Value that maintains a singly-linked list of Values
-type List struct {
-	Value Value
-	Rest  *List
+// Cons contains a bound pair that can be used for constructing Lists
+type Cons struct {
+	Car Value
+	Cdr Value
 }
 
 var (
-	// EmptyList represents the empty list and the terminal of a List
-	EmptyList = &List{nil, nil}
-
-	// Nil is an alias for EmptyList
-	Nil = EmptyList
+	// Nil represents an empty Cons and the terminator of a List
+	Nil = &Cons{nil, nil}
 )
 
-// NewList creates a new List instance
-func NewList(v Value) *List {
-	return &List{v, EmptyList}
+// NewList creates a new List instance of the form &Cons{Value, Nil}
+func NewList(v Value) *Cons {
+	return &Cons{v, Nil}
 }
 
-// Cons constructs a new List by prepending to the current List
-func (l *List) Cons(v Value) *List {
-	return &List{v, l}
+type consIterator struct {
+	current *Cons
 }
 
-func (l *List) duplicate() (head *List, tail *List) {
-	if l == EmptyList {
-		return l, l
-	}
-
-	h := &List{l.Value, EmptyList}
-	t := h
-	for li := l.Rest; li != EmptyList; li = li.Rest {
-		t.Rest = &List{li.Value, EmptyList}
-		t = t.Rest
-	}
-	return h, t
-}
-
-// Conj constructs a new List by appending to the current List
-// Very expensive operation because it performs duplication
-func (l *List) Conj(v Value) *List {
-	h, t := l.duplicate()
-	t.Rest = &List{v, EmptyList}
-	return h
-}
-
-// listIterator is an Iterator implementation for the List type
-type listIterator struct {
-	current *List
-}
-
-// Iterate creates a new Iterator instance for the List
-func (l *List) Iterate() Iterator {
-	return &listIterator{l}
+// Iterate creates a new Iterator instance for the Cons
+func (c *Cons) Iterate() Iterator {
+	return &consIterator{c}
 }
 
 // Next returns the next Value from the Iterator
-func (l *listIterator) Next() (v Value, ok bool) {
-	if l.current == EmptyList {
-		return EmptyList, false
+func (i *consIterator) Next() (v Value, ok bool) {
+	if i.current == Nil {
+		return Nil, false
 	}
-	r := l.current.Value
-	l.current = l.current.Rest
+	r := i.current.Car
+	if cdr, ok := i.current.Cdr.(*Cons); ok {
+		i.current = cdr
+	} else {
+		r = i.current
+		i.current = Nil
+	}
 	return r, true
 }
 
 // Iterable returns a new Iterable from the Iterator's current state
-func (l *listIterator) Iterable() Iterable {
-	return l.current
+func (i *consIterator) Iterable() Iterable {
+	return i.current
 }
 
-// Count returns the length of the List
-func (l *List) Count() int {
-	c := 0
-	for li := l; li != EmptyList; li = li.Rest {
-		c++
+// Count returns the length of the Cons
+func (c *Cons) Count() int {
+	i := c.Iterate()
+	r := 0
+	for _, ok := i.Next(); ok; _, ok = i.Next() {
+		r++
 	}
-	return c
+	return r
 }
 
-// Evaluate makes a List Evaluable
-func (l *List) Evaluate(c *Context) Value {
-	if l == EmptyList {
-		return EmptyList
+// Evaluate makes a Cons Evaluable
+func (c *Cons) Evaluate(ctx *Context) Value {
+	if c == Nil {
+		return Nil
 	}
-	if f, ok := l.Value.(*Function); ok {
-		return f.Exec(c, l.Rest)
-	}
-	if s, ok := l.Value.(*Symbol); ok {
-		if v, ok := c.Get(s.Name); ok {
-			if cv, ok := v.(*Function); ok {
-				return cv.Exec(c, l.Rest)
+	if a, ok := c.Cdr.(*Cons); ok {
+		if f, ok := c.Car.(*Function); ok {
+			return f.Exec(ctx, a)
+		}
+
+		if s, ok := c.Car.(*Symbol); ok {
+			if v, ok := ctx.Get(s.Name); ok {
+				if cv, ok := v.(*Function); ok {
+					return cv.Exec(ctx, a)
+				}
 			}
 		}
+		panic(NonFunction)
 	}
-	panic(NonFunction)
+	panic("Cdr is not a Cons!")
 }
 
-func (l *List) String() string {
+func (c *Cons) listString() string {
 	var b bytes.Buffer
 
 	b.WriteString("(")
-	for li := l; li != EmptyList; li = li.Rest {
-		if s, ok := li.Value.(fmt.Stringer); ok {
-			b.WriteString(s.String())
-		} else {
-			b.WriteString(li.Value.(string))
-		}
-		if li.Rest != EmptyList {
+	i := c.Iterate()
+	var n = false
+	for v, ok := i.Next(); ok; v, ok = i.Next() {
+		if n {
 			b.WriteString(" ")
 		}
+		if s, ok := v.(fmt.Stringer); ok {
+			b.WriteString(s.String())
+		} else {
+			b.WriteString(v.(string))
+		}
+		n = true
 	}
 	b.WriteString(")")
 	return b.String()
+}
+
+func str(v Value) string {
+	if s, ok := v.(fmt.Stringer); ok {
+		return s.String()
+	}
+	return v.(string)
+}
+
+func (c *Cons) consString() string {
+	var b bytes.Buffer
+	b.WriteString(str(c.Car))
+	b.WriteString(" . ")
+	b.WriteString(str(c.Cdr))
+	return b.String()
+}
+
+func (c *Cons) String() string {
+	if _, ok := c.Cdr.(*Cons); ok {
+		return c.listString()
+	}
+	return c.consString()
 }

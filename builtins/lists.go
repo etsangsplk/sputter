@@ -6,7 +6,7 @@ func isList(c *a.Context, args a.Iterable) a.Value {
 	AssertArity(args, 1)
 	i := args.Iterate()
 	if v, ok := i.Next(); ok {
-		if _, ok := a.Evaluate(c, v).(*a.List); ok {
+		if _, ok := a.Evaluate(c, v).(*a.Cons); ok {
 			return a.True
 		}
 	}

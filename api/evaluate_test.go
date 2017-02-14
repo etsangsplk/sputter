@@ -29,7 +29,7 @@ func TestEvaluate(t *testing.T) {
 		},
 	}
 
-	l := s.NewList(f).Conj("World")
+	l := &s.Cons{Car: f, Cdr: s.NewList("World")}
 	r := s.Evaluate(s.NewContext(), l)
 
 	a.Equal("Hello, World!", r.(string), "good hello")

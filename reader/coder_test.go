@@ -32,7 +32,7 @@ func TestCodeList(t *testing.T) {
 	l := r.NewLexer(`(99 "hello" 55.12)`)
 	c := r.NewCoder(s.NewContext(), l)
 	v := c.Next()
-	list, ok := v.(*s.List)
+	list, ok := v.(*s.Cons)
 	a.True(ok)
 
 	i := list.Iterate()
@@ -57,7 +57,7 @@ func TestCodeNestedList(t *testing.T) {
 	l := r.NewLexer(`(99 ("hello" "there") 55.12)`)
 	c := r.NewCoder(s.NewContext(), l)
 	v := c.Next()
-	list, ok := v.(*s.List)
+	list, ok := v.(*s.Cons)
 	a.True(ok)
 
 	i1 := list.Iterate()
@@ -68,7 +68,7 @@ func TestCodeNestedList(t *testing.T) {
 	// get nested list
 	val, ok = i1.Next()
 	a.True(ok)
-	list2, ok := val.(*s.List)
+	list2, ok := val.(*s.Cons)
 	a.True(ok)
 
 	// iterate over the rest of top-level list
