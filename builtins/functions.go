@@ -9,20 +9,20 @@ func define(name a.Name, argNames a.Iterable, body a.Iterable) *a.Function {
 		Name: name,
 		Exec: func(c *a.Context, args a.Iterable) a.Value {
 			AssertArity(args, ac)
-			locals := c.Child()
-			argNamesIter := argNames.Iterate()
-			argIter := args.Iterate()
-			for nameSymbol, nameFound := argNamesIter.Next(); nameFound; {
-				argName := nameSymbol.(*a.Symbol).Name
-				argValue, argFound := argIter.Next()
-				if argFound {
-					locals.Put(argName, argValue)
+			l := c.Child()
+			anIter := argNames.Iterate()
+			aIter := args.Iterate()
+			for ns, nok := anIter.Next(); nok; {
+				an := ns.(*a.Symbol).Name
+				av, aok := aIter.Next()
+				if aok {
+					l.Put(an, av)
 				} else {
-					locals.Put(argName, a.EmptyList)
+					l.Put(an, a.EmptyList)
 				}
-				nameSymbol, nameFound = argNamesIter.Next()
+				ns, nok = anIter.Next()
 			}
-			return a.EvaluateIterator(locals, body.Iterate())
+			return a.EvaluateIterator(l, body.Iterate())
 		},
 	}
 }
@@ -32,16 +32,15 @@ func defunCommand(c *a.Context, args a.Iterable) a.Value {
 	g := c.Globals()
 	i := args.Iterate()
 
-	funcNameValue, _ := i.Next()
-	funcName := funcNameValue.(*a.Symbol).Name
+	fv, _ := i.Next()
+	fn := fv.(*a.Symbol).Name
 
-	argNamesValue, _ := i.Next()
-	argNames := argNamesValue.(a.Iterable)
+	av, _ := i.Next()
+	an := av.(a.Iterable)
 
-	body := i.Iterable()
+	b := i.Iterable()
 
-	d := define(funcName, argNames, body)
-
+	d := define(fn, an, b)
 	g.PutFunction(d)
 	return d
 }
