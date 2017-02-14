@@ -15,7 +15,7 @@ type List struct {
 }
 
 var (
-	// EmptyList represents the empty list and the terminal 'rest' of a List
+	// EmptyList represents the empty list and the terminal of a List
 	EmptyList = &List{nil, nil}
 
 	// Nil is an alias for EmptyList
@@ -23,13 +23,13 @@ var (
 )
 
 // NewList creates a new List instance
-func NewList(head Value) *List {
-	return &List{head, EmptyList}
+func NewList(v Value) *List {
+	return &List{v, EmptyList}
 }
 
 // Cons constructs a new List by prepending to the current List
-func (l *List) Cons(head Value) *List {
-	return &List{head, l}
+func (l *List) Cons(v Value) *List {
+	return &List{v, l}
 }
 
 func (l *List) duplicate() (*List, *List) {
@@ -37,21 +37,21 @@ func (l *List) duplicate() (*List, *List) {
 		return l, l
 	}
 
-	first := &List{l.Value, EmptyList}
-	last := first
-	for current := l.Rest; current != EmptyList; current = current.Rest {
-		last.Rest = &List{current.Value, EmptyList}
-		last = last.Rest
+	h := &List{l.Value, EmptyList}
+	t := h
+	for li := l.Rest; li != EmptyList; li = li.Rest {
+		t.Rest = &List{li.Value, EmptyList}
+		t = t.Rest
 	}
-	return first, last
+	return h, t
 }
 
 // Conj constructs a new List by appending to the current List
 // Very expensive operation because it performs duplication
-func (l *List) Conj(tail Value) *List {
-	first, last := l.duplicate()
-	last.Rest = &List{tail, EmptyList}
-	return first
+func (l *List) Conj(v Value) *List {
+	h, t := l.duplicate()
+	t.Rest = &List{v, EmptyList}
+	return h
 }
 
 // ListIterator is an Iterator implementation for the List type
@@ -69,9 +69,9 @@ func (l *listIterator) Next() (Value, bool) {
 	if l.current == EmptyList {
 		return EmptyList, false
 	}
-	result := l.current.Value
+	r := l.current.Value
 	l.current = l.current.Rest
-	return result, true
+	return r, true
 }
 
 // Iterable returns a new Iterable from the Iterator's current state
@@ -81,11 +81,11 @@ func (l *listIterator) Iterable() Iterable {
 
 // Count returns the length of the List
 func (l *List) Count() int {
-	count := 0
-	for current := l; current != EmptyList; current = current.Rest {
-		count++
+	c := 0
+	for li := l; li != EmptyList; li = li.Rest {
+		c++
 	}
-	return count
+	return c
 }
 
 // Evaluate makes a List Evaluable
@@ -93,13 +93,13 @@ func (l *List) Evaluate(c *Context) Value {
 	if l == EmptyList {
 		return EmptyList
 	}
-	if function, ok := l.Value.(*Function); ok {
-		return function.Exec(c, l.Rest)
+	if f, ok := l.Value.(*Function); ok {
+		return f.Exec(c, l.Rest)
 	}
-	if sym, ok := l.Value.(*Symbol); ok {
-		if v, ok := c.Get(sym.Name); ok {
-			if entry, ok := v.(*Function); ok {
-				return entry.Exec(c, l.Rest)
+	if s, ok := l.Value.(*Symbol); ok {
+		if v, ok := c.Get(s.Name); ok {
+			if cv, ok := v.(*Function); ok {
+				return cv.Exec(c, l.Rest)
 			}
 		}
 	}
@@ -107,19 +107,19 @@ func (l *List) Evaluate(c *Context) Value {
 }
 
 func (l *List) String() string {
-	var buffer bytes.Buffer
+	var b bytes.Buffer
 
-	buffer.WriteString("(")
-	for current := l; current != EmptyList; current = current.Rest {
-		if str, ok := current.Value.(fmt.Stringer); ok {
-			buffer.WriteString(str.String())
+	b.WriteString("(")
+	for li := l; li != EmptyList; li = li.Rest {
+		if s, ok := li.Value.(fmt.Stringer); ok {
+			b.WriteString(s.String())
 		} else {
-			buffer.WriteString(current.Value.(string))
+			b.WriteString(li.Value.(string))
 		}
-		if current.Rest != EmptyList {
-			buffer.WriteString(" ")
+		if li.Rest != EmptyList {
+			b.WriteString(" ")
 		}
 	}
-	buffer.WriteString(")")
-	return buffer.String()
+	b.WriteString(")")
+	return b.String()
 }

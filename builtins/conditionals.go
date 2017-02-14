@@ -4,13 +4,13 @@ import a "github.com/kode4food/sputter/api"
 
 func ifCommand(c *a.Context, args a.Iterable) a.Value {
 	AssertArityRange(args, 2, 3)
-	iter := args.Iterate()
-	condValue, _ := iter.Next()
-	cond := a.Evaluate(c, condValue)
+	i := args.Iterate()
+	condVal, _ := i.Next()
+	cond := a.Evaluate(c, condVal)
 	if !a.Truthy(cond) {
-		iter.Next()
+		i.Next()
 	}
-	result, _ := iter.Next()
+	result, _ := i.Next()
 	return a.Evaluate(c, result)
 }
 

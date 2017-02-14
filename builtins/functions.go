@@ -2,13 +2,13 @@ package builtins
 
 import a "github.com/kode4food/sputter/api"
 
-func define(name string, argNames a.Iterable, body a.Iterable) *a.Function {
-	count := argCount(argNames)
+func define(name a.Name, argNames a.Iterable, body a.Iterable) *a.Function {
+	ac := argCount(argNames)
 
 	return &a.Function{
 		Name: name,
 		Exec: func(c *a.Context, args a.Iterable) a.Value {
-			AssertArity(args, count)
+			AssertArity(args, ac)
 			locals := c.Child()
 			argNamesIter := argNames.Iterate()
 			argIter := args.Iterate()
@@ -29,21 +29,21 @@ func define(name string, argNames a.Iterable, body a.Iterable) *a.Function {
 
 func defunCommand(c *a.Context, args a.Iterable) a.Value {
 	AssertMinimumArity(args, 3)
-	globals := c.Globals()
-	iter := args.Iterate()
+	g := c.Globals()
+	i := args.Iterate()
 
-	funcNameValue, _ := iter.Next()
+	funcNameValue, _ := i.Next()
 	funcName := funcNameValue.(*a.Symbol).Name
 
-	argNamesValue, _ := iter.Next()
+	argNamesValue, _ := i.Next()
 	argNames := argNamesValue.(a.Iterable)
 
-	body := iter.Iterable()
+	body := i.Iterable()
 
-	defined := define(funcName, argNames, body)
+	d := define(funcName, argNames, body)
 
-	globals.PutFunction(defined)
-	return defined
+	g.PutFunction(d)
+	return d
 }
 
 func init() {

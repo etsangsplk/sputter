@@ -25,11 +25,11 @@ func (v Vector) Iterate() Iterator {
 
 // Evaluate makes a Vector Evaluable
 func (v Vector) Evaluate(c *Context) Value {
-	result := make(Vector, len(v))
-	for index := 0; index < len(v); index++ {
-		result[index] = Evaluate(c, v[index])
+	r := make(Vector, len(v))
+	for i := 0; i < len(v); i++ {
+		r[i] = Evaluate(c, v[i])
 	}
-	return result
+	return r
 }
 
 type vectorIterator struct {
@@ -41,9 +41,9 @@ type vectorIterator struct {
 // Next returns the next Value from the Iterator
 func (i *vectorIterator) Next() (Value, bool) {
 	if i.pos < i.len {
-		result := i.vector[i.pos]
+		r := i.vector[i.pos]
 		i.pos++
-		return result, true
+		return r, true
 	}
 	return EmptyList, false
 }
@@ -54,20 +54,20 @@ func (i *vectorIterator) Iterable() Iterable {
 }
 
 func (v Vector) String() string {
-	var buffer bytes.Buffer
+	var b bytes.Buffer
 
-	buffer.WriteString("[")
+	b.WriteString("[")
 	for i := 0; i < len(v); i++ {
-		current := v[i]
+		vi := v[i]
 		if i > 0 {
-			buffer.WriteString(" ")
+			b.WriteString(" ")
 		}
-		if str, ok := current.(fmt.Stringer); ok {
-			buffer.WriteString(str.String())
+		if s, ok := vi.(fmt.Stringer); ok {
+			b.WriteString(s.String())
 		} else {
-			buffer.WriteString(current.(string))
+			b.WriteString(vi.(string))
 		}
 	}
-	buffer.WriteString("]")
-	return buffer.String()
+	b.WriteString("]")
+	return b.String()
 }

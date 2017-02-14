@@ -2,8 +2,8 @@ package api
 
 const defaultVarSize = 16
 
-// Variables are how a closure stores key/value pairs
-type Variables map[string]Value
+// Variables are how a closure stores name/value pairs
+type Variables map[Name]Value
 
 // Context represents a functional closure
 type Context struct {
@@ -22,27 +22,27 @@ func (c *Context) Child() *Context {
 }
 
 // Get retrieves a value from the Context chain
-func (c *Context) Get(name string) (Value, bool) {
-	if value, ok := c.vars[name]; ok {
-		return value, true
+func (c *Context) Get(n Name) (Value, bool) {
+	if v, ok := c.vars[n]; ok {
+		return v, true
 	} else if c.parent != nil {
-		return c.parent.Get(name)
+		return c.parent.Get(n)
 	}
 	return EmptyList, false
 }
 
 // Globals retrieves the Root Context (one with no parent)
 func (c *Context) Globals() *Context {
-	current := c
-	for current.parent != nil {
-		current = current.parent
+	t := c
+	for t.parent != nil {
+		t = t.parent
 	}
-	return current
+	return t
 }
 
-// Put puts a value into the immediate Context
-func (c *Context) Put(name string, value Value) *Context {
-	c.vars[name] = value
+// Put puts a Value into the immediate Context
+func (c *Context) Put(n Name, v Value) *Context {
+	c.vars[n] = v
 	return c
 }
 

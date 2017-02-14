@@ -13,8 +13,8 @@ func (l *Data) Evaluate(c *Context) Value {
 }
 
 func (l *Data) String() string {
-	if str, ok := l.Value.(fmt.Stringer); ok {
-		return str.String()
+	if s, ok := l.Value.(fmt.Stringer); ok {
+		return s.String()
 	}
 	return l.Value.(string)
 }

@@ -7,14 +7,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func assertGet(a *assert.Assertions, c *s.Context, key string, value s.Value) {
-	v, ok := c.Get(key)
+func assertGet(a *assert.Assertions, c *s.Context, n s.Name, cv s.Value) {
+	v, ok := c.Get(n)
 	a.True(ok)
-	a.Equal(value, v)
+	a.Equal(cv, v)
 }
 
-func assertMissing(a *assert.Assertions, c *s.Context, key string) {
-	v, ok := c.Get(key)
+func assertMissing(a *assert.Assertions, c *s.Context, n s.Name) {
+	v, ok := c.Get(n)
 	a.False(ok)
 	a.Equal(s.EmptyList, v)
 }

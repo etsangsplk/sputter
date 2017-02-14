@@ -2,17 +2,17 @@ package api
 
 // Evaluate a Value against a Context
 func Evaluate(c *Context, v Value) Value {
-	if eval, ok := v.(Evaluable); ok {
-		return eval.Evaluate(c)
+	if e, ok := v.(Evaluable); ok {
+		return e.Evaluate(c)
 	}
 	return v
 }
 
 // EvaluateIterator evaluates each element of the provided Iterator
-func EvaluateIterator(c *Context, iter Iterator) Value {
-	var lastEval Value = EmptyList
-	for val, ok := iter.Next(); ok; val, ok = iter.Next() {
-		lastEval = Evaluate(c, val)
+func EvaluateIterator(c *Context, i Iterator) Value {
+	var r Value = EmptyList
+	for v, ok := i.Next(); ok; v, ok = i.Next() {
+		r = Evaluate(c, v)
 	}
-	return lastEval
+	return r
 }

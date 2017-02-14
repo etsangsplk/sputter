@@ -4,33 +4,33 @@ import a "github.com/kode4food/sputter/api"
 
 func defvarCommand(c *a.Context, args a.Iterable) a.Value {
 	AssertMinimumArity(args, 2)
-	globals := c.Globals()
-	iter := args.Iterate()
-	sym, _ := iter.Next()
-	name := sym.(*a.Symbol).Name
-	_, bound := globals.Get(name)
-	if !bound {
-		val, _ := iter.Next()
-		globals.Put(name, a.Evaluate(c, val))
+	g := c.Globals()
+	i := args.Iterate()
+	s, _ := i.Next()
+	n := s.(*a.Symbol).Name
+	_, b := g.Get(n)
+	if !b {
+		v, _ := i.Next()
+		g.Put(n, a.Evaluate(c, v))
 	}
-	return sym
+	return s
 }
 
 func letCommand(c *a.Context, args a.Iterable) a.Value {
 	AssertMinimumArity(args, 2)
-	locals := c.Child()
-	iter := args.Iterate()
-	bindings, _ := iter.Next()
+	l := c.Child()
+	i := args.Iterate()
+	b, _ := i.Next()
 
-	bindIter := bindings.(a.Iterable).Iterate()
-	for sym, ok := bindIter.Next(); ok; sym, ok = bindIter.Next() {
-		name := sym.(*a.Symbol).Name
-		if val, ok := bindIter.Next(); ok {
-			locals.Put(name, a.Evaluate(locals, val))
+	bi := b.(a.Iterable).Iterate()
+	for s, ok := bi.Next(); ok; s, ok = bi.Next() {
+		n := s.(*a.Symbol).Name
+		if v, ok := bi.Next(); ok {
+			l.Put(n, a.Evaluate(l, v))
 		}
 	}
 
-	return a.EvaluateIterator(locals, iter)
+	return a.EvaluateIterator(l, i)
 }
 
 func init() {

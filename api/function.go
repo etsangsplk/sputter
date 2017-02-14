@@ -6,10 +6,10 @@ type ArgumentProcessor func(*Context, Iterable) Value
 
 // Function is a Value that can be invoked
 type Function struct {
-	Name string
+	Name Name
 	Exec ArgumentProcessor
 }
 
-func (f *Function) String() string {
+func (f *Function) String() Name {
 	return f.Name
 }

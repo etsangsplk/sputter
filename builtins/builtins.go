@@ -15,17 +15,19 @@ const (
 // BuiltIns is a special Context of built-in identifiers
 var BuiltIns = a.NewContext()
 
+func countIterator(i a.Iterator) int {
+	var c = 0
+	for _, ok := i.Next(); ok; _, ok = i.Next() {
+		c++
+	}
+	return c
+}
+
 func argCount(args a.Iterable) int {
 	if c, ok := args.(a.Countable); ok {
 		return c.Count()
 	}
-
-	var count = 0
-	iter := args.Iterate()
-	for _, ok := iter.Next(); ok; _, ok = iter.Next() {
-		count++
-	}
-	return count
+	return countIterator(args.Iterate())
 }
 
 // AssertArity explodes if the arg count doesn't match provided arity

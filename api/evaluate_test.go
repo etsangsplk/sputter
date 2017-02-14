@@ -9,28 +9,28 @@ import (
 )
 
 func evaluateToString(c *s.Context, v s.Value) string {
-	result := s.Evaluate(c, v)
-	if str, ok := result.(fmt.Stringer); ok {
-		return str.String()
+	r := s.Evaluate(c, v)
+	if s, ok := r.(fmt.Stringer); ok {
+		return s.String()
 	}
-	return result.(string)
+	return r.(string)
 }
 
 func TestEvaluate(t *testing.T) {
 	a := assert.New(t)
 
-	hello := &s.Function{
+	f := &s.Function{
 		Name: "hello",
 		Exec: func(c *s.Context, args s.Iterable) s.Value {
-			iter := args.Iterate()
-			arg, _ := iter.Next()
-			value := evaluateToString(c, arg)
-			return "Hello, " + value + "!"
+			i := args.Iterate()
+			a, _ := i.Next()
+			v := evaluateToString(c, a)
+			return "Hello, " + v + "!"
 		},
 	}
 
-	list := s.NewList(hello).Conj("World")
-	result := s.Evaluate(s.NewContext(), list)
+	l := s.NewList(f).Conj("World")
+	r := s.Evaluate(s.NewContext(), l)
 
-	a.Equal("Hello, World!", result.(string), "good hello")
+	a.Equal("Hello, World!", r.(string), "good hello")
 }

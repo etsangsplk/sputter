@@ -6,7 +6,10 @@ var (
 
 	// False is an alias for EmptyList or Nil
 	False = Nil
-) 
+)
+
+// Name is a Variable name
+type Name string
 
 // Value is the generic interface for all 'Values' in the VM
 type Value interface {
@@ -34,9 +37,9 @@ type Indexable interface {
 }
 
 // Truthy evaluates whether or not a Value is Truthy
-func Truthy(value Value) bool {
+func Truthy(v Value) bool {
 	switch {
-	case value == EmptyList || value == False:
+	case v == EmptyList || v == False:
 		return false
 	default:
 		return true

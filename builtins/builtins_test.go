@@ -17,7 +17,7 @@ func TestBuiltInsContext(t *testing.T) {
 
 	a.Equal(b.BuiltIns, bg3.Globals())
 
-	trueVal, ok := bg3.Get("true")
+	tv, ok := bg3.Get("true")
 	a.True(ok)
-	a.Equal(s.True, trueVal)
+	a.Equal(s.True, tv)
 }

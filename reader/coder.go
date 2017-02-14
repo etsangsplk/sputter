@@ -47,7 +47,7 @@ func (c *Coder) token(t *Token) a.Value {
 	case VectorStart:
 		return c.vector()
 	case Identifier:
-		return &a.Symbol{Name: t.Value.(string)}
+		return &a.Symbol{Name: a.Name(t.Value.(string))}
 	case ListEnd:
 		panic(UnmatchedListEnd)
 	case VectorEnd:
@@ -84,7 +84,7 @@ func (c *Coder) list() *a.List {
 	first = func() *a.List {
 		token := c.reader.Next()
 		if token.Type == Identifier {
-			name := token.Value.(string)
+			name := a.Name(token.Value.(string))
 			if function, ok := c.builtIns.Get(name); ok {
 				list := next()
 				return list.Cons(function)
@@ -116,7 +116,6 @@ func (c *Coder) vector() a.Vector {
 			result = append(result, elem)
 		}
 	}
-	return result
 }
 
 // EvaluateCoder evaluates each element of the provided Coder

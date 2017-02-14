@@ -4,9 +4,9 @@ import a "github.com/kode4food/sputter/api"
 
 func isListCommand(c *a.Context, args a.Iterable) a.Value {
 	AssertArity(args, 1)
-	iter := args.Iterate()
-	if val, ok := iter.Next(); ok {
-		if _, ok := a.Evaluate(c, val).(*a.List); ok {
+	i := args.Iterate()
+	if v, ok := i.Next(); ok {
+		if _, ok := a.Evaluate(c, v).(*a.List); ok {
 			return a.True
 		}
 	}

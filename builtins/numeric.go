@@ -17,33 +17,33 @@ func addition(c *a.Context, args a.Iterable) a.Value {
 
 func subtraction(c *a.Context, args a.Iterable) a.Value {
 	AssertMinimumArity(args, 1)
-	iter := args.Iterate()
-	value, ok := iter.Next()
-	diff := a.Evaluate(c, value).(*big.Float)
-	for value, ok = iter.Next(); ok; value, ok = iter.Next() {
-		diff.Sub(diff, a.Evaluate(c, value).(*big.Float))
+	i := args.Iterate()
+	v, ok := i.Next()
+	r := a.Evaluate(c, v).(*big.Float)
+	for v, ok = i.Next(); ok; v, ok = i.Next() {
+		r.Sub(r, a.Evaluate(c, v).(*big.Float))
 	}
-	return diff
+	return r
 }
 
 func multiplication(c *a.Context, args a.Iterable) a.Value {
-	prod := big.NewFloat(1)
-	iter := args.Iterate()
-	for value, ok := iter.Next(); ok; value, ok = iter.Next() {
-		prod.Mul(prod, a.Evaluate(c, value).(*big.Float))
+	r := big.NewFloat(1)
+	i := args.Iterate()
+	for v, ok := i.Next(); ok; v, ok = i.Next() {
+		r.Mul(r, a.Evaluate(c, v).(*big.Float))
 	}
-	return prod
+	return r
 }
 
 func division(c *a.Context, args a.Iterable) a.Value {
 	AssertMinimumArity(args, 1)
-	iter := args.Iterate()
-	value, ok := iter.Next()
-	quotient := a.Evaluate(c, value).(*big.Float)
-	for value, ok = iter.Next(); ok; value, ok = iter.Next() {
-		quotient.Quo(quotient, a.Evaluate(c, value).(*big.Float))
+	i := args.Iterate()
+	v, ok := i.Next()
+	r := a.Evaluate(c, v).(*big.Float)
+	for v, ok = i.Next(); ok; v, ok = i.Next() {
+		r.Quo(r, a.Evaluate(c, v).(*big.Float))
 	}
-	return quotient
+	return r
 }
 
 func init() {
