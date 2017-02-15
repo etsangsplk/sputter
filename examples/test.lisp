@@ -31,3 +31,7 @@
   (println "nope"))
 
 (println [1 2 3])
+
+(let
+  [a (cons 1 '(2 3 4))]
+  (println a))

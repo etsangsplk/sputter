@@ -2,6 +2,14 @@ package builtins
 
 import a "github.com/kode4food/sputter/api"
 
+func cons(c *a.Context, args a.Iterable) a.Value {
+	AssertArity(args, 2)
+	i := args.Iterate()
+	car, _ := i.Next()
+	cdr, _ := i.Next()
+	return &a.Cons{Car: a.Evaluate(c, car), Cdr: a.Evaluate(c, cdr)}
+}
+
 func isList(c *a.Context, args a.Iterable) a.Value {
 	AssertArity(args, 1)
 	i := args.Iterate()
@@ -14,5 +22,6 @@ func isList(c *a.Context, args a.Iterable) a.Value {
 }
 
 func init() {
+	Context.PutFunction(&a.Function{Name: "cons", Exec: cons})
 	Context.PutFunction(&a.Function{Name: "list?", Exec: isList})
 }

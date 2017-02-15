@@ -6,7 +6,10 @@ import (
 )
 
 // NonFunction is the error returned when a non-Function is invoked
-const NonFunction = "first element of list is not a function"
+const NonFunction = "cannot resolve first element as a function"
+
+// NonList is the error returned when a non-List is invoked
+const NonList = "cannot resolve second element as a list"
 
 // Cons contains a bound pair that can be used for constructing Lists
 type Cons struct {
@@ -63,7 +66,7 @@ func (c *Cons) Count() int {
 	return r
 }
 
-// Evaluate makes a Cons Evaluable
+// Evaluate makes a List Evaluable
 func (c *Cons) Evaluate(ctx *Context) Value {
 	if c == Nil {
 		return Nil
@@ -82,7 +85,7 @@ func (c *Cons) Evaluate(ctx *Context) Value {
 		}
 		panic(NonFunction)
 	}
-	panic("Cdr is not a Cons!")
+	panic(NonList)
 }
 
 func (c *Cons) listString() string {
