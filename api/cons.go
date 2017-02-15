@@ -2,7 +2,6 @@ package api
 
 import (
 	"bytes"
-	"fmt"
 )
 
 // NonFunction is the error returned when a non-Function is invoked
@@ -38,14 +37,15 @@ func (c *Cons) Iterate() Iterator {
 
 // Next returns the next Value from the Iterator
 func (i *consIterator) Next() (v Value, ok bool) {
-	if i.current == Nil {
+	c := i.current
+	if c == Nil {
 		return Nil, false
 	}
-	r := i.current.Car
-	if cdr, ok := i.current.Cdr.(*Cons); ok {
+	r := c.Car
+	if cdr, ok := c.Cdr.(*Cons); ok {
 		i.current = cdr
 	} else {
-		r = i.current
+		r = c
 		i.current = Nil
 	}
 	return r, true
@@ -90,37 +90,31 @@ func (c *Cons) Evaluate(ctx *Context) Value {
 
 func (c *Cons) listString() string {
 	var b bytes.Buffer
-
 	b.WriteString("(")
-	i := c.Iterate()
-	var n = false
-	for v, ok := i.Next(); ok; v, ok = i.Next() {
-		if n {
-			b.WriteString(" ")
-		}
-		if s, ok := v.(fmt.Stringer); ok {
-			b.WriteString(s.String())
+	for e := c; e != Nil; {
+		b.WriteString(ValueToString(e.Car))
+		if n, ok := e.Cdr.(*Cons); ok {
+			e = n
+			if e != Nil {
+				b.WriteString(" ")
+			}
 		} else {
-			b.WriteString(v.(string))
+			b.WriteString(" . ")
+			b.WriteString(ValueToString(e.Cdr))
+			break
 		}
-		n = true
 	}
 	b.WriteString(")")
 	return b.String()
 }
 
-func str(v Value) string {
-	if s, ok := v.(fmt.Stringer); ok {
-		return s.String()
-	}
-	return v.(string)
-}
-
 func (c *Cons) consString() string {
 	var b bytes.Buffer
-	b.WriteString(str(c.Car))
+	b.WriteString("(")
+	b.WriteString(ValueToString(c.Car))
 	b.WriteString(" . ")
-	b.WriteString(str(c.Cdr))
+	b.WriteString(ValueToString(c.Cdr))
+	b.WriteString(")")
 	return b.String()
 }
 

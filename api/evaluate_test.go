@@ -1,7 +1,6 @@
 package api_test
 
 import (
-	"fmt"
 	"testing"
 
 	s "github.com/kode4food/sputter/api"
@@ -9,11 +8,7 @@ import (
 )
 
 func evaluateToString(c *s.Context, v s.Value) string {
-	r := s.Evaluate(c, v)
-	if s, ok := r.(fmt.Stringer); ok {
-		return s.String()
-	}
-	return r.(string)
+	return s.ValueToString(s.Evaluate(c, v))
 }
 
 func TestEvaluate(t *testing.T) {

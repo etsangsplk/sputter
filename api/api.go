@@ -1,5 +1,7 @@
 package api
 
+import "fmt"
+
 var (
 	// True is literal value that represents any value other than False
 	True = &Data{Value: true}
@@ -39,9 +41,17 @@ type Indexable interface {
 // Truthy evaluates whether or not a Value is Truthy
 func Truthy(v Value) bool {
 	switch {
-	case v == Nil || v == False:
+	case v == Nil || v == False || v == nil || v == false:
 		return false
 	default:
 		return true
 	}
+}
+
+// ValueToString either calls the String() method or tries to convert
+func ValueToString(v Value) string {
+	if s, ok := v.(fmt.Stringer); ok {
+		return s.String()
+	}
+	return v.(string)
 }

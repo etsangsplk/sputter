@@ -1,7 +1,5 @@
 package api
 
-import "fmt"
-
 // Data identifies a Value as being in data mode (literal)
 type Data struct {
 	Value Value
@@ -13,8 +11,5 @@ func (l *Data) Evaluate(c *Context) Value {
 }
 
 func (l *Data) String() string {
-	if s, ok := l.Value.(fmt.Stringer); ok {
-		return s.String()
-	}
-	return l.Value.(string)
+	return ValueToString(l.Value)
 }

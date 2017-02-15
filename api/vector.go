@@ -2,7 +2,6 @@ package api
 
 import (
 	"bytes"
-	"fmt"
 )
 
 // Vector is a fixed-length Array of Values
@@ -62,11 +61,7 @@ func (v Vector) String() string {
 		if i > 0 {
 			b.WriteString(" ")
 		}
-		if s, ok := vi.(fmt.Stringer); ok {
-			b.WriteString(s.String())
-		} else {
-			b.WriteString(vi.(string))
-		}
+		b.WriteString(ValueToString(vi))
 	}
 	b.WriteString("]")
 	return b.String()

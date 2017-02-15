@@ -10,6 +10,6 @@ type Function struct {
 	Exec ArgumentProcessor
 }
 
-func (f *Function) String() Name {
-	return f.Name
+func (f *Function) String() string {
+	return string(f.Name)
 }

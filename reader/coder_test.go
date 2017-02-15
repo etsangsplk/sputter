@@ -1,7 +1,6 @@
 package interpreter_test
 
 import (
-	"fmt"
 	"math/big"
 	"testing"
 
@@ -131,11 +130,7 @@ func testCodeWithContext(a *assert.Assertions, code string, expect s.Value, cont
 }
 
 func evaluateToString(c *s.Context, v s.Value) string {
-	res := s.Evaluate(c, v)
-	if s, ok := res.(fmt.Stringer); ok {
-		return s.String()
-	}
-	return res.(string)
+	return s.ValueToString(s.Evaluate(c, v))
 }
 
 func TestEvaluable(t *testing.T) {

@@ -33,5 +33,13 @@
 (println [1 2 3])
 
 (let
-  [a (cons 1 '(2 3 4))]
+  [a (cons 1 (list 2 3 4))]
   (println a))
+
+(println (car '(1 2 3)))
+(println (cdr '(1 2 3)))
+
+(println (list 'a 'b 'c))
+(println (cons 50 (cons 99 100)))
+(println (cons 100 200))
+

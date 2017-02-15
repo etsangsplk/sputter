@@ -27,6 +27,7 @@ func TestCons(t *testing.T) {
 	l2 := &s.Cons{Car: n2, Cdr: l1}
 	a.Equal(n2, l2.Car, "2nd head is populated correctly")
 	a.Equal(l1, l2.Cdr, "2nd tail is populated correctly")
+	a.Equal(2, l2.Count(), "2nd list count is correct")
 }
 
 func TestIterator(t *testing.T) {
