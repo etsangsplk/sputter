@@ -5,7 +5,7 @@ type Data struct {
 	Value Value
 }
 
-// Evaluate makes Data Evaluable
+// Eval makes Data Evaluable
 func (l *Data) Eval(c *Context) Value {
 	return l.Value
 }

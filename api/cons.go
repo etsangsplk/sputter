@@ -87,7 +87,7 @@ func (c *Cons) Get(index int) Value {
 	return Nil
 }
 
-// Evaluate makes a List Evaluable
+// Eval makes a List Evaluable
 func (c *Cons) Eval(ctx *Context) Value {
 	if c == Nil {
 		return Nil

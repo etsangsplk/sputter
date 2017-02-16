@@ -13,16 +13,13 @@ var (
 // Name is a Variable name
 type Name string
 
-// Value is the generic interface for all 'Values' in the VM
+// Value is the generic interface for all 'Values'
 type Value interface {
 }
 
 // Sequence interfaces expose a one dimensional set of Values
 type Sequence interface {
 	Iterate() Iterator
-}
-
-type Countable interface {
 }
 
 // Finite interfaces allow a Sequence item to be retrieved by index

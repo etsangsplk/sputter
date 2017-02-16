@@ -8,7 +8,7 @@ type Symbol struct {
 	Name Name
 }
 
-// Evaluate makes a Symbol Evaluable
+// Eval makes a Symbol Evaluable
 func (s *Symbol) Eval(c *Context) Value {
 	if r, ok := c.Get(s.Name); ok {
 		return r
