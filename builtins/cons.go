@@ -5,38 +5,38 @@ import a "github.com/kode4food/sputter/api"
 // NonCons is thrown when you call car/cdr on a non-Cons
 const NonCons = "Value is not a Cons cell"
 
-func cons(c *a.Context, args a.Iterable) a.Value {
+func cons(c *a.Context, args a.Sequence) a.Value {
 	AssertArity(args, 2)
 	i := args.Iterate()
 	car, _ := i.Next()
 	cdr, _ := i.Next()
-	return &a.Cons{Car: a.Evaluate(c, car), Cdr: a.Evaluate(c, cdr)}
+	return &a.Cons{Car: a.Eval(c, car), Cdr: a.Eval(c, cdr)}
 }
 
-func fetchCons(c *a.Context, args a.Iterable) *a.Cons {
+func fetchCons(c *a.Context, args a.Sequence) *a.Cons {
 	AssertArity(args, 1)
 	i := args.Iterate()
 	v, _ := i.Next()
-	r := a.Evaluate(c, v)
+	r := a.Eval(c, v)
 	if cons, ok := r.(*a.Cons); ok {
 		return cons
 	}
 	panic(NonCons)
 }
 
-func car(c *a.Context, args a.Iterable) a.Value {
+func car(c *a.Context, args a.Sequence) a.Value {
 	return fetchCons(c, args).Car
 }
 
-func cdr(c *a.Context, args a.Iterable) a.Value {
+func cdr(c *a.Context, args a.Sequence) a.Value {
 	return fetchCons(c, args).Cdr
 }
 
-func list(c *a.Context, args a.Iterable) a.Value {
+func list(c *a.Context, args a.Sequence) a.Value {
 	s := &a.Stack{}
 	i := args.Iterate()
 	for v, ok := i.Next(); ok; v, ok = i.Next() {
-		s.Push(a.Evaluate(c, v))
+		s.Push(a.Eval(c, v))
 	}
 
 	e, ok := s.Pop()
@@ -51,11 +51,11 @@ func list(c *a.Context, args a.Iterable) a.Value {
 	return l
 }
 
-func isList(c *a.Context, args a.Iterable) a.Value {
+func isList(c *a.Context, args a.Sequence) a.Value {
 	AssertArity(args, 1)
 	i := args.Iterate()
 	if v, ok := i.Next(); ok {
-		if _, ok := a.Evaluate(c, v).(*a.Cons); ok {
+		if _, ok := a.Eval(c, v).(*a.Cons); ok {
 			return a.True
 		}
 	}

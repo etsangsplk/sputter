@@ -118,11 +118,11 @@ func (c *Coder) vector() a.Vector {
 	}
 }
 
-// EvaluateCoder evaluates each element of the provided Coder
-func EvaluateCoder(c *a.Context, coder *Coder) a.Value {
+// EvalCoder evaluates each element of the provided Reader
+func EvalCoder(c *a.Context, coder *Coder) a.Value {
 	var r a.Value
 	for v := coder.Next(); v != EndOfCoder; v = coder.Next() {
-		r = a.Evaluate(c, v)
+		r = a.Eval(c, v)
 	}
 	return r
 }

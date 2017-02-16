@@ -52,7 +52,7 @@ func (i *consIterator) Next() (v Value, ok bool) {
 }
 
 // Iterable returns a new Iterable from the Iterator's current state
-func (i *consIterator) Iterable() Iterable {
+func (i *consIterator) Iterable() Sequence {
 	return i.current
 }
 
@@ -67,7 +67,7 @@ func (c *Cons) Count() int {
 }
 
 // Evaluate makes a List Evaluable
-func (c *Cons) Evaluate(ctx *Context) Value {
+func (c *Cons) Eval(ctx *Context) Value {
 	if c == Nil {
 		return Nil
 	}

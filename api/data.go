@@ -6,7 +6,7 @@ type Data struct {
 }
 
 // Evaluate makes Data Evaluable
-func (l *Data) Evaluate(c *Context) Value {
+func (l *Data) Eval(c *Context) Value {
 	return l.Value
 }
 

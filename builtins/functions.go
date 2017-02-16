@@ -2,12 +2,12 @@ package builtins
 
 import a "github.com/kode4food/sputter/api"
 
-func define(n a.Name, argNames a.Iterable, body a.Iterable) *a.Function {
-	ac := argCount(argNames)
+func define(n a.Name, argNames a.Sequence, body a.Sequence) *a.Function {
+	ac := argNames.Count()
 
 	return &a.Function{
 		Name: n,
-		Exec: func(c *a.Context, args a.Iterable) a.Value {
+		Exec: func(c *a.Context, args a.Sequence) a.Value {
 			AssertArity(args, ac)
 			l := c.Child()
 			anIter := argNames.Iterate()
@@ -22,12 +22,12 @@ func define(n a.Name, argNames a.Iterable, body a.Iterable) *a.Function {
 				}
 				ns, nok = anIter.Next()
 			}
-			return a.EvaluateIterator(l, body.Iterate())
+			return a.EvalIterator(l, body.Iterate())
 		},
 	}
 }
 
-func defun(c *a.Context, args a.Iterable) a.Value {
+func defun(c *a.Context, args a.Sequence) a.Value {
 	AssertMinimumArity(args, 3)
 	g := c.Globals()
 	i := args.Iterate()
@@ -36,7 +36,7 @@ func defun(c *a.Context, args a.Iterable) a.Value {
 	fn := fv.(*a.Symbol).Name
 
 	av, _ := i.Next()
-	an := av.(a.Iterable)
+	an := av.(a.Sequence)
 
 	b := i.Iterable()
 

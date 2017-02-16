@@ -14,7 +14,7 @@ func testCode(a *assert.Assertions, src string, expect s.Value) {
 	ctx := s.NewContext()
 	l := r.NewLexer(src)
 	c := r.NewCoder(b.Context, l)
-	a.Equal(expect, r.EvaluateCoder(ctx, c), src)
+	a.Equal(expect, r.EvalCoder(ctx, c), src)
 }
 
 func TestBasics(t *testing.T) {

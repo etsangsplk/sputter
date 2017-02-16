@@ -29,7 +29,7 @@ func main() {
 		context := a.NewContext()
 		l := r.NewLexer(string(buffer))
 		c := r.NewCoder(b.Context, l)
-		r.EvaluateCoder(context, c)
+		r.EvalCoder(context, c)
 	} else {
 		fmt.Println("File not found:", filename)
 		os.Exit(-1)

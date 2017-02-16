@@ -22,11 +22,11 @@ func (v Vector) Iterate() Iterator {
 	return &vectorIterator{v, len(v), 0}
 }
 
-// Evaluate makes a Vector Evaluable
-func (v Vector) Evaluate(c *Context) Value {
+// Eval makes a Vector Evaluable
+func (v Vector) Eval(c *Context) Value {
 	r := make(Vector, len(v))
 	for i := 0; i < len(v); i++ {
-		r[i] = Evaluate(c, v[i])
+		r[i] = Eval(c, v[i])
 	}
 	return r
 }
@@ -48,7 +48,7 @@ func (i *vectorIterator) Next() (v Value, ok bool) {
 }
 
 // Iterable returns a new Iterable from the Iterator's current state
-func (i *vectorIterator) Iterable() Iterable {
+func (i *vectorIterator) Iterable() Sequence {
 	return i.vector[i.pos:]
 }
 

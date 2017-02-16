@@ -6,16 +6,16 @@ import (
 	a "github.com/kode4food/sputter/api"
 )
 
-func print(c *a.Context, args a.Iterable) a.Value {
+func print(c *a.Context, args a.Sequence) a.Value {
 	i := args.Iterate()
 	for v, ok := i.Next(); ok; v, ok = i.Next() {
-		r := a.Evaluate(c, v)
+		r := a.Eval(c, v)
 		fmt.Print(r)
 	}
 	return a.Nil
 }
 
-func println(c *a.Context, args a.Iterable) a.Value {
+func println(c *a.Context, args a.Sequence) a.Value {
 	print(c, args)
 	fmt.Println("")
 	return a.Nil

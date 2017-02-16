@@ -6,42 +6,42 @@ import (
 	a "github.com/kode4food/sputter/api"
 )
 
-func add(c *a.Context, args a.Iterable) a.Value {
+func add(c *a.Context, args a.Sequence) a.Value {
 	sum := big.NewFloat(0)
 	iter := args.Iterate()
 	for value, ok := iter.Next(); ok; value, ok = iter.Next() {
-		sum.Add(sum, a.Evaluate(c, value).(*big.Float))
+		sum.Add(sum, a.Eval(c, value).(*big.Float))
 	}
 	return sum
 }
 
-func sub(c *a.Context, args a.Iterable) a.Value {
+func sub(c *a.Context, args a.Sequence) a.Value {
 	AssertMinimumArity(args, 1)
 	i := args.Iterate()
 	v, ok := i.Next()
-	r := a.Evaluate(c, v).(*big.Float)
+	r := a.Eval(c, v).(*big.Float)
 	for v, ok = i.Next(); ok; v, ok = i.Next() {
-		r.Sub(r, a.Evaluate(c, v).(*big.Float))
+		r.Sub(r, a.Eval(c, v).(*big.Float))
 	}
 	return r
 }
 
-func mul(c *a.Context, args a.Iterable) a.Value {
+func mul(c *a.Context, args a.Sequence) a.Value {
 	r := big.NewFloat(1)
 	i := args.Iterate()
 	for v, ok := i.Next(); ok; v, ok = i.Next() {
-		r.Mul(r, a.Evaluate(c, v).(*big.Float))
+		r.Mul(r, a.Eval(c, v).(*big.Float))
 	}
 	return r
 }
 
-func div(c *a.Context, args a.Iterable) a.Value {
+func div(c *a.Context, args a.Sequence) a.Value {
 	AssertMinimumArity(args, 1)
 	i := args.Iterate()
 	v, ok := i.Next()
-	r := a.Evaluate(c, v).(*big.Float)
+	r := a.Eval(c, v).(*big.Float)
 	for v, ok = i.Next(); ok; v, ok = i.Next() {
-		r.Quo(r, a.Evaluate(c, v).(*big.Float))
+		r.Quo(r, a.Eval(c, v).(*big.Float))
 	}
 	return r
 }

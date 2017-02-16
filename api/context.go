@@ -54,5 +54,5 @@ func (c *Context) PutFunction(f *Function) *Context {
 
 // Evaluable can be evaluated against a Context
 type Evaluable interface {
-	Evaluate(c *Context) Value
+	Eval(c *Context) Value
 }

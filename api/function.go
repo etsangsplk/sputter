@@ -2,7 +2,7 @@ package api
 
 // ArgumentProcessor is the standard signature for a function that is
 // capable of processing an Iterable (like Lists)
-type ArgumentProcessor func(*Context, Iterable) Value
+type ArgumentProcessor func(*Context, Sequence) Value
 
 // Function is a Value that can be invoked
 type Function struct {

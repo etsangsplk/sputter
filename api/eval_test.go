@@ -8,7 +8,7 @@ import (
 )
 
 func evaluateToString(c *s.Context, v s.Value) string {
-	return s.ValueToString(s.Evaluate(c, v))
+	return s.ValueToString(s.Eval(c, v))
 }
 
 func TestEvaluate(t *testing.T) {
@@ -16,7 +16,7 @@ func TestEvaluate(t *testing.T) {
 
 	f := &s.Function{
 		Name: "hello",
-		Exec: func(c *s.Context, args s.Iterable) s.Value {
+		Exec: func(c *s.Context, args s.Sequence) s.Value {
 			i := args.Iterate()
 			a, _ := i.Next()
 			v := evaluateToString(c, a)
@@ -25,7 +25,7 @@ func TestEvaluate(t *testing.T) {
 	}
 
 	l := &s.Cons{Car: f, Cdr: s.NewList("World")}
-	r := s.Evaluate(s.NewContext(), l)
+	r := s.Eval(s.NewContext(), l)
 
 	a.Equal("Hello, World!", r.(string), "good hello")
 }

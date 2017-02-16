@@ -126,11 +126,11 @@ func TestData(t *testing.T) {
 func testCodeWithContext(a *assert.Assertions, code string, expect s.Value, context *s.Context) {
 	l := r.NewLexer(code)
 	c := r.NewCoder(s.NewContext(), l)
-	a.Equal(expect, r.EvaluateCoder(context, c), code)
+	a.Equal(expect, r.EvalCoder(context, c), code)
 }
 
 func evaluateToString(c *s.Context, v s.Value) string {
-	return s.ValueToString(s.Evaluate(c, v))
+	return s.ValueToString(s.Eval(c, v))
 }
 
 func TestEvaluable(t *testing.T) {
@@ -139,7 +139,7 @@ func TestEvaluable(t *testing.T) {
 
 	hello := &s.Function{
 		Name: "hello",
-		Exec: func(c *s.Context, args s.Iterable) s.Value {
+		Exec: func(c *s.Context, args s.Sequence) s.Value {
 			i := args.Iterate()
 			arg, _ := i.Next()
 			v := evaluateToString(c, arg)

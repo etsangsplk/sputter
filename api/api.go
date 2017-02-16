@@ -17,20 +17,16 @@ type Name string
 type Value interface {
 }
 
-// Iterable values can be used in loops and comprehensions
-type Iterable interface {
+// Sequence interfaces expose a one dimensional set of Values
+type Sequence interface {
 	Iterate() Iterator
+	Count() int	
 }
 
 // Iterator interfaces are stateful iteration interfaces
 type Iterator interface {
 	Next() (Value, bool)
-	Iterable() Iterable
-}
-
-// Countable interfaces can return a Count of contained items
-type Countable interface {
-	Count() int
+	Iterable() Sequence
 }
 
 // Indexable interfaces can return an item by index
