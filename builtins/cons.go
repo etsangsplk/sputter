@@ -62,10 +62,28 @@ func isList(c *a.Context, args a.Sequence) a.Value {
 	return a.False
 }
 
+func first(c *a.Context, args a.Sequence) a.Value {
+	AssertArity(args, 1)
+	return fetchCons(c, args).Get(0)	
+}
+
+func second(c *a.Context, args a.Sequence) a.Value {
+	AssertArity(args, 1)
+	return fetchCons(c, args).Get(1)
+}
+
+func third(c *a.Context, args a.Sequence) a.Value {
+	AssertArity(args, 1)
+	return fetchCons(c, args).Get(2)
+}
+
 func init() {
 	Context.PutFunction(&a.Function{Name: "cons", Exec: cons})
 	Context.PutFunction(&a.Function{Name: "car", Exec: car})
 	Context.PutFunction(&a.Function{Name: "cdr", Exec: cdr})
 	Context.PutFunction(&a.Function{Name: "list", Exec: list})
 	Context.PutFunction(&a.Function{Name: "list?", Exec: isList})
+	Context.PutFunction(&a.Function{Name: "first", Exec: first})
+	Context.PutFunction(&a.Function{Name: "second", Exec: second})
+	Context.PutFunction(&a.Function{Name: "third", Exec: third})	
 }

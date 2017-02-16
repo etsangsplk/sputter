@@ -2,6 +2,7 @@ package api
 
 import (
 	"bytes"
+	"fmt"
 )
 
 // NonFunction is the error returned when a non-Function is invoked
@@ -9,6 +10,9 @@ const NonFunction = "cannot resolve first element as a function"
 
 // NonList is the error returned when a non-List is invoked
 const NonList = "cannot resolve second element as a list"
+
+// IndexNotCons is the error returns when walking a non-List
+const IndexNotCons = "%d is not a Cons cell"
 
 // Cons contains a bound pair that can be used for constructing Lists
 type Cons struct {
@@ -64,6 +68,23 @@ func (c *Cons) Count() int {
 		r++
 	}
 	return r
+}
+
+// Get returns the Value at the indexed position in the List
+func (c *Cons) Get(index int) Value {
+	var i = 0
+	for e := c; e != Nil; {
+		if i == index {
+			return e.Car
+		}
+		if n, ok := e.Cdr.(*Cons); ok {
+			e = n
+			i++
+			continue
+		}
+		panic(fmt.Sprintf(IndexNotCons, i))
+	}
+	return Nil
 }
 
 // Evaluate makes a List Evaluable

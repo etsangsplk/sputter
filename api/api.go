@@ -20,18 +20,14 @@ type Value interface {
 // Sequence interfaces expose a one dimensional set of Values
 type Sequence interface {
 	Iterate() Iterator
-	Count() int	
+	Get(index int) Value
+	Count() int
 }
 
 // Iterator interfaces are stateful iteration interfaces
 type Iterator interface {
 	Next() (Value, bool)
 	Iterable() Sequence
-}
-
-// Indexable interfaces can return an item by index
-type Indexable interface {
-	Get(index int) Value
 }
 
 // Truthy evaluates whether or not a Value is Truthy

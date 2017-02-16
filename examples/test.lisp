@@ -43,3 +43,17 @@
 (println (cons 50 (cons 99 100)))
 (println (cons 100 200))
 
+(defvar r (cons 3 (cons 4 (cons 9 10))))
+(println (car r))
+(println (cdr r))
+(println (cdr (cdr r)))
+(println (cdr (cdr (cdr r))))
+
+(println (first r))
+(println (second r))
+(println (third r))
+
+(defvar s (cons 4 (cons 9 10)))
+(println (first s))
+(println (second s))
+
