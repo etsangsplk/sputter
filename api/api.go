@@ -20,8 +20,15 @@ type Value interface {
 // Sequence interfaces expose a one dimensional set of Values
 type Sequence interface {
 	Iterate() Iterator
-	Get(index int) Value
+}
+
+type Countable interface {
+}
+
+// Finite interfaces allow a Sequence item to be retrieved by index
+type Finite interface {
 	Count() int
+	Get(index int) Value
 }
 
 // Iterator interfaces are stateful iteration interfaces
@@ -38,6 +45,20 @@ func Truthy(v Value) bool {
 	default:
 		return true
 	}
+}
+
+// CountSequence will either use Finite.Count() or iterate over the Sequence
+func CountSequence(s Sequence) int {
+	if f, ok := s.(Finite); ok {
+		return f.Count()
+	}
+
+	i := s.Iterate()
+	var r = 0
+	for _, ok := i.Next(); ok; _, ok = i.Next() {
+		r++
+	}
+	return r
 }
 
 // ValueToString either calls the String() method or tries to convert

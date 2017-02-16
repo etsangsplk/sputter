@@ -17,7 +17,7 @@ var Context = a.NewContext()
 
 // AssertArity explodes if the arg count doesn't match provided arity
 func AssertArity(args a.Sequence, arity int) {
-	c := args.Count()
+	c := a.CountSequence(args)
 	if c != arity {
 		panic(fmt.Sprintf(badArity, arity, c))
 	}
@@ -25,7 +25,7 @@ func AssertArity(args a.Sequence, arity int) {
 
 // AssertMinimumArity explodes if the arg count isn't at least arity
 func AssertMinimumArity(args a.Sequence, arity int) {
-	c := args.Count()
+	c := a.CountSequence(args)
 	if c < arity {
 		panic(fmt.Sprintf(badMinArity, arity, c))
 	}
@@ -33,7 +33,7 @@ func AssertMinimumArity(args a.Sequence, arity int) {
 
 // AssertArityRange explodes if the arg count isn't in the arity range
 func AssertArityRange(args a.Sequence, min int, max int) {
-	c := args.Count()
+	c := a.CountSequence(args)
 	if c < min || c > max {
 		panic(fmt.Sprintf(badArityRange, min, max, c))
 	}

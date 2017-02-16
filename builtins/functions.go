@@ -3,7 +3,7 @@ package builtins
 import a "github.com/kode4food/sputter/api"
 
 func define(n a.Name, argNames a.Sequence, body a.Sequence) *a.Function {
-	ac := argNames.Count()
+	ac := a.CountSequence(argNames)
 
 	return &a.Function{
 		Name: n,
