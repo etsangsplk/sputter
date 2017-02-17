@@ -31,7 +31,7 @@ type Finite interface {
 // Iterator interfaces are stateful iteration interfaces
 type Iterator interface {
 	Next() (Value, bool)
-	Slice() Sequence
+	Rest() Sequence
 }
 
 // Truthy evaluates whether or not a Value is Truthy
