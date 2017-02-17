@@ -14,15 +14,11 @@ func define(n a.Name, argNames a.Sequence, body a.Sequence) *a.Function {
 			aIter := args.Iterate()
 			for ns, nok := anIter.Next(); nok; {
 				an := ns.(*a.Symbol).Name
-				av, aok := aIter.Next()
-				if aok {
-					l.Put(an, av)
-				} else {
-					l.Put(an, a.Nil)
-				}
+				av, _ := aIter.Next()
+				l.Put(an, a.Eval(c, av))
 				ns, nok = anIter.Next()
 			}
-			return a.EvalIterator(l, body.Iterate())
+			return a.EvalSequence(l, body)
 		},
 	}
 }

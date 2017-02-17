@@ -30,7 +30,7 @@ func let(c *a.Context, args a.Sequence) a.Value {
 		}
 	}
 
-	return a.EvalIterator(l, i)
+	return a.EvalSequence(l, i.Slice())
 }
 
 func init() {
