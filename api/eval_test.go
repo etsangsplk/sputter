@@ -8,7 +8,7 @@ import (
 )
 
 func evaluateToString(c *s.Context, v s.Value) string {
-	return s.ValueToString(s.Eval(c, v))
+	return s.String(s.Eval(c, v))
 }
 
 func TestEvaluate(t *testing.T) {

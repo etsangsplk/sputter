@@ -17,11 +17,6 @@ func (v Vector) Get(index int) Value {
 	return v[index]
 }
 
-// Iterate creates a new Iterator instance for the Vector
-func (v Vector) Iterate() Iterator {
-	return &vectorIterator{v, len(v), 0}
-}
-
 // Eval makes a Vector Evaluable
 func (v Vector) Eval(c *Context) Value {
 	r := make(Vector, len(v))
@@ -35,6 +30,11 @@ type vectorIterator struct {
 	vector Vector
 	len    int
 	pos    int
+}
+
+// Iterate creates a new Iterator instance for the Vector
+func (v Vector) Iterate() Iterator {
+	return &vectorIterator{v, len(v), 0}
 }
 
 // Next returns the next Value from the Iterator
@@ -61,7 +61,7 @@ func (v Vector) String() string {
 		if i > 0 {
 			b.WriteString(" ")
 		}
-		b.WriteString(ValueToString(vi))
+		b.WriteString(String(vi))
 	}
 	b.WriteString("]")
 	return b.String()

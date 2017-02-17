@@ -4,6 +4,8 @@ import (
 	"math/big"
 	"testing"
 
+	"fmt"
+
 	s "github.com/kode4food/sputter/api"
 	b "github.com/kode4food/sputter/builtins"
 	r "github.com/kode4food/sputter/reader"
@@ -55,8 +57,8 @@ func TestBadArity(t *testing.T) {
 
 	defer func() {
 		if rec := recover(); rec != nil {
-			err := "expected 1 argument(s), got 0"
-			a.Equal(rec, err, "bad arity")
+			err := fmt.Sprintf(b.BadArity, 1, 0)
+			a.Equal(err, rec, "bad arity")
 			return
 		}
 		a.Fail("bad arity didn't panic")

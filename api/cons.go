@@ -82,7 +82,7 @@ func (c *Cons) Get(index int) Value {
 			i++
 			continue
 		}
-		panic(fmt.Sprintf(IndexNotCons, i))
+		panic(fmt.Sprintf(IndexNotCons, index))
 	}
 	return Nil
 }
@@ -113,7 +113,7 @@ func (c *Cons) listString() string {
 	var b bytes.Buffer
 	b.WriteString("(")
 	for e := c; e != Nil; {
-		b.WriteString(ValueToString(e.Car))
+		b.WriteString(String(e.Car))
 		if n, ok := e.Cdr.(*Cons); ok {
 			e = n
 			if e != Nil {
@@ -121,7 +121,7 @@ func (c *Cons) listString() string {
 			}
 		} else {
 			b.WriteString(" . ")
-			b.WriteString(ValueToString(e.Cdr))
+			b.WriteString(String(e.Cdr))
 			break
 		}
 	}
@@ -132,9 +132,9 @@ func (c *Cons) listString() string {
 func (c *Cons) consString() string {
 	var b bytes.Buffer
 	b.WriteString("(")
-	b.WriteString(ValueToString(c.Car))
+	b.WriteString(String(c.Car))
 	b.WriteString(" . ")
-	b.WriteString(ValueToString(c.Cdr))
+	b.WriteString(String(c.Cdr))
 	b.WriteString(")")
 	return b.String()
 }
