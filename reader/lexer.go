@@ -72,8 +72,8 @@ func init() {
 		{regexp.MustCompile(`^;[^\n]*[\n]`), tokenState(Comment)},
 		{regexp.MustCompile(`^\s+`), tokenState(Whitespace)},
 		{regexp.MustCompile(`^\(`), tokenState(ListStart)},
-		{regexp.MustCompile(`^\)`), tokenState(ListEnd)},
 		{regexp.MustCompile(`^\[`), tokenState(VectorStart)},
+		{regexp.MustCompile(`^\)`), tokenState(ListEnd)},
 		{regexp.MustCompile(`^]`), tokenState(VectorEnd)},
 		{regexp.MustCompile(`^'`), tokenState(DataMarker)},
 

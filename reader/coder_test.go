@@ -51,6 +51,18 @@ func TestCodeList(t *testing.T) {
 	a.False(ok)
 }
 
+func TestCodeVector(t *testing.T) {
+	a := assert.New(t)
+	l := r.NewLexer(`[99 "hello" 55.12]`)
+	c := r.NewCoder(s.NewContext(), l)
+	v := c.Next()
+	vector, ok := v.(s.Vector)
+	a.True(ok)
+	a.Equal(0, big.NewFloat(99.0).Cmp(vector.Get(0).(*big.Float)))
+	a.Equal("hello", vector.Get(1))
+	a.Equal(0, big.NewFloat(55.120).Cmp(vector.Get(2).(*big.Float)))
+}
+
 func TestCodeNestedList(t *testing.T) {
 	a := assert.New(t)
 	l := r.NewLexer(`(99 ("hello" "there") 55.12)`)
@@ -152,4 +164,28 @@ func TestEvaluable(t *testing.T) {
 
 	testCodeWithContext(a, `(hello "World")`, "Hello, World!", c)
 	testCodeWithContext(a, `(hello name)`, "Hello, Bob!", c)
+}
+
+func testCoderError(t *testing.T, src string, err string) {
+	a := assert.New(t)
+
+	defer func() {
+		if rec := recover(); rec != nil {
+			a.Equal(err, rec, "coder errors out")
+			return
+		}
+		a.Fail("coder doesn't error out like it should")
+	}()
+
+	l := r.NewLexer(src)
+	c := r.NewCoder(s.NewContext(), l)
+	for n := c.Next(); n != r.EndOfCoder; n = c.Next() {}
+}
+
+func TestCoderErrors(t *testing.T) {
+	testCoderError(t, "(99 100 ", r.ListNotClosed)
+	testCoderError(t, "[99 100 ", r.VectorNotClosed)
+	
+	testCoderError(t, "99 100)", r.UnmatchedListEnd)
+	testCoderError(t, "99 100]", r.UnmatchedVectorEnd)
 }
