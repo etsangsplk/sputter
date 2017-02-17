@@ -55,8 +55,8 @@ func (i *consIterator) Next() (v Value, ok bool) {
 	return r, true
 }
 
-// Iterable returns a new Iterable from the Iterator's current state
-func (i *consIterator) Iterable() Sequence {
+// Slice returns a new Iterable from the Iterator's current state
+func (i *consIterator) Slice() Sequence {
 	return i.current
 }
 

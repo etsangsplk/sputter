@@ -38,7 +38,7 @@ func defun(c *a.Context, args a.Sequence) a.Value {
 	av, _ := i.Next()
 	an := av.(a.Sequence)
 
-	b := i.Iterable()
+	b := i.Slice()
 
 	d := define(fn, an, b)
 	g.PutFunction(d)

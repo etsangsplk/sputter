@@ -47,8 +47,8 @@ func (i *vectorIterator) Next() (v Value, ok bool) {
 	return Nil, false
 }
 
-// Iterable returns a new Iterable from the Iterator's current state
-func (i *vectorIterator) Iterable() Sequence {
+// Slice returns a new Iterable from the Iterator's current state
+func (i *vectorIterator) Slice() Sequence {
 	return i.vector[i.pos:]
 }
 
