@@ -57,3 +57,4 @@
 (println (first s))
 (println (second s))
 
+(println -10)
