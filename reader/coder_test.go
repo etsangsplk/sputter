@@ -179,13 +179,14 @@ func testCoderError(t *testing.T, src string, err string) {
 
 	l := r.NewLexer(src)
 	c := r.NewCoder(s.NewContext(), l)
-	for n := c.Next(); n != r.EndOfCoder; n = c.Next() {}
+	for n := c.Next(); n != r.EndOfCoder; n = c.Next() {
+	}
 }
 
 func TestCoderErrors(t *testing.T) {
 	testCoderError(t, "(99 100 ", r.ListNotClosed)
 	testCoderError(t, "[99 100 ", r.VectorNotClosed)
-	
+
 	testCoderError(t, "99 100)", r.UnmatchedListEnd)
 	testCoderError(t, "99 100]", r.UnmatchedVectorEnd)
 }
