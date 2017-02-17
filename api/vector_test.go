@@ -43,9 +43,9 @@ func TestIterate(t *testing.T) {
 	v := &s.Vector{"hello", "how", "are", "you?"}
 	i := v.Iterate()
 	e1, _ := i.Next()
-	s1 := i.Slice()
+	s1 := i.Rest()
 	e2, _ := i.Next()
-	s2 := i.Slice()
+	s2 := i.Rest()
 	e3, _ := i.Next()
 	e4, _ := i.Next()
 	e5, ok := i.Next()

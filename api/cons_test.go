@@ -84,9 +84,9 @@ func TestDotCons(t *testing.T) {
 
 	i := c3.Iterate()
 	v1, _ := i.Next()
-	s1 := i.Slice()
+	s1 := i.Rest()
 	v2, _ := i.Next()
-	s2 := i.Slice()
+	s2 := i.Rest()
 	v3, _ := i.Next()
 	v4, ok := i.Next()
 
