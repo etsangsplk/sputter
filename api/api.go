@@ -2,6 +2,9 @@ package api
 
 import "fmt"
 
+// NonFinite is thrown if count is called against a non-finite sequence
+const NonFinite = "sequence is not finite and can't be counted"
+
 var (
 	// True is literal value that represents any value other than False
 	True = &Data{Value: true}
@@ -44,22 +47,16 @@ func Truthy(v Value) bool {
 	}
 }
 
-// CountSequence will either use Finite.Count() or iterate over the Sequence
-func CountSequence(s Sequence) int {
+// Count will either use Finite.Count() or iterate over the Sequence
+func Count(s Sequence) int {
 	if f, ok := s.(Finite); ok {
 		return f.Count()
 	}
-
-	i := s.Iterate()
-	var r = 0
-	for _, ok := i.Next(); ok; _, ok = i.Next() {
-		r++
-	}
-	return r
+	panic(NonFinite)
 }
 
-// ValueToString either calls the String() method or tries to convert
-func ValueToString(v Value) string {
+// String either calls the String() method or tries to convert
+func String(v Value) string {
 	if s, ok := v.(fmt.Stringer); ok {
 		return s.String()
 	}

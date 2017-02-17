@@ -8,9 +8,10 @@ func Eval(c *Context, v Value) Value {
 	return v
 }
 
-// EvalIterator evaluates each element of the provided Iterator
-func EvalIterator(c *Context, i Iterator) Value {
+// EvalSequence evaluates each element of the provided Sequence
+func EvalSequence(c *Context, s Sequence) Value {
 	var r Value = Nil
+	i := s.Iterate()
 	for v, ok := i.Next(); ok; v, ok = i.Next() {
 		r = Eval(c, v)
 	}

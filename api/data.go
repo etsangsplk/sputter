@@ -11,5 +11,5 @@ func (l *Data) Eval(c *Context) Value {
 }
 
 func (l *Data) String() string {
-	return ValueToString(l.Value)
+	return String(l.Value)
 }

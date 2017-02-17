@@ -97,7 +97,7 @@ func TestUnclosedList(t *testing.T) {
 
 	defer func() {
 		if rec := recover(); rec != nil {
-			a.Equal(rec, r.ListNotClosed, "unclosed list")
+			a.Equal(r.ListNotClosed, rec, "unclosed list")
 			return
 		}
 		a.Fail("unclosed list didn't panic")
@@ -130,7 +130,7 @@ func testCodeWithContext(a *assert.Assertions, code string, expect s.Value, cont
 }
 
 func evaluateToString(c *s.Context, v s.Value) string {
-	return s.ValueToString(s.Eval(c, v))
+	return s.String(s.Eval(c, v))
 }
 
 func TestEvaluable(t *testing.T) {

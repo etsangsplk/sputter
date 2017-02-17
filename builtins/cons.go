@@ -64,7 +64,7 @@ func isList(c *a.Context, args a.Sequence) a.Value {
 
 func first(c *a.Context, args a.Sequence) a.Value {
 	AssertArity(args, 1)
-	return fetchCons(c, args).Get(0)	
+	return fetchCons(c, args).Get(0)
 }
 
 func second(c *a.Context, args a.Sequence) a.Value {
@@ -85,5 +85,5 @@ func init() {
 	Context.PutFunction(&a.Function{Name: "list?", Exec: isList})
 	Context.PutFunction(&a.Function{Name: "first", Exec: first})
 	Context.PutFunction(&a.Function{Name: "second", Exec: second})
-	Context.PutFunction(&a.Function{Name: "third", Exec: third})	
+	Context.PutFunction(&a.Function{Name: "third", Exec: third})
 }
