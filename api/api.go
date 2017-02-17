@@ -2,6 +2,7 @@ package api
 
 import "fmt"
 
+// NonFinite is thrown if count is called against a non-finite sequence
 const NonFinite = "sequence is not finite and can't be counted"
 
 var (

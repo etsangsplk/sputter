@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var hello = &s.Function{
+var helloThere = &s.Function{
 	Name: "hello",
 	Exec: func(c *s.Context, args s.Sequence) s.Value {
 		return "there"
@@ -114,13 +114,13 @@ func TestDotCons(t *testing.T) {
 	c3.Get(3) // will explode
 }
 
-func TestEval(t *testing.T) {
+func TestConsEval(t *testing.T) {
 	a := assert.New(t)
 
 	c := s.NewContext()
-	c.PutFunction(hello)
+	c.PutFunction(helloThere)
 
-	fl := s.NewList(hello)
+	fl := s.NewList(helloThere)
 	a.Equal("there", fl.Eval(c), "function-based list eval")
 
 	sl := s.NewList(&s.Symbol{Name: "hello"})
@@ -145,7 +145,7 @@ func testBrokenEval(t *testing.T, cons *s.Cons, err string) {
 }
 
 func TestNonList(t *testing.T) {
-	cons := &s.Cons{Car: hello, Cdr: "uh-oh"}
+	cons := &s.Cons{Car: helloThere, Cdr: "uh-oh"}
 	testBrokenEval(t, cons, s.NonList)
 }
 
