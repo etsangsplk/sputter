@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	s "github.com/kode4food/sputter/api"
+	b "github.com/kode4food/sputter/builtins"
 )
 
 func TestCons(t *testing.T) {
@@ -20,4 +21,9 @@ func TestCons(t *testing.T) {
 	testCode(t, `(second (cons 1 (cons 2 3)))`, big.NewFloat(2))
 	testCode(t, `(car (cons 1 2))`, big.NewFloat(1))
 	testCode(t, `(cdr (cons 1 2))`, big.NewFloat(2))
+}
+
+func TestBadCons(t *testing.T) {
+	testBadCode(t, `(car 99)`, b.NonCons)
+	testBadCode(t, `(cdr 100)`, b.NonCons)
 }

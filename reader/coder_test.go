@@ -193,10 +193,10 @@ func testCoderError(t *testing.T, src string, err string) {
 		a.Fail("coder doesn't error out like it should")
 	}()
 
+	ctx := s.NewContext()
 	l := r.NewLexer(src)
-	c := r.NewCoder(s.NewContext(), l)
-	for n := c.Next(); n != r.EndOfCoder; n = c.Next() {
-	}
+	c := r.NewCoder(ctx, l)
+	r.EvalCoder(ctx, c)
 }
 
 func TestCoderErrors(t *testing.T) {
