@@ -166,6 +166,22 @@ func TestEvaluable(t *testing.T) {
 	testCodeWithContext(a, `(hello name)`, "Hello, Bob!", c)
 }
 
+func TestCoderBuiltins(t *testing.T) {
+	a := assert.New(t)
+
+	b := s.NewContext()
+	b.PutFunction(&s.Function{
+		Name: "hello",
+		Exec: func(c *s.Context, args s.Sequence) s.Value {
+			return "there"
+		},
+	})
+
+	l := r.NewLexer(`(hello)`)
+	c := r.NewCoder(b, l)
+	a.Equal("there", r.EvalCoder(s.NewContext(), c), "builtin called")
+}
+
 func testCoderError(t *testing.T, src string, err string) {
 	a := assert.New(t)
 

@@ -16,9 +16,9 @@ func print(c *a.Context, args a.Sequence) a.Value {
 }
 
 func println(c *a.Context, args a.Sequence) a.Value {
-	print(c, args)
+	r := print(c, args)
 	fmt.Println("")
-	return a.Nil
+	return r
 }
 
 func init() {
