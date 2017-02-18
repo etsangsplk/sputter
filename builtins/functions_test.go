@@ -4,9 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	s "github.com/kode4food/sputter/api"
 	b "github.com/kode4food/sputter/builtins"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestFunction(t *testing.T) {
@@ -21,20 +19,11 @@ func TestFunction(t *testing.T) {
 	`, "foo")
 }
 
-func TestBadArity(t *testing.T) {
-	a := assert.New(t)
+func TestBadFunctionArity(t *testing.T) {
+	testBadCode(t, `(defun blah)`, fmt.Sprintf(b.BadMinArity, 3, 1))
 
-	defer func() {
-		if rec := recover(); rec != nil {
-			err := fmt.Sprintf(b.BadArity, 1, 0)
-			a.Equal(err, rec, "bad arity")
-			return
-		}
-		a.Fail("bad arity didn't panic")
-	}()
-
-	testCode(t, `
+	testBadCode(t, `
 		(defun identity [value] value)
 		(identity)
-	`, s.Nil)
+	`, fmt.Sprintf(b.BadArity, 1, 0))
 }

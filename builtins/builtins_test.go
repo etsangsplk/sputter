@@ -1,7 +1,6 @@
 package builtins_test
 
 import (
-	"fmt"
 	"testing"
 
 	s "github.com/kode4food/sputter/api"
@@ -53,9 +52,4 @@ func TestTrueFalse(t *testing.T) {
 	testCode(t, `true`, s.True)
 	testCode(t, `false`, s.False)
 	testCode(t, `nil`, s.Nil)
-}
-
-func TestBadArities(t *testing.T) {
-	testBadCode(t, `(defun blah)`, fmt.Sprintf(b.BadMinArity, 3, 1))
-	testBadCode(t, `(if)`, fmt.Sprintf(b.BadArityRange, 2, 3, 0))
 }
