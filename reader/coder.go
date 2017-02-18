@@ -1,8 +1,6 @@
 package interpreter
 
-import (
-	a "github.com/kode4food/sputter/api"
-)
+import a "github.com/kode4food/sputter/api"
 
 const (
 	// ListNotClosed is thrown when EOF is reached inside a Cons

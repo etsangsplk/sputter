@@ -166,7 +166,7 @@ func TestEvaluable(t *testing.T) {
 	testCodeWithContext(a, `(hello name)`, "Hello, Bob!", c)
 }
 
-func TestCoderBuiltins(t *testing.T) {
+func TestBuiltIns(t *testing.T) {
 	a := assert.New(t)
 
 	b := s.NewContext()

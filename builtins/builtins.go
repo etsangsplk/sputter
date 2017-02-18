@@ -45,7 +45,6 @@ func AssertArityRange(args a.Sequence, min int, max int) {
 }
 
 func init() {
-	Context.Put("T", a.True)
 	Context.Put("nil", a.Nil)
 	Context.Put("true", a.True)
 	Context.Put("false", a.False)

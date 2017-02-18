@@ -1,8 +1,6 @@
 package api
 
-import (
-	"bytes"
-)
+import "bytes"
 
 // Vector is a fixed-length Array of Values
 type Vector []Value
