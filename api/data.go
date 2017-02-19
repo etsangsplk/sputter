@@ -1,6 +1,6 @@
 package api
 
-// Atom identifies an Value as being atomic (evaluating to itself)
+// Atom identifies a Value as being atomic (evaluating to itself)
 type Atom struct {
 	Label string
 }

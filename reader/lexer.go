@@ -7,11 +7,13 @@ import (
 	a "github.com/kode4food/sputter/api"
 )
 
-// UnexpectedEndOfFile is the error returned when EOF is unexpectedly reached
-const UnexpectedEndOfFile = "end of file reached unexpectedly"
+const (
+	// UnexpectedEndOfFile is the error returned when EOF is unexpectedly reached
+	UnexpectedEndOfFile = "end of file reached unexpectedly"
 
-// UnmatchedState is the error returned when the lexing state is invalid
-const UnmatchedState = "unmatched lexing state"
+	// UnmatchedState is the error returned when the lexing state is invalid
+	UnmatchedState = "unmatched lexing state"
+)
 
 // TokenType is an opaque type for lexer tokens
 type TokenType int

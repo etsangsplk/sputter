@@ -5,14 +5,16 @@ import (
 	"fmt"
 )
 
-// NonFunction is the error returned when a non-Function is invoked
-const NonFunction = "cannot resolve first element as a function"
+const (
+	// NonFunction is the error returned when a non-Function is invoked
+	NonFunction = "cannot resolve first element as a function"
 
-// NonList is the error returned when a non-List is invoked
-const NonList = "cannot resolve second element as a list"
+	// NonList is the error returned when a non-List is invoked
+	NonList = "cannot resolve second element as a list"
 
-// IndexNotCons is the error returns when walking a non-List
-const IndexNotCons = "%d is not a Cons cell"
+	// IndexNotCons is the error returns when walking a non-List
+	IndexNotCons = "%d is not a Cons cell"
+)
 
 // Cons contains a bound pair that can be used for constructing Lists
 type Cons struct {
