@@ -7,7 +7,7 @@ const NonFinite = "sequence is not finite and can't be counted"
 
 var (
 	// True is literal value that represents any value other than False
-	True = &Data{Value: true}
+	True = &Atom{Label: "true"}
 
 	// False is an alias for Nil or Nil
 	False = Nil

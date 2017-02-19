@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 
+	s "github.com/kode4food/sputter/api"
 	b "github.com/kode4food/sputter/builtins"
 	r "github.com/kode4food/sputter/reader"
 )
@@ -27,7 +28,7 @@ func main() {
 	if buffer, err := ioutil.ReadFile(filename); err == nil {
 		l := r.NewLexer(string(buffer))
 		c := r.NewCoder(b.Context, l)
-		r.EvalCoder(b.Context.Child(), c)
+		r.EvalCoder(s.NewContext(), c)
 	} else {
 		fmt.Println("File not found:", filename)
 		os.Exit(-1)

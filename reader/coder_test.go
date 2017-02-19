@@ -127,7 +127,7 @@ func TestData(t *testing.T) {
 	c := r.NewCoder(s.NewContext(), l)
 	v := c.Next()
 
-	d, ok := v.(*s.Data)
+	d, ok := v.(*s.Quote)
 	a.True(ok)
 
 	value, ok := d.Value.(*big.Float)

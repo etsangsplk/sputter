@@ -45,7 +45,11 @@ func (c *Coder) token(t *Token) a.Value {
 	case VectorStart:
 		return c.vector()
 	case Identifier:
-		return &a.Symbol{Name: a.Name(t.Value.(string))}
+		n := a.Name(t.Value.(string))
+		if v, ok := c.builtIns.Get(n); ok {
+			return v;
+		}
+		return &a.Symbol{Name: n}
 	case ListEnd:
 		panic(UnmatchedListEnd)
 	case VectorEnd:
@@ -57,16 +61,15 @@ func (c *Coder) token(t *Token) a.Value {
 	}
 }
 
-func (c *Coder) data() *a.Data {
-	return &a.Data{Value: c.Next()}
+func (c *Coder) data() *a.Quote {
+	return &a.Quote{Value: c.Next()}
 }
 
 func (c *Coder) list() *a.Cons {
-	var handle func(token *Token) *a.Cons
-	var first func() *a.Cons
 	var next func() *a.Cons
 
-	handle = func(t *Token) *a.Cons {
+	next = func() *a.Cons {
+		t := c.reader.Next()
 		switch t.Type {
 		case ListEnd:
 			return a.Nil
@@ -79,24 +82,7 @@ func (c *Coder) list() *a.Cons {
 		}
 	}
 
-	first = func() *a.Cons {
-		t := c.reader.Next()
-		if t.Type == Identifier {
-			n := a.Name(t.Value.(string))
-			if f, ok := c.builtIns.Get(n); ok {
-				l := next()
-				return &a.Cons{Car: f, Cdr: l}
-			}
-		}
-		return handle(t)
-	}
-
-	next = func() *a.Cons {
-		t := c.reader.Next()
-		return handle(t)
-	}
-
-	return first()
+	return next()
 }
 
 func (c *Coder) vector() a.Vector {
