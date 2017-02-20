@@ -7,9 +7,9 @@ func define(n a.Name, argNames a.Sequence, body a.Sequence) *a.Function {
 
 	return &a.Function{
 		Name: n,
-		Exec: func(c *a.Context, args a.Sequence) a.Value {
+		Exec: func(c a.Context, args a.Sequence) a.Value {
 			AssertArity(args, ac)
-			l := c.Child()
+			l := a.ChildContext(c)
 			anIter := argNames.Iterate()
 			aIter := args.Iterate()
 			for ns, nok := anIter.Next(); nok; {
@@ -23,7 +23,7 @@ func define(n a.Name, argNames a.Sequence, body a.Sequence) *a.Function {
 	}
 }
 
-func defun(c *a.Context, args a.Sequence) a.Value {
+func defun(c a.Context, args a.Sequence) a.Value {
 	AssertMinimumArity(args, 3)
 	g := c.Globals()
 	i := args.Iterate()
@@ -37,10 +37,10 @@ func defun(c *a.Context, args a.Sequence) a.Value {
 	b := i.Rest()
 
 	d := define(fn, an, b)
-	g.PutFunction(d)
+	a.PutFunction(g, d)
 	return d
 }
 
 func init() {
-	Context.PutFunction(&a.Function{Name: "defun", Exec: defun})
+	a.PutFunction(Context, &a.Function{Name: "defun", Exec: defun})
 }

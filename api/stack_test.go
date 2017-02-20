@@ -10,7 +10,7 @@ import (
 func TestStack(t *testing.T) {
 	a := assert.New(t)
 
-	st := &s.Stack{}
+	st := s.NewStack()
 
 	v, ok := st.Peek()
 	a.Equal(nil, v, "1st peek is nil")

@@ -11,7 +11,7 @@ import (
 
 var helloThere = &s.Function{
 	Name: "hello",
-	Exec: func(c *s.Context, args s.Sequence) s.Value {
+	Exec: func(c s.Context, args s.Sequence) s.Value {
 		return "there"
 	},
 }
@@ -118,7 +118,7 @@ func TestConsEval(t *testing.T) {
 	a := assert.New(t)
 
 	c := s.NewContext()
-	c.PutFunction(helloThere)
+	c.Put(helloThere.Name, helloThere)
 
 	fl := s.NewList(helloThere)
 	a.Equal("there", fl.Eval(c), "function-based list eval")

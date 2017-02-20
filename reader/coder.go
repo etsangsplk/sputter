@@ -22,12 +22,12 @@ var EndOfCoder = struct{}{}
 // Coder is responsible for taking a stream of Tokens and converting them
 // into Lists for evaluation
 type Coder struct {
-	builtIns *a.Context
+	builtIns a.Context
 	reader   Reader
 }
 
 // NewCoder instantiates a new Coder using the provided Reader
-func NewCoder(builtIns *a.Context, r Reader) *Coder {
+func NewCoder(builtIns a.Context, r Reader) *Coder {
 	return &Coder{builtIns, r}
 }
 
@@ -47,7 +47,7 @@ func (c *Coder) token(t *Token) a.Value {
 	case Identifier:
 		n := a.Name(t.Value.(string))
 		if v, ok := c.builtIns.Get(n); ok {
-			return v;
+			return v
 		}
 		return &a.Symbol{Name: n}
 	case ListEnd:
@@ -103,7 +103,7 @@ func (c *Coder) vector() a.Vector {
 }
 
 // EvalCoder evaluates each element of the provided Reader
-func EvalCoder(c *a.Context, coder *Coder) a.Value {
+func EvalCoder(c a.Context, coder *Coder) a.Value {
 	var r a.Value
 	for v := coder.Next(); v != EndOfCoder; v = coder.Next() {
 		r = a.Eval(c, v)

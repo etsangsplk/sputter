@@ -6,7 +6,7 @@ type Atom struct {
 }
 
 // Eval makes Atom Evaluable
-func (a *Atom) Eval(c *Context) Value {
+func (a *Atom) Eval(c Context) Value {
 	return a
 }
 
@@ -20,7 +20,7 @@ type Quote struct {
 }
 
 // Eval makes Quote Evaluable
-func (q *Quote) Eval(c *Context) Value {
+func (q *Quote) Eval(c Context) Value {
 	return q.Value
 }
 

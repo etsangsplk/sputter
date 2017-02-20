@@ -7,13 +7,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func assertGet(a *assert.Assertions, c *s.Context, n s.Name, cv s.Value) {
+func assertGet(a *assert.Assertions, c s.Context, n s.Name, cv s.Value) {
 	v, ok := c.Get(n)
 	a.True(ok)
 	a.Equal(cv, v)
 }
 
-func assertMissing(a *assert.Assertions, c *s.Context, n s.Name) {
+func assertMissing(a *assert.Assertions, c s.Context, n s.Name) {
 	v, ok := c.Get(n)
 	a.False(ok)
 	a.Equal(s.Nil, v)
@@ -39,7 +39,7 @@ func TestNestedContext(t *testing.T) {
 	c1.Put("hello", "there")
 	c1.Put("howdy", "ho")
 
-	c2 := c1.Child()
+	c2 := s.ChildContext(c1)
 	c2.Put("hello", "you")
 	c2.Put("foo", "bar")
 
@@ -56,8 +56,8 @@ func TestGlobalContext(t *testing.T) {
 	a := assert.New(t)
 
 	sg1 := s.NewContext()
-	sg2 := sg1.Child()
-	sg3 := sg2.Child()
+	sg2 := s.ChildContext(sg1)
+	sg3 := s.ChildContext(sg2)
 
 	a.Equal(sg1, sg3.Globals())
 }

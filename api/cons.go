@@ -16,16 +16,14 @@ const (
 	IndexNotCons = "%d is not a Cons cell"
 )
 
+// Nil represents an empty Cons and the terminator of a List
+var Nil = &Cons{nil, nil}
+
 // Cons contains a bound pair that can be used for constructing Lists
 type Cons struct {
 	Car Value
 	Cdr Value
 }
-
-var (
-	// Nil represents an empty Cons and the terminator of a List
-	Nil = &Cons{nil, nil}
-)
 
 // NewList creates a new List instance of the form &Cons{Value, Nil}
 func NewList(v Value) *Cons {
@@ -90,7 +88,7 @@ func (c *Cons) Get(index int) Value {
 }
 
 // Eval makes a List Evaluable
-func (c *Cons) Eval(ctx *Context) Value {
+func (c *Cons) Eval(ctx Context) Value {
 	if c == Nil {
 		return Nil
 	}

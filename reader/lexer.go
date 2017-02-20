@@ -35,6 +35,9 @@ const (
 	Comment
 )
 
+// EOFToken marks the end of a Reader stream
+var EOFToken = &Token{EndOfFile, ""}
+
 // Token is a Lexer token
 type Token struct {
 	Type  TokenType
@@ -45,9 +48,6 @@ type Token struct {
 type Reader interface {
 	Next() *Token
 }
-
-// EOFToken marks the end of a Reader stream
-var EOFToken = &Token{EndOfFile, ""}
 
 // Lexer is the lexer interface
 type Lexer struct {

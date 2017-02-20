@@ -16,7 +16,7 @@ func (v Vector) Get(index int) Value {
 }
 
 // Eval makes a Vector Evaluable
-func (v Vector) Eval(c *Context) Value {
+func (v Vector) Eval(c Context) Value {
 	r := make(Vector, len(v))
 	for i := 0; i < len(v); i++ {
 		r[i] = Eval(c, v[i])

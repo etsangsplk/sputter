@@ -9,7 +9,7 @@ import (
 
 var helloName = &s.Function{
 	Name: "hello",
-	Exec: func(c *s.Context, args s.Sequence) s.Value {
+	Exec: func(c s.Context, args s.Sequence) s.Value {
 		i := args.Iterate()
 		a, _ := i.Next()
 		v := evaluateToString(c, a)
@@ -17,7 +17,7 @@ var helloName = &s.Function{
 	},
 }
 
-func evaluateToString(c *s.Context, v s.Value) string {
+func evaluateToString(c s.Context, v s.Value) string {
 	return s.String(s.Eval(c, v))
 }
 

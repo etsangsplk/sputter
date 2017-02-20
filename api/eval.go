@@ -1,7 +1,7 @@
 package api
 
 // Eval evaluates a Value against a Context
-func Eval(c *Context, v Value) Value {
+func Eval(c Context, v Value) Value {
 	if e, ok := v.(Evaluable); ok {
 		return e.Eval(c)
 	}
@@ -9,7 +9,7 @@ func Eval(c *Context, v Value) Value {
 }
 
 // EvalSequence evaluates each element of the provided Sequence
-func EvalSequence(c *Context, s Sequence) Value {
+func EvalSequence(c Context, s Sequence) Value {
 	var r Value = Nil
 	i := s.Iterate()
 	for v, ok := i.Next(); ok; v, ok = i.Next() {

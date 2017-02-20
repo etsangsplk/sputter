@@ -1,28 +1,43 @@
 package api
 
-const defaultVarSize = 16
+const defaultVarsSize = 16
 
 // Variables are how a closure stores name/value pairs
 type Variables map[Name]Value
 
-// Context represents a functional closure
-type Context struct {
-	parent *Context
+// Context represents a variable scope
+type Context interface {
+	Globals() Context
+	Get(n Name) (v Value, bound bool)
+	Put(n Name, v Value) Context
+}
+
+// BasicContext is the most basic Context implementation
+type basicContext struct {
+	parent Context
 	vars   Variables
 }
 
 // NewContext creates a new Context instance
-func NewContext() *Context {
-	return &Context{nil, make(Variables, defaultVarSize)}
+func NewContext() Context {
+	return &basicContext{nil, make(Variables, defaultVarsSize)}
 }
 
-// Child creates a child Context instance
-func (c *Context) Child() *Context {
-	return &Context{c, make(Variables, defaultVarSize)}
+// ChildContext creates a new child Context of the provided parent
+func ChildContext(parent Context) Context {
+	return &basicContext{parent, make(Variables, defaultVarsSize)}
+}
+
+// Globals retrieves the Root Context (one with no parent)
+func (c *basicContext) Globals() Context {
+	if c.parent == nil {
+		return c
+	}
+	return c.parent.Globals()
 }
 
 // Get retrieves a value from the Context chain
-func (c *Context) Get(n Name) (v Value, bound bool) {
+func (c *basicContext) Get(n Name) (Value, bool) {
 	if v, ok := c.vars[n]; ok {
 		return v, true
 	} else if c.parent != nil {
@@ -31,28 +46,18 @@ func (c *Context) Get(n Name) (v Value, bound bool) {
 	return Nil, false
 }
 
-// Globals retrieves the Root Context (one with no parent)
-func (c *Context) Globals() *Context {
-	t := c
-	for t.parent != nil {
-		t = t.parent
-	}
-	return t
-}
-
 // Put puts a Value into the immediate Context
-func (c *Context) Put(n Name, v Value) *Context {
+func (c *basicContext) Put(n Name, v Value) Context {
 	c.vars[n] = v
 	return c
 }
 
-// PutFunction puts a Function into the immediate Context by its name
-func (c *Context) PutFunction(f *Function) *Context {
-	c.vars[f.Name] = f
-	return c
+// PutFunction puts a Function into a Context by its name
+func PutFunction(c Context, f *Function) Context {
+	return c.Put(f.Name, f)
 }
 
 // Evaluable can be evaluated against a Context
 type Evaluable interface {
-	Eval(c *Context) Value
+	Eval(c Context) Value
 }

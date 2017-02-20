@@ -135,13 +135,13 @@ func TestData(t *testing.T) {
 	a.Equal(0, big.NewFloat(99).Cmp(value))
 }
 
-func testCodeWithContext(a *assert.Assertions, code string, expect s.Value, context *s.Context) {
+func testCodeWithContext(a *assert.Assertions, code string, expect s.Value, context s.Context) {
 	l := r.NewLexer(code)
 	c := r.NewCoder(s.NewContext(), l)
 	a.Equal(expect, r.EvalCoder(context, c), code)
 }
 
-func evaluateToString(c *s.Context, v s.Value) string {
+func evaluateToString(c s.Context, v s.Value) string {
 	return s.String(s.Eval(c, v))
 }
 
@@ -151,7 +151,7 @@ func TestEvaluable(t *testing.T) {
 
 	hello := &s.Function{
 		Name: "hello",
-		Exec: func(c *s.Context, args s.Sequence) s.Value {
+		Exec: func(c s.Context, args s.Sequence) s.Value {
 			i := args.Iterate()
 			arg, _ := i.Next()
 			v := evaluateToString(c, arg)
@@ -170,9 +170,9 @@ func TestBuiltIns(t *testing.T) {
 	a := assert.New(t)
 
 	b := s.NewContext()
-	b.PutFunction(&s.Function{
+	s.PutFunction(b, &s.Function{
 		Name: "hello",
-		Exec: func(c *s.Context, args s.Sequence) s.Value {
+		Exec: func(c s.Context, args s.Sequence) s.Value {
 			return "there"
 		},
 	})

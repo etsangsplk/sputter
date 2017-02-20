@@ -19,7 +19,7 @@ func TestVector(t *testing.T) {
 
 type testEvaluable struct{}
 
-func (t *testEvaluable) Eval(c *s.Context) s.Value {
+func (t *testEvaluable) Eval(c s.Context) s.Value {
 	return "are"
 }
 

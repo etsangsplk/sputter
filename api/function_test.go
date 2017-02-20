@@ -12,7 +12,7 @@ func TestFunction(t *testing.T) {
 
 	f := &s.Function{
 		Name: "test-function",
-		Exec: func(c *s.Context, args s.Sequence) s.Value {
+		Exec: func(c s.Context, args s.Sequence) s.Value {
 			return "hello"
 		},
 	}

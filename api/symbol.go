@@ -9,7 +9,7 @@ type Symbol struct {
 }
 
 // Eval makes a Symbol Evaluable
-func (s *Symbol) Eval(c *Context) Value {
+func (s *Symbol) Eval(c Context) Value {
 	if r, ok := c.Get(s.Name); ok {
 		return r
 	}

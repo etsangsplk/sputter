@@ -6,7 +6,7 @@ import (
 	a "github.com/kode4food/sputter/api"
 )
 
-func add(c *a.Context, args a.Sequence) a.Value {
+func add(c a.Context, args a.Sequence) a.Value {
 	sum := big.NewFloat(0)
 	iter := args.Iterate()
 	for value, ok := iter.Next(); ok; value, ok = iter.Next() {
@@ -15,7 +15,7 @@ func add(c *a.Context, args a.Sequence) a.Value {
 	return sum
 }
 
-func sub(c *a.Context, args a.Sequence) a.Value {
+func sub(c a.Context, args a.Sequence) a.Value {
 	AssertMinimumArity(args, 1)
 	i := args.Iterate()
 	v, ok := i.Next()
@@ -26,7 +26,7 @@ func sub(c *a.Context, args a.Sequence) a.Value {
 	return r
 }
 
-func mul(c *a.Context, args a.Sequence) a.Value {
+func mul(c a.Context, args a.Sequence) a.Value {
 	r := big.NewFloat(1)
 	i := args.Iterate()
 	for v, ok := i.Next(); ok; v, ok = i.Next() {
@@ -35,7 +35,7 @@ func mul(c *a.Context, args a.Sequence) a.Value {
 	return r
 }
 
-func div(c *a.Context, args a.Sequence) a.Value {
+func div(c a.Context, args a.Sequence) a.Value {
 	AssertMinimumArity(args, 1)
 	i := args.Iterate()
 	v, ok := i.Next()
@@ -47,8 +47,8 @@ func div(c *a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	Context.PutFunction(&a.Function{Name: "+", Exec: add})
-	Context.PutFunction(&a.Function{Name: "-", Exec: sub})
-	Context.PutFunction(&a.Function{Name: "*", Exec: mul})
-	Context.PutFunction(&a.Function{Name: "/", Exec: div})
+	a.PutFunction(Context, &a.Function{Name: "+", Exec: add})
+	a.PutFunction(Context, &a.Function{Name: "-", Exec: sub})
+	a.PutFunction(Context, &a.Function{Name: "*", Exec: mul})
+	a.PutFunction(Context, &a.Function{Name: "/", Exec: div})
 }

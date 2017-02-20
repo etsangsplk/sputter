@@ -1,7 +1,13 @@
 package api
 
-// Stack implements a non-concurrent stack
-type Stack struct {
+type Stack interface {
+	Push(v Value)
+	Peek() (v Value, ok bool)
+	Pop() (v Value, ok bool)
+}
+
+// basicStack implements a non-concurrent Stack
+type basicStack struct {
 	head *entry
 }
 
@@ -10,8 +16,13 @@ type entry struct {
 	next  *entry
 }
 
+// NewStack creates a new Stack instance
+func NewStack() Stack {
+	return &basicStack{}	
+}
+
 // Push a Value onto the Stack
-func (s *Stack) Push(v Value) {
+func (s *basicStack) Push(v Value) {
 	if s.head == nil {
 		s.head = &entry{v, nil}
 		return
@@ -20,7 +31,7 @@ func (s *Stack) Push(v Value) {
 }
 
 // Peek the head of the Stack
-func (s *Stack) Peek() (v Value, ok bool) {
+func (s *basicStack) Peek() (Value, bool) {
 	e := s.head
 	if e != nil {
 		return e.value, true
@@ -29,7 +40,7 @@ func (s *Stack) Peek() (v Value, ok bool) {
 }
 
 // Pop the head of the Stack
-func (s *Stack) Pop() (v Value, ok bool) {
+func (s *basicStack) Pop() (Value, bool) {
 	e := s.head
 	if e != nil {
 		s.head = e.next

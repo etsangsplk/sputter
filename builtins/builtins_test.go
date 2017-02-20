@@ -35,9 +35,9 @@ func testBadCode(t *testing.T, src string, err string) {
 func TestBuiltInsContext(t *testing.T) {
 	a := assert.New(t)
 
-	bg1 := b.Context.Child()
-	bg2 := bg1.Child()
-	bg3 := bg2.Child()
+	bg1 := s.ChildContext(b.Context)
+	bg2 := s.ChildContext(bg1)
+	bg3 := s.ChildContext(bg2)
 
 	a.Equal(b.Context, bg3.Globals())
 
