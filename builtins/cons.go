@@ -6,7 +6,7 @@ import a "github.com/kode4food/sputter/api"
 const NonCons = "Value is not a Cons cell"
 
 func cons(c a.Context, args a.Sequence) a.Value {
-	AssertArity(args, 2)
+	a.AssertArity(args, 2)
 	i := args.Iterate()
 	car, _ := i.Next()
 	cdr, _ := i.Next()
@@ -14,7 +14,7 @@ func cons(c a.Context, args a.Sequence) a.Value {
 }
 
 func fetchCons(c a.Context, args a.Sequence) *a.Cons {
-	AssertArity(args, 1)
+	a.AssertArity(args, 1)
 	i := args.Iterate()
 	v, _ := i.Next()
 	r := a.Eval(c, v)
@@ -52,7 +52,7 @@ func list(c a.Context, args a.Sequence) a.Value {
 }
 
 func isList(c a.Context, args a.Sequence) a.Value {
-	AssertArity(args, 1)
+	a.AssertArity(args, 1)
 	i := args.Iterate()
 	if v, ok := i.Next(); ok {
 		if _, ok := a.Eval(c, v).(*a.Cons); ok {
@@ -63,17 +63,17 @@ func isList(c a.Context, args a.Sequence) a.Value {
 }
 
 func first(c a.Context, args a.Sequence) a.Value {
-	AssertArity(args, 1)
+	a.AssertArity(args, 1)
 	return fetchCons(c, args).Get(0)
 }
 
 func second(c a.Context, args a.Sequence) a.Value {
-	AssertArity(args, 1)
+	a.AssertArity(args, 1)
 	return fetchCons(c, args).Get(1)
 }
 
 func third(c a.Context, args a.Sequence) a.Value {
-	AssertArity(args, 1)
+	a.AssertArity(args, 1)
 	return fetchCons(c, args).Get(2)
 }
 

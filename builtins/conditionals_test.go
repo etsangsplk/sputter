@@ -5,7 +5,7 @@ import (
 	"math/big"
 	"testing"
 
-	b "github.com/kode4food/sputter/builtins"
+	s "github.com/kode4food/sputter/api"
 )
 
 func TestConditional(t *testing.T) {
@@ -17,5 +17,5 @@ func TestConditional(t *testing.T) {
 }
 
 func TestBadIfArity(t *testing.T) {
-	testBadCode(t, `(if)`, fmt.Sprintf(b.BadArityRange, 2, 3, 0))
+	testBadCode(t, `(if)`, fmt.Sprintf(s.BadArityRange, 2, 3, 0))
 }

@@ -8,7 +8,7 @@ func define(n a.Name, argNames a.Sequence, body a.Sequence) *a.Function {
 	return &a.Function{
 		Name: n,
 		Exec: func(c a.Context, args a.Sequence) a.Value {
-			AssertArity(args, ac)
+			a.AssertArity(args, ac)
 			l := a.ChildContext(c)
 			anIter := argNames.Iterate()
 			aIter := args.Iterate()
@@ -24,7 +24,7 @@ func define(n a.Name, argNames a.Sequence, body a.Sequence) *a.Function {
 }
 
 func defun(c a.Context, args a.Sequence) a.Value {
-	AssertMinimumArity(args, 3)
+	a.AssertMinimumArity(args, 3)
 	g := c.Globals()
 	i := args.Iterate()
 

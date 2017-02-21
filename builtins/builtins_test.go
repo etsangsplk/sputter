@@ -12,8 +12,8 @@ import (
 func testCode(t *testing.T, src string, expect s.Value) {
 	a := assert.New(t)
 	l := r.NewLexer(src)
-	c := r.NewCoder(b.Context, l)
-	a.Equal(expect, r.EvalCoder(s.NewContext(), c), src)
+	tr := r.NewReader(b.Context, l)
+	a.Equal(expect, r.EvalReader(s.NewContext(), tr), src)
 }
 
 func testBadCode(t *testing.T, src string, err string) {
@@ -28,8 +28,8 @@ func testBadCode(t *testing.T, src string, err string) {
 	}()
 
 	l := r.NewLexer(src)
-	c := r.NewCoder(b.Context, l)
-	r.EvalCoder(s.NewContext(), c)
+	tr := r.NewReader(b.Context, l)
+	r.EvalReader(s.NewContext(), tr)
 }
 
 func TestBuiltInsContext(t *testing.T) {

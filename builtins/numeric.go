@@ -16,7 +16,7 @@ func add(c a.Context, args a.Sequence) a.Value {
 }
 
 func sub(c a.Context, args a.Sequence) a.Value {
-	AssertMinimumArity(args, 1)
+	a.AssertMinimumArity(args, 1)
 	i := args.Iterate()
 	v, ok := i.Next()
 	r := a.Eval(c, v).(*big.Float)
@@ -36,7 +36,7 @@ func mul(c a.Context, args a.Sequence) a.Value {
 }
 
 func div(c a.Context, args a.Sequence) a.Value {
-	AssertMinimumArity(args, 1)
+	a.AssertMinimumArity(args, 1)
 	i := args.Iterate()
 	v, ok := i.Next()
 	r := a.Eval(c, v).(*big.Float)

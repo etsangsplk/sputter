@@ -3,7 +3,7 @@ package builtins
 import a "github.com/kode4food/sputter/api"
 
 func defvar(c a.Context, args a.Sequence) a.Value {
-	AssertMinimumArity(args, 2)
+	a.AssertMinimumArity(args, 2)
 	g := c.Globals()
 	i := args.Iterate()
 	s, _ := i.Next()
@@ -17,7 +17,7 @@ func defvar(c a.Context, args a.Sequence) a.Value {
 }
 
 func let(c a.Context, args a.Sequence) a.Value {
-	AssertMinimumArity(args, 2)
+	a.AssertMinimumArity(args, 2)
 	l := a.ChildContext(c)
 	i := args.Iterate()
 	b, _ := i.Next()

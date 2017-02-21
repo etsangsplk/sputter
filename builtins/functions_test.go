@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	b "github.com/kode4food/sputter/builtins"
+	s "github.com/kode4food/sputter/api"
 )
 
 func TestFunction(t *testing.T) {
@@ -20,10 +20,10 @@ func TestFunction(t *testing.T) {
 }
 
 func TestBadFunctionArity(t *testing.T) {
-	testBadCode(t, `(defun blah)`, fmt.Sprintf(b.BadMinArity, 3, 1))
+	testBadCode(t, `(defun blah)`, fmt.Sprintf(s.BadMinimumArity, 3, 1))
 
 	testBadCode(t, `
 		(defun identity [value] value)
 		(identity)
-	`, fmt.Sprintf(b.BadArity, 1, 0))
+	`, fmt.Sprintf(s.BadArity, 1, 0))
 }

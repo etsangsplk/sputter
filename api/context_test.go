@@ -61,3 +61,11 @@ func TestGlobalContext(t *testing.T) {
 
 	a.Equal(sg1, sg3.Globals())
 }
+
+func TestPutFunction(t *testing.T) {
+	a := assert.New(t)
+	
+	c := s.NewContext()
+	s.PutFunction(c, helloThere)
+	assertGet(a, c, "hello", helloThere)
+}

@@ -1,4 +1,4 @@
-package interpreter_test
+package reader_test
 
 import (
 	"math/big"
@@ -9,18 +9,18 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCreateCoder(t *testing.T) {
+func TestCreateReader(t *testing.T) {
 	a := assert.New(t)
 	l := r.NewLexer("99")
-	c := r.NewCoder(s.NewContext(), l)
-	a.NotNil(c)
+	tr := r.NewReader(s.NewContext(), l)
+	a.NotNil(tr)
 }
 
 func TestCodeInteger(t *testing.T) {
 	a := assert.New(t)
 	l := r.NewLexer("99")
-	c := r.NewCoder(s.NewContext(), l)
-	v := c.Next()
+	tr := r.NewReader(s.NewContext(), l)
+	v := tr.Next()
 	f, ok := v.(*big.Float)
 	a.True(ok)
 	a.Equal(0, f.Cmp(big.NewFloat(99)))
@@ -29,8 +29,8 @@ func TestCodeInteger(t *testing.T) {
 func TestCodeList(t *testing.T) {
 	a := assert.New(t)
 	l := r.NewLexer(`(99 "hello" 55.12)`)
-	c := r.NewCoder(s.NewContext(), l)
-	v := c.Next()
+	tr := r.NewReader(s.NewContext(), l)
+	v := tr.Next()
 	list, ok := v.(*s.Cons)
 	a.True(ok)
 
@@ -54,8 +54,8 @@ func TestCodeList(t *testing.T) {
 func TestCodeVector(t *testing.T) {
 	a := assert.New(t)
 	l := r.NewLexer(`[99 "hello" 55.12]`)
-	c := r.NewCoder(s.NewContext(), l)
-	v := c.Next()
+	tr := r.NewReader(s.NewContext(), l)
+	v := tr.Next()
 	vector, ok := v.(s.Vector)
 	a.True(ok)
 	a.Equal(0, big.NewFloat(99.0).Cmp(vector.Get(0).(*big.Float)))
@@ -66,8 +66,8 @@ func TestCodeVector(t *testing.T) {
 func TestCodeNestedList(t *testing.T) {
 	a := assert.New(t)
 	l := r.NewLexer(`(99 ("hello" "there") 55.12)`)
-	c := r.NewCoder(s.NewContext(), l)
-	v := c.Next()
+	tr := r.NewReader(s.NewContext(), l)
+	v := tr.Next()
 	list, ok := v.(*s.Cons)
 	a.True(ok)
 
@@ -116,16 +116,16 @@ func TestUnclosedList(t *testing.T) {
 	}()
 
 	l := r.NewLexer(`(99 ("hello" "there") 55.12`)
-	c := r.NewCoder(s.NewContext(), l)
-	c.Next()
+	tr := r.NewReader(s.NewContext(), l)
+	tr.Next()
 }
 
 func TestData(t *testing.T) {
 	a := assert.New(t)
 
 	l := r.NewLexer(`'99`)
-	c := r.NewCoder(s.NewContext(), l)
-	v := c.Next()
+	tr := r.NewReader(s.NewContext(), l)
+	v := tr.Next()
 
 	d, ok := v.(*s.Quote)
 	a.True(ok)
@@ -137,8 +137,8 @@ func TestData(t *testing.T) {
 
 func testCodeWithContext(a *assert.Assertions, code string, expect s.Value, context s.Context) {
 	l := r.NewLexer(code)
-	c := r.NewCoder(s.NewContext(), l)
-	a.Equal(expect, r.EvalCoder(context, c), code)
+	tr := r.NewReader(s.NewContext(), l)
+	a.Equal(expect, r.EvalReader(context, tr), code)
 }
 
 func evaluateToString(c s.Context, v s.Value) string {
@@ -178,11 +178,11 @@ func TestBuiltIns(t *testing.T) {
 	})
 
 	l := r.NewLexer(`(hello)`)
-	c := r.NewCoder(b, l)
-	a.Equal("there", r.EvalCoder(s.NewContext(), c), "builtin called")
+	tr := r.NewReader(b, l)
+	a.Equal("there", r.EvalReader(s.NewContext(), tr), "builtin called")
 }
 
-func testCoderError(t *testing.T, src string, err string) {
+func testReaderError(t *testing.T, src string, err string) {
 	a := assert.New(t)
 
 	defer func() {
@@ -195,14 +195,14 @@ func testCoderError(t *testing.T, src string, err string) {
 
 	ctx := s.NewContext()
 	l := r.NewLexer(src)
-	c := r.NewCoder(ctx, l)
-	r.EvalCoder(ctx, c)
+	tr := r.NewReader(ctx, l)
+	r.EvalReader(ctx, tr)
 }
 
-func TestCoderErrors(t *testing.T) {
-	testCoderError(t, "(99 100 ", r.ListNotClosed)
-	testCoderError(t, "[99 100 ", r.VectorNotClosed)
+func TestReaderErrors(t *testing.T) {
+	testReaderError(t, "(99 100 ", r.ListNotClosed)
+	testReaderError(t, "[99 100 ", r.VectorNotClosed)
 
-	testCoderError(t, "99 100)", r.UnmatchedListEnd)
-	testCoderError(t, "99 100]", r.UnmatchedVectorEnd)
+	testReaderError(t, "99 100)", r.UnmatchedListEnd)
+	testReaderError(t, "99 100]", r.UnmatchedVectorEnd)
 }

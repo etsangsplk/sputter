@@ -10,9 +10,14 @@ import (
 	r "github.com/kode4food/sputter/reader"
 )
 
+const (
+	noFileSpecified = "No file specified"
+	fileNotFound = "File not found: %s"
+)
+
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Println("No file specified")
+		fmt.Println(noFileSpecified)
 		os.Exit(-2)
 	}
 
@@ -27,10 +32,10 @@ func main() {
 	filename := os.Args[1]
 	if buffer, err := ioutil.ReadFile(filename); err == nil {
 		l := r.NewLexer(string(buffer))
-		c := r.NewCoder(b.Context, l)
-		r.EvalCoder(s.NewContext(), c)
+		tr := r.NewReader(b.Context, l)
+		r.EvalReader(s.NewContext(), tr)
 	} else {
-		fmt.Println("File not found:", filename)
+		fmt.Println(fmt.Sprintf(fileNotFound, filename))
 		os.Exit(-1)
 	}
 }

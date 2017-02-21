@@ -1,4 +1,4 @@
-package interpreter_test
+package reader_test
 
 import (
 	"math/big"
@@ -65,7 +65,7 @@ func TestStrings(t *testing.T) {
 	assertToken(a, r.EOFToken, l.Next())
 }
 
-func TestMultiline(t *testing.T) {
+func TestMultiLine(t *testing.T) {
 	a := assert.New(t)
 	l := r.NewLexer(` "hello there"
   "how's life?"

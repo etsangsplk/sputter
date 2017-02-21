@@ -1,4 +1,4 @@
-package interpreter
+package reader
 
 import a "github.com/kode4food/sputter/api"
 
@@ -16,37 +16,42 @@ const (
 	UnmatchedVectorEnd = "encountered ']' with no open vector"
 )
 
-// EndOfCoder represents the end of a Coder stream
-var EndOfCoder = struct{}{}
+// EndOfReader represents the end of a Reader stream
+var EndOfReader = struct{}{}
 
-// Coder is responsible for taking a stream of Tokens and converting them
-// into Lists for evaluation
-type Coder struct {
+// Reader is responsible for returning the next Value from a Reader source
+type Reader interface {
+	Next() a.Value
+}
+
+// tokenReader is responsible for taking a stream of Lexer Tokens and
+// converting them into Lists for evaluation
+type tokenReader struct {
 	builtIns a.Context
-	reader   Reader
+	lexer    Lexer
 }
 
-// NewCoder instantiates a new Coder using the provided Reader
-func NewCoder(builtIns a.Context, r Reader) *Coder {
-	return &Coder{builtIns, r}
+// NewReader instantiates a new TokenReader using the provided Lexer
+func NewReader(builtIns a.Context, l Lexer) Reader {
+	return &tokenReader{builtIns, l}
 }
 
-// Next returns the next value from the Coder
-func (c *Coder) Next() a.Value {
-	return c.token(c.reader.Next())
+// Next returns the next value from the Reader
+func (r *tokenReader) Next() a.Value {
+	return r.token(r.lexer.Next())
 }
 
-func (c *Coder) token(t *Token) a.Value {
+func (r *tokenReader) token(t *Token) a.Value {
 	switch t.Type {
 	case DataMarker:
-		return c.data()
+		return r.data()
 	case ListStart:
-		return c.list()
+		return r.list()
 	case VectorStart:
-		return c.vector()
+		return r.vector()
 	case Identifier:
 		n := a.Name(t.Value.(string))
-		if v, ok := c.builtIns.Get(n); ok {
+		if v, ok := r.builtIns.Get(n); ok {
 			return v
 		}
 		return &a.Symbol{Name: n}
@@ -55,28 +60,28 @@ func (c *Coder) token(t *Token) a.Value {
 	case VectorEnd:
 		panic(UnmatchedVectorEnd)
 	case EndOfFile:
-		return EndOfCoder
+		return EndOfReader
 	default:
 		return t.Value
 	}
 }
 
-func (c *Coder) data() *a.Quote {
-	return &a.Quote{Value: c.Next()}
+func (r *tokenReader) data() *a.Quote {
+	return &a.Quote{Value: r.Next()}
 }
 
-func (c *Coder) list() *a.Cons {
+func (r *tokenReader) list() *a.Cons {
 	var next func() *a.Cons
 
 	next = func() *a.Cons {
-		t := c.reader.Next()
+		t := r.lexer.Next()
 		switch t.Type {
 		case ListEnd:
 			return a.Nil
 		case EndOfFile:
 			panic(ListNotClosed)
 		default:
-			v := c.token(t)
+			v := r.token(t)
 			l := next()
 			return &a.Cons{Car: v, Cdr: l}
 		}
@@ -85,27 +90,27 @@ func (c *Coder) list() *a.Cons {
 	return next()
 }
 
-func (c *Coder) vector() a.Vector {
-	var r = make(a.Vector, 0)
+func (r *tokenReader) vector() a.Vector {
+	var v = make(a.Vector, 0)
 
 	for {
-		t := c.reader.Next()
+		t := r.lexer.Next()
 		switch t.Type {
 		case VectorEnd:
-			return r
+			return v
 		case EndOfFile:
 			panic(VectorNotClosed)
 		default:
-			v := c.token(t)
-			r = append(r, v)
+			e := r.token(t)
+			v = append(v, e)
 		}
 	}
 }
 
-// EvalCoder evaluates each element of the provided Reader
-func EvalCoder(c a.Context, coder *Coder) a.Value {
+// EvalReader evaluates each element of the provided Reader
+func EvalReader(c a.Context, reader Reader) a.Value {
 	var r a.Value
-	for v := coder.Next(); v != EndOfCoder; v = coder.Next() {
+	for v := reader.Next(); v != EndOfReader; v = reader.Next() {
 		r = a.Eval(c, v)
 	}
 	return r
