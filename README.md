@@ -26,12 +26,11 @@ sputter ./examples/test.lisp
 I just started this thing and it's still pretty fragile, but
 that will change rapidly.  The current built-in forms are:
 
-  * Control: `quote`, `do`
+  * Control and Branching: `if`, `cond`, `quote`, `do`
   * Numeric: `+`, `-`, `*`, `/`, `=`, `<`, `<=`, `>`, `>=`
   * Variables and Functions: `defvar`, `let`, `defun`, `lambda`
-  * Branching: `if`, `cond`
   * Predicates: `eq`, `nil?`, `list?`
-  * List Stuff: `list`, `cons`, `car`, `cdr`, `first`, `second`, `third`
+  * Lists: `list`, `cons`, `car`, `cdr`, `first`, `second`, `third`
   * I/O: `print`, `println`
 
 ## License (MIT License)
