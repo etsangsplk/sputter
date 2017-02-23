@@ -63,6 +63,15 @@ func TestQuote(t *testing.T) {
 	a.Equal(big.NewFloat(3.0), r1.Get(2), "third element correct")
 }
 
+func TestDo(t *testing.T) {
+	testCode(t, `
+		(do
+			(println "hello")
+			(println "there")
+			99)
+	`, big.NewFloat(99))
+}
+
 func TestTrueFalse(t *testing.T) {
 	testCode(t, `true`, s.True)
 	testCode(t, `false`, s.False)

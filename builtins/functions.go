@@ -41,6 +41,18 @@ func defun(c a.Context, args a.Sequence) a.Value {
 	return d
 }
 
+func lambda(c a.Context, args a.Sequence) a.Value {
+	a.AssertMinimumArity(args, 2)
+	i := args.Iterate()
+	av, _ := i.Next()
+	an := av.(a.Sequence)
+
+	b := i.Rest()
+
+	return define("lambda", an, b)
+}
+
 func init() {
 	a.PutFunction(Context, &a.Function{Name: "defun", Exec: defun})
+	a.PutFunction(Context, &a.Function{Name: "lambda", Exec: lambda})
 }

@@ -27,3 +27,9 @@ func TestBadFunctionArity(t *testing.T) {
 		(identity)
 	`, fmt.Sprintf(s.BadArity, 1, 0))
 }
+
+func TestLambda(t *testing.T) {
+	testCode(t, `
+		(let [foo (lambda [] "hello")] (foo))
+	`, "hello")
+}

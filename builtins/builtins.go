@@ -34,10 +34,15 @@ func quote(c a.Context, args a.Sequence) a.Value {
 	return v
 }
 
+func do(c a.Context, args a.Sequence) a.Value {
+	return a.EvalSequence(c, args)
+}
+
 func init() {
 	Context.Put("nil", a.Nil)
 	Context.Put("true", a.True)
 	Context.Put("false", a.False)
 
 	a.PutFunction(Context, &a.Function{Name: "quote", Exec: quote})
+	a.PutFunction(Context, &a.Function{Name: "do", Exec: do})
 }
