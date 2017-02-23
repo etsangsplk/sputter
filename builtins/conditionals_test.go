@@ -8,7 +8,23 @@ import (
 	s "github.com/kode4food/sputter/api"
 )
 
-func TestConditional(t *testing.T) {
+func TestCond(t *testing.T) {
+	testCode(t, `
+		(cond
+			(false "goodbye")
+			(nil   "nope")
+			(true  "hello")
+			("hi"  "ignored"))
+	`, "hello")
+
+	testCode(t, `
+		(cond
+			(false "goodbye")
+			(nil   "nope"))
+	`, s.Nil)
+}
+
+func TestIf(t *testing.T) {
 	testCode(t, `(if false 1 0)`, big.NewFloat(0))
 	testCode(t, `(if true 1 0)`, big.NewFloat(1))
 	testCode(t, `(if nil 1 0)`, big.NewFloat(0))

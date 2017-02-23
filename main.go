@@ -5,15 +5,21 @@ import (
 	"io/ioutil"
 	"os"
 
-	s "github.com/kode4food/sputter/api"
+	a "github.com/kode4food/sputter/api"
 	b "github.com/kode4food/sputter/builtins"
 	r "github.com/kode4food/sputter/reader"
 )
 
 const (
 	noFileSpecified = "No file specified"
-	fileNotFound = "File not found: %s"
+	fileNotFound    = "File not found: %s"
 )
+
+func evalString(src string) a.Value {
+	l := r.NewLexer(string(src))
+	tr := r.NewReader(b.Context, l)
+	return r.EvalReader(a.NewContext(), tr)
+}
 
 func main() {
 	if len(os.Args) < 2 {
@@ -31,9 +37,7 @@ func main() {
 
 	filename := os.Args[1]
 	if buffer, err := ioutil.ReadFile(filename); err == nil {
-		l := r.NewLexer(string(buffer))
-		tr := r.NewReader(b.Context, l)
-		r.EvalReader(s.NewContext(), tr)
+		evalString(string(buffer))
 	} else {
 		fmt.Println(fmt.Sprintf(fileNotFound, filename))
 		os.Exit(-1)

@@ -29,7 +29,7 @@ const (
 	ListEnd
 	VectorStart
 	VectorEnd
-	DataMarker
+	QuoteMarker
 	EndOfFile
 	Whitespace
 	Comment
@@ -76,7 +76,7 @@ func init() {
 		{regexp.MustCompile(`^\[`), tokenState(VectorStart)},
 		{regexp.MustCompile(`^\)`), tokenState(ListEnd)},
 		{regexp.MustCompile(`^]`), tokenState(VectorEnd)},
-		{regexp.MustCompile(`^'`), tokenState(DataMarker)},
+		{regexp.MustCompile(`^'`), tokenState(QuoteMarker)},
 
 		{regexp.MustCompile(`^"(\\.|[^"])*"`), stringState},
 		{regexp.MustCompile(`^[+-]?[1-9]\d*/[1-9]\d*`), ratioState},

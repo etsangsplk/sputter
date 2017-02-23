@@ -56,8 +56,3 @@ func (c *basicContext) Put(n Name, v Value) Context {
 func PutFunction(c Context, f *Function) Context {
 	return c.Put(f.Name, f)
 }
-
-// Evaluable can be evaluated against a Context
-type Evaluable interface {
-	Eval(c Context) Value
-}

@@ -58,3 +58,6 @@
 (println (second s))
 
 (println -10)
+
+(println (if (> 10 9 8 7 6) "hello" "not"))
+(println (if (nil? false nil ()) "nil" "no"))

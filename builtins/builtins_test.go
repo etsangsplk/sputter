@@ -1,6 +1,7 @@
 package builtins_test
 
 import (
+	"math/big"
 	"testing"
 
 	s "github.com/kode4food/sputter/api"
@@ -9,11 +10,15 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func testCode(t *testing.T, src string, expect s.Value) {
-	a := assert.New(t)
+func runCode(src string) s.Value {
 	l := r.NewLexer(src)
 	tr := r.NewReader(b.Context, l)
-	a.Equal(expect, r.EvalReader(s.NewContext(), tr), src)
+	return r.EvalReader(s.NewContext(), tr)
+}
+
+func testCode(t *testing.T, src string, expect s.Value) {
+	a := assert.New(t)
+	a.Equal(expect, runCode(src), src)
 }
 
 func testBadCode(t *testing.T, src string, err string) {
@@ -27,9 +32,7 @@ func testBadCode(t *testing.T, src string, err string) {
 		a.Fail("bad code should panic")
 	}()
 
-	l := r.NewLexer(src)
-	tr := r.NewReader(b.Context, l)
-	r.EvalReader(s.NewContext(), tr)
+	runCode(src)
 }
 
 func TestBuiltInsContext(t *testing.T) {
@@ -44,6 +47,20 @@ func TestBuiltInsContext(t *testing.T) {
 	tv, ok := bg3.Get("true")
 	a.True(ok)
 	a.Equal(s.True, tv)
+}
+
+func TestQuote(t *testing.T) {
+	a := assert.New(t)
+
+	r1 := runCode("(quote (1 2 3))").(*s.Cons)
+	r2 := runCode("'(1 2 3)").(*s.Cons)
+
+	a.Equal(r1.Get(0), r2.Get(0), "first element same")
+	a.Equal(big.NewFloat(1.0), r1.Get(0), "first element correct")
+	a.Equal(r1.Get(1), r2.Get(1), "second element same")
+	a.Equal(big.NewFloat(2.0), r1.Get(1), "second element correct")
+	a.Equal(r1.Get(2), r2.Get(2), "third element same")
+	a.Equal(big.NewFloat(3.0), r1.Get(2), "third element correct")
 }
 
 func TestTrueFalse(t *testing.T) {

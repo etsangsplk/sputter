@@ -16,7 +16,7 @@ var helloThere = &s.Function{
 	},
 }
 
-func TestList(t *testing.T) {
+func TestSimpleList(t *testing.T) {
 	a := assert.New(t)
 	n := big.NewFloat(12)
 	l := s.NewList(n)
@@ -111,7 +111,7 @@ func TestDotCons(t *testing.T) {
 		a.Fail("bad Get index didn't panic")
 	}()
 
-	c3.Get(3) // will explode
+	c3.Get(3)
 }
 
 func TestConsEval(t *testing.T) {
