@@ -144,6 +144,8 @@ func (l *lispLexer) matchState() stateFunc {
 			return s.function
 		}
 	}
+	// Can't happen because of the patterns that are defined,
+	// but is here as a safety net
 	panic(UnmatchedState)
 }
 

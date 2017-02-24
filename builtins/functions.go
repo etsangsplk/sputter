@@ -2,15 +2,22 @@ package builtins
 
 import a "github.com/kode4food/sputter/api"
 
-func define(n a.Name, argNames a.Sequence, body a.Sequence) *a.Function {
-	ac := a.Count(argNames)
+type functionDefinition struct {
+	name     a.Name
+	argNames a.Sequence
+	body     a.Sequence
+	closure  a.Context
+}
+
+func define(d *functionDefinition) *a.Function {
+	ac := a.Count(d.argNames)
 
 	return &a.Function{
-		Name: n,
+		Name: d.name,
 		Exec: func(c a.Context, args a.Sequence) a.Value {
 			a.AssertArity(args, ac)
-			l := a.ChildContext(c)
-			anIter := argNames.Iterate()
+			l := a.ChildContext(d.closure)
+			anIter := d.argNames.Iterate()
 			aIter := args.Iterate()
 			for ns, nok := anIter.Next(); nok; {
 				an := ns.(*a.Symbol).Name
@@ -18,7 +25,7 @@ func define(n a.Name, argNames a.Sequence, body a.Sequence) *a.Function {
 				l.Put(an, a.Eval(c, av))
 				ns, nok = anIter.Next()
 			}
-			return a.EvalSequence(l, body)
+			return a.EvalSequence(l, d.body)
 		},
 	}
 }
@@ -36,7 +43,13 @@ func defun(c a.Context, args a.Sequence) a.Value {
 
 	b := i.Rest()
 
-	d := define(fn, an, b)
+	d := define(&functionDefinition{
+		name:     fn,
+		argNames: an,
+		body:     b,
+		closure:  c,
+	})
+
 	a.PutFunction(g, d)
 	return d
 }
@@ -49,7 +62,11 @@ func lambda(c a.Context, args a.Sequence) a.Value {
 
 	b := i.Rest()
 
-	return define("lambda", an, b)
+	return define(&functionDefinition{
+		argNames: an,
+		body:     b,
+		closure:  c,
+	})
 }
 
 func init() {

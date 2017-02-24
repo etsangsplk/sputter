@@ -30,6 +30,9 @@ func TestBadFunctionArity(t *testing.T) {
 
 func TestLambda(t *testing.T) {
 	testCode(t, `
-		(let [foo (lambda [] "hello")] (foo))
+		(defun call [func] (func))
+		(let [greeting "hello"]
+			(let [foo (lambda [] greeting)]
+				(call foo)))
 	`, "hello")
 }
