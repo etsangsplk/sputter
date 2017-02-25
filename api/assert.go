@@ -49,6 +49,7 @@ func AssertArityRange(args Sequence, min int, max int) {
 	}
 }
 
+// AssertSequence will cast a Value into a Sequence or explode violently
 func AssertSequence(v Value) Sequence {
 	if r, ok := v.(Sequence); ok {
 		return r
@@ -56,6 +57,7 @@ func AssertSequence(v Value) Sequence {
 	panic(ExpectedSequence)
 }
 
+// AssertSymbol will cast a Value into a Symbol or explode violently
 func AssertSymbol(v Value) *Symbol {
 	if r, ok := v.(*Symbol); ok {
 		return r
@@ -63,6 +65,7 @@ func AssertSymbol(v Value) *Symbol {
 	panic(ExpectedSymbol)
 }
 
+// AssertNumeric will cast a Value into a Numeric or explode violently
 func AssertNumeric(v Value) *big.Float {
 	if r, ok := v.(*big.Float); ok {
 		return r

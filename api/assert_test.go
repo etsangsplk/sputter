@@ -2,6 +2,7 @@ package api_test
 
 import (
 	"fmt"
+	"math/big"
 	"testing"
 
 	s "github.com/kode4food/sputter/api"
@@ -72,4 +73,49 @@ func TestArityRange(t *testing.T) {
 	}()
 
 	s.AssertArityRange(v, 4, 7)
+}
+
+func TestAssertSequence(t *testing.T) {
+	a := assert.New(t)
+	s.AssertSequence(s.NewList("hello"))
+
+	defer func() {
+		if rec := recover(); rec != nil {
+			a.Equal(s.ExpectedSequence, rec, "type error properly raised")
+			return
+		}
+		a.Fail("type error not raised")
+	}()
+
+	s.AssertSequence(big.NewFloat(99))
+}
+
+func TestAssertSymbol(t *testing.T) {
+	a := assert.New(t)
+	s.AssertSymbol(&s.Symbol{})
+
+	defer func() {
+		if rec := recover(); rec != nil {
+			a.Equal(s.ExpectedSymbol, rec, "type error properly raised")
+			return
+		}
+		a.Fail("type error not raised")
+	}()
+
+	s.AssertSymbol(big.NewFloat(99))
+}
+
+func TestAssertNumeric(t *testing.T) {
+	a := assert.New(t)
+	s.AssertNumeric(big.NewFloat(99))
+
+	defer func() {
+		if rec := recover(); rec != nil {
+			a.Equal(s.ExpectedNumeric, rec, "type error properly raised")
+			return
+		}
+		a.Fail("type error not raised")
+	}()
+
+	s.AssertNumeric(&s.Symbol{})
 }
