@@ -2,18 +2,51 @@ package builtins
 
 import a "github.com/kode4food/sputter/api"
 
-func cond(c a.Context, args a.Sequence) a.Value {
-	i := args.Iterate()
-	for e, ok := i.Next(); ok; e, ok = i.Next() {
-		b := a.AssertSequence(e)
-		a.AssertMinimumArity(b, 2)
-		bi := b.Iterate()
-		cond, _ := bi.Next()
-		if a.Truthy(a.Eval(c, cond)) {
-			return a.EvalSequence(c, bi.Rest())
-		}
+type branch struct {
+	condition a.Value
+	steps     a.Vector
+}
+
+type branches []branch
+
+func makeBranch(e a.Value) branch {
+	b := a.AssertSequence(e)
+	a.AssertMinimumArity(b, 2)
+	i := b.Iterate()
+
+	c, _ := i.Next()
+	s := make(a.Vector, 0)
+	for n, ok := i.Next(); ok; n, ok = i.Next() {
+		s = append(s, n)
 	}
-	return a.Nil
+
+	return branch{
+		condition: c,
+		steps:     s,
+	}
+}
+
+func makeCond(b branches) a.SequenceProcessor {
+	return func(c a.Context, args a.Sequence) a.Value {
+		for _, e := range b {
+			if a.Truthy(a.Eval(c, e.condition)) {
+				return a.EvalSequence(c, e.steps)
+			}
+		}
+		return a.Nil
+	}
+}
+
+func cond(c a.Context, f a.Sequence) a.Value {
+	i := f.Iterate()
+	i.Next() // we're already here
+
+	b := []branch{}
+	for e, ok := i.Next(); ok; e, ok = i.Next() {
+		b = append(b, makeBranch(e))
+	}
+
+	return a.NewList(&a.Function{Exec: makeCond(b)})
 }
 
 func _if(c a.Context, args a.Sequence) a.Value {
@@ -29,6 +62,6 @@ func _if(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	a.PutFunction(Context, &a.Function{Name: "cond", Exec: cond})
+	a.PutFunction(Context, &a.Function{Name: "cond", Prepare: cond})
 	a.PutFunction(Context, &a.Function{Name: "if", Exec: _if})
 }

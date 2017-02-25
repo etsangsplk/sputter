@@ -15,6 +15,9 @@ const (
 	// BadArityRange is thrown when a Function has an arity range
 	BadArityRange = "expected between %d and %d arguments, got %d"
 
+	// ExpectedValue is thrown when a Value is retrieved
+	ExpectedValue = "no value was retrieved"
+
 	// ExpectedSequence is thrown when a Value is not a Sequence
 	ExpectedSequence = "value is not a list or vector"
 
@@ -23,6 +26,9 @@ const (
 
 	// ExpectedNumeric is thrown when a Value is not a Number
 	ExpectedNumeric = "value is not numeric"
+
+	// ExpectedFunction is thrown when a Value is not a Function
+	ExpectedFunction = "value is not a function"
 )
 
 // AssertArity explodes if the arg count doesn't match provided arity

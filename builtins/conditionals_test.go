@@ -25,11 +25,11 @@ func TestCond(t *testing.T) {
 			(nil   "nope"))
 	`, s.Nil)
 
-	testCode(t, `
+	testBadCode(t, `
 		(cond
 			(true "hello")
 			99)
-	`, "hello")
+	`, s.ExpectedSequence)
 }
 
 func TestBadCond(t *testing.T) {
