@@ -1,13 +1,14 @@
 package api
 
-// ArgumentProcessor is the standard signature for a function that is
-// capable of processing an Iterable (like Lists)
-type ArgumentProcessor func(Context, Sequence) Value
+// SequenceProcessor is the standard signature for a function that is
+// capable of transforming or validating a Sequence
+type SequenceProcessor func(Context, Sequence) Value
 
 // Function is a Value that can be invoked
 type Function struct {
-	Name Name
-	Exec ArgumentProcessor
+	Name    Name
+	Exec    SequenceProcessor
+	Prepare SequenceProcessor
 }
 
 func (f *Function) String() string {

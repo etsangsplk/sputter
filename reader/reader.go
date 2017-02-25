@@ -38,21 +38,27 @@ func NewReader(builtIns a.Context, l Lexer) Reader {
 
 // Next returns the next value from the Reader
 func (r *tokenReader) Next() a.Value {
-	return r.token(r.lexer.Next())
+	return r.token(r.lexer.Next(), false)
 }
 
-func (r *tokenReader) token(t *Token) a.Value {
+func (r *tokenReader) nextData() a.Value {
+	return r.token(r.lexer.Next(), true)
+}
+
+func (r *tokenReader) token(t *Token, data bool) a.Value {
 	switch t.Type {
 	case QuoteMarker:
 		return r.quote()
 	case ListStart:
-		return r.list()
+		return r.list(data)
 	case VectorStart:
-		return r.vector()
+		return r.vector(data)
 	case Identifier:
 		n := a.Name(t.Value.(string))
-		if v, ok := r.builtIns.Get(n); ok {
-			return v
+		if !data {
+			if v, ok := r.builtIns.Get(n); ok {
+				return v
+			}
 		}
 		return &a.Symbol{Name: n}
 	case ListEnd:
@@ -67,11 +73,12 @@ func (r *tokenReader) token(t *Token) a.Value {
 }
 
 func (r *tokenReader) quote() *a.Quote {
-	return &a.Quote{Value: r.Next()}
+	return &a.Quote{Value: r.nextData()}
 }
 
-func (r *tokenReader) list() *a.Cons {
+func (r *tokenReader) list(data bool) a.Value {
 	var next func() *a.Cons
+	var first func() a.Value
 
 	next = func() *a.Cons {
 		t := r.lexer.Next()
@@ -81,16 +88,29 @@ func (r *tokenReader) list() *a.Cons {
 		case EndOfFile:
 			panic(ListNotClosed)
 		default:
-			v := r.token(t)
+			v := r.token(t, data)
 			l := next()
 			return &a.Cons{Car: v, Cdr: l}
 		}
 	}
 
-	return next()
+	first = func() a.Value {
+		l := next()
+		if f, ok := l.Car.(*a.Function); ok {
+			if f.Prepare != nil {
+				return f.Prepare(r.builtIns, l)
+			}
+		}
+		return l
+	}
+
+	if data {
+		return next()
+	}
+	return first()
 }
 
-func (r *tokenReader) vector() a.Vector {
+func (r *tokenReader) vector(data bool) a.Vector {
 	var v = make(a.Vector, 0)
 
 	for {
@@ -101,7 +121,7 @@ func (r *tokenReader) vector() a.Vector {
 		case EndOfFile:
 			panic(VectorNotClosed)
 		default:
-			e := r.token(t)
+			e := r.token(t, data)
 			v = append(v, e)
 		}
 	}

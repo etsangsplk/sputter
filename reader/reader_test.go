@@ -120,7 +120,7 @@ func TestUnclosedList(t *testing.T) {
 	tr.Next()
 }
 
-func TestData(t *testing.T) {
+func TestSimpleData(t *testing.T) {
 	a := assert.New(t)
 
 	l := r.NewLexer(`'99`)
@@ -133,6 +133,38 @@ func TestData(t *testing.T) {
 	value, ok := d.Value.(*big.Float)
 	a.True(ok)
 	a.Equal(0, big.NewFloat(99).Cmp(value))
+}
+
+func TestListData(t *testing.T) {
+	a := assert.New(t)
+
+	l := r.NewLexer(`'(symbol 99)`)
+	tr := r.NewReader(s.NewContext(), l)
+	v := tr.Next()
+
+	d, ok := v.(*s.Quote)
+	a.True(ok)
+
+	value, ok := d.Value.(*s.Cons)
+	a.True(ok)
+
+	if sym, ok := value.Car.(*s.Symbol); ok {
+		a.Equal("symbol", string(sym.Name), "symbol was literal")
+	} else {
+		a.Fail("first element should be symbol")
+	}
+
+	if n, ok := value.Cdr.(*s.Cons); ok {
+		f, ok := n.Car.(*big.Float)
+		a.True(ok)
+		a.Equal(0, big.NewFloat(99).Cmp(f))
+
+		nl, ok := n.Cdr.(*s.Cons)
+		a.True(ok)
+		a.Equal(s.Nil, nl, "list properly terminated")
+	} else {
+		a.Fail("rest() elements not a cons")
+	}
 }
 
 func testCodeWithContext(a *assert.Assertions, code string, expect s.Value, context s.Context) {
@@ -180,6 +212,31 @@ func TestBuiltIns(t *testing.T) {
 	l := r.NewLexer(`(hello)`)
 	tr := r.NewReader(b, l)
 	a.Equal("there", r.EvalReader(s.NewContext(), tr), "builtin called")
+}
+
+func TestReaderPrepare(t *testing.T) {
+	a := assert.New(t)
+
+	b := s.NewContext()
+	s.PutFunction(b, &s.Function{
+		Name: "hello",
+		Prepare: func(c s.Context, l s.Sequence) s.Value {
+			if _, ok := l.(*s.Cons); !ok {
+				a.Fail("provided list is not a cons")
+			}
+			return s.Vector{"you"}
+		},
+	})
+
+	l := r.NewLexer(`(hello)`)
+	tr := r.NewReader(b, l)
+	v := tr.Next()
+
+	if r, ok := v.(s.Vector); ok {
+		a.Equal("you", r.Get(0), "prepared transformed into vector")
+	} else {
+		a.Fail("prepare did not transform")
+	}
 }
 
 func testReaderError(t *testing.T, src string, err string) {
