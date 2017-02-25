@@ -9,23 +9,33 @@ type functionDefinition struct {
 	closure  a.Context
 }
 
+func argNames(n a.Sequence) []a.Name {
+	an := []a.Name{}
+	i := n.Iterate()
+	for e, ok := i.Next(); ok; e, ok = i.Next() {
+		v := a.AssertSymbol(e).Name
+		an = append(an, v)
+	}
+	return an
+}
+
 func define(d *functionDefinition) *a.Function {
-	ac := a.Count(d.argNames)
+	an := argNames(d.argNames)
+	ac := len(an)
+	dc := d.closure
+	db := d.body
 
 	return &a.Function{
 		Name: d.name,
 		Exec: func(c a.Context, args a.Sequence) a.Value {
 			a.AssertArity(args, ac)
-			l := a.ChildContext(d.closure)
-			anIter := d.argNames.Iterate()
-			aIter := args.Iterate()
-			for ns, nok := anIter.Next(); nok; {
-				an := ns.(*a.Symbol).Name
-				av, _ := aIter.Next()
-				l.Put(an, a.Eval(c, av))
-				ns, nok = anIter.Next()
+			l := a.ChildContext(dc)
+			i := args.Iterate()
+			for _, n := range an {
+				v, _ := i.Next()
+				l.Put(n, a.Eval(c, v))
 			}
-			return a.EvalSequence(l, d.body)
+			return a.EvalSequence(l, db)
 		},
 	}
 }
@@ -33,20 +43,19 @@ func define(d *functionDefinition) *a.Function {
 func defun(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 3)
 	g := c.Globals()
+
 	i := args.Iterate()
 
 	fv, _ := i.Next()
-	fn := fv.(*a.Symbol).Name
+	fn := a.AssertSymbol(fv).Name
 
 	av, _ := i.Next()
-	an := av.(a.Sequence)
-
-	b := i.Rest()
+	an := a.AssertSequence(av)
 
 	d := define(&functionDefinition{
 		name:     fn,
 		argNames: an,
-		body:     b,
+		body:     i.Rest(),
 		closure:  c,
 	})
 
@@ -58,13 +67,11 @@ func lambda(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 	i := args.Iterate()
 	av, _ := i.Next()
-	an := av.(a.Sequence)
-
-	b := i.Rest()
+	an := a.AssertSequence(av)
 
 	return define(&functionDefinition{
 		argNames: an,
-		body:     b,
+		body:     i.Rest(),
 		closure:  c,
 	})
 }

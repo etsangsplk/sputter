@@ -6,9 +6,6 @@ import (
 	a "github.com/kode4food/sputter/api"
 )
 
-// NonNumericArgument is raised when a numeric argument is required
-const NonNumericArgument = "arguments must be numeric"
-
 type reduceFunc func(prev *big.Float, next *big.Float) *big.Float
 type compareFunc func(prev *big.Float, next *big.Float) bool
 
@@ -16,11 +13,8 @@ func reduce(c a.Context, s a.Sequence, v *big.Float, f reduceFunc) a.Value {
 	cur := v
 	i := s.Iterate()
 	for e, ok := i.Next(); ok; e, ok = i.Next() {
-		if fv, ok := a.Eval(c, e).(*big.Float); ok {
-			cur = f(cur, fv)
-			continue
-		}
-		panic(NonNumericArgument)
+		fv := a.AssertNumeric(a.Eval(c, e))
+		cur = f(cur, fv)
 	}
 	return cur
 }
@@ -32,21 +26,18 @@ func fetchFirstNumber(c a.Context, args a.Sequence) (*big.Float, a.Sequence) {
 	if r, ok := a.Eval(c, v).(*big.Float); ok {
 		return r, i.Rest()
 	}
-	panic(NonNumericArgument)
+	panic(a.ExpectedNumeric)
 }
 
 func compare(c a.Context, s a.Sequence, f compareFunc) a.Value {
 	cur, r := fetchFirstNumber(c, s)
 	i := r.Iterate()
 	for e, ok := i.Next(); ok; e, ok = i.Next() {
-		if v, ok := a.Eval(c, e).(*big.Float); ok {
-			if !f(cur, v) {
-				return a.False
-			}
-			cur = v
-			continue
+		v := a.AssertNumeric(a.Eval(c, e))
+		if !f(cur, v) {
+			return a.False
 		}
-		panic(NonNumericArgument)
+		cur = v
 	}
 	return a.True
 }

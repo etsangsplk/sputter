@@ -9,6 +9,8 @@ import (
 )
 
 func TestCond(t *testing.T) {
+	testCode(t, `(cond)`, s.Nil)
+
 	testCode(t, `
 		(cond
 			(false "goodbye")
@@ -22,6 +24,22 @@ func TestCond(t *testing.T) {
 			(false "goodbye")
 			(nil   "nope"))
 	`, s.Nil)
+
+	testCode(t, `
+		(cond
+			(true "hello")
+			99)
+	`, "hello")
+}
+
+func TestBadCond(t *testing.T) {
+	testBadCode(t, `(cond 99)`, s.ExpectedSequence)
+
+	testBadCode(t, `
+		(cond
+			(false "hello")
+			99)
+	`, s.ExpectedSequence)
 }
 
 func TestIf(t *testing.T) {

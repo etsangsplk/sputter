@@ -19,6 +19,12 @@ func TestFunction(t *testing.T) {
 	`, "foo")
 }
 
+func TestBadFunction(t *testing.T) {
+	testBadCode(t, `(defun blah [name 99 bad] (name))`, s.ExpectedSymbol)
+	testBadCode(t, `(defun blah 99 (name))`, s.ExpectedSequence)
+	testBadCode(t, `(defun 99 [x y] (+ x y))`, s.ExpectedSymbol)
+}
+
 func TestBadFunctionArity(t *testing.T) {
 	testBadCode(t, `(defun blah)`, fmt.Sprintf(s.BadMinimumArity, 3, 1))
 
@@ -35,4 +41,8 @@ func TestLambda(t *testing.T) {
 			(let [foo (lambda [] greeting)]
 				(call foo)))
 	`, "hello")
+}
+
+func TestBadLambda(t *testing.T) {
+	testBadCode(t, `(lambda 99 "hello")`, s.ExpectedSequence)
 }

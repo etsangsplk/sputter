@@ -1,5 +1,6 @@
 package api
 
+// Stack is your standard Stack interface
 type Stack interface {
 	Push(v Value)
 	Peek() (v Value, ok bool)
@@ -18,7 +19,7 @@ type entry struct {
 
 // NewStack creates a new Stack instance
 func NewStack() Stack {
-	return &basicStack{}	
+	return &basicStack{}
 }
 
 // Push a Value onto the Stack

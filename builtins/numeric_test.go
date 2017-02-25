@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	s "github.com/kode4food/sputter/api"
-	b "github.com/kode4food/sputter/builtins"
 )
 
 func TestBasicNumeric(t *testing.T) {
@@ -26,8 +25,8 @@ func TestNestedNumeric(t *testing.T) {
 }
 
 func TestNonNumeric(t *testing.T) {
-	testBadCode(t, `(+ 99 "hello")`, b.NonNumericArgument)
-	testBadCode(t, `(+ "hello")`, b.NonNumericArgument)
+	testBadCode(t, `(+ 99 "hello")`, s.ExpectedNumeric)
+	testBadCode(t, `(+ "hello")`, s.ExpectedNumeric)
 }
 
 func TestCompare(t *testing.T) {
@@ -56,6 +55,6 @@ func TestCompare(t *testing.T) {
 }
 
 func TestBadCompare(t *testing.T) {
-	testBadCode(t, `(< 99 "hello")`, b.NonNumericArgument)
-	testBadCode(t, `(< "hello" "there")`, b.NonNumericArgument)
+	testBadCode(t, `(< 99 "hello")`, s.ExpectedNumeric)
+	testBadCode(t, `(< "hello" "there")`, s.ExpectedNumeric)
 }
