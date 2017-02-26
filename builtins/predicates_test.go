@@ -15,8 +15,9 @@ func TestPredicates(t *testing.T) {
 
 	testCode(t, `(nil? ())`, s.True)
 	testCode(t, `(nil? () () ())`, s.True)
-	testCode(t, `(nil? false)`, s.True)
-	testCode(t, `(nil? false () nil)`, s.True)
+	testCode(t, `(nil? () nil)`, s.True)	
+	testCode(t, `(nil? false)`, s.False)
+	testCode(t, `(nil? false () nil)`, s.False)
 	testCode(t, `(nil? nil)`, s.True)
 
 	testCode(t, `(nil? "hello")`, s.False)

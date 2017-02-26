@@ -64,7 +64,7 @@ func (r *tokenReader) token(t *Token, data bool) a.Value {
 		if v, ok := specialNames[n]; ok {
 			return v
 		}
-		return &a.Symbol{Name: n}
+		return a.NewSymbol(n)
 	case ListEnd:
 		panic(UnmatchedListEnd)
 	case VectorEnd:

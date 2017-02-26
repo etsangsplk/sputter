@@ -6,11 +6,11 @@ import "fmt"
 const NonFinite = "sequence is not finite and can't be counted"
 
 var (
-	// True is literal value that represents any value other than False
+	// True is a value that represents any value other than False
 	True = &Atom{Label: "true"}
 
-	// False is an alias for Nil or Nil
-	False = Nil
+	// False is a value that represents either itself or nil
+	False = &Atom{Label: "false"}
 )
 
 // Name is a Variable name
@@ -19,6 +19,9 @@ type Name string
 // Value is the generic interface for all 'Values'
 type Value interface {
 }
+
+// Variables are represents a mapping from Name to Value
+type Variables map[Name]Value
 
 // Sequence interfaces expose a one dimensional set of Values
 type Sequence interface {

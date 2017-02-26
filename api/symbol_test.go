@@ -18,6 +18,17 @@ func TestSymbol(t *testing.T) {
 	a.Equal("howdy", sym.String(), "symbol name returned")
 }
 
+func TestSymbolInterning(t *testing.T) {
+	a := assert.New(t)
+	
+	sym1 := s.NewSymbol("hello")
+	sym2 := s.NewSymbol("there")
+	sym3 := s.NewSymbol("hello")
+	
+	a.Equal(sym1, sym3, "properly interned")
+	a.NotEqual(sym1, sym2, "properly isolated")
+}
+
 func TestUnknownSymbol(t *testing.T) {
 	a := assert.New(t)
 

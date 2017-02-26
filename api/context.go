@@ -2,9 +2,6 @@ package api
 
 const defaultVarsSize = 16
 
-// Variables are how a closure stores name/value pairs
-type Variables map[Name]Value
-
 // Context represents a variable scope
 type Context interface {
 	Globals() Context
