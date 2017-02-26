@@ -15,8 +15,8 @@ const (
 	// BadArityRange is thrown when a Function has an arity range
 	BadArityRange = "expected between %d and %d arguments, got %d"
 
-	// ExpectedValue is thrown when a Value is retrieved
-	ExpectedValue = "no value was retrieved"
+	// ExpectedCons is thrown when a Value is not a Cons cell
+	ExpectedCons = "value is not a cons cell"
 
 	// ExpectedSequence is thrown when a Value is not a Sequence
 	ExpectedSequence = "value is not a list or vector"

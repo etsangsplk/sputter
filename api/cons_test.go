@@ -1,7 +1,6 @@
 package api_test
 
 import (
-	"fmt"
 	"math/big"
 	"testing"
 
@@ -104,8 +103,7 @@ func TestDotCons(t *testing.T) {
 
 	defer func() {
 		if rec := recover(); rec != nil {
-			err := fmt.Sprintf(s.IndexNotCons, 3)
-			a.Equal(err, rec, "bad Get index")
+			a.Equal(s.ExpectedCons, rec, "bad Get index")
 			return
 		}
 		a.Fail("bad Get index didn't panic")
@@ -146,7 +144,7 @@ func testBrokenEval(t *testing.T, cons *s.Cons, err string) {
 
 func TestNonList(t *testing.T) {
 	cons := &s.Cons{Car: helloThere, Cdr: "uh-oh"}
-	testBrokenEval(t, cons, s.NonList)
+	testBrokenEval(t, cons, s.ExpectedCons)
 }
 
 func TestNonFunction(t *testing.T) {
@@ -154,5 +152,5 @@ func TestNonFunction(t *testing.T) {
 		Car: &s.Symbol{Name: "unknown"},
 		Cdr: s.NewList("foo"),
 	}
-	testBrokenEval(t, cons, s.NonFunction)
+	testBrokenEval(t, cons, s.ExpectedFunction)
 }

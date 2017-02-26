@@ -20,7 +20,7 @@ type Name string
 type Value interface {
 }
 
-// Variables are represents a mapping from Name to Value
+// Variables represents a mapping from Name to Value
 type Variables map[Name]Value
 
 // Sequence interfaces expose a one dimensional set of Values

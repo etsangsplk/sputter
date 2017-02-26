@@ -1,20 +1,6 @@
 package api
 
-import (
-	"bytes"
-	"fmt"
-)
-
-const (
-	// NonFunction is the error returned when a non-Function is invoked
-	NonFunction = "cannot resolve first element as a function"
-
-	// NonList is the error returned when a non-List is invoked
-	NonList = "cannot resolve second element as a list"
-
-	// IndexNotCons is the error returns when walking a non-List
-	IndexNotCons = "%d is not a Cons cell"
-)
+import "bytes"
 
 // Nil represents an empty Cons and the terminator of a List
 var Nil = &Cons{nil, nil}
@@ -82,7 +68,7 @@ func (c *Cons) Get(index int) Value {
 			i++
 			continue
 		}
-		panic(fmt.Sprintf(IndexNotCons, index))
+		panic(ExpectedCons)
 	}
 	return Nil
 }
@@ -92,6 +78,7 @@ func (c *Cons) Eval(ctx Context) Value {
 	if c == Nil {
 		return Nil
 	}
+	
 	if a, ok := c.Cdr.(*Cons); ok {
 		if f, ok := c.Car.(*Function); ok {
 			return f.Exec(ctx, a)
@@ -104,9 +91,9 @@ func (c *Cons) Eval(ctx Context) Value {
 				}
 			}
 		}
-		panic(NonFunction)
+		panic(ExpectedFunction)
 	}
-	panic(NonList)
+	panic(ExpectedCons)
 }
 
 func (c *Cons) listString() string {
