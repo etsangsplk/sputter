@@ -16,6 +16,12 @@ const (
 	UnmatchedVectorEnd = "encountered ']' with no open vector"
 )
 
+var specialNames = a.Variables{
+	"true":  a.True,
+	"false": a.False,
+	"nil":   a.Nil,
+}
+
 // EndOfReader represents the end of a Reader stream
 var EndOfReader = struct{}{}
 
@@ -27,13 +33,13 @@ type Reader interface {
 // tokenReader is responsible for taking a stream of Lexer Tokens and
 // converting them into Lists for evaluation
 type tokenReader struct {
-	builtIns a.Context
-	lexer    Lexer
+	context a.Context
+	lexer   Lexer
 }
 
 // NewReader instantiates a new TokenReader using the provided Lexer
-func NewReader(builtIns a.Context, l Lexer) Reader {
-	return &tokenReader{builtIns, l}
+func NewReader(context a.Context, l Lexer) Reader {
+	return &tokenReader{context, l}
 }
 
 // Next returns the next value from the Reader
@@ -55,10 +61,8 @@ func (r *tokenReader) token(t *Token, data bool) a.Value {
 		return r.vector(data)
 	case Identifier:
 		n := a.Name(t.Value.(string))
-		if !data {
-			if v, ok := r.builtIns.Get(n); ok {
-				return v
-			}
+		if v, ok := specialNames[n]; ok {
+			return v
 		}
 		return &a.Symbol{Name: n}
 	case ListEnd:
@@ -76,9 +80,23 @@ func (r *tokenReader) quote() *a.Quote {
 	return &a.Quote{Value: r.nextData()}
 }
 
+func (r *tokenReader) prepareList(l *a.Cons) a.Value {
+	if s, ok := l.Car.(*a.Symbol); ok {
+		if v, ok := r.context.Get(s.Name); ok {
+			if f, ok := v.(*a.Function); ok {
+				fl := &a.Cons{Car: f, Cdr: l.Cdr}
+				if f.Prepare != nil {
+					return f.Prepare(r.context, fl)
+				}
+				return fl
+			}
+		}
+	}
+	return l
+}
+
 func (r *tokenReader) list(data bool) a.Value {
 	var next func() *a.Cons
-	var first func() a.Value
 
 	next = func() *a.Cons {
 		t := r.lexer.Next()
@@ -94,20 +112,10 @@ func (r *tokenReader) list(data bool) a.Value {
 		}
 	}
 
-	first = func() a.Value {
-		l := next()
-		if f, ok := l.Car.(*a.Function); ok {
-			if f.Prepare != nil {
-				return f.Prepare(r.builtIns, l)
-			}
-		}
-		return l
-	}
-
 	if data {
 		return next()
 	}
-	return first()
+	return r.prepareList(next())
 }
 
 func (r *tokenReader) vector(data bool) a.Vector {

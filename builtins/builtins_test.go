@@ -44,9 +44,13 @@ func TestBuiltInsContext(t *testing.T) {
 
 	a.Equal(b.Context, bg3.Globals())
 
-	tv, ok := bg3.Get("true")
+	qv, ok := bg3.Get("quote")
 	a.True(ok)
-	a.Equal(s.True, tv)
+	if fv, ok := qv.(*s.Function); ok {
+		a.Equal("quote", string(fv.Name))
+	} else {
+		a.Fail("returned value not a Function")
+	}
 }
 
 func TestQuote(t *testing.T) {

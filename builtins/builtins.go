@@ -39,10 +39,6 @@ func do(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	Context.Put("nil", a.Nil)
-	Context.Put("true", a.True)
-	Context.Put("false", a.False)
-
 	a.PutFunction(Context, &a.Function{Name: "quote", Exec: quote})
 	a.PutFunction(Context, &a.Function{Name: "do", Exec: do})
 }

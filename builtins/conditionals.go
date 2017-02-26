@@ -37,8 +37,8 @@ func makeCond(b branches) a.SequenceProcessor {
 	}
 }
 
-func cond(c a.Context, f a.Sequence) a.Value {
-	i := f.Iterate()
+func cond(_ a.Context, form a.Sequence) a.Value {
+	i := form.Iterate()
 	i.Next() // we're already here
 
 	b := []branch{}
@@ -49,6 +49,7 @@ func cond(c a.Context, f a.Sequence) a.Value {
 	return a.NewList(&a.Function{Exec: makeCond(b)})
 }
 
+// this will be replaced by a macro -> cond
 func _if(c a.Context, args a.Sequence) a.Value {
 	a.AssertArityRange(args, 2, 3)
 	i := args.Iterate()

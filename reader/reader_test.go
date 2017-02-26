@@ -16,7 +16,7 @@ func TestCreateReader(t *testing.T) {
 	a.NotNil(tr)
 }
 
-func TestCodeInteger(t *testing.T) {
+func TestReadInteger(t *testing.T) {
 	a := assert.New(t)
 	l := r.NewLexer("99")
 	tr := r.NewReader(s.NewContext(), l)
@@ -26,7 +26,7 @@ func TestCodeInteger(t *testing.T) {
 	a.Equal(0, f.Cmp(big.NewFloat(99)))
 }
 
-func TestCodeList(t *testing.T) {
+func TestReadList(t *testing.T) {
 	a := assert.New(t)
 	l := r.NewLexer(`(99 "hello" 55.12)`)
 	tr := r.NewReader(s.NewContext(), l)
@@ -51,7 +51,7 @@ func TestCodeList(t *testing.T) {
 	a.False(ok)
 }
 
-func TestCodeVector(t *testing.T) {
+func TestReadVector(t *testing.T) {
 	a := assert.New(t)
 	l := r.NewLexer(`[99 "hello" 55.12]`)
 	tr := r.NewReader(s.NewContext(), l)
@@ -63,7 +63,7 @@ func TestCodeVector(t *testing.T) {
 	a.Equal(0, big.NewFloat(55.120).Cmp(vector.Get(2).(*big.Float)))
 }
 
-func TestCodeNestedList(t *testing.T) {
+func TestReadNestedList(t *testing.T) {
 	a := assert.New(t)
 	l := r.NewLexer(`(99 ("hello" "there") 55.12)`)
 	tr := r.NewReader(s.NewContext(), l)
@@ -138,7 +138,7 @@ func TestSimpleData(t *testing.T) {
 func TestListData(t *testing.T) {
 	a := assert.New(t)
 
-	l := r.NewLexer(`'(symbol 99)`)
+	l := r.NewLexer(`'(symbol true)`)
 	tr := r.NewReader(s.NewContext(), l)
 	v := tr.Next()
 
@@ -155,9 +155,9 @@ func TestListData(t *testing.T) {
 	}
 
 	if n, ok := value.Cdr.(*s.Cons); ok {
-		f, ok := n.Car.(*big.Float)
+		b, ok := n.Car.(*s.Atom)
 		a.True(ok)
-		a.Equal(0, big.NewFloat(99).Cmp(f))
+		a.Equal(s.True, b)
 
 		nl, ok := n.Cdr.(*s.Cons)
 		a.True(ok)
