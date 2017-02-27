@@ -27,6 +27,10 @@ func (b *builtInsContext) Put(n a.Name, v a.Value) a.Context {
 	return b
 }
 
+func do(c a.Context, args a.Sequence) a.Value {
+	return a.EvalSequence(c, args)
+}
+
 func quote(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
 	i := args.Iterate()
@@ -34,11 +38,12 @@ func quote(c a.Context, args a.Sequence) a.Value {
 	return v
 }
 
-func do(c a.Context, args a.Sequence) a.Value {
-	return a.EvalSequence(c, args)
-}
-
 func init() {
-	a.PutFunction(Context, &a.Function{Name: "quote", Exec: quote})
 	a.PutFunction(Context, &a.Function{Name: "do", Exec: do})
+
+	a.PutFunction(Context, &a.Function{
+		Name: "quote",
+		Exec: quote,
+		Data: true,
+	})
 }

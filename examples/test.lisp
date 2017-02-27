@@ -61,3 +61,6 @@
 
 (println (if (> 10 9 8 7 6) "hello" "not"))
 (println (if (nil? false nil ()) "nil" "no"))
+
+(defmacro foo [x] (println "hello"))
+(println "macro: " (foo blah))

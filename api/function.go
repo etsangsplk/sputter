@@ -9,6 +9,25 @@ type Function struct {
 	Name    Name
 	Exec    SequenceProcessor
 	Prepare SequenceProcessor
+	Data    bool
+}
+
+// ResolveFunction either returns a Function as-is or tries to perform
+// a lookup if the Value is a Symbol
+func ResolveFunction(c Context, v Value) (*Function, bool) {
+	if f, ok := v.(*Function); ok {
+		return f, true
+	}
+
+	if s, ok := v.(*Symbol); ok {
+		if sv, ok := c.Get(s.Name); ok {
+			if f, ok := sv.(*Function); ok {
+				return f, true
+			}
+		}
+	}
+
+	return nil, false
 }
 
 func (f *Function) String() string {

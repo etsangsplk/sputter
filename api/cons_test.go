@@ -144,7 +144,7 @@ func testBrokenEval(t *testing.T, cons *s.Cons, err string) {
 
 func TestNonList(t *testing.T) {
 	cons := &s.Cons{Car: helloThere, Cdr: "uh-oh"}
-	testBrokenEval(t, cons, s.ExpectedCons)
+	testBrokenEval(t, cons, s.ExpectedList)
 }
 
 func TestNonFunction(t *testing.T) {

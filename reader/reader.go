@@ -16,6 +16,13 @@ const (
 	UnmatchedVectorEnd = "encountered ']' with no open vector"
 )
 
+type mode bool
+
+const (
+	readCode mode = false
+	readData mode = true
+)
+
 var specialNames = a.Variables{
 	"true":  a.True,
 	"false": a.False,
@@ -44,27 +51,23 @@ func NewReader(context a.Context, l Lexer) Reader {
 
 // Next returns the next value from the Reader
 func (r *tokenReader) Next() a.Value {
-	return r.token(r.lexer.Next(), false)
+	return r.token(r.lexer.Next(), readCode)
 }
 
 func (r *tokenReader) nextData() a.Value {
-	return r.token(r.lexer.Next(), true)
+	return r.token(r.lexer.Next(), readData)
 }
 
-func (r *tokenReader) token(t *Token, data bool) a.Value {
+func (r *tokenReader) token(t *Token, m mode) a.Value {
 	switch t.Type {
 	case QuoteMarker:
 		return r.quote()
 	case ListStart:
-		return r.list(data)
+		return r.list(m)
 	case VectorStart:
-		return r.vector(data)
+		return r.vector(m)
 	case Identifier:
-		n := a.Name(t.Value.(string))
-		if v, ok := specialNames[n]; ok {
-			return v
-		}
-		return a.NewSymbol(n)
+		return identifier(t)
 	case ListEnd:
 		panic(UnmatchedListEnd)
 	case VectorEnd:
@@ -80,45 +83,55 @@ func (r *tokenReader) quote() *a.Quote {
 	return &a.Quote{Value: r.nextData()}
 }
 
-func (r *tokenReader) prepareList(l *a.Cons) a.Value {
-	if s, ok := l.Car.(*a.Symbol); ok {
-		if v, ok := r.context.Get(s.Name); ok {
-			if f, ok := v.(*a.Function); ok {
-				fl := &a.Cons{Car: f, Cdr: l.Cdr}
-				if f.Prepare != nil {
-					return f.Prepare(r.context, fl)
-				}
-				return fl
-			}
-		}
-	}
-	return l
-}
+func (r *tokenReader) list(m mode) a.Value {
+	var handle func(t *Token, m mode) *a.Cons
+	var rest func(m mode) *a.Cons
+	var first func() a.Value
 
-func (r *tokenReader) list(data bool) a.Value {
-	var next func() *a.Cons
-
-	next = func() *a.Cons {
-		t := r.lexer.Next()
+	handle = func(t *Token, m mode) *a.Cons {
 		switch t.Type {
 		case ListEnd:
 			return a.Nil
 		case EndOfFile:
 			panic(ListNotClosed)
 		default:
-			v := r.token(t, data)
-			l := next()
+			v := r.token(t, m)
+			l := rest(m)
 			return &a.Cons{Car: v, Cdr: l}
 		}
 	}
 
-	if data {
-		return next()
+	rest = func(m mode) *a.Cons {
+		return handle(r.lexer.Next(), m)
 	}
-	return r.prepareList(next())
+
+	first = func() a.Value {
+		t := r.lexer.Next()
+		if f, ok := r.function(t); ok {
+			fl := &a.Cons{Car: f, Cdr: rest(mode(f.Data))}
+			if f.Prepare != nil {
+				return f.Prepare(r.context, fl)
+			}
+			return fl
+		}
+		return handle(t, m)
+	}
+
+	if m == readData {
+		return rest(m)
+	}
+	return first()
 }
 
-func (r *tokenReader) vector(data bool) a.Vector {
+func (r *tokenReader) function(t *Token) (*a.Function, bool) {
+	if t.Type != Identifier {
+		return nil, false
+	}
+	v := identifier(t)
+	return a.ResolveFunction(r.context, v)
+}
+
+func (r *tokenReader) vector(m mode) a.Vector {
 	var v = make(a.Vector, 0)
 
 	for {
@@ -129,10 +142,18 @@ func (r *tokenReader) vector(data bool) a.Vector {
 		case EndOfFile:
 			panic(VectorNotClosed)
 		default:
-			e := r.token(t, data)
+			e := r.token(t, m)
 			v = append(v, e)
 		}
 	}
+}
+
+func identifier(t *Token) a.Value {
+	n := a.Name(t.Value.(string))
+	if v, ok := specialNames[n]; ok {
+		return v
+	}
+	return a.NewSymbol(n)
 }
 
 // EvalReader evaluates each element of the provided Reader

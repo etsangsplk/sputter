@@ -13,21 +13,35 @@ type Context interface {
 type basicContext struct {
 	parent Context
 	vars   Variables
+	global bool
 }
 
-// NewContext creates a new Context instance
+// NewGlobalContext creates a new global Context instance that
+// chains up to a reserved Context for special forms
+func NewGlobalContext(reserved Context) Context {
+	return &basicContext{
+		parent: reserved,
+		vars:   make(Variables, defaultVarsSize),
+		global: true,
+	}
+}
+
+// NewContext creates a new global Context instance
 func NewContext() Context {
-	return &basicContext{nil, make(Variables, defaultVarsSize)}
+	return NewGlobalContext(nil)
 }
 
 // ChildContext creates a new child Context of the provided parent
 func ChildContext(parent Context) Context {
-	return &basicContext{parent, make(Variables, defaultVarsSize)}
+	return &basicContext{
+		parent: parent,
+		vars:   make(Variables, defaultVarsSize),
+	}
 }
 
 // Globals retrieves the Root Context (one with no parent)
 func (c *basicContext) Globals() Context {
-	if c.parent == nil {
+	if c.global || c.parent == nil {
 		return c
 	}
 	return c.parent.Globals()
@@ -37,7 +51,8 @@ func (c *basicContext) Globals() Context {
 func (c *basicContext) Get(n Name) (Value, bool) {
 	if v, ok := c.vars[n]; ok {
 		return v, true
-	} else if c.parent != nil {
+	}
+	if c.parent != nil {
 		return c.parent.Get(n)
 	}
 	return Nil, false

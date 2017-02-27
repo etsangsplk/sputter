@@ -18,5 +18,7 @@ func TestFunction(t *testing.T) {
 	}
 
 	a.Equal("test-function", f.String(), "string returned")
-	a.Equal("hello", f.Exec(s.NewContext(), s.Nil), "function executes")
+
+	c := s.NewContext()
+	a.Equal("hello", f.Exec(c, s.Nil), "function executes")
 }

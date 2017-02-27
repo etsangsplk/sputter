@@ -18,6 +18,9 @@ const (
 	// ExpectedCons is thrown when a Value is not a Cons cell
 	ExpectedCons = "value is not a cons cell"
 
+	// ExpectedList is thrown when a Value is not a Cons cell
+	ExpectedList = "value is not a list"
+
 	// ExpectedSequence is thrown when a Value is not a Sequence
 	ExpectedSequence = "value is not a list or vector"
 

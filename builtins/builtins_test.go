@@ -12,8 +12,9 @@ import (
 
 func runCode(src string) s.Value {
 	l := r.NewLexer(src)
-	tr := r.NewReader(b.Context, l)
-	return r.EvalReader(s.NewContext(), tr)
+	c := s.NewGlobalContext(b.Context)
+	tr := r.NewReader(c, l)
+	return r.EvalReader(s.ChildContext(c), tr)
 }
 
 func testCode(t *testing.T, src string, expect s.Value) {
@@ -44,10 +45,10 @@ func TestBuiltInsContext(t *testing.T) {
 
 	a.Equal(b.Context, bg3.Globals())
 
-	qv, ok := bg3.Get("quote")
+	qv, ok := bg3.Get("do")
 	a.True(ok)
 	if fv, ok := qv.(*s.Function); ok {
-		a.Equal("quote", string(fv.Name))
+		a.Equal("do", string(fv.Name))
 	} else {
 		a.Fail("returned value not a Function")
 	}
@@ -56,11 +57,13 @@ func TestBuiltInsContext(t *testing.T) {
 func TestQuote(t *testing.T) {
 	a := assert.New(t)
 
-	r1 := runCode("(quote (1 2 3))").(*s.Cons)
-	r2 := runCode("'(1 2 3)").(*s.Cons)
+	r1 := runCode("(quote (blah 2 3))").(*s.Cons)
+	r2 := runCode("'(blah 2 3)").(*s.Cons)
 
 	a.Equal(r1.Get(0), r2.Get(0), "first element same")
-	a.Equal(big.NewFloat(1.0), r1.Get(0), "first element correct")
+	if _, ok := r1.Get(0).(*s.Symbol); !ok {
+		a.Fail("first element is not a symbol")
+	}
 	a.Equal(r1.Get(1), r2.Get(1), "second element same")
 	a.Equal(big.NewFloat(2.0), r1.Get(1), "second element correct")
 	a.Equal(r1.Get(2), r2.Get(2), "third element same")

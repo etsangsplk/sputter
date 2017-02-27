@@ -25,7 +25,8 @@ func TestEvaluate(t *testing.T) {
 	a := assert.New(t)
 
 	l := &s.Cons{Car: helloName, Cdr: s.NewList("World")}
-	r := s.Eval(s.NewContext(), l)
+	c := s.NewContext()
+	r := s.Eval(c, l)
 
 	a.Equal("Hello, World!", r.(string), "good hello")
 }
@@ -37,6 +38,7 @@ func TestEvaluateSequence(t *testing.T) {
 	s2 := &s.Cons{Car: helloName, Cdr: s.NewList("Foo")}
 	l := &s.Cons{Car: s1, Cdr: s.NewList(s2)}
 
-	r := s.EvalSequence(s.NewContext(), l)
+	c := s.NewContext()
+	r := s.EvalSequence(c, l)
 	a.Equal("Hello, Foo!", r.(string), "last result")
 }

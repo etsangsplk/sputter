@@ -27,7 +27,8 @@ func TestVectorEval(t *testing.T) {
 	a := assert.New(t)
 
 	v := &s.Vector{"hello", "how", &testEvaluable{}, "you?"}
-	r := v.Eval(s.NewContext())
+	c := s.NewContext()
+	r := v.Eval(c)
 
 	if _, ok := r.(s.Finite); !ok {
 		a.Fail("result is not a finite sequence")

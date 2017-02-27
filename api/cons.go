@@ -78,22 +78,14 @@ func (c *Cons) Eval(ctx Context) Value {
 	if c == Nil {
 		return Nil
 	}
-	
-	if a, ok := c.Cdr.(*Cons); ok {
-		if f, ok := c.Car.(*Function); ok {
-			return f.Exec(ctx, a)
-		}
 
-		if s, ok := c.Car.(*Symbol); ok {
-			if v, ok := ctx.Get(s.Name); ok {
-				if cv, ok := v.(*Function); ok {
-					return cv.Exec(ctx, a)
-				}
-			}
+	if a, ok := c.Cdr.(*Cons); ok {
+		if f, ok := ResolveFunction(ctx, c.Car); ok {
+			return f.Exec(ctx, a)
 		}
 		panic(ExpectedFunction)
 	}
-	panic(ExpectedCons)
+	panic(ExpectedList)
 }
 
 func (c *Cons) listString() string {
@@ -127,6 +119,9 @@ func (c *Cons) consString() string {
 }
 
 func (c *Cons) String() string {
+	if c == Nil {
+		return "()"
+	}
 	if _, ok := c.Cdr.(*Cons); ok {
 		return c.listString()
 	}

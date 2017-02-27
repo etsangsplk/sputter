@@ -17,8 +17,9 @@ const (
 
 func evalString(src string) a.Value {
 	l := r.NewLexer(string(src))
-	tr := r.NewReader(b.Context, l)
-	return r.EvalReader(a.NewContext(), tr)
+	g := a.NewGlobalContext(b.Context)
+	tr := r.NewReader(g, l)
+	return r.EvalReader(a.ChildContext(g), tr)
 }
 
 func main() {

@@ -12,14 +12,16 @@ import (
 func TestCreateReader(t *testing.T) {
 	a := assert.New(t)
 	l := r.NewLexer("99")
-	tr := r.NewReader(s.NewContext(), l)
+	c := s.NewContext()
+	tr := r.NewReader(c, l)
 	a.NotNil(tr)
 }
 
 func TestReadInteger(t *testing.T) {
 	a := assert.New(t)
 	l := r.NewLexer("99")
-	tr := r.NewReader(s.NewContext(), l)
+	c := s.NewContext()
+	tr := r.NewReader(c, l)
 	v := tr.Next()
 	f, ok := v.(*big.Float)
 	a.True(ok)
@@ -29,7 +31,8 @@ func TestReadInteger(t *testing.T) {
 func TestReadList(t *testing.T) {
 	a := assert.New(t)
 	l := r.NewLexer(`(99 "hello" 55.12)`)
-	tr := r.NewReader(s.NewContext(), l)
+	c := s.NewContext()
+	tr := r.NewReader(c, l)
 	v := tr.Next()
 	list, ok := v.(*s.Cons)
 	a.True(ok)
@@ -54,7 +57,8 @@ func TestReadList(t *testing.T) {
 func TestReadVector(t *testing.T) {
 	a := assert.New(t)
 	l := r.NewLexer(`[99 "hello" 55.12]`)
-	tr := r.NewReader(s.NewContext(), l)
+	c := s.NewContext()
+	tr := r.NewReader(c, l)
 	v := tr.Next()
 	vector, ok := v.(s.Vector)
 	a.True(ok)
@@ -66,7 +70,8 @@ func TestReadVector(t *testing.T) {
 func TestReadNestedList(t *testing.T) {
 	a := assert.New(t)
 	l := r.NewLexer(`(99 ("hello" "there") 55.12)`)
-	tr := r.NewReader(s.NewContext(), l)
+	c := s.NewContext()
+	tr := r.NewReader(c, l)
 	v := tr.Next()
 	list, ok := v.(*s.Cons)
 	a.True(ok)
@@ -116,7 +121,8 @@ func TestUnclosedList(t *testing.T) {
 	}()
 
 	l := r.NewLexer(`(99 ("hello" "there") 55.12`)
-	tr := r.NewReader(s.NewContext(), l)
+	c := s.NewContext()
+	tr := r.NewReader(c, l)
 	tr.Next()
 }
 
@@ -124,7 +130,8 @@ func TestSimpleData(t *testing.T) {
 	a := assert.New(t)
 
 	l := r.NewLexer(`'99`)
-	tr := r.NewReader(s.NewContext(), l)
+	c := s.NewContext()
+	tr := r.NewReader(c, l)
 	v := tr.Next()
 
 	d, ok := v.(*s.Quote)
@@ -139,7 +146,8 @@ func TestListData(t *testing.T) {
 	a := assert.New(t)
 
 	l := r.NewLexer(`'(symbol true)`)
-	tr := r.NewReader(s.NewContext(), l)
+	c := s.NewContext()
+	tr := r.NewReader(c, l)
 	v := tr.Next()
 
 	d, ok := v.(*s.Quote)
@@ -169,7 +177,8 @@ func TestListData(t *testing.T) {
 
 func testCodeWithContext(a *assert.Assertions, code string, expect s.Value, context s.Context) {
 	l := r.NewLexer(code)
-	tr := r.NewReader(s.NewContext(), l)
+	c := s.NewContext()
+	tr := r.NewReader(c, l)
 	a.Equal(expect, r.EvalReader(context, tr), code)
 }
 
@@ -211,7 +220,8 @@ func TestBuiltIns(t *testing.T) {
 
 	l := r.NewLexer(`(hello)`)
 	tr := r.NewReader(b, l)
-	a.Equal("there", r.EvalReader(s.NewContext(), tr), "builtin called")
+	c := s.ChildContext(b)
+	a.Equal("there", r.EvalReader(c, tr), "builtin called")
 }
 
 func TestReaderPrepare(t *testing.T) {
@@ -250,10 +260,10 @@ func testReaderError(t *testing.T, src string, err string) {
 		a.Fail("coder doesn't error out like it should")
 	}()
 
-	ctx := s.NewContext()
+	c := s.NewContext()
 	l := r.NewLexer(src)
-	tr := r.NewReader(ctx, l)
-	r.EvalReader(ctx, tr)
+	tr := r.NewReader(c, l)
+	r.EvalReader(c, tr)
 }
 
 func TestReaderErrors(t *testing.T) {

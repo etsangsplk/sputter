@@ -12,7 +12,8 @@ func TestAtom(t *testing.T) {
 	a := assert.New(t)
 
 	v := &s.Atom{Label: "hello"}
-	a.Equal(v, v.Eval(s.NewContext()), "own value returned")
+	c := s.NewContext()
+	a.Equal(v, v.Eval(c), "own value returned")
 	a.Equal("hello", v.String(), "label returned")
 }
 
@@ -21,6 +22,7 @@ func TestQuote(t *testing.T) {
 
 	f := big.NewFloat(99.0)
 	q := &s.Quote{Value: f}
-	a.Equal(f, q.Eval(s.NewContext()), "wrapped value returned")
+	c := s.NewContext()
+	a.Equal(f, q.Eval(c), "wrapped value returned")
 	a.Equal("99", q.String(), "string returned")
 }
