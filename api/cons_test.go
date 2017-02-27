@@ -33,6 +33,7 @@ func TestCons(t *testing.T) {
 	n2 := big.NewFloat(20.5)
 	l2 := &s.Cons{Car: n2, Cdr: l1}
 
+	a.Equal("()", s.Nil.String())
 	a.Equal("(20.5 12)", l2.String())
 	a.Equal(n2, l2.Car, "2nd head is populated correctly")
 	a.Equal(l1, l2.Cdr, "2nd tail is populated correctly")
