@@ -6,7 +6,7 @@
   (println "Hello there, " name "!"))
 
 (let (a 10)   ; this is an EOL comment
-  (println "a = " a)
+  (user:println "a = " a)
   (let (a 20)
     (println "a = " a))
   (println "a = " a))
@@ -32,7 +32,7 @@
 
 (println [1 2 3])
 
-(let
+(sputter:let
   [a (cons 1 (list 2 3 4))]
   (println a))
 

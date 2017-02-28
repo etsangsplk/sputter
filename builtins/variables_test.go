@@ -27,6 +27,6 @@ func TestScopeQualifiers(t *testing.T) {
 	testCode(t, `
 		(defvar foo 99)
 		(let [foo 100]
-			user:foo)
-	`, big.NewFloat(99))
+			(+ foo user:foo))
+	`, big.NewFloat(199))
 }
