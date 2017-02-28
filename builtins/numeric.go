@@ -103,13 +103,13 @@ func lte(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	a.PutFunction(Context, &a.Function{Name: "+", Exec: add})
-	a.PutFunction(Context, &a.Function{Name: "-", Exec: sub})
-	a.PutFunction(Context, &a.Function{Name: "*", Exec: mul})
-	a.PutFunction(Context, &a.Function{Name: "/", Exec: div})
-	a.PutFunction(Context, &a.Function{Name: "=", Exec: eq})
-	a.PutFunction(Context, &a.Function{Name: ">", Exec: gt})
-	a.PutFunction(Context, &a.Function{Name: ">=", Exec: gte})
-	a.PutFunction(Context, &a.Function{Name: "<", Exec: lt})
-	a.PutFunction(Context, &a.Function{Name: "<=", Exec: lte})
+	a.PutFunction(Context, &a.Function{Name: "+", Apply: add})
+	a.PutFunction(Context, &a.Function{Name: "-", Apply: sub})
+	a.PutFunction(Context, &a.Function{Name: "*", Apply: mul})
+	a.PutFunction(Context, &a.Function{Name: "/", Apply: div})
+	a.PutFunction(Context, &a.Function{Name: "=", Apply: eq})
+	a.PutFunction(Context, &a.Function{Name: ">", Apply: gt})
+	a.PutFunction(Context, &a.Function{Name: ">=", Apply: gte})
+	a.PutFunction(Context, &a.Function{Name: "<", Apply: lt})
+	a.PutFunction(Context, &a.Function{Name: "<=", Apply: lte})
 }

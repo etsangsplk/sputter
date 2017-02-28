@@ -78,12 +78,12 @@ func third(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	a.PutFunction(Context, &a.Function{Name: "cons", Exec: cons})
-	a.PutFunction(Context, &a.Function{Name: "car", Exec: car})
-	a.PutFunction(Context, &a.Function{Name: "cdr", Exec: cdr})
-	a.PutFunction(Context, &a.Function{Name: "list", Exec: list})
-	a.PutFunction(Context, &a.Function{Name: "list?", Exec: isList})
-	a.PutFunction(Context, &a.Function{Name: "first", Exec: first})
-	a.PutFunction(Context, &a.Function{Name: "second", Exec: second})
-	a.PutFunction(Context, &a.Function{Name: "third", Exec: third})
+	a.PutFunction(Context, &a.Function{Name: "cons", Apply: cons})
+	a.PutFunction(Context, &a.Function{Name: "car", Apply: car})
+	a.PutFunction(Context, &a.Function{Name: "cdr", Apply: cdr})
+	a.PutFunction(Context, &a.Function{Name: "list", Apply: list})
+	a.PutFunction(Context, &a.Function{Name: "list?", Apply: isList})
+	a.PutFunction(Context, &a.Function{Name: "first", Apply: first})
+	a.PutFunction(Context, &a.Function{Name: "second", Apply: second})
+	a.PutFunction(Context, &a.Function{Name: "third", Apply: third})
 }

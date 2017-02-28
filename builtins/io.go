@@ -22,6 +22,6 @@ func _println(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	a.PutFunction(Context, &a.Function{Name: "print", Exec: _print})
-	a.PutFunction(Context, &a.Function{Name: "println", Exec: _println})
+	a.PutFunction(Context, &a.Function{Name: "print", Apply: _print})
+	a.PutFunction(Context, &a.Function{Name: "println", Apply: _println})
 }

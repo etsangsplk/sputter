@@ -46,7 +46,7 @@ func cond(_ a.Context, form a.Sequence) a.Value {
 		b = append(b, makeBranch(e))
 	}
 
-	return a.NewList(&a.Function{Exec: makeCond(b)})
+	return a.NewList(&a.Function{Apply: makeCond(b)})
 }
 
 // this will be replaced by a macro -> cond
@@ -64,5 +64,5 @@ func _if(c a.Context, args a.Sequence) a.Value {
 
 func init() {
 	a.PutFunction(Context, &a.Function{Name: "cond", Prepare: cond})
-	a.PutFunction(Context, &a.Function{Name: "if", Exec: _if})
+	a.PutFunction(Context, &a.Function{Name: "if", Apply: _if})
 }

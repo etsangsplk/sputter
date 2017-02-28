@@ -17,11 +17,11 @@ func quote(_ a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	a.PutFunction(Context, &a.Function{Name: "do", Exec: do})
+	a.PutFunction(Context, &a.Function{Name: "do", Apply: do})
 
 	a.PutFunction(Context, &a.Function{
-		Name: "quote",
-		Exec: quote,
-		Data: true,
+		Name:  "quote",
+		Apply: quote,
+		Data:  true,
 	})
 }

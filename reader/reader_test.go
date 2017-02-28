@@ -192,7 +192,7 @@ func TestEvaluable(t *testing.T) {
 
 	hello := &s.Function{
 		Name: "hello",
-		Exec: func(c s.Context, args s.Sequence) s.Value {
+		Apply: func(c s.Context, args s.Sequence) s.Value {
 			i := args.Iterate()
 			arg, _ := i.Next()
 			v := evaluateToString(c, arg)
@@ -213,7 +213,7 @@ func TestBuiltIns(t *testing.T) {
 	b := s.NewContext()
 	s.PutFunction(b, &s.Function{
 		Name: "hello",
-		Exec: func(c s.Context, args s.Sequence) s.Value {
+		Apply: func(c s.Context, args s.Sequence) s.Value {
 			return "there"
 		},
 	})

@@ -81,7 +81,7 @@ func (c *Cons) Eval(ctx Context) Value {
 
 	if a, ok := c.Cdr.(*Cons); ok {
 		if f, ok := ResolveAsFunction(ctx, c.Car); ok {
-			return f.Exec(ctx, a)
+			return f.Apply(ctx, a)
 		}
 		panic(ExpectedFunction)
 	}

@@ -12,7 +12,7 @@ func TestFunction(t *testing.T) {
 
 	f := &s.Function{
 		Name: "test-function",
-		Exec: func(c s.Context, args s.Sequence) s.Value {
+		Apply: func(c s.Context, args s.Sequence) s.Value {
 			return "hello"
 		},
 	}
@@ -20,5 +20,5 @@ func TestFunction(t *testing.T) {
 	a.Equal("test-function", f.String(), "string returned")
 
 	c := s.NewContext()
-	a.Equal("hello", f.Exec(c, s.Nil), "function executes")
+	a.Equal("hello", f.Apply(c, s.Nil), "function executes")
 }

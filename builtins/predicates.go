@@ -24,6 +24,6 @@ func isNil(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	a.PutFunction(Context, &a.Function{Name: "eq", Exec: identical})
-	a.PutFunction(Context, &a.Function{Name: "nil?", Exec: isNil})
+	a.PutFunction(Context, &a.Function{Name: "eq", Apply: identical})
+	a.PutFunction(Context, &a.Function{Name: "nil?", Apply: isNil})
 }

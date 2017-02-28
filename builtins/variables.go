@@ -35,6 +35,6 @@ func let(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	a.PutFunction(Context, &a.Function{Name: "defvar", Exec: defvar})
-	a.PutFunction(Context, &a.Function{Name: "let", Exec: let})
+	a.PutFunction(Context, &a.Function{Name: "defvar", Apply: defvar})
+	a.PutFunction(Context, &a.Function{Name: "let", Apply: let})
 }

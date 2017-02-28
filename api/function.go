@@ -7,7 +7,7 @@ type SequenceProcessor func(Context, Sequence) Value
 // Function is a Value that can be invoked
 type Function struct {
 	Name    Name
-	Exec    SequenceProcessor
+	Apply   SequenceProcessor
 	Prepare SequenceProcessor
 	Data    bool
 }

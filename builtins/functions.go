@@ -27,7 +27,7 @@ func define(d *functionDefinition) *a.Function {
 
 	return &a.Function{
 		Name: d.name,
-		Exec: func(c a.Context, args a.Sequence) a.Value {
+		Apply: func(c a.Context, args a.Sequence) a.Value {
 			a.AssertArity(args, ac)
 			l := a.ChildContext(dc)
 			i := args.Iterate()
@@ -75,6 +75,6 @@ func lambda(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	a.PutFunction(Context, &a.Function{Name: "defun", Exec: defun})
-	a.PutFunction(Context, &a.Function{Name: "lambda", Exec: lambda})
+	a.PutFunction(Context, &a.Function{Name: "defun", Apply: defun})
+	a.PutFunction(Context, &a.Function{Name: "lambda", Apply: lambda})
 }
