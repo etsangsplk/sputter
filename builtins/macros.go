@@ -2,9 +2,9 @@ package builtins
 
 import a "github.com/kode4food/sputter/api"
 
-func defmacro(c a.Context, form a.Sequence) a.Value {
+func defmacro(_ a.Context, form a.Sequence) a.Value {
 	a.AssertArity(form, 4)
-	g := c.Globals()
+	g := a.GetNamespace(a.UserDomain)
 
 	i := form.Iterate()
 	i.Next() // skip the form name

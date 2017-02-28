@@ -122,13 +122,12 @@ func (r *tokenReader) list(m mode) a.Value {
 	}
 	return first()
 }
-
 func (r *tokenReader) function(t *Token) (*a.Function, bool) {
 	if t.Type != Identifier {
 		return nil, false
 	}
 	v := identifier(t)
-	return a.ResolveFunction(r.context, v)
+	return a.ResolveAsFunction(r.context, v)
 }
 
 func (r *tokenReader) vector(m mode) a.Vector {
@@ -153,7 +152,7 @@ func identifier(t *Token) a.Value {
 	if v, ok := specialNames[n]; ok {
 		return v
 	}
-	return a.NewSymbol(n)
+	return a.ParseSymbol(n)
 }
 
 // EvalReader evaluates each element of the provided Reader

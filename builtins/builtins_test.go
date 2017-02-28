@@ -5,16 +5,15 @@ import (
 	"testing"
 
 	s "github.com/kode4food/sputter/api"
-	b "github.com/kode4food/sputter/builtins"
 	r "github.com/kode4food/sputter/reader"
 	"github.com/stretchr/testify/assert"
 )
 
 func runCode(src string) s.Value {
 	l := r.NewLexer(src)
-	c := s.NewGlobalContext(b.Context)
+	c := s.NewEvalContext()
 	tr := r.NewReader(c, l)
-	return r.EvalReader(s.ChildContext(c), tr)
+	return r.EvalReader(c, tr)
 }
 
 func testCode(t *testing.T, src string, expect s.Value) {
@@ -39,11 +38,9 @@ func testBadCode(t *testing.T, src string, err string) {
 func TestBuiltInsContext(t *testing.T) {
 	a := assert.New(t)
 
-	bg1 := s.ChildContext(b.Context)
+	bg1 := s.NewEvalContext()
 	bg2 := s.ChildContext(bg1)
 	bg3 := s.ChildContext(bg2)
-
-	a.Equal(b.Context, bg3.Globals())
 
 	qv, ok := bg3.Get("do")
 	a.True(ok)

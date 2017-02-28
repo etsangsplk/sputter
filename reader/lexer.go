@@ -11,7 +11,7 @@ const (
 	// UnexpectedEndOfFile is the error returned when EOF is unexpectedly reached
 	UnexpectedEndOfFile = "end of file reached unexpectedly"
 
-	// UnmatchedState is the error returned when the lexing state is invalid
+	// UnmatchedState is the error returned when the lexer state is invalid
 	UnmatchedState = "unmatched lexing state"
 )
 
@@ -82,7 +82,8 @@ func init() {
 		{regexp.MustCompile(`^[+-]?[1-9]\d*/[1-9]\d*`), ratioState},
 		{regexp.MustCompile(`^[+-]?(0|[1-9]\d*(\.\d+)?([eE][+-]?\d+)?)`), numberState},
 
-		{regexp.MustCompile(`^[^()\[\]\s]+`), tokenState(Identifier)},
+		{regexp.MustCompile(`^(([^():\[\]\s]+)?:)?[^():\[\]\s]+`), tokenState(Identifier)},
+
 		{regexp.MustCompile(`^.`), endState(Error)},
 	}
 }

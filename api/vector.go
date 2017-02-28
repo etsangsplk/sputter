@@ -36,7 +36,7 @@ func (v Vector) Iterate() Iterator {
 }
 
 // Next returns the next Value from the Iterator
-func (i *vectorIterator) Next() (v Value, ok bool) {
+func (i *vectorIterator) Next() (Value, bool) {
 	if i.pos < i.len {
 		r := i.vector[i.pos]
 		i.pos++

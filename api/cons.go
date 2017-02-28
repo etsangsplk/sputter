@@ -26,7 +26,7 @@ func (c *Cons) Iterate() Iterator {
 }
 
 // Next returns the next Value from the Iterator
-func (i *consIterator) Next() (v Value, ok bool) {
+func (i *consIterator) Next() (Value, bool) {
 	c := i.current
 	if c == Nil {
 		return Nil, false
@@ -80,7 +80,7 @@ func (c *Cons) Eval(ctx Context) Value {
 	}
 
 	if a, ok := c.Cdr.(*Cons); ok {
-		if f, ok := ResolveFunction(ctx, c.Car); ok {
+		if f, ok := ResolveAsFunction(ctx, c.Car); ok {
 			return f.Exec(ctx, a)
 		}
 		panic(ExpectedFunction)

@@ -1,50 +1,40 @@
 package api
 
-const defaultVarsSize = 16
+const defaultContextSize = 16
 
 // Context represents a variable scope
 type Context interface {
-	Globals() Context
 	Get(n Name) (v Value, bound bool)
 	Put(n Name, v Value) Context
+	Delete(n Name) Context
 }
 
-// BasicContext is the most basic Context implementation
+// basicContext is the most basic Context implementation
 type basicContext struct {
 	parent Context
 	vars   Variables
-	global bool
 }
 
-// NewGlobalContext creates a new global Context instance that
-// chains up to a reserved Context for special forms
-func NewGlobalContext(reserved Context) Context {
-	return &basicContext{
-		parent: reserved,
-		vars:   make(Variables, defaultVarsSize),
-		global: true,
-	}
-}
-
-// NewContext creates a new global Context instance
+// NewContext creates a new independent Context instance
 func NewContext() Context {
-	return NewGlobalContext(nil)
+	return &basicContext{
+		parent: nil,
+		vars:   make(Variables, defaultContextSize),
+	}
 }
 
 // ChildContext creates a new child Context of the provided parent
 func ChildContext(parent Context) Context {
 	return &basicContext{
 		parent: parent,
-		vars:   make(Variables, defaultVarsSize),
+		vars:   make(Variables, defaultContextSize),
 	}
 }
 
-// Globals retrieves the Root Context (one with no parent)
-func (c *basicContext) Globals() Context {
-	if c.global || c.parent == nil {
-		return c
-	}
-	return c.parent.Globals()
+// NewEvalContext creates a new Context instance that
+// chains up to the UserDomain Context for special forms
+func NewEvalContext() Context {
+	return ChildContext(GetNamespace(UserDomain))
 }
 
 // Get retrieves a value from the Context chain
@@ -61,6 +51,11 @@ func (c *basicContext) Get(n Name) (Value, bool) {
 // Put puts a Value into the immediate Context
 func (c *basicContext) Put(n Name, v Value) Context {
 	c.vars[n] = v
+	return c
+}
+
+func (c *basicContext) Delete(n Name) Context {
+	delete(c.vars, n)
 	return c
 }
 

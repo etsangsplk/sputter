@@ -20,11 +20,11 @@ func TestSymbol(t *testing.T) {
 
 func TestSymbolInterning(t *testing.T) {
 	a := assert.New(t)
-	
-	sym1 := s.NewSymbol("hello")
-	sym2 := s.NewSymbol("there")
-	sym3 := s.NewSymbol("hello")
-	
+
+	sym1 := s.NewLocalSymbol("hello")
+	sym2 := s.NewLocalSymbol("there")
+	sym3 := s.NewLocalSymbol("hello")
+
 	a.Equal(sym1, sym3, "properly interned")
 	a.NotEqual(sym1, sym2, "properly isolated")
 }
@@ -43,4 +43,30 @@ func TestUnknownSymbol(t *testing.T) {
 	c := s.NewContext()
 	sym := &s.Symbol{Name: "howdy"}
 	sym.Eval(c)
+}
+
+func TestSymbolParsing(t *testing.T) {
+	a := assert.New(t)
+
+	s1 := s.ParseSymbol("domain:name1")
+	a.Equal("domain", string(s1.Domain))
+	a.Equal("name1", string(s1.Name))
+
+	s2 := s.ParseSymbol(":name2")
+	a.Equal(s.LocalDomain, s2.Domain)
+	a.Equal("name2", string(s2.Name))
+
+	s3 := s.ParseSymbol("name3")
+	a.Equal(s.LocalDomain, s3.Domain)
+	a.Equal("name3", string(s3.Name))
+
+	defer func() {
+		if rec := recover(); rec != nil {
+			a.Equal(s.BadQualifiedName, rec, "parse explodes correctly")
+			return
+		}
+		a.Fail("bad parse should explode")
+	}()
+
+	s.ParseSymbol("one:too:")
 }

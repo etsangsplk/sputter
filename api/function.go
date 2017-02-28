@@ -12,15 +12,15 @@ type Function struct {
 	Data    bool
 }
 
-// ResolveFunction either returns a Function as-is or tries to perform
-// a lookup if the Value is a Symbol
-func ResolveFunction(c Context, v Value) (*Function, bool) {
+// ResolveAsFunction either returns a Function as-is or tries
+// to perform a lookup if the Value is a Symbol
+func ResolveAsFunction(c Context, v Value) (*Function, bool) {
 	if f, ok := v.(*Function); ok {
 		return f, true
 	}
 
 	if s, ok := v.(*Symbol); ok {
-		if sv, ok := c.Get(s.Name); ok {
+		if sv, ok := s.Resolve(c); ok {
 			if f, ok := sv.(*Function); ok {
 				return f, true
 			}

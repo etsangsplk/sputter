@@ -52,20 +52,22 @@ func TestNestedContext(t *testing.T) {
 	assertGet(a, c2, "foo", "bar")
 }
 
-func TestGlobalContext(t *testing.T) {
-	a := assert.New(t)
-
-	sg1 := s.NewContext()
-	sg2 := s.ChildContext(sg1)
-	sg3 := s.ChildContext(sg2)
-
-	a.Equal(sg1, sg3.Globals())
-}
-
 func TestPutFunction(t *testing.T) {
 	a := assert.New(t)
-	
+
 	c := s.NewContext()
 	s.PutFunction(c, helloThere)
 	assertGet(a, c, "hello", helloThere)
+}
+
+func TestEvalContext(t *testing.T) {
+	a := assert.New(t)
+
+	uc := s.GetNamespace(s.UserDomain)
+	uc.Delete("foo")
+	uc.Put("foo", 99)
+
+	ec := s.NewEvalContext()
+	v, _ := ec.Get("foo")
+	a.Equal(99, v, "EvalContext chain works")
 }

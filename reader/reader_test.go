@@ -242,8 +242,8 @@ func TestReaderPrepare(t *testing.T) {
 	tr := r.NewReader(b, l)
 	v := tr.Next()
 
-	if r, ok := v.(s.Vector); ok {
-		a.Equal("you", r.Get(0), "prepared transformed into vector")
+	if rv, ok := v.(s.Vector); ok {
+		a.Equal("you", rv.Get(0), "prepared transformed into vector")
 	} else {
 		a.Fail("prepare did not transform")
 	}

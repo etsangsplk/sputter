@@ -6,7 +6,7 @@ import (
 	"os"
 
 	a "github.com/kode4food/sputter/api"
-	b "github.com/kode4food/sputter/builtins"
+	_ "github.com/kode4food/sputter/builtins"
 	r "github.com/kode4food/sputter/reader"
 )
 
@@ -17,9 +17,9 @@ const (
 
 func evalString(src string) a.Value {
 	l := r.NewLexer(string(src))
-	g := a.NewGlobalContext(b.Context)
-	tr := r.NewReader(g, l)
-	return r.EvalReader(a.ChildContext(g), tr)
+	c := a.NewEvalContext()
+	tr := r.NewReader(c, l)
+	return r.EvalReader(c, tr)
 }
 
 func main() {

@@ -42,13 +42,11 @@ func define(d *functionDefinition) *a.Function {
 
 func defun(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 3)
-	g := c.Globals()
+	g := a.GetNamespace(a.UserDomain)
 
 	i := args.Iterate()
-
 	fv, _ := i.Next()
 	fn := a.AssertSymbol(fv).Name
-
 	av, _ := i.Next()
 	an := a.AssertSequence(av)
 

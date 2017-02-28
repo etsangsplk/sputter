@@ -4,7 +4,8 @@ import a "github.com/kode4food/sputter/api"
 
 func defvar(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
-	g := c.Globals()
+	g := a.GetNamespace(a.UserDomain)
+
 	i := args.Iterate()
 	s, _ := i.Next()
 	n := s.(*a.Symbol).Name
