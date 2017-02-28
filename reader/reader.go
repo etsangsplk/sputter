@@ -122,6 +122,7 @@ func (r *tokenReader) list(m mode) a.Value {
 	}
 	return first()
 }
+
 func (r *tokenReader) function(t *Token) (*a.Function, bool) {
 	if t.Type != Identifier {
 		return nil, false
