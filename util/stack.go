@@ -1,12 +1,14 @@
 package util
 
-import a "github.com/kode4food/sputter/api"
+// Value allows the Stack to take anything
+type Value interface {
+}
 
 // Stack is your standard Stack interface
 type Stack interface {
-	Push(v a.Value)
-	Peek() (v a.Value, ok bool)
-	Pop() (v a.Value, ok bool)
+	Push(v Value)
+	Peek() (v Value, ok bool)
+	Pop() (v Value, ok bool)
 }
 
 // basicStack implements a non-concurrent Stack
@@ -15,7 +17,7 @@ type basicStack struct {
 }
 
 type entry struct {
-	value a.Value
+	value Value
 	next  *entry
 }
 
@@ -25,7 +27,7 @@ func NewStack() Stack {
 }
 
 // Push a Value onto the Stack
-func (s *basicStack) Push(v a.Value) {
+func (s *basicStack) Push(v Value) {
 	if s.head == nil {
 		s.head = &entry{v, nil}
 		return
@@ -34,7 +36,7 @@ func (s *basicStack) Push(v a.Value) {
 }
 
 // Peek the head of the Stack
-func (s *basicStack) Peek() (a.Value, bool) {
+func (s *basicStack) Peek() (Value, bool) {
 	e := s.head
 	if e != nil {
 		return e.value, true
@@ -43,7 +45,7 @@ func (s *basicStack) Peek() (a.Value, bool) {
 }
 
 // Pop the head of the Stack
-func (s *basicStack) Pop() (a.Value, bool) {
+func (s *basicStack) Pop() (Value, bool) {
 	e := s.head
 	if e != nil {
 		s.head = e.next
