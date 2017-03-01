@@ -1,16 +1,16 @@
-package api_test
+package util_test
 
 import (
 	"testing"
 
-	s "github.com/kode4food/sputter/api"
+	u "github.com/kode4food/sputter/util"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestStack(t *testing.T) {
 	a := assert.New(t)
 
-	st := s.NewStack()
+	st := u.NewStack()
 
 	v, ok := st.Peek()
 	a.Equal(nil, v, "1st peek is nil")

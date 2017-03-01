@@ -1,6 +1,9 @@
 package builtins
 
-import a "github.com/kode4food/sputter/api"
+import (
+	a "github.com/kode4food/sputter/api"
+	u "github.com/kode4food/sputter/util"
+)
 
 // NonCons is thrown when you call car/cdr on a non-Cons
 const NonCons = "Value is not a Cons cell"
@@ -33,7 +36,7 @@ func cdr(c a.Context, args a.Sequence) a.Value {
 }
 
 func list(c a.Context, args a.Sequence) a.Value {
-	s := a.NewStack()
+	s := u.NewStack()
 	i := args.Iterate()
 	for v, ok := i.Next(); ok; v, ok = i.Next() {
 		s.Push(a.Eval(c, v))
