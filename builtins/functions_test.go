@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	s "github.com/kode4food/sputter/api"
+	"math/big"
 )
 
 func TestFunction(t *testing.T) {
@@ -45,4 +46,9 @@ func TestLambda(t *testing.T) {
 
 func TestBadLambda(t *testing.T) {
 	testBadCode(t, `(lambda 99 "hello")`, s.ExpectedSequence)
+}
+
+func TestApply(t *testing.T) {
+	testCode(t, `(apply + [1 2 3])`, big.NewFloat(6))
+	testBadCode(t, `(apply 32 [1 2 3])`, s.ExpectedFunction)
 }

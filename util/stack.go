@@ -1,14 +1,14 @@
 package util
 
-// Value allows the Stack to take anything
-type Value interface {
+// value allows the Stack to take anything
+type value interface {
 }
 
 // Stack is your standard Stack interface
 type Stack interface {
-	Push(v Value)
-	Peek() (v Value, ok bool)
-	Pop() (v Value, ok bool)
+	Push(v value)
+	Peek() (v value, ok bool)
+	Pop() (v value, ok bool)
 }
 
 // basicStack implements a non-concurrent Stack
@@ -17,7 +17,7 @@ type basicStack struct {
 }
 
 type entry struct {
-	value Value
+	value value
 	next  *entry
 }
 
@@ -27,7 +27,7 @@ func NewStack() Stack {
 }
 
 // Push a Value onto the Stack
-func (s *basicStack) Push(v Value) {
+func (s *basicStack) Push(v value) {
 	if s.head == nil {
 		s.head = &entry{v, nil}
 		return
@@ -36,7 +36,7 @@ func (s *basicStack) Push(v Value) {
 }
 
 // Peek the head of the Stack
-func (s *basicStack) Peek() (Value, bool) {
+func (s *basicStack) Peek() (value, bool) {
 	e := s.head
 	if e != nil {
 		return e.value, true
@@ -45,7 +45,7 @@ func (s *basicStack) Peek() (Value, bool) {
 }
 
 // Pop the head of the Stack
-func (s *basicStack) Pop() (Value, bool) {
+func (s *basicStack) Pop() (value, bool) {
 	e := s.head
 	if e != nil {
 		s.head = e.next

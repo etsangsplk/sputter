@@ -74,7 +74,19 @@ func lambda(c a.Context, args a.Sequence) a.Value {
 	})
 }
 
+func apply(c a.Context, args a.Sequence) a.Value {
+	a.AssertArity(args, 2)
+	i := args.Iterate()
+	fv, _ := i.Next()
+	av, _ := i.Next()
+	if f, ok := a.ResolveAsFunction(c, fv); ok {
+		return f.Apply(c, a.AssertSequence(av))
+	}
+	panic(a.ExpectedFunction)
+}
+
 func init() {
 	a.PutFunction(Context, &a.Function{Name: "defun", Apply: defun})
 	a.PutFunction(Context, &a.Function{Name: "lambda", Apply: lambda})
+	a.PutFunction(Context, &a.Function{Name: "apply", Apply: apply})
 }

@@ -28,7 +28,8 @@ that will change rapidly.  The current built-in forms are:
 
   * Control and Branching: `if`, `cond`, `quote`, `do`
   * Numeric: `+`, `-`, `*`, `/`, `=`, `<`, `<=`, `>`, `>=`
-  * Variables and Functions: `defvar`, `let`, `defun`, `lambda`
+  * Variables: `defvar`, `let`
+  * Functions: `defun`, `lambda`, `apply`
   * Predicates: `eq`, `nil?`, `list?`
   * Lists: `list`, `cons`, `car`, `cdr`, `first`, `second`, `third`
   * I/O: `print`, `println`
