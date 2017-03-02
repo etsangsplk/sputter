@@ -81,3 +81,11 @@ func AssertNumeric(v Value) *big.Float {
 	}
 	panic(ExpectedNumeric)
 }
+
+// AssertFunction will cast a Value into a Function or explode violently
+func AssertFunction(v Value) *Function {
+	if r, ok := v.(*Function); ok {
+		return r
+	}
+	panic(ExpectedFunction)
+}

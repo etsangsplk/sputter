@@ -50,5 +50,11 @@ func TestBadLambda(t *testing.T) {
 
 func TestApply(t *testing.T) {
 	testCode(t, `(apply + [1 2 3])`, big.NewFloat(6))
+	testCode(t, `
+		(apply
+			(lambda [x y z] (+ x y z))
+			[1 2 3])
+	`, big.NewFloat(6))
+	
 	testBadCode(t, `(apply 32 [1 2 3])`, s.ExpectedFunction)
 }

@@ -79,9 +79,8 @@ func apply(c a.Context, args a.Sequence) a.Value {
 	i := args.Iterate()
 	fv, _ := i.Next()
 	av, _ := i.Next()
-	if f, ok := a.ResolveAsFunction(c, fv); ok {
-		return f.Apply(c, a.AssertSequence(av))
-	}
+	f := a.AssertFunction(a.Eval(c, fv))
+	return f.Apply(c, a.AssertSequence(av))
 	panic(a.ExpectedFunction)
 }
 
