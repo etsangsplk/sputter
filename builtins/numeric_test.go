@@ -35,6 +35,11 @@ func TestCompare(t *testing.T) {
 	testCode(t, `(= 1 2)`, s.False)
 	testCode(t, `(= 1 1 1 1 2 1 1 1)`, s.False)
 
+	testCode(t, `(!= 1 1)`, s.False)
+	testCode(t, `(!= 1 1 1 1 '1 1 1)`, s.False)
+	testCode(t, `(!= 1 2)`, s.True)
+	testCode(t, `(!= 1 1 1 1 2 1 1 1)`, s.True)
+
 	testCode(t, `(> 1 1)`, s.False)
 	testCode(t, `(> 2 1)`, s.True)
 	testCode(t, `(> 1 2)`, s.False)

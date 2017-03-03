@@ -40,7 +40,7 @@ func define(d *functionDefinition) *a.Function {
 	}
 }
 
-func defun(c a.Context, args a.Sequence) a.Value {
+func defn(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 3)
 	g := a.GetNamespace(a.UserDomain)
 
@@ -61,7 +61,7 @@ func defun(c a.Context, args a.Sequence) a.Value {
 	return d
 }
 
-func lambda(c a.Context, args a.Sequence) a.Value {
+func fn(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 	i := args.Iterate()
 	av, _ := i.Next()
@@ -81,11 +81,10 @@ func apply(c a.Context, args a.Sequence) a.Value {
 	av, _ := i.Next()
 	f := a.AssertFunction(a.Eval(c, fv))
 	return f.Apply(c, a.AssertSequence(av))
-	panic(a.ExpectedFunction)
 }
 
 func init() {
-	a.PutFunction(Context, &a.Function{Name: "defun", Apply: defun})
-	a.PutFunction(Context, &a.Function{Name: "lambda", Apply: lambda})
+	a.PutFunction(Context, &a.Function{Name: "defn", Apply: defn})
+	a.PutFunction(Context, &a.Function{Name: "fn", Apply: fn})
 	a.PutFunction(Context, &a.Function{Name: "apply", Apply: apply})
 }

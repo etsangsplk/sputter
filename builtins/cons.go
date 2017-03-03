@@ -5,9 +5,6 @@ import (
 	u "github.com/kode4food/sputter/util"
 )
 
-// NonCons is thrown when you call car/cdr on a non-Cons
-const NonCons = "Value is not a Cons cell"
-
 func cons(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 2)
 	i := args.Iterate()
@@ -20,11 +17,7 @@ func fetchCons(c a.Context, args a.Sequence) *a.Cons {
 	a.AssertArity(args, 1)
 	i := args.Iterate()
 	v, _ := i.Next()
-	r := a.Eval(c, v)
-	if cons, ok := r.(*a.Cons); ok {
-		return cons
-	}
-	panic(NonCons)
+	return a.AssertCons(a.Eval(c, v))
 }
 
 func car(c a.Context, args a.Sequence) a.Value {
@@ -65,28 +58,34 @@ func isList(c a.Context, args a.Sequence) a.Value {
 	return a.False
 }
 
+func fetchSequence(c a.Context, args a.Sequence) a.Sequence {
+	a.AssertArity(args, 1)
+	i := args.Iterate()
+	v, _ := i.Next()
+	return a.AssertSequence(a.Eval(c, v))
+}
+
 func first(c a.Context, args a.Sequence) a.Value {
-	a.AssertArity(args, 1)
-	return fetchCons(c, args).Get(0)
+	s := fetchSequence(c, args)
+	i := s.Iterate()
+	v, _ := i.Next()
+	return a.Eval(c, v)
 }
 
-func second(c a.Context, args a.Sequence) a.Value {
-	a.AssertArity(args, 1)
-	return fetchCons(c, args).Get(1)
-}
-
-func third(c a.Context, args a.Sequence) a.Value {
-	a.AssertArity(args, 1)
-	return fetchCons(c, args).Get(2)
+func rest(c a.Context, args a.Sequence) a.Value {
+	s := fetchSequence(c, args)
+	i := s.Iterate()
+	i.Next()
+	return i.Rest()
 }
 
 func init() {
 	a.PutFunction(Context, &a.Function{Name: "cons", Apply: cons})
 	a.PutFunction(Context, &a.Function{Name: "car", Apply: car})
 	a.PutFunction(Context, &a.Function{Name: "cdr", Apply: cdr})
+
 	a.PutFunction(Context, &a.Function{Name: "list", Apply: list})
 	a.PutFunction(Context, &a.Function{Name: "list?", Apply: isList})
 	a.PutFunction(Context, &a.Function{Name: "first", Apply: first})
-	a.PutFunction(Context, &a.Function{Name: "second", Apply: second})
-	a.PutFunction(Context, &a.Function{Name: "third", Apply: third})
+	a.PutFunction(Context, &a.Function{Name: "rest", Apply: rest})
 }

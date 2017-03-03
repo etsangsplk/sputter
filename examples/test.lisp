@@ -1,66 +1,64 @@
 ;;;; this is a comment at the top of the file
 
-(defvar blah "blah is stored")
+(def blah "blah is stored")
 
-(defun say-hello [name]
-  (println "Hello there, " name "!"))
+(defn say-hello [name]
+  (println "Hello there," name "!"))
 
 (let (a 10)   ; this is an EOL comment
-  (user:println "a = " a)
+  (println "a =" a)
   (let (a 20)
-    (println "a = " a))
-  (println "a = " a))
+    (println "a =" a))
+  (println "a =" a))
 
-(println
-  "hello "
+(prn
+  "hello"
   (*
     (+ 9.5e+2 1.0)
     2.0)
-  " "
   '(blah 99 "yep"))
 
 (say-hello "Thom")
 
-(println
-  "howdy "
-  "ho "
+(prn
+  "howdy"
+  "ho"
   blah)
 
 (if (list? [1])
-  (println "yep")
-  (println "nope"))
+  (prn "yep")
+  (prn "nope"))
 
-(println [1 2 3])
+(prn [1 2 3])
 
 (sputter:let
   [a (cons 1 (list 2 3 4))]
-  (println a))
+  (prn a))
 
-(println (car '(1 2 3)))
-(println (cdr '(1 2 3)))
+(prn (car '(1 2 3)))
+(prn (cdr '(1 2 3)))
 
-(println (list 'a 'b 'c))
-(println (cons 50 (cons 99 100)))
-(println (cons 100 200))
+(prn (list 'a 'b 'c))
+(prn (cons 50 (cons 99 100)))
+(prn (cons 100 200))
 
-(defvar r (cons 3 (cons 4 (cons 9 10))))
-(println (car r))
-(println (cdr r))
-(println (cdr (cdr r)))
-(println (cdr (cdr (cdr r))))
+(def r (cons 3 (cons 4 (cons 9 10))))
+(prn (car r))
+(prn (cdr r))
+(prn (cdr (cdr r)))
+(prn (cdr (cdr (cdr r))))
 
-(println (first r))
-(println (second r))
-(println (third r))
+(prn (first r))
+(prn (rest r))
 
-(defvar s (cons 4 (cons 9 10)))
-(println (first s))
-(println (second s))
+(def s (cons 4 (cons 9 10)))
+(prn (first s))
+(prn (rest s))
 
-(println -10)
+(prn -10)
 
-(println (if (> 10 9 8 7 6) "hello" "not"))
-(println (if (nil? false nil ()) "nil" "no"))
+(prn (if (> 10 9 8 7 6) "hello" "not"))
+(prn (if (nil? false nil ()) "nil" "no"))
 
-(sputter:defmacro foo [x] (println "hello"))
-(println "macro: " (foo blah))
+(sputter:defmacro foo [x] (prn "hello"))
+(prn "macro:" (foo blah))

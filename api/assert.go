@@ -58,6 +58,14 @@ func AssertArityRange(args Sequence, min int, max int) {
 	}
 }
 
+// AssertCons will cast a Value into a Cons or explode violently
+func AssertCons(v Value) *Cons {
+	if r, ok := v.(*Cons); ok {
+		return r
+	}
+	panic(ExpectedCons)
+}
+
 // AssertSequence will cast a Value into a Sequence or explode violently
 func AssertSequence(v Value) Sequence {
 	if r, ok := v.(Sequence); ok {

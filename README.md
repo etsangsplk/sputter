@@ -27,12 +27,13 @@ I just started this thing and it's still pretty fragile, but
 that will change rapidly.  The current built-in forms are:
 
   * Control and Branching: `if`, `cond`, `quote`, `do`
-  * Numeric: `+`, `-`, `*`, `/`, `=`, `<`, `<=`, `>`, `>=`
-  * Variables: `defvar`, `let`
-  * Functions: `defun`, `lambda`, `apply`
-  * Predicates: `eq`, `nil?`, `list?`
-  * Lists: `list`, `cons`, `car`, `cdr`, `first`, `second`, `third`
-  * I/O: `print`, `println`
+  * Numeric: `+`, `-`, `*`, `/`, `!=`, `=`, `<`, `<=`, `>`, `>=`
+  * Variables: `def`, `let`
+  * Functions: `defn`, `fn`, `apply`
+  * Predicates: `eq`, `!eq`, `nil?`, `list?`
+  * Cons Cells: `cons`, `car`, `cdr`
+  * Lists: `list`, `first`, `rest`
+  * I/O: `pr`, `prn`, `print`, `println`
 
 ## License (MIT License)
 Copyright (c) 2017 Thomas S. Bradford

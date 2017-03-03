@@ -2,7 +2,7 @@ package builtins
 
 import a "github.com/kode4food/sputter/api"
 
-func defvar(c a.Context, args a.Sequence) a.Value {
+func def(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 	g := a.GetNamespace(a.UserDomain)
 
@@ -35,6 +35,6 @@ func let(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	a.PutFunction(Context, &a.Function{Name: "defvar", Apply: defvar})
+	a.PutFunction(Context, &a.Function{Name: "def", Apply: def})
 	a.PutFunction(Context, &a.Function{Name: "let", Apply: let})
 }

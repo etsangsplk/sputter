@@ -12,6 +12,14 @@ func identical(c a.Context, args a.Sequence) a.Value {
 	}
 	return a.False
 }
+
+func notIdentical(c a.Context, args a.Sequence) a.Value {
+	if identical(c, args) == a.True {
+		return a.False
+	}
+	return a.True
+}
+
 func isNil(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
 	i := args.Iterate()
@@ -25,5 +33,6 @@ func isNil(c a.Context, args a.Sequence) a.Value {
 
 func init() {
 	a.PutFunction(Context, &a.Function{Name: "eq", Apply: identical})
+	a.PutFunction(Context, &a.Function{Name: "!eq", Apply: notIdentical})
 	a.PutFunction(Context, &a.Function{Name: "nil?", Apply: isNil})
 }

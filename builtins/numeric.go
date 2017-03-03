@@ -76,6 +76,13 @@ func eq(c a.Context, args a.Sequence) a.Value {
 	})
 }
 
+func neq(c a.Context, args a.Sequence) a.Value {
+	if eq(c, args) == a.True {
+		return a.False
+	}
+	return a.True
+}
+
 func gt(c a.Context, args a.Sequence) a.Value {
 	return compare(c, args, func(p *big.Float, n *big.Float) bool {
 		return p.Cmp(n) == 1
@@ -108,6 +115,7 @@ func init() {
 	a.PutFunction(Context, &a.Function{Name: "*", Apply: mul})
 	a.PutFunction(Context, &a.Function{Name: "/", Apply: div})
 	a.PutFunction(Context, &a.Function{Name: "=", Apply: eq})
+	a.PutFunction(Context, &a.Function{Name: "!=", Apply: neq})
 	a.PutFunction(Context, &a.Function{Name: ">", Apply: gt})
 	a.PutFunction(Context, &a.Function{Name: ">=", Apply: gte})
 	a.PutFunction(Context, &a.Function{Name: "<", Apply: lt})

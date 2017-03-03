@@ -10,13 +10,13 @@ import (
 func TestVariables(t *testing.T) {
 	s.GetNamespace(s.UserDomain).Delete("foo")
 	testCode(t, `
-		(defvar foo "bar")
+		(def foo "bar")
 		foo
 	`, "bar")
 
 	s.GetNamespace(s.UserDomain).Delete("return-local")
 	testCode(t, `
-		(defun return-local []
+		(defn return-local []
 			(let [foo "local"] foo))
 		(return-local)
 	`, "local")
@@ -25,7 +25,7 @@ func TestVariables(t *testing.T) {
 func TestScopeQualifiers(t *testing.T) {
 	s.GetNamespace(s.UserDomain).Delete("foo")
 	testCode(t, `
-		(defvar foo 99)
+		(def foo 99)
 		(let [foo 100]
 			(+ foo user:foo))
 	`, big.NewFloat(199))

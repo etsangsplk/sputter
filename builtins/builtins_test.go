@@ -70,9 +70,12 @@ func TestQuote(t *testing.T) {
 func TestDo(t *testing.T) {
 	testCode(t, `
 		(do
-			(println "hello")
-			(println "there")
-			99)
+			55
+		    (pr "hello")
+			(prn "there" 45)
+			(print "how ")
+			(println "are" 66)
+			(if true 99 33))
 	`, big.NewFloat(99))
 }
 
