@@ -5,8 +5,8 @@ const defaultContextSize = 16
 // Context represents a variable scope
 type Context interface {
 	Get(n Name) (v Value, bound bool)
-	Put(n Name, v Value) Context
-	Delete(n Name) Context
+	Put(n Name, v Value)
+	Delete(n Name)
 }
 
 // basicContext is the most basic Context implementation
@@ -34,7 +34,10 @@ func ChildContext(parent Context) Context {
 // NewEvalContext creates a new Context instance that
 // chains up to the UserDomain Context for special forms
 func NewEvalContext() Context {
-	return ChildContext(GetNamespace(UserDomain))
+	ns := GetNamespace(UserDomain)
+	c := ChildContext(ns)
+	c.Put(ContextDomain, UserDomain)
+	return c
 }
 
 // Get retrieves a value from the Context chain
@@ -49,17 +52,15 @@ func (c *basicContext) Get(n Name) (Value, bool) {
 }
 
 // Put puts a Value into the immediate Context
-func (c *basicContext) Put(n Name, v Value) Context {
+func (c *basicContext) Put(n Name, v Value) {
 	c.vars[n] = v
-	return c
 }
 
-func (c *basicContext) Delete(n Name) Context {
+func (c *basicContext) Delete(n Name) {
 	delete(c.vars, n)
-	return c
 }
 
 // PutFunction puts a Function into a Context by its name
-func PutFunction(c Context, f *Function) Context {
-	return c.Put(f.Name, f)
+func PutFunction(c Context, f *Function) {
+	c.Put(f.Name, f)
 }

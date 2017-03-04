@@ -18,6 +18,32 @@ func TestSymbol(t *testing.T) {
 	a.Equal("howdy", sym.String(), "symbol name returned")
 }
 
+func TestQualifiedSymbol(t *testing.T) {
+	a := assert.New(t)
+
+	ns1 := s.GetNamespace("ns1")
+	ns1.Put("foo", "foo-ns1")
+	ns2 := s.GetNamespace("ns2")
+	ns2.Put("foo", "foo-ns2")
+
+	empty := s.NewContext()
+
+	c1 := s.NewContext()
+	c1.Put(s.ContextDomain, s.Name("ns1"))
+
+	c2 := s.NewContext()
+	c2.Put(s.ContextDomain, s.Name("ns2"))
+
+	s1 := s.ParseSymbol("ns1:foo")
+	s2 := s.ParseSymbol("ns2:foo")
+	s3 := s.ParseSymbol("foo")
+
+	a.Equal("foo-ns1", s1.Eval(empty))
+	a.Equal("foo-ns2", s2.Eval(empty))
+	a.Equal("foo-ns1", s3.Eval(c1))
+	a.Equal("foo-ns2", s3.Eval(c2))
+}
+
 func TestSymbolInterning(t *testing.T) {
 	a := assert.New(t)
 

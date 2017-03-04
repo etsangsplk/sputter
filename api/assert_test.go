@@ -90,11 +90,19 @@ func TestAssertNumeric(t *testing.T) {
 	defer expectError(a, s.ExpectedNumeric)
 	s.AssertNumeric(&s.Symbol{})
 }
- 
+
 func TestAssertFunction(t *testing.T) {
 	a := assert.New(t)
 	s.AssertFunction(&s.Function{})
 
 	defer expectError(a, s.ExpectedFunction)
 	s.AssertFunction(&s.Symbol{})
+}
+
+func TestAssertName(t *testing.T) {
+	a := assert.New(t)
+	s.AssertName(s.Name("hello"))
+
+	defer expectError(a, s.ExpectedName)
+	s.AssertName("hello")
 }

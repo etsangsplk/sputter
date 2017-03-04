@@ -13,6 +13,9 @@ const (
 
 	// LocalDomain stores local vars
 	LocalDomain = Name("")
+
+	// ContextDomain identifies the scoped domain
+	ContextDomain = Name("*ns*")
 )
 
 // GetNamespace returns the Context for the specified domain.
@@ -23,6 +26,15 @@ func GetNamespace(domain Name) Context {
 	ns := NewContext()
 	namespaces[domain] = ns
 	return ns
+}
+
+// GetContextNamespace resolves the Namespace based on its Context
+func GetContextNamespace(c Context) Context {
+	if v, ok := c.Get(ContextDomain); ok {
+		ns := AssertName(v)
+		return GetNamespace(ns)
+	}
+	return GetNamespace(UserDomain)
 }
 
 func init() {

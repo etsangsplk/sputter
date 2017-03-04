@@ -67,13 +67,13 @@ func (s *Symbol) Qualified() Name {
 func (s *Symbol) Resolve(c Context) (Value, bool) {
 	n := s.Name
 	d := s.Domain
-	if d == LocalDomain {
-		if r, ok := c.Get(s.Name); ok {
-			return r, true
-		}
+	if d != LocalDomain {
+		return GetNamespace(d).Get(n)
 	}
-	ns := GetNamespace(d)
-	return ns.Get(n)
+	if r, ok := c.Get(s.Name); ok {
+		return r, true
+	}
+	return GetContextNamespace(c).Get(n)
 }
 
 // Eval makes a Symbol Evaluable
