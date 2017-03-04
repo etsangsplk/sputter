@@ -68,23 +68,26 @@ type stateMap []stateMapEntry
 var states stateMap
 
 func init() {
+	re := regexp.MustCompile
 	states = stateMap{
-		{regexp.MustCompile(`^$`), endState(EndOfFile)},
-		{regexp.MustCompile(`^;[^\n]*[\n]`), tokenState(Comment)},
-		{regexp.MustCompile(`^\s+`), tokenState(Whitespace)},
-		{regexp.MustCompile(`^\(`), tokenState(ListStart)},
-		{regexp.MustCompile(`^\[`), tokenState(VectorStart)},
-		{regexp.MustCompile(`^\)`), tokenState(ListEnd)},
-		{regexp.MustCompile(`^]`), tokenState(VectorEnd)},
-		{regexp.MustCompile(`^'`), tokenState(QuoteMarker)},
+		{re(`^$`), endState(EndOfFile)},
+		{re(`^;[^\n]*[\n]`), tokenState(Comment)},
+		{re(`^\s+`), tokenState(Whitespace)},
+		{re(`^\(`), tokenState(ListStart)},
+		{re(`^\[`), tokenState(VectorStart)},
+		{re(`^\)`), tokenState(ListEnd)},
+		{re(`^]`), tokenState(VectorEnd)},
+		{re(`^'`), tokenState(QuoteMarker)},
 
-		{regexp.MustCompile(`^"(\\.|[^"])*"`), stringState},
-		{regexp.MustCompile(`^[+-]?[1-9]\d*/[1-9]\d*`), ratioState},
-		{regexp.MustCompile(`^[+-]?(0|[1-9]\d*(\.\d+)?([eE][+-]?\d+)?)`), numberState},
+		{re(`^"(\\.|[^"])*"`), stringState},
+		{re(`^[+-]?[1-9]\d*/[1-9]\d*`), ratioState},
+		{re(`^[+-]?(0|[1-9]\d*(\.\d+)?([eE][+-]?\d+)?)`), numberState},
 
-		{regexp.MustCompile(`^(([^():\[\]\s]+)?:)?[^():\[\]\s]+`), tokenState(Identifier)},
+		{re(`^[^:()\[\]\s]+:[^:()\[\]\s]+`), tokenState(Identifier)},
+		{re(`^:[^:()\[\]\s]+`), tokenState(Identifier)},
+		{re(`^[^:()\[\]\s]+`), tokenState(Identifier)},
 
-		{regexp.MustCompile(`^.`), endState(Error)},
+		{re(`^.`), endState(Error)},
 	}
 }
 
