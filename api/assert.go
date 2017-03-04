@@ -27,6 +27,9 @@ const (
 	// ExpectedSymbol is thrown when a Value is not a Symbol
 	ExpectedSymbol = "value is not a symbol"
 
+	// ExpectedUnqualifiedSymbol is thrown when a Symbol should be unqualified
+	ExpectedUnqualifiedSymbol = "value is not an unqualified symbol"
+
 	// ExpectedNumeric is thrown when a Value is not a Number
 	ExpectedNumeric = "value is not numeric"
 
@@ -83,6 +86,17 @@ func AssertSymbol(v Value) *Symbol {
 		return r
 	}
 	panic(ExpectedSymbol)
+}
+
+// AssertUnqualifiedSymbol will cast a Value into an
+// Unqualified Symbol or explode violently
+func AssertUnqualifiedSymbol(v Value) *Symbol {
+	if r, ok := v.(*Symbol); ok {
+		if r.Domain == LocalDomain {
+			return r
+		}
+	}
+	panic(ExpectedUnqualifiedSymbol)
 }
 
 // AssertNumeric will cast a Value into a Numeric or explode violently

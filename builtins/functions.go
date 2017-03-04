@@ -42,7 +42,7 @@ func define(d *functionDefinition) *a.Function {
 
 func defn(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 3)
-	g := a.GetNamespace(a.UserDomain)
+	g := a.GetContextNamespace(c)
 
 	i := args.Iterate()
 	fv, _ := i.Next()
