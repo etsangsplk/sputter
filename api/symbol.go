@@ -84,6 +84,14 @@ func (s *Symbol) Eval(c Context) Value {
 	panic(UnknownSymbol)
 }
 
+func (s *Symbol) Namespace(c Context) Value {
+	d := s.Domain
+	if d != LocalDomain {
+		return GetNamespace(d)
+	}
+	return GetContextNamespace(c)
+}
+
 func (s *Symbol) String() string {
 	return string(s.Qualified())
 }

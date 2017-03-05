@@ -13,7 +13,7 @@ func argNames(n a.Sequence) []a.Name {
 	an := []a.Name{}
 	i := n.Iterate()
 	for e, ok := i.Next(); ok; e, ok = i.Next() {
-		v := a.AssertSymbol(e).Name
+		v := a.AssertUnqualified(e).Name
 		an = append(an, v)
 	}
 	return an
@@ -46,7 +46,7 @@ func defn(c a.Context, args a.Sequence) a.Value {
 
 	i := args.Iterate()
 	fv, _ := i.Next()
-	fn := a.AssertSymbol(fv).Name
+	fn := a.AssertUnqualified(fv).Name
 	av, _ := i.Next()
 	an := a.AssertSequence(av)
 

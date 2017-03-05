@@ -18,5 +18,5 @@ func TestNamespaces(t *testing.T) {
 
 	testBadCode(t, `
 		(ns foo:bar)
-	`, a.ExpectedUnqualifiedSymbol)
+	`, a.ExpectedUnqualified)
 }

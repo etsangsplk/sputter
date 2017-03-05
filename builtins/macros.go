@@ -10,7 +10,7 @@ func defmacro(_ a.Context, form a.Sequence) a.Value {
 	i.Next() // skip the form name
 
 	mv, _ := i.Next()
-	mn := a.AssertSymbol(mv).Name
+	mn := a.AssertUnqualified(mv).Name
 
 	av, _ := i.Next()
 	an := a.AssertSequence(av)

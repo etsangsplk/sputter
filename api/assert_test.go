@@ -75,20 +75,12 @@ func TestAssertSequence(t *testing.T) {
 	s.AssertSequence(big.NewFloat(99))
 }
 
-func TestAssertSymbol(t *testing.T) {
+func TestAssertUnqualified(t *testing.T) {
 	a := assert.New(t)
-	s.AssertSymbol(&s.Symbol{})
+	s.AssertUnqualified(&s.Symbol{Name: "hello"})
 
-	defer expectError(a, s.ExpectedSymbol)
-	s.AssertSymbol(big.NewFloat(99))
-}
-
-func TestAssertUnqualifiedSymbol(t *testing.T) {
-	a := assert.New(t)
-	s.AssertUnqualifiedSymbol(&s.Symbol{Name: "hello"})
-
-	defer expectError(a, s.ExpectedUnqualifiedSymbol)
-	s.AssertUnqualifiedSymbol(&s.Symbol{Name: "hello", Domain: "bar"})
+	defer expectError(a, s.ExpectedUnqualified)
+	s.AssertUnqualified(&s.Symbol{Name: "hello", Domain: "bar"})
 }
 
 func TestAssertNumeric(t *testing.T) {

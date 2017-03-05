@@ -38,6 +38,10 @@ func TestQualifiedSymbol(t *testing.T) {
 	s2 := s.ParseSymbol("ns2:foo")
 	s3 := s.ParseSymbol("foo")
 
+	a.Equal(s.GetNamespace("ns1"), s1.Namespace(c2))
+	a.Equal(s.GetNamespace("ns2"), s2.Namespace(c1))
+	a.Equal(s.GetNamespace("ns1"), s3.Namespace(c1))
+
 	a.Equal("foo-ns1", s1.Eval(empty))
 	a.Equal("foo-ns2", s2.Eval(empty))
 	a.Equal("foo-ns1", s3.Eval(c1))

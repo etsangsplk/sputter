@@ -24,11 +24,8 @@ const (
 	// ExpectedSequence is thrown when a Value is not a Sequence
 	ExpectedSequence = "value is not a list or vector"
 
-	// ExpectedSymbol is thrown when a Value is not a Symbol
-	ExpectedSymbol = "value is not a symbol"
-
-	// ExpectedUnqualifiedSymbol is thrown when a Symbol should be unqualified
-	ExpectedUnqualifiedSymbol = "value is not an unqualified symbol"
+	// ExpectedUnqualified is thrown when a Value is not a unqualified Symbol
+	ExpectedUnqualified = "value is not a symbol"
 
 	// ExpectedNumeric is thrown when a Value is not a Number
 	ExpectedNumeric = "value is not numeric"
@@ -80,23 +77,15 @@ func AssertSequence(v Value) Sequence {
 	panic(ExpectedSequence)
 }
 
-// AssertSymbol will cast a Value into a Symbol or explode violently
-func AssertSymbol(v Value) *Symbol {
-	if r, ok := v.(*Symbol); ok {
-		return r
-	}
-	panic(ExpectedSymbol)
-}
-
-// AssertUnqualifiedSymbol will cast a Value into an
-// Unqualified Symbol or explode violently
-func AssertUnqualifiedSymbol(v Value) *Symbol {
+// AssertUnqualified will cast a Value into a Symbol and explode
+// violently if it's qualified with a domain
+func AssertUnqualified(v Value) *Symbol {
 	if r, ok := v.(*Symbol); ok {
 		if r.Domain == LocalDomain {
 			return r
 		}
 	}
-	panic(ExpectedUnqualifiedSymbol)
+	panic(ExpectedUnqualified)
 }
 
 // AssertNumeric will cast a Value into a Numeric or explode violently

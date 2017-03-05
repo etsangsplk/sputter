@@ -5,8 +5,8 @@ import a "github.com/kode4food/sputter/api"
 func ns(c a.Context, args a.Sequence) a.Value {
 	i := args.Iterate()
 	v, _ := i.Next()
-	s := a.AssertUnqualifiedSymbol(v)
-	c.Put(a.ContextDomain, s.Name)
+	n := a.AssertUnqualified(v).Name
+	c.Put(a.ContextDomain, n)
 	return a.GetContextNamespace(c)
 }
 

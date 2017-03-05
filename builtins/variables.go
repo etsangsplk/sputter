@@ -8,7 +8,7 @@ func def(c a.Context, args a.Sequence) a.Value {
 
 	i := args.Iterate()
 	s, _ := i.Next()
-	n := s.(*a.Symbol).Name
+	n := a.AssertUnqualified(s).Name
 	_, b := g.Get(n)
 	if !b {
 		v, _ := i.Next()
@@ -25,7 +25,7 @@ func let(c a.Context, args a.Sequence) a.Value {
 
 	bi := b.(a.Sequence).Iterate()
 	for s, ok := bi.Next(); ok; s, ok = bi.Next() {
-		n := s.(*a.Symbol).Name
+		n := a.AssertUnqualified(s).Name
 		if v, ok := bi.Next(); ok {
 			l.Put(n, a.Eval(l, v))
 		}
