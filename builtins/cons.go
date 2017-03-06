@@ -80,12 +80,12 @@ func rest(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	a.PutFunction(Context, &a.Function{Name: "cons", Apply: cons})
-	a.PutFunction(Context, &a.Function{Name: "car", Apply: car})
-	a.PutFunction(Context, &a.Function{Name: "cdr", Apply: cdr})
+	putFunction(BuiltInNamespace, &a.Function{Name: "cons", Apply: cons})
+	putFunction(BuiltInNamespace, &a.Function{Name: "car", Apply: car})
+	putFunction(BuiltInNamespace, &a.Function{Name: "cdr", Apply: cdr})
 
-	a.PutFunction(Context, &a.Function{Name: "list", Apply: list})
+	putFunction(BuiltInNamespace, &a.Function{Name: "list", Apply: list})
 	registerPredicate(&a.Function{Name: "list?", Apply: isList})
-	a.PutFunction(Context, &a.Function{Name: "first", Apply: first})
-	a.PutFunction(Context, &a.Function{Name: "rest", Apply: rest})
+	putFunction(BuiltInNamespace, &a.Function{Name: "first", Apply: first})
+	putFunction(BuiltInNamespace, &a.Function{Name: "rest", Apply: rest})
 }

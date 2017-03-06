@@ -33,8 +33,8 @@ const (
 	// ExpectedFunction is thrown when a Value is not a Function
 	ExpectedFunction = "value is not a function"
 
-	// ExpectedName is thrown when a Value is not a Name
-	ExpectedName = "value is not a name"
+	// ExpectedNamespace is thrown when a Value is not a Namespace
+	ExpectedNamespace = "value is not a namespace"
 )
 
 // AssertArity explodes if the arg count doesn't match provided arity
@@ -104,10 +104,10 @@ func AssertFunction(v Value) *Function {
 	panic(ExpectedFunction)
 }
 
-// AssertName will cast a Value to a Name or explode violently
-func AssertName(v Value) Name {
-	if r, ok := v.(Name); ok {
+// AssertNamespace will cast a Value to a Namespace or explode violently
+func AssertNamespace(v Value) Namespace {
+	if r, ok := v.(Namespace); ok {
 		return r
 	}
-	panic(ExpectedName)
+	panic(ExpectedNamespace)
 }

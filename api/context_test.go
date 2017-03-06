@@ -52,14 +52,6 @@ func TestNestedContext(t *testing.T) {
 	assertGet(a, c2, "foo", "bar")
 }
 
-func TestPutFunction(t *testing.T) {
-	a := assert.New(t)
-
-	c := s.NewContext()
-	s.PutFunction(c, helloThere)
-	assertGet(a, c, "hello", helloThere)
-}
-
 func TestEvalContext(t *testing.T) {
 	a := assert.New(t)
 

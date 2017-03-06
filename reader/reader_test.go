@@ -210,8 +210,9 @@ func TestEvaluable(t *testing.T) {
 func TestBuiltIns(t *testing.T) {
 	a := assert.New(t)
 
-	b := s.NewContext()
-	s.PutFunction(b, &s.Function{
+	b := s.NewEvalContext()
+	ns := s.GetContextNamespace(b)
+	ns.Put("hello", &s.Function{
 		Name: "hello",
 		Apply: func(c s.Context, args s.Sequence) s.Value {
 			return "there"
@@ -227,8 +228,9 @@ func TestBuiltIns(t *testing.T) {
 func TestReaderPrepare(t *testing.T) {
 	a := assert.New(t)
 
-	b := s.NewContext()
-	s.PutFunction(b, &s.Function{
+	b := s.NewEvalContext()
+	ns := s.GetContextNamespace(b)
+	ns.Put("hello", &s.Function{
 		Name: "hello",
 		Prepare: func(c s.Context, l s.Sequence) s.Value {
 			if _, ok := l.(*s.Cons); !ok {

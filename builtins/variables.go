@@ -4,15 +4,14 @@ import a "github.com/kode4food/sputter/api"
 
 func def(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
-	g := a.GetContextNamespace(c)
+	ns := a.GetContextNamespace(c)
 
 	i := args.Iterate()
 	s, _ := i.Next()
 	n := a.AssertUnqualified(s).Name
-	_, b := g.Get(n)
-	if !b {
+	if _, b := ns.Get(n); !b {
 		v, _ := i.Next()
-		g.Put(n, a.Eval(c, v))
+		ns.Put(n, a.Eval(c, v))
 	}
 	return s
 }
@@ -35,6 +34,6 @@ func let(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	a.PutFunction(Context, &a.Function{Name: "def", Apply: def})
-	a.PutFunction(Context, &a.Function{Name: "let", Apply: let})
+	putFunction(BuiltInNamespace, &a.Function{Name: "def", Apply: def})
+	putFunction(BuiltInNamespace, &a.Function{Name: "let", Apply: let})
 }

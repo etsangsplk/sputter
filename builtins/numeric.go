@@ -110,14 +110,14 @@ func lte(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	a.PutFunction(Context, &a.Function{Name: "+", Apply: add})
-	a.PutFunction(Context, &a.Function{Name: "-", Apply: sub})
-	a.PutFunction(Context, &a.Function{Name: "*", Apply: mul})
-	a.PutFunction(Context, &a.Function{Name: "/", Apply: div})
-	a.PutFunction(Context, &a.Function{Name: "=", Apply: eq})
-	a.PutFunction(Context, &a.Function{Name: "!=", Apply: neq})
-	a.PutFunction(Context, &a.Function{Name: ">", Apply: gt})
-	a.PutFunction(Context, &a.Function{Name: ">=", Apply: gte})
-	a.PutFunction(Context, &a.Function{Name: "<", Apply: lt})
-	a.PutFunction(Context, &a.Function{Name: "<=", Apply: lte})
+	putFunction(BuiltInNamespace, &a.Function{Name: "+", Apply: add})
+	putFunction(BuiltInNamespace, &a.Function{Name: "-", Apply: sub})
+	putFunction(BuiltInNamespace, &a.Function{Name: "*", Apply: mul})
+	putFunction(BuiltInNamespace, &a.Function{Name: "/", Apply: div})
+	putFunction(BuiltInNamespace, &a.Function{Name: "=", Apply: eq})
+	putFunction(BuiltInNamespace, &a.Function{Name: "!=", Apply: neq})
+	putFunction(BuiltInNamespace, &a.Function{Name: ">", Apply: gt})
+	putFunction(BuiltInNamespace, &a.Function{Name: ">=", Apply: gte})
+	putFunction(BuiltInNamespace, &a.Function{Name: "<", Apply: lt})
+	putFunction(BuiltInNamespace, &a.Function{Name: "<=", Apply: lte})
 }

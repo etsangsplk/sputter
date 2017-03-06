@@ -59,6 +59,7 @@
 
 (prn (if (> 10 9 8 7 6) "hello" "not"))
 (prn (if (nil? false nil ()) "nil" "no"))
+(prn (if (!nil? false nil ()) "nil" "no"))
 
 (sputter:defmacro foo [x] (prn "hello"))
 (prn "macro:" (foo blah))

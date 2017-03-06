@@ -99,10 +99,10 @@ func TestAssertFunction(t *testing.T) {
 	s.AssertFunction(&s.Symbol{})
 }
 
-func TestAssertName(t *testing.T) {
+func TestAssertNamespace(t *testing.T) {
 	a := assert.New(t)
-	s.AssertName(s.Name("hello"))
+	s.AssertNamespace(s.GetNamespace("hello"))
 
-	defer expectError(a, s.ExpectedName)
-	s.AssertName("hello")
+	defer expectError(a, s.ExpectedNamespace)
+	s.AssertNamespace("hello")
 }

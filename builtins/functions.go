@@ -42,7 +42,7 @@ func define(d *functionDefinition) *a.Function {
 
 func defn(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 3)
-	g := a.GetContextNamespace(c)
+	ns := a.GetContextNamespace(c)
 
 	i := args.Iterate()
 	fv, _ := i.Next()
@@ -57,7 +57,7 @@ func defn(c a.Context, args a.Sequence) a.Value {
 		closure:  c,
 	})
 
-	a.PutFunction(g, d)
+	putFunction(ns, d)
 	return d
 }
 
@@ -84,7 +84,7 @@ func apply(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	a.PutFunction(Context, &a.Function{Name: "defn", Apply: defn})
-	a.PutFunction(Context, &a.Function{Name: "fn", Apply: fn})
-	a.PutFunction(Context, &a.Function{Name: "apply", Apply: apply})
+	putFunction(BuiltInNamespace, &a.Function{Name: "defn", Apply: defn})
+	putFunction(BuiltInNamespace, &a.Function{Name: "fn", Apply: fn})
+	putFunction(BuiltInNamespace, &a.Function{Name: "apply", Apply: apply})
 }

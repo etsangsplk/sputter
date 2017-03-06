@@ -3,8 +3,8 @@ package builtins
 import a "github.com/kode4food/sputter/api"
 
 func registerPredicate(f *a.Function) {
-	a.PutFunction(Context, f)
-	a.PutFunction(Context, &a.Function{
+	putFunction(BuiltInNamespace, f)
+	putFunction(BuiltInNamespace, &a.Function{
 		Name: "!" + f.Name,
 		Apply: func(c a.Context, args a.Sequence) a.Value {
 			r := f.Apply(c, args)

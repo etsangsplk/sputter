@@ -16,10 +16,6 @@ type Symbol struct {
 	Domain Name
 }
 
-type symbolMap map[Name](*Symbol)
-
-var interned = make(symbolMap, 4096)
-
 func qualifiedName(name Name, domain Name) Name {
 	if domain == LocalDomain {
 		return name
@@ -27,17 +23,10 @@ func qualifiedName(name Name, domain Name) Name {
 	return Name(domain + ":" + name)
 }
 
-// NewQualifiedSymbol returns a Symbol by Name. This Symbol will be
-// interned, meaning that there will be only on instance for each
-// Name, allowing the Symbols to be compared by reference
+// NewQualifiedSymbol returns a Qualified Symbol for a specific domain
 func NewQualifiedSymbol(name Name, domain Name) *Symbol {
-	k := qualifiedName(name, domain)
-	if s, ok := interned[k]; ok {
-		return s
-	}
-	s := &Symbol{Name: name, Domain: domain}
-	interned[k] = s
-	return s
+	ns := GetNamespace(domain)
+	return ns.Intern(name)
 }
 
 // NewLocalSymbol returns a Symbol from the local domain
@@ -52,7 +41,7 @@ func ParseSymbol(n Name) *Symbol {
 	case 2:
 		return NewQualifiedSymbol(Name(s[1]), Name(s[0]))
 	case 1:
-		return NewQualifiedSymbol(Name(s[0]), LocalDomain)
+		return NewLocalSymbol(Name(s[0]))
 	default:
 		panic(BadQualifiedName)
 	}
@@ -84,7 +73,8 @@ func (s *Symbol) Eval(c Context) Value {
 	panic(UnknownSymbol)
 }
 
-func (s *Symbol) Namespace(c Context) Value {
+// Namespace returns the Namespace for this Symbol
+func (s *Symbol) Namespace(c Context) Namespace {
 	d := s.Domain
 	if d != LocalDomain {
 		return GetNamespace(d)

@@ -6,10 +6,11 @@ func ns(c a.Context, args a.Sequence) a.Value {
 	i := args.Iterate()
 	v, _ := i.Next()
 	n := a.AssertUnqualified(v).Name
-	c.Put(a.ContextDomain, n)
-	return a.GetContextNamespace(c)
+	ns := a.GetNamespace(n)
+	c.Put(a.ContextDomain, ns)
+	return ns
 }
 
 func init() {
-	a.PutFunction(Context, &a.Function{Name: "ns", Apply: ns})
+	putFunction(BuiltInNamespace, &a.Function{Name: "ns", Apply: ns})
 }

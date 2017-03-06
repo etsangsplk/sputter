@@ -55,8 +55,8 @@ func _println(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	a.PutFunction(Context, &a.Function{Name: "pr", Apply: pr})
-	a.PutFunction(Context, &a.Function{Name: "prn", Apply: prn})
-	a.PutFunction(Context, &a.Function{Name: "print", Apply: _print})
-	a.PutFunction(Context, &a.Function{Name: "println", Apply: _println})
+	putFunction(BuiltInNamespace, &a.Function{Name: "pr", Apply: pr})
+	putFunction(BuiltInNamespace, &a.Function{Name: "prn", Apply: prn})
+	putFunction(BuiltInNamespace, &a.Function{Name: "print", Apply: _print})
+	putFunction(BuiltInNamespace, &a.Function{Name: "println", Apply: _println})
 }

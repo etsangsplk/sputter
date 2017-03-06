@@ -2,9 +2,9 @@ package builtins
 
 import a "github.com/kode4food/sputter/api"
 
-func defmacro(_ a.Context, form a.Sequence) a.Value {
+func defmacro(c a.Context, form a.Sequence) a.Value {
 	a.AssertArity(form, 4)
-	g := a.GetNamespace(a.UserDomain)
+	ns := a.GetContextNamespace(c)
 
 	i := form.Iterate()
 	i.Next() // skip the form name
@@ -26,12 +26,12 @@ func defmacro(_ a.Context, form a.Sequence) a.Value {
 			return b
 		},
 	}
-	a.PutFunction(g, m)
+	putFunction(ns, m)
 	return m
 }
 
 func init() {
-	a.PutFunction(Context, &a.Function{
+	putFunction(BuiltInNamespace, &a.Function{
 		Name:    "defmacro",
 		Prepare: defmacro,
 		Data:    true,

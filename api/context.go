@@ -1,6 +1,6 @@
 package api
 
-const defaultContextSize = 16
+const defaultContextEntries = 16
 
 // Context represents a variable scope
 type Context interface {
@@ -19,7 +19,7 @@ type basicContext struct {
 func NewContext() Context {
 	return &basicContext{
 		parent: nil,
-		vars:   make(Variables, defaultContextSize),
+		vars:   make(Variables, defaultContextEntries),
 	}
 }
 
@@ -27,7 +27,7 @@ func NewContext() Context {
 func ChildContext(parent Context) Context {
 	return &basicContext{
 		parent: parent,
-		vars:   make(Variables, defaultContextSize),
+		vars:   make(Variables, defaultContextEntries),
 	}
 }
 
@@ -36,7 +36,7 @@ func ChildContext(parent Context) Context {
 func NewEvalContext() Context {
 	ns := GetNamespace(UserDomain)
 	c := ChildContext(ns)
-	c.Put(ContextDomain, UserDomain)
+	c.Put(ContextDomain, ns)
 	return c
 }
 
@@ -56,11 +56,7 @@ func (c *basicContext) Put(n Name, v Value) {
 	c.vars[n] = v
 }
 
+// Delete removes a Value from the immediate Context
 func (c *basicContext) Delete(n Name) {
 	delete(c.vars, n)
-}
-
-// PutFunction puts a Function into a Context by its name
-func PutFunction(c Context, f *Function) {
-	c.Put(f.Name, f)
 }

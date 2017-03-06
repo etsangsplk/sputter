@@ -29,10 +29,10 @@ func TestQualifiedSymbol(t *testing.T) {
 	empty := s.NewContext()
 
 	c1 := s.NewContext()
-	c1.Put(s.ContextDomain, s.Name("ns1"))
+	c1.Put(s.ContextDomain, s.GetNamespace("ns1"))
 
 	c2 := s.NewContext()
-	c2.Put(s.ContextDomain, s.Name("ns2"))
+	c2.Put(s.ContextDomain, s.GetNamespace("ns2"))
 
 	s1 := s.ParseSymbol("ns1:foo")
 	s2 := s.ParseSymbol("ns2:foo")
