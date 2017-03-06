@@ -30,7 +30,7 @@ that will change rapidly.  The current built-in forms are:
   * Numeric: `+`, `-`, `*`, `/`, `!=`, `=`, `<`, `<=`, `>`, `>=`
   * Variables: `def`, `let`, `ns`
   * Functions: `defn`, `fn`, `apply`
-  * Predicates: `eq`, `!eq`, `nil?`, `list?`
+  * Predicates: `eq`, `!eq`, `nil?`, `!nil?`, `list?`, `!list?`
   * Cons Cells: `cons`, `car`, `cdr`
   * Lists: `list`, `first`, `rest`
   * I/O: `pr`, `prn`, `print`, `println`

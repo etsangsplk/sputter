@@ -2,6 +2,20 @@ package builtins
 
 import a "github.com/kode4food/sputter/api"
 
+func registerPredicate(f *a.Function) {
+	a.PutFunction(Context, f)
+	a.PutFunction(Context, &a.Function{
+		Name: "!" + f.Name,
+		Apply: func(c a.Context, args a.Sequence) a.Value {
+			r := f.Apply(c, args)
+			if r == a.True {
+				return a.False
+			}
+			return a.True
+		},
+	})
+}
+
 func identical(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 2)
 	i := args.Iterate()
@@ -11,13 +25,6 @@ func identical(c a.Context, args a.Sequence) a.Value {
 		return a.True
 	}
 	return a.False
-}
-
-func notIdentical(c a.Context, args a.Sequence) a.Value {
-	if identical(c, args) == a.True {
-		return a.False
-	}
-	return a.True
 }
 
 func isNil(c a.Context, args a.Sequence) a.Value {
@@ -32,7 +39,6 @@ func isNil(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	a.PutFunction(Context, &a.Function{Name: "eq", Apply: identical})
-	a.PutFunction(Context, &a.Function{Name: "!eq", Apply: notIdentical})
-	a.PutFunction(Context, &a.Function{Name: "nil?", Apply: isNil})
+	registerPredicate(&a.Function{Name: "eq", Apply: identical})
+	registerPredicate(&a.Function{Name: "nil?", Apply: isNil})
 }
