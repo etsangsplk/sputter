@@ -4,7 +4,7 @@ import (
 	"math/big"
 	"testing"
 
-	s "github.com/kode4food/sputter/api"
+	a "github.com/kode4food/sputter/api"
 )
 
 func TestBasicNumeric(t *testing.T) {
@@ -25,41 +25,41 @@ func TestNestedNumeric(t *testing.T) {
 }
 
 func TestNonNumeric(t *testing.T) {
-	testBadCode(t, `(+ 99 "hello")`, s.ExpectedNumeric)
-	testBadCode(t, `(+ "hello")`, s.ExpectedNumeric)
+	testBadCode(t, `(+ 99 "hello")`, a.ExpectedNumeric)
+	testBadCode(t, `(+ "hello")`, a.ExpectedNumeric)
 }
 
 func TestCompare(t *testing.T) {
-	testCode(t, `(= 1 1)`, s.True)
-	testCode(t, `(= 1 1 1 1 '1 1 1)`, s.True)
-	testCode(t, `(= 1 2)`, s.False)
-	testCode(t, `(= 1 1 1 1 2 1 1 1)`, s.False)
+	testCode(t, `(= 1 1)`, a.True)
+	testCode(t, `(= 1 1 1 1 '1 1 1)`, a.True)
+	testCode(t, `(= 1 2)`, a.False)
+	testCode(t, `(= 1 1 1 1 2 1 1 1)`, a.False)
 
-	testCode(t, `(!= 1 1)`, s.False)
-	testCode(t, `(!= 1 1 1 1 '1 1 1)`, s.False)
-	testCode(t, `(!= 1 2)`, s.True)
-	testCode(t, `(!= 1 1 1 1 2 1 1 1)`, s.True)
+	testCode(t, `(!= 1 1)`, a.False)
+	testCode(t, `(!= 1 1 1 1 '1 1 1)`, a.False)
+	testCode(t, `(!= 1 2)`, a.True)
+	testCode(t, `(!= 1 1 1 1 2 1 1 1)`, a.True)
 
-	testCode(t, `(> 1 1)`, s.False)
-	testCode(t, `(> 2 1)`, s.True)
-	testCode(t, `(> 1 2)`, s.False)
-	testCode(t, `(> 1 2 3 4 5)`, s.False)
-	testCode(t, `(> 5 4 3 2 1)`, s.True)
-	testCode(t, `(>= 1 1)`, s.True)
-	testCode(t, `(>= 0 1)`, s.False)
-	testCode(t, `(>= 1 0)`, s.True)
+	testCode(t, `(> 1 1)`, a.False)
+	testCode(t, `(> 2 1)`, a.True)
+	testCode(t, `(> 1 2)`, a.False)
+	testCode(t, `(> 1 2 3 4 5)`, a.False)
+	testCode(t, `(> 5 4 3 2 1)`, a.True)
+	testCode(t, `(>= 1 1)`, a.True)
+	testCode(t, `(>= 0 1)`, a.False)
+	testCode(t, `(>= 1 0)`, a.True)
 
-	testCode(t, `(< 1 1)`, s.False)
-	testCode(t, `(< 2 1)`, s.False)
-	testCode(t, `(< 1 2)`, s.True)
-	testCode(t, `(< 1 2 3 4 5)`, s.True)
-	testCode(t, `(< 5 4 3 2 1)`, s.False)
-	testCode(t, `(<= 1 1)`, s.True)
-	testCode(t, `(<= 0 1)`, s.True)
-	testCode(t, `(<= 1 0)`, s.False)
+	testCode(t, `(< 1 1)`, a.False)
+	testCode(t, `(< 2 1)`, a.False)
+	testCode(t, `(< 1 2)`, a.True)
+	testCode(t, `(< 1 2 3 4 5)`, a.True)
+	testCode(t, `(< 5 4 3 2 1)`, a.False)
+	testCode(t, `(<= 1 1)`, a.True)
+	testCode(t, `(<= 0 1)`, a.True)
+	testCode(t, `(<= 1 0)`, a.False)
 }
 
 func TestBadCompare(t *testing.T) {
-	testBadCode(t, `(< 99 "hello")`, s.ExpectedNumeric)
-	testBadCode(t, `(< "hello" "there")`, s.ExpectedNumeric)
+	testBadCode(t, `(< 99 "hello")`, a.ExpectedNumeric)
+	testBadCode(t, `(< "hello" "there")`, a.ExpectedNumeric)
 }

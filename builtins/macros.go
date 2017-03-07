@@ -31,7 +31,7 @@ func defmacro(c a.Context, form a.Sequence) a.Value {
 }
 
 func init() {
-	putFunction(BuiltInNamespace, &a.Function{
+	putFunction(BuiltIns, &a.Function{
 		Name:    "defmacro",
 		Prepare: defmacro,
 		Data:    true,

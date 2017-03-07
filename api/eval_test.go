@@ -3,13 +3,13 @@ package api_test
 import (
 	"testing"
 
-	s "github.com/kode4food/sputter/api"
+	a "github.com/kode4food/sputter/api"
 	"github.com/stretchr/testify/assert"
 )
 
-var helloName = &s.Function{
+var helloName = &a.Function{
 	Name: "hello",
-	Apply: func(c s.Context, args s.Sequence) s.Value {
+	Apply: func(c a.Context, args a.Sequence) a.Value {
 		i := args.Iterate()
 		a, _ := i.Next()
 		v := evaluateToString(c, a)
@@ -17,28 +17,28 @@ var helloName = &s.Function{
 	},
 }
 
-func evaluateToString(c s.Context, v s.Value) string {
-	return s.String(s.Eval(c, v))
+func evaluateToString(c a.Context, v a.Value) string {
+	return a.String(a.Eval(c, v))
 }
 
 func TestEvaluate(t *testing.T) {
-	a := assert.New(t)
+	as := assert.New(t)
 
-	l := &s.Cons{Car: helloName, Cdr: s.NewList("World")}
-	c := s.NewContext()
-	r := s.Eval(c, l)
+	l := &a.Cons{Car: helloName, Cdr: a.NewList("World")}
+	c := a.NewContext()
+	r := a.Eval(c, l)
 
-	a.Equal("Hello, World!", r.(string), "good hello")
+	as.Equal("Hello, World!", r.(string), "good hello")
 }
 
 func TestEvaluateSequence(t *testing.T) {
-	a := assert.New(t)
+	as := assert.New(t)
 
-	s1 := &s.Cons{Car: helloName, Cdr: s.NewList("World")}
-	s2 := &s.Cons{Car: helloName, Cdr: s.NewList("Foo")}
-	l := &s.Cons{Car: s1, Cdr: s.NewList(s2)}
+	s1 := &a.Cons{Car: helloName, Cdr: a.NewList("World")}
+	s2 := &a.Cons{Car: helloName, Cdr: a.NewList("Foo")}
+	l := &a.Cons{Car: s1, Cdr: a.NewList(s2)}
 
-	c := s.NewContext()
-	r := s.EvalSequence(c, l)
-	a.Equal("Hello, Foo!", r.(string), "last result")
+	c := a.NewContext()
+	r := a.EvalSequence(c, l)
+	as.Equal("Hello, Foo!", r.(string), "last result")
 }

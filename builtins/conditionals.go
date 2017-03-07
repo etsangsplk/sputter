@@ -63,6 +63,6 @@ func _if(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	putFunction(BuiltInNamespace, &a.Function{Name: "cond", Prepare: cond})
-	putFunction(BuiltInNamespace, &a.Function{Name: "if", Apply: _if})
+	putFunction(BuiltIns, &a.Function{Name: "cond", Prepare: cond})
+	putFunction(BuiltIns, &a.Function{Name: "if", Apply: _if})
 }

@@ -1,5 +1,21 @@
 package api
 
+import "fmt"
+
+const (
+	// BadArity is thrown when a Function has a fixed arity
+	BadArity = "expected %d argument(s), got %d"
+
+	// BadMinimumArity is thrown when a Function has a minimum arity
+	BadMinimumArity = "expected at least %d argument(s), got %d"
+
+	// BadArityRange is thrown when a Function has an arity range
+	BadArityRange = "expected between %d and %d arguments, got %d"
+
+	// ExpectedFunction is thrown when a Value is not a Function
+	ExpectedFunction = "value is not a function"
+)
+
 // SequenceProcessor is the standard signature for a function that is
 // capable of transforming or validating a Sequence
 type SequenceProcessor func(Context, Sequence) Value
@@ -32,4 +48,36 @@ func ResolveAsFunction(c Context, v Value) (*Function, bool) {
 
 func (f *Function) String() string {
 	return string(f.Name)
+}
+
+// AssertArity explodes if the arg count doesn't match provided arity
+func AssertArity(args Sequence, arity int) {
+	c := Count(args)
+	if c != arity {
+		panic(fmt.Sprintf(BadArity, arity, c))
+	}
+}
+
+// AssertMinimumArity explodes if the arg count isn't at least arity
+func AssertMinimumArity(args Sequence, arity int) {
+	c := Count(args)
+	if c < arity {
+		panic(fmt.Sprintf(BadMinimumArity, arity, c))
+	}
+}
+
+// AssertArityRange explodes if the arg count isn't in the arity range
+func AssertArityRange(args Sequence, min int, max int) {
+	c := Count(args)
+	if c < min || c > max {
+		panic(fmt.Sprintf(BadArityRange, min, max, c))
+	}
+}
+
+// AssertFunction will cast a Value into a Function or explode violently
+func AssertFunction(v Value) *Function {
+	if r, ok := v.(*Function); ok {
+		return r
+	}
+	panic(ExpectedFunction)
 }

@@ -4,17 +4,19 @@ import (
 	"math/big"
 	"testing"
 
-	s "github.com/kode4food/sputter/api"
+	a "github.com/kode4food/sputter/api"
 )
 
 func TestVariables(t *testing.T) {
-	s.GetNamespace(s.UserDomain).Delete("foo")
+	ns := a.GetNamespace(a.UserDomain)
+	ns.Delete("foo")
+	ns.Delete("return-local")
+
 	testCode(t, `
 		(def foo "bar")
 		foo
 	`, "bar")
 
-	s.GetNamespace(s.UserDomain).Delete("return-local")
 	testCode(t, `
 		(defn return-local []
 			(let [foo "local"] foo))
@@ -23,7 +25,7 @@ func TestVariables(t *testing.T) {
 }
 
 func TestScopeQualifiers(t *testing.T) {
-	s.GetNamespace(s.UserDomain).Delete("foo")
+	a.GetNamespace(a.UserDomain).Delete("foo")
 	testCode(t, `
 		(def foo 99)
 		(let [foo 100]

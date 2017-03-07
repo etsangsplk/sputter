@@ -2,6 +2,17 @@ package api
 
 import "bytes"
 
+const (
+	// ExpectedCons is thrown when a Value is not a Cons cell
+	ExpectedCons = "value is not a cons cell"
+
+	// ExpectedList is thrown when a Value is not a Cons cell
+	ExpectedList = "value is not a list"
+
+	// ExpectedSequence is thrown when a Value is not a Sequence
+	ExpectedSequence = "value is not a list or vector"
+)
+
 // Nil represents an empty Cons and the terminator of a List
 var Nil = &Cons{nil, nil}
 
@@ -126,4 +137,20 @@ func (c *Cons) String() string {
 		return c.listString()
 	}
 	return c.consString()
+}
+
+// AssertCons will cast a Value into a Cons or explode violently
+func AssertCons(v Value) *Cons {
+	if r, ok := v.(*Cons); ok {
+		return r
+	}
+	panic(ExpectedCons)
+}
+
+// AssertSequence will cast a Value into a Sequence or explode violently
+func AssertSequence(v Value) Sequence {
+	if r, ok := v.(Sequence); ok {
+		return r
+	}
+	panic(ExpectedSequence)
 }

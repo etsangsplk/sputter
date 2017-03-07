@@ -5,10 +5,14 @@ import (
 	"math/big"
 	"testing"
 
-	s "github.com/kode4food/sputter/api"
+	a "github.com/kode4food/sputter/api"
 )
 
 func TestFunction(t *testing.T) {
+	ns := a.GetNamespace(a.UserDomain)
+	ns.Delete("say-hello")
+	ns.Delete("identity")
+
 	testCode(t, `
 		(defn say-hello [] "Hello, World!")
 		(say-hello)
@@ -21,21 +25,26 @@ func TestFunction(t *testing.T) {
 }
 
 func TestBadFunction(t *testing.T) {
-	testBadCode(t, `(defn blah [name 99 bad] (name))`, s.ExpectedUnqualified)
-	testBadCode(t, `(defn blah 99 (name))`, s.ExpectedSequence)
-	testBadCode(t, `(defn 99 [x y] (+ x y))`, s.ExpectedUnqualified)
+	testBadCode(t, `(defn blah [name 99 bad] (name))`, a.ExpectedUnqualified)
+	testBadCode(t, `(defn blah 99 (name))`, a.ExpectedSequence)
+	testBadCode(t, `(defn 99 [x y] (+ x y))`, a.ExpectedUnqualified)
 }
 
 func TestBadFunctionArity(t *testing.T) {
-	testBadCode(t, `(defn blah)`, fmt.Sprintf(s.BadMinimumArity, 3, 1))
+	a.GetNamespace(a.UserDomain).Delete("identity")
+
+	testBadCode(t, `(defn blah)`, fmt.Sprintf(a.BadMinimumArity, 3, 1))
 
 	testBadCode(t, `
 		(defn identity [value] value)
 		(identity)
-	`, fmt.Sprintf(s.BadArity, 1, 0))
+	`, fmt.Sprintf(a.BadArity, 1, 0))
 }
 
 func TestLambda(t *testing.T) {
+	ns := a.GetNamespace(a.UserDomain)
+	ns.Delete("call")
+
 	testCode(t, `
 		(defn call [func] (func))
 		(let [greeting "hello"]
@@ -45,7 +54,7 @@ func TestLambda(t *testing.T) {
 }
 
 func TestBadLambda(t *testing.T) {
-	testBadCode(t, `(fn 99 "hello")`, s.ExpectedSequence)
+	testBadCode(t, `(fn 99 "hello")`, a.ExpectedSequence)
 }
 
 func TestApply(t *testing.T) {
@@ -56,5 +65,5 @@ func TestApply(t *testing.T) {
 			[1 2 3])
 	`, big.NewFloat(6))
 
-	testBadCode(t, `(apply 32 [1 2 3])`, s.ExpectedFunction)
+	testBadCode(t, `(apply 32 [1 2 3])`, a.ExpectedFunction)
 }

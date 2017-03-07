@@ -1,9 +1,17 @@
 package api
 
-import "fmt"
+import (
+	"fmt"
+	"math/big"
+)
 
-// NonFinite is thrown if count is called against a non-finite sequence
-const NonFinite = "sequence is not finite and can't be counted"
+const (
+	// ExpectedFinite is thrown if when taking count of a non-finite sequence
+	ExpectedFinite = "sequence is not finite and can't be counted"
+
+	// ExpectedNumeric is thrown when a Value is not a Number
+	ExpectedNumeric = "value is not numeric"
+)
 
 var (
 	// True is a value that represents any value other than False
@@ -55,7 +63,7 @@ func Count(s Sequence) int {
 	if f, ok := s.(Finite); ok {
 		return f.Count()
 	}
-	panic(NonFinite)
+	panic(ExpectedFinite)
 }
 
 // String either calls the String() method or tries to convert
@@ -64,4 +72,12 @@ func String(v Value) string {
 		return s.String()
 	}
 	return v.(string)
+}
+
+// AssertNumeric will cast a Value into a Numeric or explode violently
+func AssertNumeric(v Value) *big.Float {
+	if r, ok := v.(*big.Float); ok {
+		return r
+	}
+	panic(ExpectedNumeric)
 }

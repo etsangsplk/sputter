@@ -63,3 +63,8 @@
 
 (sputter:defmacro foo [x] (prn "hello"))
 (prn "macro:" (foo blah))
+
+(with-ns foo
+  (defn bar [x y] (+ x y)))
+
+(prn (ns foo))

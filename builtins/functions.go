@@ -84,7 +84,7 @@ func apply(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	putFunction(BuiltInNamespace, &a.Function{Name: "defn", Apply: defn})
-	putFunction(BuiltInNamespace, &a.Function{Name: "fn", Apply: fn})
-	putFunction(BuiltInNamespace, &a.Function{Name: "apply", Apply: apply})
+	putFunction(BuiltIns, &a.Function{Name: "defn", Apply: defn})
+	putFunction(BuiltIns, &a.Function{Name: "fn", Apply: fn})
+	putFunction(BuiltIns, &a.Function{Name: "apply", Apply: apply})
 }

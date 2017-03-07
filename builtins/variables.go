@@ -9,10 +9,8 @@ func def(c a.Context, args a.Sequence) a.Value {
 	i := args.Iterate()
 	s, _ := i.Next()
 	n := a.AssertUnqualified(s).Name
-	if _, b := ns.Get(n); !b {
-		v, _ := i.Next()
-		ns.Put(n, a.Eval(c, v))
-	}
+	v, _ := i.Next()
+	ns.Put(n, a.Eval(c, v))
 	return s
 }
 
@@ -34,6 +32,6 @@ func let(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	putFunction(BuiltInNamespace, &a.Function{Name: "def", Apply: def})
-	putFunction(BuiltInNamespace, &a.Function{Name: "let", Apply: let})
+	putFunction(BuiltIns, &a.Function{Name: "def", Apply: def})
+	putFunction(BuiltIns, &a.Function{Name: "let", Apply: let})
 }

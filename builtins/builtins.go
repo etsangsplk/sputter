@@ -2,8 +2,8 @@ package builtins
 
 import a "github.com/kode4food/sputter/api"
 
-// BuiltInNamespace is a special Namespace for built-in identifiers
-var BuiltInNamespace = a.GetNamespace(a.BuiltInDomain)
+// BuiltIns is a special Namespace for built-in identifiers
+var BuiltIns = a.GetNamespace(a.BuiltInDomain)
 
 // PutFunction puts a Function into a Namespace by its Name
 func putFunction(ns a.Namespace, f *a.Function) {
@@ -22,9 +22,9 @@ func quote(_ a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	putFunction(BuiltInNamespace, &a.Function{Name: "do", Apply: do})
+	putFunction(BuiltIns, &a.Function{Name: "do", Apply: do})
 
-	putFunction(BuiltInNamespace, &a.Function{
+	putFunction(BuiltIns, &a.Function{
 		Name:  "quote",
 		Apply: quote,
 		Data:  true,

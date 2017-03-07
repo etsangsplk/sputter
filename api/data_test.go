@@ -4,25 +4,25 @@ import (
 	"math/big"
 	"testing"
 
-	s "github.com/kode4food/sputter/api"
+	a "github.com/kode4food/sputter/api"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestAtom(t *testing.T) {
-	a := assert.New(t)
+	as := assert.New(t)
 
-	v := &s.Atom{Label: "hello"}
-	c := s.NewContext()
-	a.Equal(v, v.Eval(c), "own value returned")
-	a.Equal("hello", v.String(), "label returned")
+	v := &a.Atom{Label: "hello"}
+	c := a.NewContext()
+	as.Equal(v, v.Eval(c), "own value returned")
+	as.Equal("hello", v.String(), "label returned")
 }
 
 func TestQuote(t *testing.T) {
-	a := assert.New(t)
+	as := assert.New(t)
 
 	f := big.NewFloat(99.0)
-	q := &s.Quote{Value: f}
-	c := s.NewContext()
-	a.Equal(f, q.Eval(c), "wrapped value returned")
-	a.Equal("99", q.String(), "string returned")
+	q := &a.Quote{Value: f}
+	c := a.NewContext()
+	as.Equal(f, q.Eval(c), "wrapped value returned")
+	as.Equal("99", q.String(), "string returned")
 }

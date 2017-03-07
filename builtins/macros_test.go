@@ -3,11 +3,11 @@ package builtins_test
 import (
 	"testing"
 
-	s "github.com/kode4food/sputter/api"
+	a "github.com/kode4food/sputter/api"
 )
 
 func TestMacroReplace(t *testing.T) {
-	s.GetNamespace(s.UserDomain).Delete("foo")
+	a.GetNamespace(a.UserDomain).Delete("foo")
 	testCode(t, `
         (defmacro foo [] "hello")
         (foo)

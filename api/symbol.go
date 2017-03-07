@@ -8,7 +8,12 @@ const (
 
 	// BadQualifiedName is thrown when a name has too many components
 	BadQualifiedName = "expected a valid qualified name"
+
+	// ExpectedUnqualified is thrown when a Value is not a unqualified Symbol
+	ExpectedUnqualified = "value is not a symbol"
 )
+
+var keywords = make(Variables, 4096)
 
 // Symbol is an Identifier that can be resolved
 type Symbol struct {
@@ -84,4 +89,39 @@ func (s *Symbol) Namespace(c Context) Namespace {
 
 func (s *Symbol) String() string {
 	return string(s.Qualified())
+}
+
+// Keyword is an Atom that represents a Name for mapping purposes
+type Keyword struct {
+	name Name
+}
+
+// NewKeyword returns an interned instance of a Keyword
+func NewKeyword(n Name) *Keyword {
+	if r, ok := keywords[n]; ok {
+		return r.(*Keyword)
+	}
+	r := &Keyword{name: n}
+	keywords[n] = r
+	return r
+}
+
+// Eval makes Keyword Evaluable
+func (k *Keyword) Eval(c Context) Value {
+	return k
+}
+
+func (k *Keyword) String() string {
+	return ":" + string(k.name)
+}
+
+// AssertUnqualified will cast a Value into a Symbol and explode
+// violently if it's qualified with a domain
+func AssertUnqualified(v Value) *Symbol {
+	if r, ok := v.(*Symbol); ok {
+		if r.Domain == LocalDomain {
+			return r
+		}
+	}
+	panic(ExpectedUnqualified)
 }

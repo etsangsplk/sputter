@@ -1,65 +1,76 @@
 package api_test
 
 import (
+	"fmt"
 	"testing"
 
-	s "github.com/kode4food/sputter/api"
+	a "github.com/kode4food/sputter/api"
 	"github.com/stretchr/testify/assert"
 )
 
-func assertGet(a *assert.Assertions, c s.Context, n s.Name, cv s.Value) {
+func assertGet(as *assert.Assertions, c a.Context, n a.Name, cv a.Value) {
 	v, ok := c.Get(n)
-	a.True(ok)
-	a.Equal(cv, v)
+	as.True(ok)
+	as.Equal(cv, v)
 }
 
-func assertMissing(a *assert.Assertions, c s.Context, n s.Name) {
+func assertMissing(as *assert.Assertions, c a.Context, n a.Name) {
 	v, ok := c.Get(n)
-	a.False(ok)
-	a.Equal(s.Nil, v)
+	as.False(ok)
+	as.Equal(a.Nil, v)
 }
 
 func TestCreateContext(t *testing.T) {
-	a := assert.New(t)
-	c := s.NewContext()
-	a.NotNil(c)
+	as := assert.New(t)
+	c := a.NewContext()
+	as.NotNil(c)
 }
 
 func TestPopulateContext(t *testing.T) {
-	a := assert.New(t)
-	c := s.NewContext()
+	as := assert.New(t)
+	c := a.NewContext()
 	c.Put("hello", "there")
-	assertGet(a, c, "hello", "there")
+	assertGet(as, c, "hello", "there")
 }
 
 func TestNestedContext(t *testing.T) {
-	a := assert.New(t)
+	as := assert.New(t)
 
-	c1 := s.NewContext()
+	c1 := a.NewContext()
 	c1.Put("hello", "there")
 	c1.Put("howdy", "ho")
 
-	c2 := s.ChildContext(c1)
+	c2 := a.ChildContext(c1)
 	c2.Put("hello", "you")
 	c2.Put("foo", "bar")
 
-	assertGet(a, c1, "hello", "there")
-	assertGet(a, c1, "howdy", "ho")
-	assertMissing(a, c1, "foo")
+	assertGet(as, c1, "hello", "there")
+	assertGet(as, c1, "howdy", "ho")
+	assertMissing(as, c1, "foo")
 
-	assertGet(a, c2, "hello", "you")
-	assertGet(a, c2, "howdy", "ho")
-	assertGet(a, c2, "foo", "bar")
+	assertGet(as, c2, "hello", "you")
+	assertGet(as, c2, "howdy", "ho")
+	assertGet(as, c2, "foo", "bar")
 }
 
 func TestEvalContext(t *testing.T) {
-	a := assert.New(t)
+	as := assert.New(t)
 
-	uc := s.GetNamespace(s.UserDomain)
+	uc := a.GetNamespace(a.UserDomain)
 	uc.Delete("foo")
 	uc.Put("foo", 99)
 
-	ec := s.NewEvalContext()
+	ec := a.NewEvalContext()
 	v, _ := ec.Get("foo")
-	a.Equal(99, v, "EvalContext chain works")
+	as.Equal(99, v, "EvalContext chain works")
+}
+
+func TestRebind(t *testing.T) {
+	as := assert.New(t)
+
+	c := a.NewContext()
+	c.Put("hello", "there")
+
+	defer expectError(as, fmt.Sprintf(a.AlreadyBound, "hello"))
+	c.Put("hello", "twice")
 }

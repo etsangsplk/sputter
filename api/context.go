@@ -1,6 +1,11 @@
 package api
 
+import "fmt"
+
 const defaultContextEntries = 16
+
+// AlreadyBound is thrown when an attempt is made to rebind a Name
+const AlreadyBound = "'%s' is already bound in this context"
 
 // Context represents a variable scope
 type Context interface {
@@ -53,6 +58,9 @@ func (c *basicContext) Get(n Name) (Value, bool) {
 
 // Put puts a Value into the immediate Context
 func (c *basicContext) Put(n Name, v Value) {
+	if _, ok := c.vars[n]; ok {
+		panic(fmt.Sprintf(AlreadyBound, n))
+	}
 	c.vars[n] = v
 }
 

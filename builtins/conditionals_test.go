@@ -5,11 +5,11 @@ import (
 	"math/big"
 	"testing"
 
-	s "github.com/kode4food/sputter/api"
+	a "github.com/kode4food/sputter/api"
 )
 
 func TestCond(t *testing.T) {
-	testCode(t, `(cond)`, s.Nil)
+	testCode(t, `(cond)`, a.Nil)
 
 	testCode(t, `
 		(cond
@@ -23,23 +23,23 @@ func TestCond(t *testing.T) {
 		(cond
 			(false "goodbye")
 			(nil   "nope"))
-	`, s.Nil)
+	`, a.Nil)
 
 	testBadCode(t, `
 		(cond
 			(true "hello")
 			99)
-	`, s.ExpectedSequence)
+	`, a.ExpectedSequence)
 }
 
 func TestBadCond(t *testing.T) {
-	testBadCode(t, `(cond 99)`, s.ExpectedSequence)
+	testBadCode(t, `(cond 99)`, a.ExpectedSequence)
 
 	testBadCode(t, `
 		(cond
 			(false "hello")
 			99)
-	`, s.ExpectedSequence)
+	`, a.ExpectedSequence)
 }
 
 func TestIf(t *testing.T) {
@@ -51,5 +51,5 @@ func TestIf(t *testing.T) {
 }
 
 func TestBadIfArity(t *testing.T) {
-	testBadCode(t, `(if)`, fmt.Sprintf(s.BadArityRange, 2, 3, 0))
+	testBadCode(t, `(if)`, fmt.Sprintf(a.BadArityRange, 2, 3, 0))
 }

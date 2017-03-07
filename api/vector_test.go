@@ -3,45 +3,45 @@ package api_test
 import (
 	"testing"
 
-	s "github.com/kode4food/sputter/api"
+	a "github.com/kode4food/sputter/api"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestVector(t *testing.T) {
-	a := assert.New(t)
+	as := assert.New(t)
 
-	v := &s.Vector{"hello", "how", "are", "you?"}
-	a.Equal(4, v.Count(), "vector count is correct")
-	a.Equal(4, s.Count(v), "vector general count is correct")
-	a.Equal("are", v.Get(2), "get by index is correct")
-	a.Equal("[hello how are you?]", v.String(), "string version is good")
+	v := &a.Vector{"hello", "how", "are", "you?"}
+	as.Equal(4, v.Count(), "vector count is correct")
+	as.Equal(4, a.Count(v), "vector general count is correct")
+	as.Equal("are", v.Get(2), "get by index is correct")
+	as.Equal("[hello how are you?]", v.String(), "string version is good")
 }
 
 type testEvaluable struct{}
 
-func (t *testEvaluable) Eval(c s.Context) s.Value {
+func (t *testEvaluable) Eval(c a.Context) a.Value {
 	return "are"
 }
 
 func TestVectorEval(t *testing.T) {
-	a := assert.New(t)
+	as := assert.New(t)
 
-	v := &s.Vector{"hello", "how", &testEvaluable{}, "you?"}
-	c := s.NewContext()
+	v := &a.Vector{"hello", "how", &testEvaluable{}, "you?"}
+	c := a.NewContext()
 	r := v.Eval(c)
 
-	if _, ok := r.(s.Finite); !ok {
-		a.Fail("result is not a finite sequence")
+	if _, ok := r.(a.Finite); !ok {
+		as.Fail("result is not a finite sequence")
 	}
 
-	a.Equal("are", r.(s.Finite).Get(2), "get is working")
-	a.Equal("[hello how are you?]", s.String(r), "string version is good")
+	as.Equal("are", r.(a.Finite).Get(2), "get is working")
+	as.Equal("[hello how are you?]", a.String(r), "string version is good")
 }
 
 func TestIterate(t *testing.T) {
-	a := assert.New(t)
+	as := assert.New(t)
 
-	v := &s.Vector{"hello", "how", "are", "you?"}
+	v := &a.Vector{"hello", "how", "are", "you?"}
 	i := v.Iterate()
 	e1, _ := i.Next()
 	s1 := i.Rest()
@@ -51,14 +51,14 @@ func TestIterate(t *testing.T) {
 	e4, _ := i.Next()
 	e5, ok := i.Next()
 
-	a.Equal("hello", e1, "first vector element")
-	a.Equal("how", e2, "second vector element")
-	a.Equal("are", e3, "third vector element")
-	a.Equal("you?", e4, "fourth vector element")
+	as.Equal("hello", e1, "first vector element")
+	as.Equal("how", e2, "second vector element")
+	as.Equal("are", e3, "third vector element")
+	as.Equal("you?", e4, "fourth vector element")
 
-	a.Equal(3, s1.(s.Finite).Count(), "s1 slice count")
-	a.Equal(2, s2.(s.Finite).Count(), "s2 slice count")
+	as.Equal(3, s1.(a.Finite).Count(), "s1 slice count")
+	as.Equal(2, s2.(a.Finite).Count(), "s2 slice count")
 
-	a.Equal(s.Nil, e5, "fifth element is nil")
-	a.False(ok, "fifth element was false")
+	as.Equal(a.Nil, e5, "fifth element is nil")
+	as.False(ok, "fifth element was false")
 }

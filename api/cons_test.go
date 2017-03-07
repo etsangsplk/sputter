@@ -4,56 +4,56 @@ import (
 	"math/big"
 	"testing"
 
-	s "github.com/kode4food/sputter/api"
+	a "github.com/kode4food/sputter/api"
 	"github.com/stretchr/testify/assert"
 )
 
-var helloThere = &s.Function{
+var helloThere = &a.Function{
 	Name: "hello",
-	Apply: func(c s.Context, args s.Sequence) s.Value {
+	Apply: func(c a.Context, args a.Sequence) a.Value {
 		return "there"
 	},
 }
 
 func TestSimpleList(t *testing.T) {
-	a := assert.New(t)
+	as := assert.New(t)
 	n := big.NewFloat(12)
-	l := s.NewList(n)
-	a.Equal(n, l.Car, "head is populated correctly")
-	a.Equal(s.Nil, l.Cdr, "list terminated properly")
+	l := a.NewList(n)
+	as.Equal(n, l.Car, "head is populated correctly")
+	as.Equal(a.Nil, l.Cdr, "list terminated properly")
 }
 
 func TestCons(t *testing.T) {
-	a := assert.New(t)
+	as := assert.New(t)
 	n1 := big.NewFloat(12)
-	l1 := s.NewList(n1)
-	a.Equal(n1, l1.Car, "1st head is populated correctly")
-	a.Equal(s.Nil, l1.Cdr, "list terminated properly")
+	l1 := a.NewList(n1)
+	as.Equal(n1, l1.Car, "1st head is populated correctly")
+	as.Equal(a.Nil, l1.Cdr, "list terminated properly")
 
 	n2 := big.NewFloat(20.5)
-	l2 := &s.Cons{Car: n2, Cdr: l1}
+	l2 := &a.Cons{Car: n2, Cdr: l1}
 
-	a.Equal("()", s.Nil.String())
-	a.Equal("(20.5 12)", l2.String())
-	a.Equal(n2, l2.Car, "2nd head is populated correctly")
-	a.Equal(l1, l2.Cdr, "2nd tail is populated correctly")
-	a.Equal(2, l2.Count(), "2nd list count is correct")
-	a.Equal(2, s.Count(l2), "2nd list general count is correct")
+	as.Equal("()", a.Nil.String())
+	as.Equal("(20.5 12)", l2.String())
+	as.Equal(n2, l2.Car, "2nd head is populated correctly")
+	as.Equal(l1, l2.Cdr, "2nd tail is populated correctly")
+	as.Equal(2, l2.Count(), "2nd list count is correct")
+	as.Equal(2, a.Count(l2), "2nd list general count is correct")
 
-	a.Equal(s.Nil, s.Nil.Get(1), "get from empty list")
+	as.Equal(a.Nil, a.Nil.Get(1), "get from empty list")
 }
 
 func TestIterator(t *testing.T) {
-	a := assert.New(t)
+	as := assert.New(t)
 	n1 := big.NewFloat(12)
-	l1 := s.NewList(n1)
-	a.Equal(n1, l1.Car, "1st head is populated correctly")
-	a.Equal(s.Nil, l1.Cdr, "list terminated properly")
+	l1 := a.NewList(n1)
+	as.Equal(n1, l1.Car, "1st head is populated correctly")
+	as.Equal(a.Nil, l1.Cdr, "list terminated properly")
 
 	n2 := big.NewFloat(20.5)
-	l2 := &s.Cons{Car: n2, Cdr: l1}
-	a.Equal(n2, l2.Car, "2nd head is populated correctly")
-	a.Equal(l1, l2.Cdr, "2nd tail is populated correctly")
+	l2 := &a.Cons{Car: n2, Cdr: l1}
+	as.Equal(n2, l2.Car, "2nd head is populated correctly")
+	as.Equal(l1, l2.Cdr, "2nd tail is populated correctly")
 
 	sum := big.NewFloat(0.0)
 	i := l2.Iterate()
@@ -67,20 +67,20 @@ func TestIterator(t *testing.T) {
 	}
 
 	val, acc := sum.Float64()
-	a.Equal(32.5, val, "values are summed correctly")
-	a.EqualValues(0, acc, "should be no loss of accuracy")
+	as.Equal(32.5, val, "values are summed correctly")
+	as.EqualValues(0, acc, "should be no loss of accuracy")
 }
 
 func TestDotCons(t *testing.T) {
-	a := assert.New(t)
+	as := assert.New(t)
 
-	c1 := &s.Cons{Car: "are", Cdr: "You?"}
-	c2 := &s.Cons{Car: "how", Cdr: c1}
-	c3 := &s.Cons{Car: "hello", Cdr: c2}
+	c1 := &a.Cons{Car: "are", Cdr: "You?"}
+	c2 := &a.Cons{Car: "how", Cdr: c1}
+	c3 := &a.Cons{Car: "hello", Cdr: c2}
 
-	a.Equal("are", c3.Get(2), "list ending in Cons gets Car, not Cons")
-	a.Equal(3, c3.Count(), "list ending in Cons has right count")
-	a.Equal(3, s.Count(c3), "list ending in Cons has right general count")
+	as.Equal("are", c3.Get(2), "list ending in Cons gets Car, not Cons")
+	as.Equal(3, c3.Count(), "list ending in Cons has right count")
+	as.Equal(3, a.Count(c3), "list ending in Cons has right general count")
 
 	i := c3.Iterate()
 	v1, _ := i.Next()
@@ -90,68 +90,84 @@ func TestDotCons(t *testing.T) {
 	v3, _ := i.Next()
 	v4, ok := i.Next()
 
-	a.Equal("(are . You?)", c1.String())
-	a.Equal("(hello how are . You?)", c3.String())
+	as.Equal("(are . You?)", c1.String())
+	as.Equal("(hello how are . You?)", c3.String())
 
-	a.Equal(2, s1.(s.Finite).Count(), "slicing correctly")
-	a.Equal(1, s2.(s.Finite).Count(), "slicing correctly")
+	as.Equal(2, s1.(a.Finite).Count(), "slicing correctly")
+	as.Equal(1, s2.(a.Finite).Count(), "slicing correctly")
 
-	a.Equal("hello", v1, "first iteration correct")
-	a.Equal("how", v2, "second iteration correct")
-	a.Equal(c1, v3, "third iteration correct")
-	a.Equal(s.Nil, v4, "fourth iteration correct")
-	a.False(ok, "fourth iteration failed properly")
+	as.Equal("hello", v1, "first iteration correct")
+	as.Equal("how", v2, "second iteration correct")
+	as.Equal(c1, v3, "third iteration correct")
+	as.Equal(a.Nil, v4, "fourth iteration correct")
+	as.False(ok, "fourth iteration failed properly")
 
 	defer func() {
 		if rec := recover(); rec != nil {
-			a.Equal(s.ExpectedCons, rec, "bad Get index")
+			as.Equal(a.ExpectedCons, rec, "bad Get index")
 			return
 		}
-		a.Fail("bad Get index didn't panic")
+		as.Fail("bad Get index didn't panic")
 	}()
 
 	c3.Get(3)
 }
 
 func TestConsEval(t *testing.T) {
-	a := assert.New(t)
+	as := assert.New(t)
 
-	c := s.NewContext()
+	c := a.NewContext()
 	c.Put(helloThere.Name, helloThere)
 
-	fl := s.NewList(helloThere)
-	a.Equal("there", fl.Eval(c), "function-based list eval")
+	fl := a.NewList(helloThere)
+	as.Equal("there", fl.Eval(c), "function-based list eval")
 
-	sl := s.NewList(&s.Symbol{Name: "hello"})
-	a.Equal("there", sl.Eval(c), "symbol-based list eval")
+	sl := a.NewList(&a.Symbol{Name: "hello"})
+	as.Equal("there", sl.Eval(c), "symbol-based list eval")
 
-	a.Equal(s.Nil, s.Nil.Eval(c), "empty list eval")
+	as.Equal(a.Nil, a.Nil.Eval(c), "empty list eval")
 }
 
-func testBrokenEval(t *testing.T, cons *s.Cons, err string) {
-	a := assert.New(t)
+func testBrokenEval(t *testing.T, cons *a.Cons, err string) {
+	as := assert.New(t)
 
 	defer func() {
 		if rec := recover(); rec != nil {
-			a.Equal(err, rec, "eval panics properly")
+			as.Equal(err, rec, "eval panics properly")
 			return
 		}
-		a.Fail("eval should panic")
+		as.Fail("eval should panic")
 	}()
 
-	c := s.NewContext()
+	c := a.NewContext()
 	cons.Eval(c)
 }
 
 func TestNonList(t *testing.T) {
-	cons := &s.Cons{Car: helloThere, Cdr: "uh-oh"}
-	testBrokenEval(t, cons, s.ExpectedList)
+	cons := &a.Cons{Car: helloThere, Cdr: "uh-oh"}
+	testBrokenEval(t, cons, a.ExpectedList)
 }
 
 func TestNonFunction(t *testing.T) {
-	cons := &s.Cons{
-		Car: &s.Symbol{Name: "unknown"},
-		Cdr: s.NewList("foo"),
+	cons := &a.Cons{
+		Car: &a.Symbol{Name: "unknown"},
+		Cdr: a.NewList("foo"),
 	}
-	testBrokenEval(t, cons, s.ExpectedFunction)
+	testBrokenEval(t, cons, a.ExpectedFunction)
+}
+
+func TestAssertCons(t *testing.T) {
+	as := assert.New(t)
+	a.AssertCons(&a.Cons{Car: "hello", Cdr: "there"})
+
+	defer expectError(as, a.ExpectedCons)
+	a.AssertCons(big.NewFloat(99))
+}
+
+func TestAssertSequence(t *testing.T) {
+	as := assert.New(t)
+	a.AssertSequence(a.NewList("hello"))
+
+	defer expectError(as, a.ExpectedSequence)
+	a.AssertSequence(big.NewFloat(99))
 }

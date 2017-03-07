@@ -28,7 +28,7 @@ that will change rapidly.  The current built-in forms are:
 
   * Control and Branching: `if`, `cond`, `quote`, `do`
   * Numeric: `+`, `-`, `*`, `/`, `!=`, `=`, `<`, `<=`, `>`, `>=`
-  * Variables: `def`, `let`, `ns`
+  * Variables: `def`, `let`, `ns`, `with-ns`
   * Functions: `defn`, `fn`, `apply`
   * Predicates: `eq`, `!eq`, `nil?`, `!nil?`, `list?`, `!list?`
   * Cons Cells: `cons`, `car`, `cdr`
