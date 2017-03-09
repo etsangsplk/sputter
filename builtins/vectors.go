@@ -13,6 +13,16 @@ func vector(c a.Context, args a.Sequence) a.Value {
 	return r
 }
 
+func isVector(c a.Context, args a.Sequence) a.Value {
+	a.AssertArity(args, 1)
+	v := args.First()
+	if _, ok := a.Eval(c, v).(a.Vector); ok {
+		return a.True
+	}
+	return a.False
+}
+
 func init() {
 	registerFunction(&a.Function{Name: "vector", Apply: vector})
+	registerPredicate(&a.Function{Name: "vector?", Apply: isVector})
 }

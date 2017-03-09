@@ -30,8 +30,10 @@ that will change rapidly.  The current built-in forms are:
   * Numeric: `+`, `-`, `*`, `/`, `!=`, `=`, `<`, `<=`, `>`, `>=`
   * Variables: `def`, `let`, `ns`, `with-ns`
   * Functions: `defn`, `fn`, `apply`
-  * Predicates: `eq`, `!eq`, `nil?`, `!nil?`, `list?`, `!list?`
-  * Lists and Vectors: `list`, `first`, `rest`, `cons`, `vector`
+  * Predicates: `eq`, `!eq`, `nil?`, `!nil?`
+  * Sequences: `seq?`, `!seq?`, `cons`
+  * Lists: `list`, `list?`, `!list?`, `first`, `rest`
+  * Vectors: `vector`, `vector?`, `!vector?`
   * I/O: `pr`, `prn`, `print`, `println`
 
 ## License (MIT License)
