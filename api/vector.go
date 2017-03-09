@@ -24,30 +24,24 @@ func (v Vector) Eval(c Context) Value {
 	return r
 }
 
-type vectorIterator struct {
-	instance Vector
-	len      int
-	pos      int
+// First returns the first element of a Vector
+func (v Vector) First() Value {
+	return v[0]
 }
 
-// Iterate creates a new Iterator instance for the Vector
-func (v Vector) Iterate() Iterator {
-	return &vectorIterator{v, len(v), 0}
+// Rest returns the remaining elements of a Vector as a Sequence
+func (v Vector) Rest() Sequence {
+	return v[1:]
 }
 
-// Next returns the next Value from the Iterator
-func (i *vectorIterator) Next() (Value, bool) {
-	if i.pos < i.len {
-		r := i.instance[i.pos]
-		i.pos++
-		return r, true
-	}
-	return Nil, false
+// Prepend creates a new Sequence by prepending a Value
+func (v Vector) Prepend(p Value) Sequence {
+	return append(Vector{p}, v...)
 }
 
-// Rest returns a new Iterable from the Iterator's current state
-func (i *vectorIterator) Rest() Sequence {
-	return i.instance[i.pos:]
+// IsSequence returns whether this instance is a consumable Sequence
+func (v Vector) IsSequence() bool {
+	return len(v) > 0
 }
 
 func (v Vector) String() string {

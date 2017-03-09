@@ -10,11 +10,17 @@ import (
 func TestVector(t *testing.T) {
 	as := assert.New(t)
 
-	v := &a.Vector{"hello", "how", "are", "you?"}
-	as.Equal(4, v.Count(), "vector count is correct")
-	as.Equal(4, a.Count(v), "vector general count is correct")
-	as.Equal("are", v.Get(2), "get by index is correct")
-	as.Equal("[hello how are you?]", v.String(), "string version is good")
+	v1 := &a.Vector{"hello", "how", "are", "you?"}
+	as.Equal(4, v1.Count(), "vector 1 count is correct")
+	as.Equal(4, a.Count(v1), "vector 1 general count is correct")
+	as.Equal("are", v1.Get(2), "get by index is correct")
+	as.Equal("[hello how are you?]", v1.String(), "string version is good")
+	
+	v2 := v1.Prepend("oh").(a.Vector)
+	as.Equal(5, v2.Count(), "vector 2 count is correct")
+	as.Equal(4, v1.Count(), "vector 1 count is still correct")
+	as.Equal("oh", v2.Get(0), "get by index is correct")
+	as.Equal("are", v2.Get(3), "get by index is correct")
 }
 
 type testEvaluable struct{}
@@ -30,11 +36,11 @@ func TestVectorEval(t *testing.T) {
 	c := a.NewContext()
 	r := v.Eval(c)
 
-	if _, ok := r.(a.Finite); !ok {
+	if _, ok := r.(a.Indexed); !ok {
 		as.Fail("result is not a finite sequence")
 	}
 
-	as.Equal("are", r.(a.Finite).Get(2), "get is working")
+	as.Equal("are", r.(a.Indexed).Get(2), "get is working")
 	as.Equal("[hello how are you?]", a.String(r), "string version is good")
 }
 
@@ -42,7 +48,7 @@ func TestIterate(t *testing.T) {
 	as := assert.New(t)
 
 	v := &a.Vector{"hello", "how", "are", "you?"}
-	i := v.Iterate()
+	i := a.Iterate(v)
 	e1, _ := i.Next()
 	s1 := i.Rest()
 	e2, _ := i.Next()
@@ -56,8 +62,8 @@ func TestIterate(t *testing.T) {
 	as.Equal("are", e3, "third vector element")
 	as.Equal("you?", e4, "fourth vector element")
 
-	as.Equal(3, s1.(a.Finite).Count(), "s1 slice count")
-	as.Equal(2, s2.(a.Finite).Count(), "s2 slice count")
+	as.Equal(3, a.Count(s1), "s1 slice count")
+	as.Equal(2, a.Count(s2), "s2 slice count")
 
 	as.Equal(a.Nil, e5, "fifth element is nil")
 	as.False(ok, "fifth element was false")

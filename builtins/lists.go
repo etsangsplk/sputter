@@ -7,30 +7,14 @@ import (
 
 func cons(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 2)
-	i := args.Iterate()
-	car, _ := i.Next()
-	cdr, _ := i.Next()
-	return &a.Cons{Car: a.Eval(c, car), Cdr: a.Eval(c, cdr)}
-}
-
-func fetchCons(c a.Context, args a.Sequence) *a.Cons {
-	a.AssertArity(args, 1)
-	i := args.Iterate()
-	v, _ := i.Next()
-	return a.AssertCons(a.Eval(c, v))
-}
-
-func car(c a.Context, args a.Sequence) a.Value {
-	return fetchCons(c, args).Car
-}
-
-func cdr(c a.Context, args a.Sequence) a.Value {
-	return fetchCons(c, args).Cdr
+	f := a.Eval(c, args.First())
+	r := a.Eval(c, args.Rest().First())
+	return a.AssertSequence(r).Prepend(f)
 }
 
 func list(c a.Context, args a.Sequence) a.Value {
 	s := u.NewStack()
-	i := args.Iterate()
+	i := a.Iterate(args)
 	for v, ok := i.Next(); ok; v, ok = i.Next() {
 		s.Push(a.Eval(c, v))
 	}
@@ -42,48 +26,35 @@ func list(c a.Context, args a.Sequence) a.Value {
 
 	var l = a.NewList(e)
 	for v, ok := s.Pop(); ok; v, ok = s.Pop() {
-		l = &a.Cons{Car: v, Cdr: l}
+		l = l.Prepend(v)
 	}
 	return l
 }
 
 func isList(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
-	i := args.Iterate()
-	if v, ok := i.Next(); ok {
-		if _, ok := a.Eval(c, v).(*a.Cons); ok {
-			return a.True
-		}
+	v := args.First()
+	if _, ok := a.Eval(c, v).(*a.List); ok {
+		return a.True
 	}
 	return a.False
 }
 
 func fetchSequence(c a.Context, args a.Sequence) a.Sequence {
 	a.AssertArity(args, 1)
-	i := args.Iterate()
-	v, _ := i.Next()
-	return a.AssertSequence(a.Eval(c, v))
+	return a.AssertSequence(a.Eval(c, args.First()))
 }
 
 func first(c a.Context, args a.Sequence) a.Value {
-	s := fetchSequence(c, args)
-	i := s.Iterate()
-	v, _ := i.Next()
-	return a.Eval(c, v)
+	return fetchSequence(c, args).First()
 }
 
 func rest(c a.Context, args a.Sequence) a.Value {
-	s := fetchSequence(c, args)
-	i := s.Iterate()
-	i.Next()
-	return i.Rest()
+	return fetchSequence(c, args).Rest()
 }
 
 func init() {
 	registerFunction(&a.Function{Name: "cons", Apply: cons})
-	registerFunction(&a.Function{Name: "car", Apply: car})
-	registerFunction(&a.Function{Name: "cdr", Apply: cdr})
-
 	registerFunction(&a.Function{Name: "list", Apply: list})
 	registerPredicate(&a.Function{Name: "list?", Apply: isList})
 	registerFunction(&a.Function{Name: "first", Apply: first})

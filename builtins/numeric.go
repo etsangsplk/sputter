@@ -11,7 +11,7 @@ type compareFunc func(prev *big.Float, next *big.Float) bool
 
 func reduce(c a.Context, s a.Sequence, v *big.Float, f reduceFunc) a.Value {
 	cur := v
-	i := s.Iterate()
+	i := a.Iterate(s)
 	for e, ok := i.Next(); ok; e, ok = i.Next() {
 		fv := a.AssertNumeric(a.Eval(c, e))
 		cur = f(cur, fv)
@@ -21,7 +21,7 @@ func reduce(c a.Context, s a.Sequence, v *big.Float, f reduceFunc) a.Value {
 
 func fetchFirstNumber(c a.Context, args a.Sequence) (*big.Float, a.Sequence) {
 	a.AssertMinimumArity(args, 1)
-	i := args.Iterate()
+	i := a.Iterate(args)
 	v, _ := i.Next()
 	if r, ok := a.Eval(c, v).(*big.Float); ok {
 		return r, i.Rest()
@@ -31,7 +31,7 @@ func fetchFirstNumber(c a.Context, args a.Sequence) (*big.Float, a.Sequence) {
 
 func compare(c a.Context, s a.Sequence, f compareFunc) a.Value {
 	cur, r := fetchFirstNumber(c, s)
-	i := r.Iterate()
+	i := a.Iterate(r)
 	for e, ok := i.Next(); ok; e, ok = i.Next() {
 		v := a.AssertNumeric(a.Eval(c, e))
 		if !f(cur, v) {

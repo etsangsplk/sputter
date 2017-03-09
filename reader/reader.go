@@ -3,7 +3,7 @@ package reader
 import a "github.com/kode4food/sputter/api"
 
 const (
-	// ListNotClosed is thrown when EOF is reached inside a Cons
+	// ListNotClosed is thrown when EOF is reached inside a List
 	ListNotClosed = "end of file reached with open list"
 
 	// UnmatchedListEnd is thrown if a list is ended without being started
@@ -84,31 +84,31 @@ func (r *tokenReader) quote() *a.Quote {
 }
 
 func (r *tokenReader) list(m mode) a.Value {
-	var handle func(t *Token, m mode) *a.Cons
-	var rest func(m mode) *a.Cons
+	var handle func(t *Token, m mode) *a.List
+	var rest func(m mode) *a.List
 	var first func() a.Value
 
-	handle = func(t *Token, m mode) *a.Cons {
+	handle = func(t *Token, m mode) *a.List {
 		switch t.Type {
 		case ListEnd:
-			return a.Nil
+			return a.EmptyList
 		case EndOfFile:
 			panic(ListNotClosed)
 		default:
 			v := r.token(t, m)
 			l := rest(m)
-			return &a.Cons{Car: v, Cdr: l}
+			return l.Prepend(v).(*a.List)
 		}
 	}
 
-	rest = func(m mode) *a.Cons {
+	rest = func(m mode) *a.List {
 		return handle(r.lexer.Next(), m)
 	}
 
 	first = func() a.Value {
 		t := r.lexer.Next()
 		if f, ok := r.function(t); ok {
-			fl := &a.Cons{Car: f, Cdr: rest(mode(f.Data))}
+			fl := rest(mode(f.Data)).Prepend(f)
 			if f.Prepare != nil {
 				return f.Prepare(r.context, fl)
 			}

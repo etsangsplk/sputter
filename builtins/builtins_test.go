@@ -54,8 +54,8 @@ func TestBuiltInsContext(t *testing.T) {
 func TestQuote(t *testing.T) {
 	as := assert.New(t)
 
-	r1 := runCode("(quote (blah 2 3))").(*a.Cons)
-	r2 := runCode("'(blah 2 3)").(*a.Cons)
+	r1 := runCode("(quote (blah 2 3))").(*a.List)
+	r2 := runCode("'(blah 2 3)").(*a.List)
 
 	as.Equal(r1.Get(0), r2.Get(0), "first element same")
 	if _, ok := r1.Get(0).(*a.Symbol); !ok {

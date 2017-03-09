@@ -12,7 +12,7 @@ type branches []branch
 func makeBranch(e a.Value) branch {
 	b := a.AssertSequence(e)
 	a.AssertMinimumArity(b, 2)
-	i := b.Iterate()
+	i := a.Iterate(b)
 
 	c, _ := i.Next()
 	s := make(a.Vector, 0)
@@ -38,7 +38,7 @@ func makeCond(b branches) a.SequenceProcessor {
 }
 
 func cond(_ a.Context, form a.Sequence) a.Value {
-	i := form.Iterate()
+	i := a.Iterate(form)
 	i.Next() // we're already here
 
 	b := []branch{}
@@ -52,7 +52,7 @@ func cond(_ a.Context, form a.Sequence) a.Value {
 // this will be replaced by a macro -> cond
 func _if(c a.Context, args a.Sequence) a.Value {
 	a.AssertArityRange(args, 2, 3)
-	i := args.Iterate()
+	i := a.Iterate(args)
 	condVal, _ := i.Next()
 	cond := a.Eval(c, condVal)
 	if !a.Truthy(cond) {

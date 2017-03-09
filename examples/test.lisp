@@ -35,23 +35,23 @@
   [a (cons 1 (list 2 3 4))]
   (prn a))
 
-(prn (car '(1 2 3)))
-(prn (cdr '(1 2 3)))
+(prn (first '(1 2 3)))
+(prn (rest '(1 2 3)))
 
 (prn (list 'a 'b 'c))
-(prn (cons 50 (cons 99 100)))
-(prn (cons 100 200))
+(prn (cons 50 (list 99 100)))
+(prn (list 100 200))
 
-(def r (cons 3 (cons 4 (cons 9 10))))
-(prn (car r))
-(prn (cdr r))
-(prn (cdr (cdr r)))
-(prn (cdr (cdr (cdr r))))
+(def r (cons 3 (cons 4 (list 9 10))))
+(prn (first r))
+(prn (rest r))
+(prn (rest (rest r)))
+(prn (rest (rest (rest r))))
 
 (prn (first r))
 (prn (rest r))
 
-(def s (cons 4 (cons 9 10)))
+(def s (cons 4 (list 9 10)))
 (prn (first s))
 (prn (rest s))
 

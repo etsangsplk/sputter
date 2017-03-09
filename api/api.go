@@ -6,8 +6,8 @@ import (
 )
 
 const (
-	// ExpectedFinite is thrown if when taking count of a non-finite sequence
-	ExpectedFinite = "sequence is not finite and can't be counted"
+	// ExpectedCountable is thrown if taking count of a non-countable sequence
+	ExpectedCountable = "sequence is not countable"
 
 	// ExpectedSequence is thrown when a Value is not a Sequence
 	ExpectedSequence = "value is not a list or vector"
@@ -17,11 +17,14 @@ const (
 )
 
 var (
-	// True is a value that represents any value other than False
+	// True represents the boolean value of True
 	True = &Atom{Label: "true"}
 
-	// False is a value that represents either itself or nil
+	// False represents the boolean value of false
 	False = &Atom{Label: "false"}
+
+	// Nil is a value that represents the absence of a Value
+	Nil = &Atom{Label: "nil"}
 )
 
 // Name is a Variable name
@@ -34,29 +37,6 @@ type Value interface {
 // Variables represents a mapping from Name to Value
 type Variables map[Name]Value
 
-// Sequence interfaces expose a one dimensional set of Values
-type Sequence interface {
-	Iterate() Iterator
-}
-
-// Finite interfaces allow a Sequence item to be retrieved by index
-type Finite interface {
-	Count() int
-	Get(index int) Value
-}
-
-// Mapped interfaces allow a Sequence item to be retrieved by Name
-type Mapped interface {
-	Count() int
-	Get(key Value) Value
-}
-
-// Iterator interfaces are stateful iteration interfaces
-type Iterator interface {
-	Next() (Value, bool)
-	Rest() Sequence
-}
-
 // Truthy evaluates whether or not a Value is Truthy
 func Truthy(v Value) bool {
 	switch {
@@ -67,12 +47,12 @@ func Truthy(v Value) bool {
 	}
 }
 
-// Count will either use Finite.Count() or iterate over the Sequence
+// Count will return the Count from a Countable Sequence or explode
 func Count(s Sequence) int {
-	if f, ok := s.(Finite); ok {
+	if f, ok := s.(Countable); ok {
 		return f.Count()
 	}
-	panic(ExpectedFinite)
+	panic(ExpectedCountable)
 }
 
 // String either calls the String() method or tries to convert

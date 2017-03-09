@@ -34,10 +34,10 @@ func TestReadList(t *testing.T) {
 	c := a.NewContext()
 	tr := r.NewReader(c, l)
 	v := tr.Next()
-	list, ok := v.(*a.Cons)
+	list, ok := v.(*a.List)
 	as.True(ok)
 
-	i := list.Iterate()
+	i := a.Iterate(list)
 	val, ok := i.Next()
 	as.True(ok)
 	as.Equal(0, big.NewFloat(99).Cmp(val.(*big.Float)))
@@ -73,10 +73,10 @@ func TestReadNestedList(t *testing.T) {
 	c := a.NewContext()
 	tr := r.NewReader(c, l)
 	v := tr.Next()
-	list, ok := v.(*a.Cons)
+	list, ok := v.(*a.List)
 	as.True(ok)
 
-	i1 := list.Iterate()
+	i1 := a.Iterate(list)
 	val, ok := i1.Next()
 	as.True(ok)
 	as.Equal(0, big.NewFloat(99).Cmp(val.(*big.Float)))
@@ -84,7 +84,7 @@ func TestReadNestedList(t *testing.T) {
 	// get nested list
 	val, ok = i1.Next()
 	as.True(ok)
-	list2, ok := val.(*a.Cons)
+	list2, ok := val.(*a.List)
 	as.True(ok)
 
 	// iterate over the rest of top-level list
@@ -96,7 +96,7 @@ func TestReadNestedList(t *testing.T) {
 	as.False(ok)
 
 	// iterate over the nested list
-	i2 := list2.Iterate()
+	i2 := a.Iterate(list2)
 	val, ok = i2.Next()
 	as.True(ok)
 	as.Equal("hello", val)
@@ -153,25 +153,26 @@ func TestListData(t *testing.T) {
 	d, ok := v.(*a.Quote)
 	as.True(ok)
 
-	value, ok := d.Value.(*a.Cons)
+	value, ok := d.Value.(*a.List)
 	as.True(ok)
 
-	if sym, ok := value.Car.(*a.Symbol); ok {
+	if sym, ok := value.First().(*a.Symbol); ok {
 		as.Equal("symbol", string(sym.Name), "symbol was literal")
 	} else {
 		as.Fail("first element should be symbol")
 	}
 
-	if n, ok := value.Cdr.(*a.Cons); ok {
-		b, ok := n.Car.(*a.Atom)
+	if n, ok := value.Rest().(*a.List); ok {
+		b, ok := n.First().(*a.Atom)
 		as.True(ok)
 		as.Equal(a.True, b)
 
-		nl, ok := n.Cdr.(*a.Cons)
+		nl, ok := n.Rest().(*a.List)
 		as.True(ok)
-		as.Equal(a.Nil, nl, "list properly terminated")
+		as.Equal(a.EmptyList, nl, "list properly terminated")
+		as.False(nl.IsSequence(), "list properly terminated")
 	} else {
-		as.Fail("rest() elements not a cons")
+		as.Fail("rest() elements not a list")
 	}
 }
 
@@ -193,7 +194,7 @@ func TestEvaluable(t *testing.T) {
 	hello := &a.Function{
 		Name: "hello",
 		Apply: func(c a.Context, args a.Sequence) a.Value {
-			i := args.Iterate()
+			i := a.Iterate(args)
 			arg, _ := i.Next()
 			v := evaluateToString(c, arg)
 			return "Hello, " + v + "!"
@@ -234,7 +235,7 @@ func TestReaderPrepare(t *testing.T) {
 	ns.Put("hello", &a.Function{
 		Name: "hello",
 		Prepare: func(c a.Context, l a.Sequence) a.Value {
-			if _, ok := l.(*a.Cons); !ok {
+			if _, ok := l.(*a.List); !ok {
 				as.Fail("provided list is not a cons")
 			}
 			return a.Vector{"you"}

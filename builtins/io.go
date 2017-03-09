@@ -21,7 +21,7 @@ func pretty(v a.Value) {
 }
 
 func out(c a.Context, args a.Sequence, o outputFunc) a.Value {
-	i := args.Iterate()
+	i := a.Iterate(args)
 	for v, ok := i.Next(); ok; {
 		o(a.Eval(c, v))
 		v, ok = i.Next()

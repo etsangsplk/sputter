@@ -6,7 +6,7 @@ func def(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 	ns := a.GetContextNamespace(c)
 
-	i := args.Iterate()
+	i := a.Iterate(args)
 	s, _ := i.Next()
 	n := a.AssertUnqualified(s).Name
 	v, _ := i.Next()
@@ -17,10 +17,10 @@ func def(c a.Context, args a.Sequence) a.Value {
 func let(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 	l := a.ChildContext(c)
-	i := args.Iterate()
+	i := a.Iterate(args)
 	b, _ := i.Next()
 
-	bi := b.(a.Sequence).Iterate()
+	bi := a.Iterate(a.AssertSequence(b))
 	for s, ok := bi.Next(); ok; s, ok = bi.Next() {
 		n := a.AssertUnqualified(s).Name
 		if v, ok := bi.Next(); ok {

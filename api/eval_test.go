@@ -10,7 +10,7 @@ import (
 var helloName = &a.Function{
 	Name: "hello",
 	Apply: func(c a.Context, args a.Sequence) a.Value {
-		i := args.Iterate()
+		i := a.Iterate(args)
 		a, _ := i.Next()
 		v := evaluateToString(c, a)
 		return "Hello, " + v + "!"
@@ -24,7 +24,7 @@ func evaluateToString(c a.Context, v a.Value) string {
 func TestEvaluate(t *testing.T) {
 	as := assert.New(t)
 
-	l := &a.Cons{Car: helloName, Cdr: a.NewList("World")}
+	l := a.NewList("World").Prepend(helloName)
 	c := a.NewContext()
 	r := a.Eval(c, l)
 
@@ -34,9 +34,9 @@ func TestEvaluate(t *testing.T) {
 func TestEvaluateSequence(t *testing.T) {
 	as := assert.New(t)
 
-	s1 := &a.Cons{Car: helloName, Cdr: a.NewList("World")}
-	s2 := &a.Cons{Car: helloName, Cdr: a.NewList("Foo")}
-	l := &a.Cons{Car: s1, Cdr: a.NewList(s2)}
+	s1 := a.NewList("World").Prepend(helloName)
+	s2 := a.NewList("Foo").Prepend(helloName)
+	l := a.NewList(s2).Prepend(s1)
 
 	c := a.NewContext()
 	r := a.EvalSequence(c, l)

@@ -22,39 +22,24 @@ func TestTruthy(t *testing.T) {
 	as.False(a.Truthy(false), "false is not Truthy")
 }
 
-type testSequence struct{}
-
-func (t *testSequence) Iterate() a.Iterator {
-	return nil
-}
-
-func TestNonFiniteCount(t *testing.T) {
-	as := assert.New(t)
-
-	defer func() {
-		if rec := recover(); rec != nil {
-			as.Equal(a.ExpectedFinite, rec, "count panics properly")
-			return
-		}
-		as.Fail("count should panic")
-	}()
-
-	i := &testSequence{}
-	a.Count(i)
-}
-
-func TestAssertSequence(t *testing.T) {
-	as := assert.New(t)
-	a.AssertSequence(a.NewList("hello"))
-
-	defer expectError(as, a.ExpectedSequence)
-	a.AssertSequence(big.NewFloat(99))
-}
-
 func TestAssertNumeric(t *testing.T) {
 	as := assert.New(t)
 	a.AssertNumeric(big.NewFloat(99))
 
 	defer expectError(as, a.ExpectedNumeric)
 	a.AssertNumeric(&a.Symbol{})
+}
+
+type noCountSequence struct {}
+func (n *noCountSequence) First() a.Value { return nil }
+func (n *noCountSequence) Rest() a.Sequence { return nil }
+func (n *noCountSequence) Prepend(v a.Value) a.Sequence { return nil }
+func (n *noCountSequence) IsSequence() bool { return true }
+
+func TestNonCountableSequence(t *testing.T) {
+	as := assert.New(t)
+	nc := &noCountSequence{}
+	
+	defer expectError(as, a.ExpectedCountable)
+	a.Count(nc)
 }

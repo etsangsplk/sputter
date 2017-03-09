@@ -18,12 +18,11 @@ func TestPredicates(t *testing.T) {
 	testCode(t, `(!eq false false)`, a.False)
 	testCode(t, `(!eq 1 1)`, a.True)
 
-	testCode(t, `(nil? ())`, a.True)
-	testCode(t, `(nil? () () ())`, a.True)
-	testCode(t, `(nil? () nil)`, a.True)
+	testCode(t, `(nil? nil)`, a.True)
+	testCode(t, `(nil? nil nil nil)`, a.True)
+	testCode(t, `(nil? () nil)`, a.False)
 	testCode(t, `(nil? false)`, a.False)
 	testCode(t, `(nil? false () nil)`, a.False)
-	testCode(t, `(nil? nil)`, a.True)
 
 	testCode(t, `(nil? "hello")`, a.False)
 	testCode(t, `(nil? '(1 2 3))`, a.False)

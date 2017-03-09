@@ -29,9 +29,7 @@ func do(c a.Context, args a.Sequence) a.Value {
 
 func quote(_ a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
-	i := args.Iterate()
-	v, _ := i.Next()
-	return v
+	return args.First()
 }
 
 func init() {

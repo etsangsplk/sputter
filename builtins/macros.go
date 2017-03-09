@@ -6,7 +6,7 @@ func defmacro(c a.Context, form a.Sequence) a.Value {
 	a.AssertArity(form, 4)
 	ns := a.GetContextNamespace(c)
 
-	i := form.Iterate()
+	i := a.Iterate(form)
 	i.Next() // skip the form name
 
 	mv, _ := i.Next()
@@ -20,13 +20,13 @@ func defmacro(c a.Context, form a.Sequence) a.Value {
 	m := &a.Function{
 		Name: mn,
 		Prepare: func(c a.Context, form a.Sequence) a.Value {
-			i := form.Iterate()
+			i := a.Iterate(form)
 			i.Next() // skip the macro name
 			a.AssertArity(i.Rest(), fc)
 			return b
 		},
 	}
-	
+
 	ns.Put(mn, m)
 	return m
 }

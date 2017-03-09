@@ -11,7 +11,7 @@ type functionDefinition struct {
 
 func argNames(n a.Sequence) []a.Name {
 	an := []a.Name{}
-	i := n.Iterate()
+	i := a.Iterate(n)
 	for e, ok := i.Next(); ok; e, ok = i.Next() {
 		v := a.AssertUnqualified(e).Name
 		an = append(an, v)
@@ -30,7 +30,7 @@ func define(d *functionDefinition) *a.Function {
 		Apply: func(c a.Context, args a.Sequence) a.Value {
 			a.AssertArity(args, ac)
 			l := a.ChildContext(dc)
-			i := args.Iterate()
+			i := a.Iterate(args)
 			for _, n := range an {
 				v, _ := i.Next()
 				l.Put(n, a.Eval(c, v))
@@ -44,7 +44,7 @@ func defn(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 3)
 	ns := a.GetContextNamespace(c)
 
-	i := args.Iterate()
+	i := a.Iterate(args)
 	fv, _ := i.Next()
 	fn := a.AssertUnqualified(fv).Name
 	av, _ := i.Next()
@@ -56,14 +56,14 @@ func defn(c a.Context, args a.Sequence) a.Value {
 		body:     i.Rest(),
 		closure:  c,
 	})
-	
+
 	ns.Put(fn, d)
 	return d
 }
 
 func fn(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
-	i := args.Iterate()
+	i := a.Iterate(args)
 	av, _ := i.Next()
 	an := a.AssertSequence(av)
 
@@ -76,11 +76,9 @@ func fn(c a.Context, args a.Sequence) a.Value {
 
 func apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 2)
-	i := args.Iterate()
-	fv, _ := i.Next()
-	av, _ := i.Next()
-	f := a.AssertFunction(a.Eval(c, fv))
-	return f.Apply(c, a.AssertSequence(av))
+	f := a.AssertFunction(a.Eval(c, args.First()))
+	a := a.AssertSequence(a.Eval(c, args.Rest().First()))
+	return f.Apply(c, a)
 }
 
 func init() {

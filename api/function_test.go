@@ -21,7 +21,7 @@ func TestFunction(t *testing.T) {
 	as.Equal("test-function", f.String(), "string returned")
 
 	c := a.NewContext()
-	as.Equal("hello", f.Apply(c, a.Nil), "function executes")
+	as.Equal("hello", f.Apply(c, a.EmptyList), "function executes")
 }
 
 func TestGoodArity(t *testing.T) {
