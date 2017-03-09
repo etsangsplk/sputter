@@ -32,9 +32,9 @@ that will change rapidly.  The current built-in forms are:
   * Functions: `defn`, `fn`, `apply`
   * Predicates: `eq`, `!eq`, `nil?`, `!nil?`
   * Sequences: `seq?`, `!seq?`, `cons`
-  * Lists: `list`, `list?`, `!list?`, `first`, `rest`
+  * Lists: `list`, `first`, `rest`, `list?`, `!list?`
   * Vectors: `vector`, `vector?`, `!vector?`
-  * I/O: `pr`, `prn`, `print`, `println`
+  * I/O: `print`, `println`, `pr`, `prn`
 
 ## License (MIT License)
 Copyright (c) 2017 Thomas S. Bradford
