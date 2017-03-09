@@ -21,7 +21,7 @@ func list(c a.Context, args a.Sequence) a.Value {
 
 	e, ok := s.Pop()
 	if !ok {
-		return a.Nil
+		return a.EmptyList
 	}
 
 	var l = a.NewList(e)
