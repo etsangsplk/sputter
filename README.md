@@ -32,7 +32,7 @@ that will change rapidly.  The current built-in forms are:
   * Functions: `defn`, `fn`, `apply`
   * Predicates: `eq`, `!eq`, `nil?`, `!nil?`, `list?`, `!list?`
   * Cons Cells: `cons`, `car`, `cdr`
-  * Lists: `list`, `first`, `rest`
+  * Lists and Vectors: `list`, `first`, `rest`, `vector`
   * I/O: `pr`, `prn`, `print`, `println`
 
 ## License (MIT License)

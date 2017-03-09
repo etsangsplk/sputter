@@ -9,6 +9,9 @@ const (
 	// ExpectedFinite is thrown if when taking count of a non-finite sequence
 	ExpectedFinite = "sequence is not finite and can't be counted"
 
+	// ExpectedSequence is thrown when a Value is not a Sequence
+	ExpectedSequence = "value is not a list or vector"
+
 	// ExpectedNumeric is thrown when a Value is not a Number
 	ExpectedNumeric = "value is not numeric"
 )
@@ -42,6 +45,12 @@ type Finite interface {
 	Get(index int) Value
 }
 
+// Mapped interfaces allow a Sequence item to be retrieved by Name
+type Mapped interface {
+	Count() int
+	Get(key Value) Value
+}
+
 // Iterator interfaces are stateful iteration interfaces
 type Iterator interface {
 	Next() (Value, bool)
@@ -72,6 +81,14 @@ func String(v Value) string {
 		return s.String()
 	}
 	return v.(string)
+}
+
+// AssertSequence will cast a Value into a Sequence or explode violently
+func AssertSequence(v Value) Sequence {
+	if r, ok := v.(Sequence); ok {
+		return r
+	}
+	panic(ExpectedSequence)
 }
 
 // AssertNumeric will cast a Value into a Numeric or explode violently

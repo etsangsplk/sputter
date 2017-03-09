@@ -25,12 +25,12 @@ func getNamespace(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	putFunction(BuiltIns, &a.Function{
+	registerFunction(&a.Function{
 		Name:  "with-ns",
 		Apply: withNamespace,
 	})
 
-	putFunction(BuiltIns, &a.Function{
+	registerFunction(&a.Function{
 		Name:  "ns",
 		Apply: getNamespace,
 	})

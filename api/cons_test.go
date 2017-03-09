@@ -163,11 +163,3 @@ func TestAssertCons(t *testing.T) {
 	defer expectError(as, a.ExpectedCons)
 	a.AssertCons(big.NewFloat(99))
 }
-
-func TestAssertSequence(t *testing.T) {
-	as := assert.New(t)
-	a.AssertSequence(a.NewList("hello"))
-
-	defer expectError(as, a.ExpectedSequence)
-	a.AssertSequence(big.NewFloat(99))
-}

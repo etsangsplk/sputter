@@ -32,6 +32,6 @@ func let(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	putFunction(BuiltIns, &a.Function{Name: "def", Apply: def})
-	putFunction(BuiltIns, &a.Function{Name: "let", Apply: let})
+	registerFunction(&a.Function{Name: "def", Apply: def})
+	registerFunction(&a.Function{Name: "let", Apply: let})
 }

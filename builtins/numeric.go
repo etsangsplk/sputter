@@ -110,14 +110,14 @@ func lte(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	putFunction(BuiltIns, &a.Function{Name: "+", Apply: add})
-	putFunction(BuiltIns, &a.Function{Name: "-", Apply: sub})
-	putFunction(BuiltIns, &a.Function{Name: "*", Apply: mul})
-	putFunction(BuiltIns, &a.Function{Name: "/", Apply: div})
-	putFunction(BuiltIns, &a.Function{Name: "=", Apply: eq})
-	putFunction(BuiltIns, &a.Function{Name: "!=", Apply: neq})
-	putFunction(BuiltIns, &a.Function{Name: ">", Apply: gt})
-	putFunction(BuiltIns, &a.Function{Name: ">=", Apply: gte})
-	putFunction(BuiltIns, &a.Function{Name: "<", Apply: lt})
-	putFunction(BuiltIns, &a.Function{Name: "<=", Apply: lte})
+	registerFunction(&a.Function{Name: "+", Apply: add})
+	registerFunction(&a.Function{Name: "-", Apply: sub})
+	registerFunction(&a.Function{Name: "*", Apply: mul})
+	registerFunction(&a.Function{Name: "/", Apply: div})
+	registerFunction(&a.Function{Name: "=", Apply: eq})
+	registerFunction(&a.Function{Name: "!=", Apply: neq})
+	registerFunction(&a.Function{Name: ">", Apply: gt})
+	registerFunction(&a.Function{Name: ">=", Apply: gte})
+	registerFunction(&a.Function{Name: "<", Apply: lt})
+	registerFunction(&a.Function{Name: "<=", Apply: lte})
 }

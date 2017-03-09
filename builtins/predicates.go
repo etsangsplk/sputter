@@ -2,20 +2,6 @@ package builtins
 
 import a "github.com/kode4food/sputter/api"
 
-func registerPredicate(f *a.Function) {
-	putFunction(BuiltIns, f)
-	putFunction(BuiltIns, &a.Function{
-		Name: "!" + f.Name,
-		Apply: func(c a.Context, args a.Sequence) a.Value {
-			r := f.Apply(c, args)
-			if r == a.True {
-				return a.False
-			}
-			return a.True
-		},
-	})
-}
-
 func identical(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 2)
 	i := args.Iterate()

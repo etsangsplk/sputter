@@ -25,9 +25,9 @@ func (v Vector) Eval(c Context) Value {
 }
 
 type vectorIterator struct {
-	vector Vector
-	len    int
-	pos    int
+	instance Vector
+	len      int
+	pos      int
 }
 
 // Iterate creates a new Iterator instance for the Vector
@@ -38,7 +38,7 @@ func (v Vector) Iterate() Iterator {
 // Next returns the next Value from the Iterator
 func (i *vectorIterator) Next() (Value, bool) {
 	if i.pos < i.len {
-		r := i.vector[i.pos]
+		r := i.instance[i.pos]
 		i.pos++
 		return r, true
 	}
@@ -47,7 +47,7 @@ func (i *vectorIterator) Next() (Value, bool) {
 
 // Rest returns a new Iterable from the Iterator's current state
 func (i *vectorIterator) Rest() Sequence {
-	return i.vector[i.pos:]
+	return i.instance[i.pos:]
 }
 
 func (v Vector) String() string {

@@ -63,6 +63,6 @@ func _if(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	putFunction(BuiltIns, &a.Function{Name: "cond", Prepare: cond})
-	putFunction(BuiltIns, &a.Function{Name: "if", Apply: _if})
+	registerFunction(&a.Function{Name: "cond", Prepare: cond})
+	registerFunction(&a.Function{Name: "if", Apply: _if})
 }

@@ -56,8 +56,8 @@ func defn(c a.Context, args a.Sequence) a.Value {
 		body:     i.Rest(),
 		closure:  c,
 	})
-
-	putFunction(ns, d)
+	
+	ns.Put(fn, d)
 	return d
 }
 
@@ -84,7 +84,7 @@ func apply(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	putFunction(BuiltIns, &a.Function{Name: "defn", Apply: defn})
-	putFunction(BuiltIns, &a.Function{Name: "fn", Apply: fn})
-	putFunction(BuiltIns, &a.Function{Name: "apply", Apply: apply})
+	registerFunction(&a.Function{Name: "defn", Apply: defn})
+	registerFunction(&a.Function{Name: "fn", Apply: fn})
+	registerFunction(&a.Function{Name: "apply", Apply: apply})
 }

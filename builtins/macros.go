@@ -26,12 +26,13 @@ func defmacro(c a.Context, form a.Sequence) a.Value {
 			return b
 		},
 	}
-	putFunction(ns, m)
+	
+	ns.Put(mn, m)
 	return m
 }
 
 func init() {
-	putFunction(BuiltIns, &a.Function{
+	registerFunction(&a.Function{
 		Name:    "defmacro",
 		Prepare: defmacro,
 		Data:    true,

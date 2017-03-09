@@ -43,6 +43,14 @@ func TestNonFiniteCount(t *testing.T) {
 	a.Count(i)
 }
 
+func TestAssertSequence(t *testing.T) {
+	as := assert.New(t)
+	a.AssertSequence(a.NewList("hello"))
+
+	defer expectError(as, a.ExpectedSequence)
+	a.AssertSequence(big.NewFloat(99))
+}
+
 func TestAssertNumeric(t *testing.T) {
 	as := assert.New(t)
 	a.AssertNumeric(big.NewFloat(99))
