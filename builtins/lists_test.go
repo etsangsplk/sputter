@@ -13,6 +13,8 @@ func TestList(t *testing.T) {
 	testCode(t, `(list? [1 2 3])`, a.False)
 	testCode(t, `(list? 42)`, a.False)
 	testCode(t, `(list? (list 1 2 3))`, a.True)
+	testCode(t, `(seq? (list 1 2 3))`, a.True)
+	testCode(t, `(seq? ())`, a.False)
 	testCode(t, `(list)`, a.EmptyList)
 	testCode(t, `(first '(1 2 3 4))`, big.NewFloat(1))
 	testCode(t, `(first (rest '(1 2 3 4)))`, big.NewFloat(2))
