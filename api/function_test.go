@@ -31,7 +31,6 @@ func TestGoodArity(t *testing.T) {
 	defer func() {
 		if rec := recover(); rec != nil {
 			as.Fail("arity tests should not explode")
-			return
 		}
 	}()
 

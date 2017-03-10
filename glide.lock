@@ -1,11 +1,11 @@
-hash: b8871919d890f8eafc3d8393d15c615fcad771840f76721c910735d01def4ed3
-updated: 2017-03-01T16:07:02.057017636+01:00
+hash: f9a786580cec7a801db51acab72d02d915c37cc1c4230ec395c3a603666ba7a2
+updated: 2017-03-10T08:27:46.518177168+01:00
 imports:
-- name: github.com/jteeuwen/go-bindata
-  version: bbd0c6e271208dce66d8fda4bc536453cd27fc4a
+- name: github.com/chzyer/readline
+  version: 62c6fe6193755f722b8b8788aa7357be55a50ff1
 testImports:
 - name: github.com/davecgh/go-spew
-  version: 5215b55f46b2b919f50a1df0eaa5886afe4e3b3d
+  version: 6d212800a42e8ab5c146b8ace3490ee17e5225f9
   subpackages:
   - spew
 - name: github.com/pmezard/go-difflib
