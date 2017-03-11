@@ -26,7 +26,8 @@ func list(c a.Context, args a.Sequence) a.Value {
 
 func toList(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
-	seq := a.AssertSequence(a.Eval(c, args.First()))
+	arg := a.Eval(c, args.First())
+	seq := a.AssertSequence(arg)
 	return list(c, seq)
 }
 
