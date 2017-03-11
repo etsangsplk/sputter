@@ -25,9 +25,9 @@ const (
 	prompt = domain + "[%d]> "
 	cont   = domain + "[%d]>   "
 
-	output = domain + "[%d]%s"
-	good   = green + "= " + bold
-	bad    = red + "! " + bold
+	output = bold + "%s" + reset
+	good   = domain + green + "[%d]= " + output
+	bad    = domain + red + "[%d]! " + output
 )
 
 // REPL manages a Read-Eval-Print Loop
@@ -80,8 +80,7 @@ func (repl *REPL) Run() {
 			continue
 		}
 
-		res := repl.evalLine()
-		repl.writeResult(res)
+		repl.evalLine()
 		repl.buf.Reset()
 
 		if a.GetContextNamespace(repl.ctx) != repl.ns {
@@ -101,10 +100,6 @@ func (repl *REPL) setInitialPrompt() {
 
 func (repl *REPL) setContinuePrompt() {
 	repl.rl.SetPrompt(fmt.Sprintf(cont, repl.nsSpace(), repl.idx))
-}
-
-func (repl *REPL) writeResult(v a.Value) {
-	fmt.Println(fmt.Sprintf(output, repl.nsSpace(), repl.idx, v))
 }
 
 func (repl *REPL) nsSpace() string {
@@ -130,16 +125,22 @@ func (repl *REPL) isReadable() (ok bool) {
 	return true
 }
 
-func (repl *REPL) evalLine() (result string) {
+func (repl *REPL) evalLine() {
 	defer func() {
 		if rec := recover(); rec != nil {
-			result = fmt.Sprint(bad, rec, reset)
+			repl.output(bad, rec)
 		}
 	}()
 
 	l := r.NewLexer(repl.buf.String())
 	tr := r.NewReader(repl.ctx, l)
-	return fmt.Sprint(good, r.EvalReader(repl.ctx, tr), reset)
+	res := r.EvalReader(repl.ctx, tr)
+	repl.output(good, res)
+}
+
+func (repl *REPL) output(prefix string, v a.Value) {
+	res := a.String(v)
+	fmt.Println(fmt.Sprintf(prefix, repl.nsSpace(), repl.idx, res))
 }
 
 func (repl *REPL) registerREPLBuiltIns() {
