@@ -30,7 +30,7 @@ const (
 	bad    = red + "! " + bold
 )
 
-// REPL manages a Read-Evaluate-Print Loop
+// REPL manages a Read-Eval-Print Loop
 type REPL struct {
 	buf bytes.Buffer
 	ctx a.Context

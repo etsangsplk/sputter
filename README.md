@@ -16,10 +16,22 @@ go get github.com/kode4food/sputter
 
 ## How To Invoke The Interpreter
 Once you've installed the package, you can run it from `GOPATH/bin`
-like so.
+like so:
 
 ```bash
 sputter ./examples/test.lisp
+
+# or
+
+cat ./examples/test.list | sputter
+```
+
+## How To Invoke The REPL
+Sputter has a very crude Read-Eval-Print Loop that will be more than
+happy to start if you call it with no arguments from the terminal:
+
+```bash
+sputter
 ```
 
 ## Current Status
