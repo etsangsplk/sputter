@@ -8,9 +8,16 @@ import (
 )
 
 func main() {
-	if len(os.Args) < 2 {
+	if isStdInPiped() {
+		c.EvaluateStdIn()
+	} else if len(os.Args) < 2 {
 		c.NewREPL().Run()
 	} else {
-		c.Exec()
+		c.EvaluateFile()
 	}
+}
+
+func isStdInPiped() bool {
+	s, _ := os.Stdin.Stat()
+	return (s.Mode() & os.ModeCharDevice) == 0
 }
