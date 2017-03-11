@@ -9,7 +9,7 @@ import (
 
 func main() {
 	if len(os.Args) < 2 {
-		c.REPL()
+		c.NewREPL().Run()
 	} else {
 		c.Exec()
 	}

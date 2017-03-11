@@ -30,24 +30,42 @@ const (
 	bad    = red + "! " + bold
 )
 
-// REPL instantiates a Read-Evaluate-Print Loop
-func REPL() {
-	fmt.Println(a.Language, a.Version)
+// REPL manages a Read-Evaluate-Print Loop
+type REPL struct {
+	buf bytes.Buffer
+	ctx a.Context
+	ns  a.Namespace
+	rl  *readline.Instance
+	idx int
+}
+
+// NewREPL instantiates a new REPL instance
+func NewREPL() *REPL {
+	repl := &REPL{}
+
 	rl, err := readline.NewEx(&readline.Config{})
 	if err != nil {
 		panic(err)
 	}
-	defer rl.Close()
 
-	var b bytes.Buffer
-	c := a.NewEvalContext()
-	ns := a.GetContextNamespace(c)
-	i := 1
+	repl.rl = rl
+	repl.ctx = a.NewEvalContext()
+	repl.ns = a.GetContextNamespace(repl.ctx)
+	repl.idx = 1
 
-	c.Put("use", &a.Function{Name: "use", Apply: use})
-	rl.SetPrompt(fmt.Sprintf(prompt, ns.Domain(), i))
+	repl.registerREPLBuiltIns()
+	return repl
+}
+
+// Run will perform the Eval-Print-Loop
+func (repl *REPL) Run() {
+	defer repl.rl.Close()
+
+	fmt.Println(a.Language, a.Version)
+	repl.setInitialPrompt()
+
 	for {
-		line, err := rl.Readline()
+		line, err := repl.rl.Readline()
 		if err != nil {
 			break
 		}
@@ -56,42 +74,45 @@ func REPL() {
 			continue
 		}
 
-		b.WriteString(line + "\n")
-		src := b.String()
-
-		if !isReadable(src) {
-			rl.SetPrompt(fmt.Sprintf(cont, nsSpace(ns), i))
+		repl.buf.WriteString(line + "\n")
+		if !repl.isReadable() {
+			repl.setContinuePrompt()
 			continue
 		}
 
-		res := evalLine(c, src)
-		fmt.Println(fmt.Sprintf(output, nsSpace(ns), i, res))
-		b.Reset()
+		res := repl.evalLine()
+		repl.writeResult(res)
+		repl.buf.Reset()
 
-		if a.GetContextNamespace(c) != ns {
+		if a.GetContextNamespace(repl.ctx) != repl.ns {
 			fmt.Println()
-			ns = a.GetContextNamespace(c)
+			repl.ns = a.GetContextNamespace(repl.ctx)
 		}
 
-		i++
-		rl.SetPrompt(fmt.Sprintf(prompt, ns.Domain(), i))
+		repl.idx++
+		repl.setInitialPrompt()
 	}
 }
 
-func use(c a.Context, args a.Sequence) a.Value {
-	a.AssertArity(args, 1)
-	n := a.AssertUnqualified(args.First()).Name
-	ns := a.GetNamespace(n)
-	c.Delete(a.ContextDomain)
-	c.Put(a.ContextDomain, ns)
-	return ns
+func (repl *REPL) setInitialPrompt() {
+	ns := repl.ns.Domain()
+	repl.rl.SetPrompt(fmt.Sprintf(prompt, ns, repl.idx))
 }
 
-func nsSpace(ns a.Namespace) string {
-	return any.ReplaceAllString(string(ns.Domain()), " ")
+func (repl *REPL) setContinuePrompt() {
+	repl.rl.SetPrompt(fmt.Sprintf(cont, repl.nsSpace(), repl.idx))
 }
 
-func isReadable(src string) (ok bool) {
+func (repl *REPL) writeResult(v a.Value) {
+	fmt.Println(fmt.Sprintf(output, repl.nsSpace(), repl.idx, v))
+}
+
+func (repl *REPL) nsSpace() string {
+	ns := repl.ns.Domain()
+	return any.ReplaceAllString(string(ns), " ")
+}
+
+func (repl *REPL) isReadable() (ok bool) {
 	defer func() {
 		if rec := recover(); rec != nil {
 			if isRecoverable(rec) {
@@ -103,27 +124,40 @@ func isReadable(src string) (ok bool) {
 	}()
 
 	c := a.NewContext()
-	l := r.NewLexer(src)
+	l := r.NewLexer(repl.buf.String())
 	tr := r.NewReader(c, l)
 	for v := tr.Next(); v != r.EndOfReader; v = tr.Next() {
 	}
 	return true
 }
 
-func isRecoverable(err a.Value) bool {
-	return err == r.ListNotClosed ||
-		err == r.VectorNotClosed ||
-		err == r.UnexpectedEndOfFile
-}
-
-func evalLine(c a.Context, src string) (result string) {
+func (repl *REPL) evalLine() (result string) {
 	defer func() {
 		if rec := recover(); rec != nil {
 			result = fmt.Sprint(bad, rec, reset)
 		}
 	}()
 
-	l := r.NewLexer(src)
-	tr := r.NewReader(c, l)
-	return fmt.Sprint(good, r.EvalReader(c, tr), reset)
+	l := r.NewLexer(repl.buf.String())
+	tr := r.NewReader(repl.ctx, l)
+	return fmt.Sprint(good, r.EvalReader(repl.ctx, tr), reset)
+}
+
+func (repl *REPL) registerREPLBuiltIns() {
+	repl.ctx.Put("use", &a.Function{Name: "use", Apply: use})
+}
+
+func use(c a.Context, args a.Sequence) a.Value {
+	a.AssertArity(args, 1)
+	n := a.AssertUnqualified(args.First()).Name
+	ns := a.GetNamespace(n)
+	c.Delete(a.ContextDomain)
+	c.Put(a.ContextDomain, ns)
+	return ns
+}
+
+func isRecoverable(err a.Value) bool {
+	return err == r.ListNotClosed ||
+		err == r.VectorNotClosed ||
+		err == r.UnexpectedEndOfFile
 }
