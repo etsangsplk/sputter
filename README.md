@@ -23,7 +23,7 @@ sputter ./examples/test.lisp
 
 # or
 
-cat ./examples/test.list | sputter
+cat ./examples/test.lisp | sputter
 ```
 
 ## How To Invoke The REPL
