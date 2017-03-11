@@ -21,4 +21,6 @@ func TestNewVector(t *testing.T) {
 	testCode(t, `(!vector? (vector 1 2 3))`, a.False)
 	testCode(t, `(!vector? [])`, a.False)
 	testCode(t, `(!vector? 99)`, a.True)
+
+	testCode(t, `(vector? (to-vector (list 1 2 3)))`, a.True)
 }

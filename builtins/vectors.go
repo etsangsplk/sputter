@@ -13,6 +13,12 @@ func vector(c a.Context, args a.Sequence) a.Value {
 	return r
 }
 
+func toVector(c a.Context, args a.Sequence) a.Value {
+	a.AssertArity(args, 1)
+	seq := a.AssertSequence(a.Eval(c, args.First()))
+	return vector(c, seq)
+}
+
 func isVector(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
 	v := args.First()
@@ -24,5 +30,6 @@ func isVector(c a.Context, args a.Sequence) a.Value {
 
 func init() {
 	registerFunction(&a.Function{Name: "vector", Apply: vector})
+	registerFunction(&a.Function{Name: "to-vector", Apply: toVector})
 	registerPredicate(&a.Function{Name: "vector?", Apply: isVector})
 }

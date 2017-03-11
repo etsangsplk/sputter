@@ -24,6 +24,12 @@ func list(c a.Context, args a.Sequence) a.Value {
 	return l
 }
 
+func toList(c a.Context, args a.Sequence) a.Value {
+	a.AssertArity(args, 1)
+	seq := a.AssertSequence(a.Eval(c, args.First()))
+	return list(c, seq)
+}
+
 func isList(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
 	v := args.First()
@@ -66,6 +72,7 @@ func cons(c a.Context, args a.Sequence) a.Value {
 
 func init() {
 	registerFunction(&a.Function{Name: "list", Apply: list})
+	registerFunction(&a.Function{Name: "to-list", Apply: toList})
 	registerPredicate(&a.Function{Name: "list?", Apply: isList})
 	registerPredicate(&a.Function{Name: "seq?", Apply: isSequence})
 	registerFunction(&a.Function{Name: "first", Apply: first})

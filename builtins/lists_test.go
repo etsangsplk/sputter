@@ -19,4 +19,5 @@ func TestList(t *testing.T) {
 	testCode(t, `(first '(1 2 3 4))`, big.NewFloat(1))
 	testCode(t, `(first (rest '(1 2 3 4)))`, big.NewFloat(2))
 	testCode(t, `(first (rest (cons 1 (list 2 3))))`, big.NewFloat(2))
+	testCode(t, `(list? (to-list (vector 1 2 3)))`, a.True)
 }
