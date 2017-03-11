@@ -47,7 +47,10 @@ func ResolveAsFunction(c Context, v Value) (*Function, bool) {
 }
 
 func (f *Function) String() string {
-	return string(f.Name)
+	if f.Name != "" {
+		return "(fn :name " + string(f.Name) + ")"
+	}
+	return fmt.Sprintf("(fn :addr %p)", &f)
 }
 
 // AssertArity explodes if the arg count doesn't match provided arity

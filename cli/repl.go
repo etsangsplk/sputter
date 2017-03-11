@@ -123,9 +123,8 @@ func (repl *REPL) isReadable() (ok bool) {
 		}
 	}()
 
-	c := a.NewContext()
 	l := r.NewLexer(repl.buf.String())
-	tr := r.NewReader(c, l)
+	tr := r.NewReader(a.ChildContext(repl.ctx), l)
 	for v := tr.Next(); v != r.EndOfReader; v = tr.Next() {
 	}
 	return true

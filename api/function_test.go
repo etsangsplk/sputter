@@ -18,7 +18,7 @@ func TestFunction(t *testing.T) {
 		},
 	}
 
-	as.Equal("test-function", f.String(), "string returned")
+	as.Equal("(fn :name test-function)", f.String(), "string returned")
 
 	c := a.NewContext()
 	as.Equal("hello", f.Apply(c, a.EmptyList), "function executes")
