@@ -84,11 +84,11 @@ func (r *tokenReader) quote() *a.Quote {
 }
 
 func (r *tokenReader) list(m mode) a.Value {
-	var handle func(t *Token, m mode) *a.List
-	var rest func(m mode) *a.List
+	var handle func(t *Token, m mode) a.Sequence
+	var rest func(m mode) a.Sequence
 	var first func() a.Value
 
-	handle = func(t *Token, m mode) *a.List {
+	handle = func(t *Token, m mode) a.Sequence {
 		switch t.Type {
 		case ListEnd:
 			return a.EmptyList
@@ -97,11 +97,11 @@ func (r *tokenReader) list(m mode) a.Value {
 		default:
 			v := r.token(t, m)
 			l := rest(m)
-			return l.Prepend(v).(*a.List)
+			return l.Prepend(v)
 		}
 	}
 
-	rest = func(m mode) *a.List {
+	rest = func(m mode) a.Sequence {
 		return handle(r.lexer.Next(), m)
 	}
 

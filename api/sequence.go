@@ -10,16 +10,19 @@ type Sequence interface {
 
 // Countable interfaces allow a Sequence to return a count of its items
 type Countable interface {
+	Sequence
 	Count() int
 }
 
 // Indexed interfaces allow a Sequence item to be retrieved by index
 type Indexed interface {
+	Sequence
 	Get(index int) Value
 }
 
 // Mapped interfaces allow a Sequence item to be retrieved by Name
 type Mapped interface {
+	Sequence
 	Get(key Value) Value
 }
 
