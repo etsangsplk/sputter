@@ -12,7 +12,7 @@ import (
 	"github.com/chzyer/readline"
 )
 
-var any = regexp.MustCompile(".")
+var anyChar = regexp.MustCompile(".")
 
 const (
 	red   = "\033[31m"
@@ -67,34 +67,43 @@ func (repl *REPL) Run() {
 
 	for {
 		line, err := repl.rl.Readline()
+		repl.buf.WriteString(line + "\n")
+
 		if err != nil {
+			emptyBuffer := isEmpty(repl.buf.String())
+			if err == readline.ErrInterrupt && !emptyBuffer {
+				repl.reset()
+				continue
+			}
 			break
 		}
 
-		if len(strings.TrimSpace(line)) == 0 {
+		if isEmpty(line) {
 			continue
 		}
 
-		repl.buf.WriteString(line + "\n")
-		if !repl.isReadable() {
+		if !repl.isBufferReadable() {
 			repl.setContinuePrompt()
 			continue
 		}
 
-		repl.evalLine()
-		repl.buf.Reset()
-
-		if a.GetContextNamespace(repl.ctx) != repl.ns {
-			fmt.Println()
-			repl.ns = a.GetContextNamespace(repl.ctx)
-		}
-
-		repl.idx++
-		repl.setInitialPrompt()
+		repl.evalBuffer()
+		repl.reset()
 	}
 }
 
+func (repl *REPL) reset() {
+	repl.buf.Reset()
+	repl.idx++
+	repl.setInitialPrompt()
+}
+
 func (repl *REPL) setInitialPrompt() {
+	if a.GetContextNamespace(repl.ctx) != repl.ns {
+		fmt.Println()
+		repl.ns = a.GetContextNamespace(repl.ctx)
+	}
+
 	ns := repl.ns.Domain()
 	repl.rl.SetPrompt(fmt.Sprintf(prompt, ns, repl.idx))
 }
@@ -104,11 +113,11 @@ func (repl *REPL) setContinuePrompt() {
 }
 
 func (repl *REPL) nsSpace() string {
-	ns := repl.ns.Domain()
-	return any.ReplaceAllString(string(ns), " ")
+	ns := string(repl.ns.Domain())
+	return anyChar.ReplaceAllString(ns, " ")
 }
 
-func (repl *REPL) isReadable() (ok bool) {
+func (repl *REPL) isBufferReadable() (ok bool) {
 	defer func() {
 		if rec := recover(); rec != nil {
 			if isRecoverable(rec) {
@@ -126,7 +135,7 @@ func (repl *REPL) isReadable() (ok bool) {
 	return true
 }
 
-func (repl *REPL) evalLine() {
+func (repl *REPL) evalBuffer() {
 	defer func() {
 		if rec := recover(); rec != nil {
 			repl.output(bad, rec)
@@ -134,6 +143,8 @@ func (repl *REPL) evalLine() {
 	}()
 
 	l := r.NewLexer(repl.buf.String())
+	repl.buf.Reset()
+
 	tr := r.NewReader(repl.ctx, l)
 	res := r.EvalReader(repl.ctx, tr)
 	repl.output(good, res)
@@ -148,6 +159,16 @@ func (repl *REPL) registerREPLBuiltIns() {
 	repl.ctx.Put("use", &a.Function{Name: "use", Apply: use})
 }
 
+func isEmpty(s string) bool {
+	return len(strings.TrimSpace(s)) == 0
+}
+
+func isRecoverable(err a.Value) bool {
+	return err == r.ListNotClosed ||
+		err == r.VectorNotClosed ||
+		err == r.UnexpectedEndOfFile
+}
+
 func use(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
 	n := a.AssertUnqualified(args.First()).Name
@@ -155,10 +176,4 @@ func use(c a.Context, args a.Sequence) a.Value {
 	c.Delete(a.ContextDomain)
 	c.Put(a.ContextDomain, ns)
 	return ns
-}
-
-func isRecoverable(err a.Value) bool {
-	return err == r.ListNotClosed ||
-		err == r.VectorNotClosed ||
-		err == r.UnexpectedEndOfFile
 }
