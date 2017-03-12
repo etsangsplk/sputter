@@ -30,9 +30,7 @@ cat ./examples/test.lisp | sputter
 Sputter has a very crude Read-Eval-Print Loop that will be more than
 happy to start if you call it with no arguments from the terminal:
 
-```bash
-sputter
-```
+<img src="doc/repl.png" />
 
 ## Current Status
 I just started this thing and it's still pretty fragile, but
