@@ -18,12 +18,13 @@ const (
 	red   = "\033[31m"
 	green = "\033[32m"
 	cyan  = "\033[36m"
+	gray  = "\033[90m"
 	bold  = "\033[1m"
 	reset = "\033[0m"
 
 	domain = cyan + "%s" + reset + " "
 	prompt = domain + "[%d]> "
-	cont   = domain + "[%d]>   "
+	cont   = domain + "[%d]" + gray + "␤   " + reset
 
 	output = bold + "%s" + reset
 	good   = domain + green + "[%d]= " + output
