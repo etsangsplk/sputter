@@ -1,5 +1,4 @@
 ;;;; this is a comment at the top of the file
-
 (def blah "blah is stored")
 
 (defn say-hello [name]
@@ -18,7 +17,7 @@
     2.0)
   '(blah 99 "yep"))
 
-(say-hello "Thom")
+(say-hello "Sputter")
 
 (prn
   "howdy"

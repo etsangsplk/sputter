@@ -166,6 +166,7 @@ func isEmpty(s string) bool {
 func isRecoverable(err a.Value) bool {
 	return err == r.ListNotClosed ||
 		err == r.VectorNotClosed ||
+		err == r.MapNotClosed ||
 		err == r.UnexpectedEndOfFile
 }
 

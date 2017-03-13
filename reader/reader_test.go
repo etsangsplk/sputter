@@ -1,6 +1,7 @@
 package reader_test
 
 import (
+	"fmt"
 	"math/big"
 	"testing"
 
@@ -67,6 +68,17 @@ func TestReadVector(t *testing.T) {
 	as.Equal(0, big.NewFloat(55.120).Cmp(vector.Get(2).(*big.Float)))
 }
 
+func TestReadMap(t *testing.T) {
+	as := assert.New(t)
+	l := r.NewLexer(`{:name "blah" :age 99}`)
+	c := a.NewContext()
+	tr := r.NewReader(c, l)
+	v := tr.Next()
+	m, ok := v.(a.ArrayMap)
+	as.True(ok)
+	as.Equal(2, m.Count(), "map count is correct")
+}
+
 func TestReadNestedList(t *testing.T) {
 	as := assert.New(t)
 	l := r.NewLexer(`(99 ("hello" "there") 55.12)`)
@@ -107,23 +119,6 @@ func TestReadNestedList(t *testing.T) {
 
 	val, ok = i2.Next()
 	as.False(ok)
-}
-
-func TestUnclosedList(t *testing.T) {
-	as := assert.New(t)
-
-	defer func() {
-		if rec := recover(); rec != nil {
-			as.Equal(r.ListNotClosed, rec, "unclosed list")
-			return
-		}
-		as.Fail("unclosed list didn't panic")
-	}()
-
-	l := r.NewLexer(`(99 ("hello" "there") 55.12`)
-	c := a.NewContext()
-	tr := r.NewReader(c, l)
-	tr.Next()
 }
 
 func TestSimpleData(t *testing.T) {
@@ -184,7 +179,7 @@ func testCodeWithContext(as *assert.Assertions, code string, expect a.Value, con
 }
 
 func evaluateToString(c a.Context, v a.Value) string {
-	return a.String(a.Eval(c, v))
+	return fmt.Sprint(a.Eval(c, v))
 }
 
 func TestEvaluable(t *testing.T) {
@@ -273,7 +268,10 @@ func testReaderError(t *testing.T, src string, err string) {
 func TestReaderErrors(t *testing.T) {
 	testReaderError(t, "(99 100 ", r.ListNotClosed)
 	testReaderError(t, "[99 100 ", r.VectorNotClosed)
+	testReaderError(t, "{:key 99", r.MapNotClosed)
 
 	testReaderError(t, "99 100)", r.UnmatchedListEnd)
 	testReaderError(t, "99 100]", r.UnmatchedVectorEnd)
+	testReaderError(t, "99}", r.UnmatchedMapEnd)
+	testReaderError(t, "{99}", r.MapNotPaired)
 }

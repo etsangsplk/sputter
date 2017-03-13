@@ -14,8 +14,8 @@ func TestVector(t *testing.T) {
 	as.Equal(4, v1.Count(), "vector 1 count is correct")
 	as.Equal(4, a.Count(v1), "vector 1 general count is correct")
 	as.Equal("are", v1.Get(2), "get by index is correct")
-	as.Equal("[hello how are you?]", v1.String(), "string version is good")
-	
+	as.Equal(`["hello" "how" "are" "you?"]`, v1.String(), "string is good")
+
 	v2 := v1.Prepend("oh").(a.Vector)
 	as.Equal(5, v2.Count(), "vector 2 count is correct")
 	as.Equal(4, v1.Count(), "vector 1 count is still correct")
@@ -41,7 +41,7 @@ func TestVectorEval(t *testing.T) {
 	}
 
 	as.Equal("are", r.(a.Indexed).Get(2), "get is working")
-	as.Equal("[hello how are you?]", a.String(r), "string version is good")
+	as.Equal(`["hello" "how" "are" "you?"]`, a.String(r), "string is good")
 }
 
 func TestIterate(t *testing.T) {

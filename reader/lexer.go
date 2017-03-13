@@ -29,6 +29,8 @@ const (
 	ListEnd
 	VectorStart
 	VectorEnd
+	MapStart
+	MapEnd
 	QuoteMarker
 	EndOfFile
 	Whitespace
@@ -69,23 +71,27 @@ var states stateMap
 
 func init() {
 	re := regexp.MustCompile
+	idComp := `[^:(){}\[\]\s,]+`
+
 	states = stateMap{
 		{re(`^$`), endState(EndOfFile)},
 		{re(`^;[^\n]*[\n]`), tokenState(Comment)},
-		{re(`^\s+`), tokenState(Whitespace)},
+		{re(`^[\s,]+`), tokenState(Whitespace)},
 		{re(`^\(`), tokenState(ListStart)},
 		{re(`^\[`), tokenState(VectorStart)},
+		{re(`^{`), tokenState(MapStart)},
 		{re(`^\)`), tokenState(ListEnd)},
 		{re(`^]`), tokenState(VectorEnd)},
+		{re(`^}`), tokenState(MapEnd)},
 		{re(`^'`), tokenState(QuoteMarker)},
 
 		{re(`^"(\\.|[^"])*"`), stringState},
 		{re(`^[+-]?[1-9]\d*/[1-9]\d*`), ratioState},
 		{re(`^[+-]?(0|[1-9]\d*(\.\d+)?([eE][+-]?\d+)?)`), numberState},
 
-		{re(`^[^:()\[\]\s]+:[^:()\[\]\s]+`), tokenState(Identifier)},
-		{re(`^:[^:()\[\]\s]+`), tokenState(Identifier)},
-		{re(`^[^:()\[\]\s]+`), tokenState(Identifier)},
+		{re(`^` + idComp + `:` + idComp), tokenState(Identifier)},
+		{re(`^:` + idComp), tokenState(Identifier)},
+		{re(`^` + idComp), tokenState(Identifier)},
 
 		{re(`^.`), endState(Error)},
 	}

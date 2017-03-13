@@ -1,6 +1,7 @@
 package api_test
 
 import (
+	"fmt"
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
@@ -18,7 +19,7 @@ var helloName = &a.Function{
 }
 
 func evaluateToString(c a.Context, v a.Value) string {
-	return a.String(a.Eval(c, v))
+	return fmt.Sprint(a.Eval(c, v))
 }
 
 func TestEvaluate(t *testing.T) {

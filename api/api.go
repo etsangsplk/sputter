@@ -60,7 +60,7 @@ func String(v Value) string {
 	if s, ok := v.(fmt.Stringer); ok {
 		return s.String()
 	}
-	return v.(string)
+	return `"` + v.(string) + `"`
 }
 
 // AssertSequence will cast a Value into a Sequence or explode violently

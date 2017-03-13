@@ -14,6 +14,15 @@ const (
 
 	// UnmatchedVectorEnd is thrown if a vector is ended without being started
 	UnmatchedVectorEnd = "encountered ']' with no open vector"
+
+	// MapNotClosed is thrown when EOF is reached inside a Map
+	MapNotClosed = "end of file reached with open map"
+
+	// UnmatchedMapEnd is thrown if a list is ended without being started
+	UnmatchedMapEnd = "encountered '}' with no open map"
+
+	// MapNotPaired is thrown if a map doesn't have an even number of elements
+	MapNotPaired = "map does not contain an even number of elements"
 )
 
 type mode bool
@@ -61,17 +70,21 @@ func (r *tokenReader) nextData() a.Value {
 func (r *tokenReader) token(t *Token, m mode) a.Value {
 	switch t.Type {
 	case QuoteMarker:
-		return r.quote()
+		return r.readQuote()
 	case ListStart:
-		return r.list(m)
+		return r.readList(m)
 	case VectorStart:
-		return r.vector(m)
+		return r.readVector(m)
+	case MapStart:
+		return r.readMap(m)
 	case Identifier:
-		return identifier(t)
+		return readIdentifier(t)
 	case ListEnd:
 		panic(UnmatchedListEnd)
 	case VectorEnd:
 		panic(UnmatchedVectorEnd)
+	case MapEnd:
+		panic(UnmatchedMapEnd)
 	case EndOfFile:
 		return EndOfReader
 	default:
@@ -79,11 +92,11 @@ func (r *tokenReader) token(t *Token, m mode) a.Value {
 	}
 }
 
-func (r *tokenReader) quote() *a.Quote {
+func (r *tokenReader) readQuote() *a.Quote {
 	return &a.Quote{Value: r.nextData()}
 }
 
-func (r *tokenReader) list(m mode) a.Value {
+func (r *tokenReader) readList(m mode) a.Value {
 	var handle func(t *Token, m mode) a.Sequence
 	var rest func(m mode) a.Sequence
 	var first func() a.Value
@@ -127,31 +140,61 @@ func (r *tokenReader) function(t *Token) (*a.Function, bool) {
 	if t.Type != Identifier {
 		return nil, false
 	}
-	v := identifier(t)
+	v := readIdentifier(t)
 	return a.ResolveAsFunction(r.context, v)
 }
 
-func (r *tokenReader) vector(m mode) a.Vector {
-	var v = make(a.Vector, 0)
+func (r *tokenReader) readVector(m mode) a.Vector {
+	var res = make(a.Vector, 0)
 
 	for {
 		t := r.lexer.Next()
 		switch t.Type {
 		case VectorEnd:
-			return v
+			return res
 		case EndOfFile:
 			panic(VectorNotClosed)
 		default:
 			e := r.token(t, m)
-			v = append(v, e)
+			res = append(res, e)
 		}
 	}
 }
 
-func identifier(t *Token) a.Value {
+func (r *tokenReader) readMap(m mode) a.ArrayMap {
+	var res = make(a.ArrayMap, 0)
+	var mp = make(a.Vector, 2)
+
+	for idx := 0; ; idx++ {
+		t := r.lexer.Next()
+		switch t.Type {
+		case MapEnd:
+			if idx%2 == 0 {
+				return res
+			}
+			panic(MapNotPaired)
+		case EndOfFile:
+			panic(MapNotClosed)
+		default:
+			e := r.token(t, m)
+			if idx%2 == 0 {
+				mp[0] = e
+			} else {
+				mp[1] = e
+				res = append(res, mp)
+				mp = make(a.Vector, 2)
+			}
+		}
+	}
+}
+
+func readIdentifier(t *Token) a.Value {
 	n := a.Name(t.Value.(string))
 	if v, ok := specialNames[n]; ok {
 		return v
+	}
+	if n[0] == ':' {
+		return a.NewKeyword(n[1:])
 	}
 	return a.ParseSymbol(n)
 }

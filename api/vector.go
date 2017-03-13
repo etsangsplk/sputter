@@ -17,8 +17,9 @@ func (v Vector) Get(index int) Value {
 
 // Eval makes a Vector Evaluable
 func (v Vector) Eval(c Context) Value {
-	r := make(Vector, len(v))
-	for i := 0; i < len(v); i++ {
+	l := len(v)
+	r := make(Vector, l)
+	for i := 0; i < l; i++ {
 		r[i] = Eval(c, v[i])
 	}
 	return r
@@ -46,14 +47,14 @@ func (v Vector) IsSequence() bool {
 
 func (v Vector) String() string {
 	var b bytes.Buffer
+	l := len(v)
 
 	b.WriteString("[")
-	for i := 0; i < len(v); i++ {
-		vi := v[i]
+	for i := 0; i < l; i++ {
 		if i > 0 {
 			b.WriteString(" ")
 		}
-		b.WriteString(String(vi))
+		b.WriteString(String(v[i]))
 	}
 	b.WriteString("]")
 	return b.String()
