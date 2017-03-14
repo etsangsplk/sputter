@@ -13,7 +13,7 @@ func TestFunction(t *testing.T) {
 
 	f := &a.Function{
 		Name: "test-function",
-		Apply: func(c a.Context, args a.Sequence) a.Value {
+		Exec: func(c a.Context, args a.Sequence) a.Value {
 			return "hello"
 		},
 	}
@@ -65,10 +65,10 @@ func TestArityRange(t *testing.T) {
 	a.AssertArityRange(v, 4, 7)
 }
 
-func TestAssertFunction(t *testing.T) {
+func TestAssertApplicable(t *testing.T) {
 	as := assert.New(t)
-	a.AssertFunction(&a.Function{})
+	a.AssertApplicable(&a.Function{})
 
-	defer expectError(as, a.ExpectedFunction)
-	a.AssertFunction(&a.Symbol{})
+	defer expectError(as, a.ExpectedApplicable)
+	a.AssertApplicable(&a.Symbol{})
 }

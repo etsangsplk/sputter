@@ -30,7 +30,7 @@ func isVector(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	registerFunction(&a.Function{Name: "vector", Apply: vector})
-	registerFunction(&a.Function{Name: "to-vector", Apply: toVector})
-	registerPredicate(&a.Function{Name: "vector?", Apply: isVector})
+	registerFunction(&a.Function{Name: "vector", Exec: vector})
+	registerFunction(&a.Function{Name: "to-vector", Exec: toVector})
+	registerPredicate(&a.Function{Name: "vector?", Exec: isVector})
 }

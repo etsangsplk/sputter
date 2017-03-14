@@ -62,10 +62,10 @@ func (l *List) Eval(ctx Context) Value {
 	if l == EmptyList {
 		return EmptyList
 	}
-	if f, ok := ResolveAsFunction(ctx, l.first); ok {
+	if f, ok := ResolveAsApplicable(ctx, l.first); ok {
 		return f.Apply(ctx, l.rest)
 	}
-	panic(ExpectedFunction)
+	panic(ExpectedApplicable)
 }
 
 func (l *List) String() string {

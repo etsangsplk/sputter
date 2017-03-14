@@ -24,6 +24,6 @@ func isNil(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	registerPredicate(&a.Function{Name: "eq", Apply: identical})
-	registerPredicate(&a.Function{Name: "nil?", Apply: isNil})
+	registerPredicate(&a.Function{Name: "eq", Exec: identical})
+	registerPredicate(&a.Function{Name: "nil?", Exec: isNil})
 }

@@ -39,15 +39,10 @@ func NewLocalSymbol(name Name) *Symbol {
 
 // ParseSymbol parses a qualified Name and produces a Symbol
 func ParseSymbol(n Name) *Symbol {
-	s := strings.Split(string(n), ":")
-	switch len(s) {
-	case 2:
-		return NewQualifiedSymbol(Name(s[1]), Name(s[0]))
-	case 1:
-		return NewLocalSymbol(Name(s[0]))
-	default:
-		panic(BadQualifiedName)
+	if i := strings.IndexRune(string(n), ':'); i != -1 {
+		return NewQualifiedSymbol(n[i+1:], n[:i])
 	}
+	return NewLocalSymbol(n)
 }
 
 // Qualified returns the fully-qualified Name of a Symbol

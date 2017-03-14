@@ -110,14 +110,14 @@ func lte(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	registerFunction(&a.Function{Name: "+", Apply: add})
-	registerFunction(&a.Function{Name: "-", Apply: sub})
-	registerFunction(&a.Function{Name: "*", Apply: mul})
-	registerFunction(&a.Function{Name: "/", Apply: div})
-	registerFunction(&a.Function{Name: "=", Apply: eq})
-	registerFunction(&a.Function{Name: "!=", Apply: neq})
-	registerFunction(&a.Function{Name: ">", Apply: gt})
-	registerFunction(&a.Function{Name: ">=", Apply: gte})
-	registerFunction(&a.Function{Name: "<", Apply: lt})
-	registerFunction(&a.Function{Name: "<=", Apply: lte})
+	registerFunction(&a.Function{Name: "+", Exec: add})
+	registerFunction(&a.Function{Name: "-", Exec: sub})
+	registerFunction(&a.Function{Name: "*", Exec: mul})
+	registerFunction(&a.Function{Name: "/", Exec: div})
+	registerFunction(&a.Function{Name: "=", Exec: eq})
+	registerFunction(&a.Function{Name: "!=", Exec: neq})
+	registerFunction(&a.Function{Name: ">", Exec: gt})
+	registerFunction(&a.Function{Name: ">=", Exec: gte})
+	registerFunction(&a.Function{Name: "<", Exec: lt})
+	registerFunction(&a.Function{Name: "<=", Exec: lte})
 }

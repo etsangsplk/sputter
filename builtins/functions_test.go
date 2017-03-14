@@ -65,5 +65,5 @@ func TestApply(t *testing.T) {
 			[1 2 3])
 	`, big.NewFloat(6))
 
-	testBadCode(t, `(apply 32 [1 2 3])`, a.ExpectedFunction)
+	testBadCode(t, `(apply 32 [1 2 3])`, a.ExpectedApplicable)
 }

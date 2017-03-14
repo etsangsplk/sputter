@@ -1,6 +1,10 @@
 package reader
 
-import a "github.com/kode4food/sputter/api"
+import (
+	"regexp"
+
+	a "github.com/kode4food/sputter/api"
+)
 
 const (
 	// ListNotClosed is thrown when EOF is reached inside a List
@@ -31,6 +35,8 @@ const (
 	readCode mode = false
 	readData mode = true
 )
+
+var keywordIdentifier = regexp.MustCompile(`^:[^(){}\[\]\s,]+`)
 
 var specialNames = a.Variables{
 	"true":  a.True,
@@ -121,11 +127,12 @@ func (r *tokenReader) readList(m mode) a.Value {
 	first = func() a.Value {
 		t := r.lexer.Next()
 		if f, ok := r.function(t); ok {
-			fl := rest(mode(f.Data)).Prepend(f)
-			if f.Prepare != nil {
-				return f.Prepare(r.context, fl)
+			if mac, ok := f.(*a.Macro); ok {
+				mm := mode(mac.Data)
+				mf := rest(mm).Prepend(mac)
+				return mac.Apply(r.context, mf)
 			}
-			return fl
+			return rest(m).Prepend(f)
 		}
 		return handle(t, m)
 	}
@@ -136,12 +143,12 @@ func (r *tokenReader) readList(m mode) a.Value {
 	return first()
 }
 
-func (r *tokenReader) function(t *Token) (*a.Function, bool) {
+func (r *tokenReader) function(t *Token) (a.Applicable, bool) {
 	if t.Type != Identifier {
 		return nil, false
 	}
 	v := readIdentifier(t)
-	return a.ResolveAsFunction(r.context, v)
+	return a.ResolveAsApplicable(r.context, v)
 }
 
 func (r *tokenReader) readVector(m mode) a.Vector {
@@ -193,7 +200,9 @@ func readIdentifier(t *Token) a.Value {
 	if v, ok := specialNames[n]; ok {
 		return v
 	}
-	if n[0] == ':' {
+
+	s := string(n)
+	if keywordIdentifier.MatchString(s) {
 		return a.NewKeyword(n[1:])
 	}
 	return a.ParseSymbol(n)

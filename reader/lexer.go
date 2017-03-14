@@ -71,8 +71,6 @@ var states stateMap
 
 func init() {
 	re := regexp.MustCompile
-	idComp := `[^:(){}\[\]\s,]+`
-
 	states = stateMap{
 		{re(`^$`), endState(EndOfFile)},
 		{re(`^;[^\n]*[\n]`), tokenState(Comment)},
@@ -86,12 +84,10 @@ func init() {
 		{re(`^'`), tokenState(QuoteMarker)},
 
 		{re(`^"(\\.|[^"])*"`), stringState},
+		{re(`^[^0-9(){}\[\]\s,][^(){}\[\]\s,]*`), tokenState(Identifier)},
+
 		{re(`^[+-]?[1-9]\d*/[1-9]\d*`), ratioState},
 		{re(`^[+-]?(0|[1-9]\d*(\.\d+)?([eE][+-]?\d+)?)`), numberState},
-
-		{re(`^` + idComp + `:` + idComp), tokenState(Identifier)},
-		{re(`^:` + idComp), tokenState(Identifier)},
-		{re(`^` + idComp), tokenState(Identifier)},
 
 		{re(`^.`), endState(Error)},
 	}
@@ -149,7 +145,7 @@ func (l *lispLexer) matchState() stateFunc {
 	src := l.input[l.pos:]
 	for _, s := range states {
 		if i := s.pattern.FindStringIndex(src); i != nil {
-			r := src[i[0]:i[1]]
+			r := src[:i[1]]
 			l.pos += len(r)
 			return s.function
 		}

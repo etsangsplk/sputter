@@ -90,15 +90,10 @@ func TestSymbolParsing(t *testing.T) {
 	as.Equal(a.LocalDomain, s3.Domain)
 	as.Equal("name3", string(s3.Name))
 
-	defer func() {
-		if rec := recover(); rec != nil {
-			as.Equal(a.BadQualifiedName, rec, "parse explodes correctly")
-			return
-		}
-		as.Fail("bad parse should explode")
-	}()
+	s4 := a.ParseSymbol("one:too:")
+	as.Equal("one", string(s4.Domain))
+	as.Equal("too:", string(s4.Name))
 
-	a.ParseSymbol("one:too:")
 }
 
 func TestAssertUnqualified(t *testing.T) {

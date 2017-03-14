@@ -188,7 +188,7 @@ func TestEvaluable(t *testing.T) {
 
 	hello := &a.Function{
 		Name: "hello",
-		Apply: func(c a.Context, args a.Sequence) a.Value {
+		Exec: func(c a.Context, args a.Sequence) a.Value {
 			i := a.Iterate(args)
 			arg, _ := i.Next()
 			v := evaluateToString(c, arg)
@@ -210,7 +210,7 @@ func TestBuiltIns(t *testing.T) {
 	ns := a.GetContextNamespace(b)
 	ns.Put("hello", &a.Function{
 		Name: "hello",
-		Apply: func(c a.Context, args a.Sequence) a.Value {
+		Exec: func(c a.Context, args a.Sequence) a.Value {
 			return "there"
 		},
 	})
@@ -227,9 +227,9 @@ func TestReaderPrepare(t *testing.T) {
 	b := a.NewEvalContext()
 	ns := a.GetContextNamespace(b)
 	ns.Delete("hello")
-	ns.Put("hello", &a.Function{
+	ns.Put("hello", &a.Macro{
 		Name: "hello",
-		Prepare: func(c a.Context, l a.Sequence) a.Value {
+		Prep: func(c a.Context, l a.Sequence) a.Value {
 			if _, ok := l.(*a.List); !ok {
 				as.Fail("provided list is not a cons")
 			}

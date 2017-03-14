@@ -21,12 +21,12 @@ func getNamespace(c a.Context, args a.Sequence) a.Value {
 
 func init() {
 	registerFunction(&a.Function{
-		Name:  "with-ns",
-		Apply: withNamespace,
+		Name: "with-ns",
+		Exec: withNamespace,
 	})
 
 	registerFunction(&a.Function{
-		Name:  "ns",
-		Apply: getNamespace,
+		Name: "ns",
+		Exec: getNamespace,
 	})
 }

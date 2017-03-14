@@ -43,6 +43,7 @@ that will change rapidly.  The current built-in forms are:
   * Predicates: `eq`, `!eq`, `nil?`, `!nil?`
   * Sequences: `cons`, `first`, `rest`, `seq?`, `!seq?`
   * Lists: `list`, `list?`, `!list?`, `to-list`
+  * Maps: `map`, `map?`, `!map?`, `to-map`
   * Vectors: `vector`, `vector?`, `!vector?`, `to-vector`
   * I/O: `print`, `println`, `pr`, `prn`
 

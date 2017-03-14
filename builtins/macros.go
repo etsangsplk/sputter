@@ -17,9 +17,10 @@ func defmacro(c a.Context, form a.Sequence) a.Value {
 	fc := a.Count(an)
 	b, _ := i.Next()
 
-	m := &a.Function{
+	m := &a.Macro{
 		Name: mn,
-		Prepare: func(c a.Context, form a.Sequence) a.Value {
+		Data: true,
+		Prep: func(c a.Context, form a.Sequence) a.Value {
 			i := a.Iterate(form)
 			i.Next() // skip the macro name
 			a.AssertArity(i.Rest(), fc)
@@ -32,9 +33,9 @@ func defmacro(c a.Context, form a.Sequence) a.Value {
 }
 
 func init() {
-	registerFunction(&a.Function{
-		Name:    "defmacro",
-		Prepare: defmacro,
-		Data:    true,
+	registerMacro(&a.Macro{
+		Name: "defmacro",
+		Prep: defmacro,
+		Data: true,
 	})
 }

@@ -12,32 +12,43 @@ const (
 	// BadArityRange is thrown when a Function has an arity range
 	BadArityRange = "expected between %d and %d arguments, got %d"
 
-	// ExpectedFunction is thrown when a Value is not a Function
-	ExpectedFunction = "value is not a function"
+	// ExpectedApplicable is thrown when a Value is not Applicable
+	ExpectedApplicable = "value does not support application"
 )
 
 // SequenceProcessor is the standard signature for a function that is
 // capable of transforming or validating a Sequence
 type SequenceProcessor func(Context, Sequence) Value
 
-// Function is a Value that can be invoked
-type Function struct {
-	Name    Name
-	Apply   SequenceProcessor
-	Prepare SequenceProcessor
-	Data    bool
+// Applicable is the standard signature for any Value that can have
+// arguments applied to it
+type Applicable interface {
+	Apply(Context, Sequence) Value
 }
 
-// ResolveAsFunction either returns a Function as-is or tries
+// Function is a Value that can be invoked
+type Function struct {
+	Name Name
+	Exec SequenceProcessor
+}
+
+// Macro is a Value that can be used to transform a Value
+type Macro struct {
+	Name Name
+	Prep SequenceProcessor
+	Data bool
+}
+
+// ResolveAsApplicable either returns an Applicable as-is or tries
 // to perform a lookup if the Value is a Symbol
-func ResolveAsFunction(c Context, v Value) (*Function, bool) {
-	if f, ok := v.(*Function); ok {
+func ResolveAsApplicable(c Context, v Value) (Applicable, bool) {
+	if f, ok := v.(Applicable); ok {
 		return f, true
 	}
 
 	if s, ok := v.(*Symbol); ok {
 		if sv, ok := s.Resolve(c); ok {
-			if f, ok := sv.(*Function); ok {
+			if f, ok := sv.(Applicable); ok {
 				return f, true
 			}
 		}
@@ -46,11 +57,28 @@ func ResolveAsFunction(c Context, v Value) (*Function, bool) {
 	return nil, false
 }
 
+// Apply makes Function Applicable
+func (f *Function) Apply(c Context, args Sequence) Value {
+	return f.Exec(c, args)
+}
+
 func (f *Function) String() string {
 	if f.Name != "" {
 		return "(fn :name " + string(f.Name) + ")"
 	}
 	return fmt.Sprintf("(fn :addr %p)", &f)
+}
+
+// Apply makes Macro Applicable
+func (m *Macro) Apply(c Context, args Sequence) Value {
+	return m.Prep(c, args)
+}
+
+func (m *Macro) String() string {
+	if m.Name != "" {
+		return "(macro :name " + string(m.Name) + ")"
+	}
+	return fmt.Sprintf("(macro :addr %p)", &m)
 }
 
 // AssertArity explodes if the arg count doesn't match provided arity
@@ -77,10 +105,10 @@ func AssertArityRange(args Sequence, min int, max int) {
 	}
 }
 
-// AssertFunction will cast a Value into a Function or explode violently
-func AssertFunction(v Value) *Function {
-	if r, ok := v.(*Function); ok {
+// AssertApplicable will cast a Value into an Applicable or explode violently
+func AssertApplicable(v Value) Applicable {
+	if r, ok := v.(Applicable); ok {
 		return r
 	}
-	panic(ExpectedFunction)
+	panic(ExpectedApplicable)
 }

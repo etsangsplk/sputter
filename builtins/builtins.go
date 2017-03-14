@@ -9,11 +9,15 @@ func registerFunction(f *a.Function) {
 	BuiltIns.Put(f.Name, f)
 }
 
+func registerMacro(m *a.Macro) {
+	BuiltIns.Put(m.Name, m)
+}
+
 func registerPredicate(f *a.Function) {
 	registerFunction(f)
 	registerFunction(&a.Function{
 		Name: "!" + f.Name,
-		Apply: func(c a.Context, args a.Sequence) a.Value {
+		Exec: func(c a.Context, args a.Sequence) a.Value {
 			r := f.Apply(c, args)
 			if r == a.True {
 				return a.False
@@ -28,16 +32,16 @@ func do(c a.Context, args a.Sequence) a.Value {
 }
 
 func quote(_ a.Context, args a.Sequence) a.Value {
-	a.AssertArity(args, 1)
-	return args.First()
+	a.AssertArity(args, 2)
+	return &a.Quote{Value: args.Rest().First()}
 }
 
 func init() {
-	registerFunction(&a.Function{Name: "do", Apply: do})
+	registerFunction(&a.Function{Name: "do", Exec: do})
 
-	registerFunction(&a.Function{
-		Name:  "quote",
-		Apply: quote,
-		Data:  true,
+	registerMacro(&a.Macro{
+		Name: "quote",
+		Prep: quote,
+		Data: true,
 	})
 }

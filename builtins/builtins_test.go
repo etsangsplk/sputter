@@ -44,10 +44,8 @@ func TestBuiltInsContext(t *testing.T) {
 
 	qv, ok := bg3.Get("do")
 	as.True(ok)
-	if fv, ok := qv.(*a.Function); ok {
-		as.Equal("do", string(fv.Name))
-	} else {
-		as.Fail("returned value not a Function")
+	if _, ok := qv.(a.Applicable); !ok {
+		as.Fail("returned value not Applicable")
 	}
 }
 

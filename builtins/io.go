@@ -55,8 +55,8 @@ func _println(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	registerFunction(&a.Function{Name: "pr", Apply: pr})
-	registerFunction(&a.Function{Name: "prn", Apply: prn})
-	registerFunction(&a.Function{Name: "print", Apply: _print})
-	registerFunction(&a.Function{Name: "println", Apply: _println})
+	registerFunction(&a.Function{Name: "pr", Exec: pr})
+	registerFunction(&a.Function{Name: "prn", Exec: prn})
+	registerFunction(&a.Function{Name: "print", Exec: _print})
+	registerFunction(&a.Function{Name: "println", Exec: _println})
 }

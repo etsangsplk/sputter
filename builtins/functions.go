@@ -27,7 +27,7 @@ func define(d *functionDefinition) *a.Function {
 
 	return &a.Function{
 		Name: d.name,
-		Apply: func(c a.Context, args a.Sequence) a.Value {
+		Exec: func(c a.Context, args a.Sequence) a.Value {
 			a.AssertArity(args, ac)
 			l := a.ChildContext(dc)
 			i := a.Iterate(args)
@@ -76,13 +76,13 @@ func fn(c a.Context, args a.Sequence) a.Value {
 
 func apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 2)
-	f := a.AssertFunction(a.Eval(c, args.First()))
+	f := a.AssertApplicable(a.Eval(c, args.First()))
 	a := a.AssertSequence(a.Eval(c, args.Rest().First()))
 	return f.Apply(c, a)
 }
 
 func init() {
-	registerFunction(&a.Function{Name: "defn", Apply: defn})
-	registerFunction(&a.Function{Name: "fn", Apply: fn})
-	registerFunction(&a.Function{Name: "apply", Apply: apply})
+	registerFunction(&a.Function{Name: "defn", Exec: defn})
+	registerFunction(&a.Function{Name: "fn", Exec: fn})
+	registerFunction(&a.Function{Name: "apply", Exec: apply})
 }

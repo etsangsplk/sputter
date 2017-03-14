@@ -20,12 +20,6 @@ type Indexed interface {
 	Get(index int) Value
 }
 
-// Mapped interfaces allow a Sequence item to be retrieved by Name
-type Mapped interface {
-	Sequence
-	Get(key Value) Value
-}
-
 // Iterator is a stateful iteration interface for Sequences
 type Iterator struct {
 	sequence Sequence

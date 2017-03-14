@@ -32,6 +32,6 @@ func let(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	registerFunction(&a.Function{Name: "def", Apply: def})
-	registerFunction(&a.Function{Name: "let", Apply: let})
+	registerFunction(&a.Function{Name: "def", Exec: def})
+	registerFunction(&a.Function{Name: "let", Exec: let})
 }

@@ -10,7 +10,7 @@ import (
 
 var helloThere = &a.Function{
 	Name: "hello",
-	Apply: func(c a.Context, args a.Sequence) a.Value {
+	Exec: func(c a.Context, args a.Sequence) a.Value {
 		return "there"
 	},
 }
@@ -106,5 +106,5 @@ func testBrokenEval(t *testing.T, seq a.Sequence, err string) {
 
 func TestNonFunction(t *testing.T) {
 	seq := a.NewList("foo").Prepend(&a.Symbol{Name: "unknown"})
-	testBrokenEval(t, seq, a.ExpectedFunction)
+	testBrokenEval(t, seq, a.ExpectedApplicable)
 }

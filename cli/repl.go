@@ -3,8 +3,10 @@ package cli
 import (
 	"bytes"
 	"fmt"
+	"math/rand"
 	"regexp"
 	"strings"
+	"time"
 
 	a "github.com/kode4food/sputter/api"
 	r "github.com/kode4food/sputter/reader"
@@ -30,6 +32,16 @@ const (
 	good   = domain + green + "[%d]= " + output
 	bad    = domain + red + "[%d]! " + output
 )
+
+var farewells = []string{
+	"Until next time...",
+	"Ciao!",
+	"Bye!",
+	"Bye for now!",
+	"Have a wonderful day!",
+	"Goodbye",
+	"B'bye!",
+}
 
 // REPL manages a Read-Eval-Print Loop
 type REPL struct {
@@ -90,6 +102,12 @@ func (repl *REPL) Run() {
 		repl.evalBuffer()
 		repl.reset()
 	}
+
+	t := time.Now().UTC().UnixNano()
+	rs := rand.NewSource(t)
+	r := rand.New(rs)
+	idx := r.Intn(len(farewells))
+	fmt.Println(farewells[idx])
 }
 
 func (repl *REPL) reset() {
@@ -156,7 +174,7 @@ func (repl *REPL) output(prefix string, v a.Value) {
 }
 
 func (repl *REPL) registerREPLBuiltIns() {
-	repl.ctx.Put("use", &a.Function{Name: "use", Apply: use})
+	repl.ctx.Put("use", &a.Function{Name: "use", Exec: use})
 }
 
 func isEmpty(s string) bool {

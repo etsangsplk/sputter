@@ -10,7 +10,7 @@ import (
 
 var helloName = &a.Function{
 	Name: "hello",
-	Apply: func(c a.Context, args a.Sequence) a.Value {
+	Exec: func(c a.Context, args a.Sequence) a.Value {
 		i := a.Iterate(args)
 		a, _ := i.Next()
 		v := evaluateToString(c, a)

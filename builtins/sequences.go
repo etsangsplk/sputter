@@ -44,9 +44,9 @@ func _len(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	registerPredicate(&a.Function{Name: "seq?", Apply: isSequence})
-	registerFunction(&a.Function{Name: "first", Apply: first})
-	registerFunction(&a.Function{Name: "rest", Apply: rest})
-	registerFunction(&a.Function{Name: "cons", Apply: cons})
-	registerFunction(&a.Function{Name: "len", Apply: _len})
+	registerPredicate(&a.Function{Name: "seq?", Exec: isSequence})
+	registerFunction(&a.Function{Name: "first", Exec: first})
+	registerFunction(&a.Function{Name: "rest", Exec: rest})
+	registerFunction(&a.Function{Name: "cons", Exec: cons})
+	registerFunction(&a.Function{Name: "len", Exec: _len})
 }
