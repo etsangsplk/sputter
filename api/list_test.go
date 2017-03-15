@@ -91,15 +91,8 @@ func TestListEval(t *testing.T) {
 
 func testBrokenEval(t *testing.T, seq a.Sequence, err string) {
 	as := assert.New(t)
-
-	defer func() {
-		if rec := recover(); rec != nil {
-			as.Equal(err, rec, "eval panics properly")
-			return
-		}
-		as.Fail("eval should panic")
-	}()
-
+	
+	defer expectError(as, err)
 	c := a.NewContext()
 	a.Eval(c, seq)
 }

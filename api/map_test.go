@@ -66,14 +66,7 @@ func TestArrayMapPrepend(t *testing.T) {
 		as.Fail("map.Eval() didn't return an ArrayMap")
 	}
 
-	defer func() {
-		if rec := recover(); rec != nil {
-			as.Equal(a.ExpectedPair, rec, "map pair expected")
-			return
-		}
-		as.Fail("error not thrown as expected")
-	}()
-
+	defer expectError(as, a.ExpectedPair)
 	m2.Prepend(99)
 }
 
@@ -107,4 +100,7 @@ func TestArrayMapLookup(t *testing.T) {
 	c := a.NewContext()
 	args := a.NewList(m1)
 	as.Equal("Sputter", nameKey.Apply(c, args), "get works")
+	
+	defer expectError(as, a.ExpectedMapped)
+	nameKey.Apply(c, a.NewList(99))
 }

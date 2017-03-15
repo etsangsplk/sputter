@@ -61,15 +61,8 @@ func TestSymbolInterning(t *testing.T) {
 
 func TestUnknownSymbol(t *testing.T) {
 	as := assert.New(t)
-
-	defer func() {
-		if rec := recover(); rec != nil {
-			as.Equal(a.UnknownSymbol, rec, "symbol eval panics properly")
-			return
-		}
-		as.Fail("symbol eval should panic")
-	}()
-
+	
+	defer expectError(as, a.UnknownSymbol)
 	c := a.NewContext()
 	sym := &a.Symbol{Name: "howdy"}
 	sym.Eval(c)
