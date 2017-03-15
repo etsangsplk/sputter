@@ -31,7 +31,7 @@ func toMap(c a.Context, args a.Sequence) a.Value {
 func isMap(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
 	v := args.First()
-	if _, ok := a.Eval(c, v).(a.ArrayMap); ok {
+	if _, ok := a.Eval(c, v).(a.Mapped); ok {
 		return a.True
 	}
 	return a.False
