@@ -65,6 +65,16 @@ func TestArrayMapPrepend(t *testing.T) {
 	} else {
 		as.Fail("map.Eval() didn't return an ArrayMap")
 	}
+
+	defer func() {
+		if rec := recover(); rec != nil {
+			as.Equal(a.ExpectedPair, rec, "map pair expected")
+			return
+		}
+		as.Fail("error not thrown as expected")
+	}()
+
+	m2.Prepend(99)
 }
 
 func TestArrayMapIterate(t *testing.T) {
@@ -87,4 +97,14 @@ func TestArrayMapIterate(t *testing.T) {
 	} else {
 		as.Fail("couldn't get second element")
 	}
+}
+
+func TestArrayMapLookup(t *testing.T) {
+	as := assert.New(t)
+	m1 := getTestMap()
+
+	nameKey := a.NewKeyword("name")
+	c := a.NewContext()
+	args := a.NewList(m1)
+	as.Equal("Sputter", nameKey.Apply(c, args), "get works")
 }

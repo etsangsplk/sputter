@@ -5,16 +5,8 @@ import (
 	"math/big"
 )
 
-const (
-	// ExpectedCountable is thrown if taking count of a non-countable sequence
-	ExpectedCountable = "sequence is not countable"
-
-	// ExpectedSequence is thrown when a Value is not a Sequence
-	ExpectedSequence = "value is not a list or vector"
-
-	// ExpectedNumeric is thrown when a Value is not a Number
-	ExpectedNumeric = "value is not numeric"
-)
+// ExpectedNumeric is thrown when a Value is not a Number
+const ExpectedNumeric = "value is not numeric"
 
 var (
 	// True represents the boolean value of True
@@ -47,28 +39,12 @@ func Truthy(v Value) bool {
 	}
 }
 
-// Count will return the Count from a Countable Sequence or explode
-func Count(s Sequence) int {
-	if f, ok := s.(Countable); ok {
-		return f.Count()
-	}
-	panic(ExpectedCountable)
-}
-
 // String either calls the String() method or tries to convert
 func String(v Value) string {
 	if s, ok := v.(fmt.Stringer); ok {
 		return s.String()
 	}
 	return `"` + v.(string) + `"`
-}
-
-// AssertSequence will cast a Value into a Sequence or explode violently
-func AssertSequence(v Value) Sequence {
-	if r, ok := v.(Sequence); ok {
-		return r
-	}
-	panic(ExpectedSequence)
 }
 
 // AssertNumeric will cast a Value into a Numeric or explode violently

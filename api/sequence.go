@@ -1,5 +1,13 @@
 package api
 
+const (
+	// ExpectedCountable is thrown if taking count of a non-countable sequence
+	ExpectedCountable = "sequence is not countable"
+
+	// ExpectedSequence is thrown when a Value is not a Sequence
+	ExpectedSequence = "value is not a list or vector"
+)
+
 // Sequence interfaces expose a lazily resolved sequence of Values
 type Sequence interface {
 	First() Value
@@ -44,4 +52,20 @@ func (i *Iterator) Rest() Sequence {
 // Iterate creates a stateful Iterator over a Sequence
 func Iterate(s Sequence) *Iterator {
 	return &Iterator{sequence: s}
+}
+
+// Count will return the Count from a Countable Sequence or explode
+func Count(s Sequence) int {
+	if f, ok := s.(Countable); ok {
+		return f.Count()
+	}
+	panic(ExpectedCountable)
+}
+
+// AssertSequence will cast a Value into a Sequence or explode violently
+func AssertSequence(v Value) Sequence {
+	if r, ok := v.(Sequence); ok {
+		return r
+	}
+	panic(ExpectedSequence)
 }
