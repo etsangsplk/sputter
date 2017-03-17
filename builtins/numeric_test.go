@@ -7,6 +7,8 @@ import (
 )
 
 func TestBasicNumber(t *testing.T) {
+	testCode(t, `(+)`, a.NewFloat(0))
+	testCode(t, `(*)`, a.NewFloat(1))
 	testCode(t, `(+ 1 1)`, a.NewFloat(2.0))
 	testCode(t, `(* 4 4)`, a.NewFloat(16.0))
 	testCode(t, `(+ 5 4)`, a.NewFloat(9.0))
