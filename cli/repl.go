@@ -216,7 +216,7 @@ func shutdown(c a.Context, args a.Sequence) a.Value {
 // TODO: Generate from docstrings when they exist
 func help(c a.Context, args a.Sequence) a.Value {
 	fmt.Println(yellow + "(help)   " + reset + "; Display this help")
-	fmt.Println(yellow + "(use ns) " + reset + "; Change the context Namespace")
+	fmt.Println(yellow + "(use ns) " + reset + "; Change namespace")
 	fmt.Println(yellow + "(quit)   " + reset + "; Quit the REPL")
 	fmt.Println()
 	return a.Nil
