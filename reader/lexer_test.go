@@ -1,7 +1,6 @@
 package reader_test
 
 import (
-	"math/big"
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
@@ -17,9 +16,9 @@ func assertToken(as *assert.Assertions, like *r.Token, value *r.Token) {
 	as.Equal(like.Type, value.Type)
 	switch like.Type {
 	case r.Number:
-		as.Equal(0, like.Value.(*big.Float).Cmp(value.Value.(*big.Float)))
+		as.Equal(a.EqualTo, like.Value.(*a.Number).Cmp(value.Value.(*a.Number)))
 	case r.Ratio:
-		as.Equal(0, like.Value.(*big.Rat).Cmp(value.Value.(*big.Rat)))
+		as.Equal(a.EqualTo, like.Value.(*a.Number).Cmp(value.Value.(*a.Number)))
 	default:
 		as.EqualValues(like.Value, value.Value)
 	}
@@ -48,12 +47,12 @@ func TestEmptyList(t *testing.T) {
 func TestNumbers(t *testing.T) {
 	as := assert.New(t)
 	l := r.NewLexer(" 10 12.8 8E+10 99.598e+10 54e+12 1/2")
-	assertToken(as, makeToken(r.Number, big.NewFloat(10)), l.Next())
-	assertToken(as, makeToken(r.Number, big.NewFloat(12.8)), l.Next())
-	assertToken(as, makeToken(r.Number, big.NewFloat(8E+10)), l.Next())
-	assertToken(as, makeToken(r.Number, big.NewFloat(99.598e+10)), l.Next())
-	assertToken(as, makeToken(r.Number, big.NewFloat(54e+12)), l.Next())
-	assertToken(as, makeToken(r.Ratio, big.NewRat(1, 2)), l.Next())
+	assertToken(as, makeToken(r.Number, a.NewFloat(10)), l.Next())
+	assertToken(as, makeToken(r.Number, a.NewFloat(12.8)), l.Next())
+	assertToken(as, makeToken(r.Number, a.NewFloat(8E+10)), l.Next())
+	assertToken(as, makeToken(r.Number, a.NewFloat(99.598e+10)), l.Next())
+	assertToken(as, makeToken(r.Number, a.NewFloat(54e+12)), l.Next())
+	assertToken(as, makeToken(r.Ratio, a.NewRatio(1, 2)), l.Next())
 	assertToken(as, r.EOFToken, l.Next())
 }
 
@@ -73,6 +72,6 @@ func TestMultiLine(t *testing.T) {
 
 	assertToken(as, makeToken(r.String, `hello there`), l.Next())
 	assertToken(as, makeToken(r.String, `how's life?`), l.Next())
-	assertToken(as, makeToken(r.Number, big.NewFloat(99)), l.Next())
+	assertToken(as, makeToken(r.Number, a.NewFloat(99)), l.Next())
 	assertToken(as, r.EOFToken, l.Next())
 }

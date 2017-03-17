@@ -1,7 +1,6 @@
 package api_test
 
 import (
-	"math/big"
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
@@ -17,7 +16,7 @@ var helloThere = &a.Function{
 
 func TestSimpleList(t *testing.T) {
 	as := assert.New(t)
-	n := big.NewFloat(12)
+	n := a.NewFloat(12)
 	l := a.NewList(n)
 	as.Equal(n, l.First(), "head is populated correctly")
 	as.Equal(a.EmptyList, l.Rest(), "list terminated properly")
@@ -25,13 +24,13 @@ func TestSimpleList(t *testing.T) {
 
 func TestList(t *testing.T) {
 	as := assert.New(t)
-	n1 := big.NewFloat(12)
+	n1 := a.NewFloat(12)
 	l1 := a.NewList(n1)
 	as.Equal(n1, l1.First(), "1st head is populated correctly")
 	as.Equal(a.EmptyList, l1.Rest(), "list terminated properly")
 	as.False(l1.Rest().IsSequence(), "list terminated properly")
 
-	n2 := big.NewFloat(20.5)
+	n2 := a.NewFloat(20.5)
 	l2 := l1.Prepend(n2).(*a.List)
 
 	as.Equal("()", a.EmptyList.String())
@@ -39,7 +38,7 @@ func TestList(t *testing.T) {
 	as.Equal(n2, l2.First(), "2nd head is populated correctly")
 	as.Equal(l1, l2.Rest(), "2nd tail is populated correctly")
 	as.Equal(2, l2.Count(), "2nd list count is correct")
-	as.Equal(big.NewFloat(12), l2.Get(1), "get(int) works")
+	as.Equal(a.NewFloat(12), l2.Get(1), "get(int) works")
 	as.Equal(2, a.Count(l2), "2nd list general count is correct")
 
 	as.Equal(a.Nil, a.EmptyList.Get(1), "get from empty list")
@@ -47,31 +46,31 @@ func TestList(t *testing.T) {
 
 func TestIterator(t *testing.T) {
 	as := assert.New(t)
-	n1 := big.NewFloat(12)
+	n1 := a.NewFloat(12)
 	l1 := a.NewList(n1)
 	as.Equal(n1, l1.First(), "1st head is populated correctly")
 	as.Equal(a.EmptyList, l1.Rest(), "list terminated properly")
 	as.False(l1.Rest().IsSequence(), "list terminated properly")
 
-	n2 := big.NewFloat(20.5)
+	n2 := a.NewFloat(20.5)
 	l2 := l1.Prepend(n2)
 	as.Equal(n2, l2.First(), "2nd head is populated correctly")
 	as.Equal(l1, l2.Rest(), "2nd tail is populated correctly")
 
-	sum := big.NewFloat(0.0)
+	sum := a.NewFloat(0.0)
 	i := a.Iterate(l2)
 	for {
 		v, ok := i.Next()
 		if !ok {
 			break
 		}
-		fv := v.(*big.Float)
-		sum.Add(sum, fv)
+		fv := v.(*a.Number)
+		sum = sum.Add(fv)
 	}
 
-	val, acc := sum.Float64()
+	val, exact := sum.Float64()
 	as.Equal(32.5, val, "values are summed correctly")
-	as.EqualValues(0, acc, "should be no loss of accuracy")
+	as.EqualValues(true, exact, "should be no loss of accuracy")
 }
 
 func TestListEval(t *testing.T) {
@@ -91,7 +90,7 @@ func TestListEval(t *testing.T) {
 
 func testBrokenEval(t *testing.T, seq a.Sequence, err string) {
 	as := assert.New(t)
-	
+
 	defer expectError(as, err)
 	c := a.NewContext()
 	a.Eval(c, seq)

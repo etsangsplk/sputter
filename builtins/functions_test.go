@@ -2,7 +2,6 @@ package builtins_test
 
 import (
 	"fmt"
-	"math/big"
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
@@ -58,12 +57,12 @@ func TestBadLambda(t *testing.T) {
 }
 
 func TestApply(t *testing.T) {
-	testCode(t, `(apply + [1 2 3])`, big.NewFloat(6))
+	testCode(t, `(apply + [1 2 3])`, a.NewFloat(6))
 	testCode(t, `
 		(apply
 			(fn [x y z] (+ x y z))
 			[1 2 3])
-	`, big.NewFloat(6))
+	`, a.NewFloat(6))
 
 	testBadCode(t, `(apply 32 [1 2 3])`, a.ExpectedApplicable)
 }

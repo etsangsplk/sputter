@@ -1,7 +1,6 @@
 package api_test
 
 import (
-	"math/big"
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
@@ -20,12 +19,4 @@ func TestTruthy(t *testing.T) {
 	as.False(a.Truthy(nil), "nil is not Truthy")
 	as.False(a.Truthy(a.False), "API False is not Truthy")
 	as.False(a.Truthy(false), "false is not Truthy")
-}
-
-func TestAssertNumeric(t *testing.T) {
-	as := assert.New(t)
-	a.AssertNumeric(big.NewFloat(99))
-
-	defer expectError(as, a.ExpectedNumeric)
-	a.AssertNumeric(&a.Symbol{})
 }

@@ -1,32 +1,31 @@
 package builtins_test
 
 import (
-	"math/big"
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
 )
 
-func TestBasicNumeric(t *testing.T) {
-	testCode(t, `(+ 1 1)`, big.NewFloat(2.0))
-	testCode(t, `(* 4 4)`, big.NewFloat(16.0))
-	testCode(t, `(+ 5 4)`, big.NewFloat(9.0))
-	testCode(t, `(* 12 3)`, big.NewFloat(36.0))
-	testCode(t, `(- 10 4)`, big.NewFloat(6.0))
-	testCode(t, `(- 10 4 2)`, big.NewFloat(4.0))
-	testCode(t, `(/ 10 2)`, big.NewFloat(5.0))
-	testCode(t, `(/ 10 2 5)`, big.NewFloat(1.0))
+func TestBasicNumber(t *testing.T) {
+	testCode(t, `(+ 1 1)`, a.NewFloat(2.0))
+	testCode(t, `(* 4 4)`, a.NewFloat(16.0))
+	testCode(t, `(+ 5 4)`, a.NewFloat(9.0))
+	testCode(t, `(* 12 3)`, a.NewFloat(36.0))
+	testCode(t, `(- 10 4)`, a.NewFloat(6.0))
+	testCode(t, `(- 10 4 2)`, a.NewFloat(4.0))
+	testCode(t, `(/ 10 2)`, a.NewFloat(5.0))
+	testCode(t, `(/ 10 2 5)`, a.NewFloat(1.0))
 }
 
-func TestNestedNumeric(t *testing.T) {
-	testCode(t, `(/ 10 (- 5 3))`, big.NewFloat(5.0))
-	testCode(t, `(* 5 (- 5 3))`, big.NewFloat(10.0))
-	testCode(t, `(/ 10 (/ 6 3))`, big.NewFloat(5.0))
+func TestNestedNumber(t *testing.T) {
+	testCode(t, `(/ 10 (- 5 3))`, a.NewFloat(5.0))
+	testCode(t, `(* 5 (- 5 3))`, a.NewFloat(10.0))
+	testCode(t, `(/ 10 (/ 6 3))`, a.NewFloat(5.0))
 }
 
-func TestNonNumeric(t *testing.T) {
-	testBadCode(t, `(+ 99 "hello")`, a.ExpectedNumeric)
-	testBadCode(t, `(+ "hello")`, a.ExpectedNumeric)
+func TestNonNumber(t *testing.T) {
+	testBadCode(t, `(+ 99 "hello")`, a.ExpectedNumber)
+	testBadCode(t, `(+ "hello")`, a.ExpectedNumber)
 }
 
 func TestCompare(t *testing.T) {
@@ -60,6 +59,6 @@ func TestCompare(t *testing.T) {
 }
 
 func TestBadCompare(t *testing.T) {
-	testBadCode(t, `(< 99 "hello")`, a.ExpectedNumeric)
-	testBadCode(t, `(< "hello" "there")`, a.ExpectedNumeric)
+	testBadCode(t, `(< 99 "hello")`, a.ExpectedNumber)
+	testBadCode(t, `(< "hello" "there")`, a.ExpectedNumber)
 }

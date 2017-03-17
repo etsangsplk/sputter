@@ -1,7 +1,6 @@
 package api_test
 
 import (
-	"math/big"
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
@@ -20,7 +19,7 @@ func TestAtom(t *testing.T) {
 func TestQuote(t *testing.T) {
 	as := assert.New(t)
 
-	f := big.NewFloat(99.0)
+	f := a.NewFloat(99.0)
 	q := &a.Quote{Value: f}
 	c := a.NewContext()
 	as.Equal(f, q.Eval(c), "wrapped value returned")

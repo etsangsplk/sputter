@@ -1,12 +1,6 @@
 package api
 
-import (
-	"fmt"
-	"math/big"
-)
-
-// ExpectedNumeric is thrown when a Value is not a Number
-const ExpectedNumeric = "value is not numeric"
+import "fmt"
 
 var (
 	// True represents the boolean value of True
@@ -45,12 +39,4 @@ func String(v Value) string {
 		return s.String()
 	}
 	return `"` + v.(string) + `"`
-}
-
-// AssertNumeric will cast a Value into a Numeric or explode violently
-func AssertNumeric(v Value) *big.Float {
-	if r, ok := v.(*big.Float); ok {
-		return r
-	}
-	panic(ExpectedNumeric)
 }

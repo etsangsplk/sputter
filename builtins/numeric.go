@@ -1,39 +1,38 @@
 package builtins
 
-import (
-	"math/big"
+import a "github.com/kode4food/sputter/api"
 
-	a "github.com/kode4food/sputter/api"
+type reduceFunc func(prev *a.Number, next *a.Number) *a.Number
+type compareFunc func(prev *a.Number, next *a.Number) bool
+
+var (
+	zero = a.NewFloat(0)
+	one  = a.NewFloat(1)
 )
 
-type reduceFunc func(prev *big.Float, next *big.Float) *big.Float
-type compareFunc func(prev *big.Float, next *big.Float) bool
-
-func reduce(c a.Context, s a.Sequence, v *big.Float, f reduceFunc) a.Value {
+func reduce(c a.Context, s a.Sequence, v *a.Number, f reduceFunc) a.Value {
 	cur := v
 	i := a.Iterate(s)
 	for e, ok := i.Next(); ok; e, ok = i.Next() {
-		fv := a.AssertNumeric(a.Eval(c, e))
+		fv := a.AssertNumber(a.Eval(c, e))
 		cur = f(cur, fv)
 	}
 	return cur
 }
 
-func fetchFirstNumber(c a.Context, args a.Sequence) (*big.Float, a.Sequence) {
+func fetchFirstNumber(c a.Context, args a.Sequence) (*a.Number, a.Sequence) {
 	a.AssertMinimumArity(args, 1)
 	i := a.Iterate(args)
 	v, _ := i.Next()
-	if r, ok := a.Eval(c, v).(*big.Float); ok {
-		return r, i.Rest()
-	}
-	panic(a.ExpectedNumeric)
+	nv := a.AssertNumber(a.Eval(c, v))
+	return nv, i.Rest()
 }
 
 func compare(c a.Context, s a.Sequence, f compareFunc) a.Value {
 	cur, r := fetchFirstNumber(c, s)
 	i := a.Iterate(r)
 	for e, ok := i.Next(); ok; e, ok = i.Next() {
-		v := a.AssertNumeric(a.Eval(c, e))
+		v := a.AssertNumber(a.Eval(c, e))
 		if !f(cur, v) {
 			return a.False
 		}
@@ -43,36 +42,42 @@ func compare(c a.Context, s a.Sequence, f compareFunc) a.Value {
 }
 
 func add(c a.Context, args a.Sequence) a.Value {
-	f := big.NewFloat(0)
-	return reduce(c, args, f, func(p *big.Float, n *big.Float) *big.Float {
-		return p.Add(p, n)
+	if !args.IsSequence() {
+		return zero
+	}
+	f, r := fetchFirstNumber(c, args)
+	return reduce(c, r, f, func(p *a.Number, n *a.Number) *a.Number {
+		return p.Add(n)
 	})
 }
 
 func sub(c a.Context, args a.Sequence) a.Value {
 	f, r := fetchFirstNumber(c, args)
-	return reduce(c, r, f, func(p *big.Float, n *big.Float) *big.Float {
-		return p.Sub(p, n)
+	return reduce(c, r, f, func(p *a.Number, n *a.Number) *a.Number {
+		return p.Sub(n)
 	})
 }
 
 func mul(c a.Context, args a.Sequence) a.Value {
-	f := big.NewFloat(1)
-	return reduce(c, args, f, func(p *big.Float, n *big.Float) *big.Float {
-		return p.Mul(p, n)
+	if !args.IsSequence() {
+		return one
+	}
+	f, r := fetchFirstNumber(c, args)
+	return reduce(c, r, f, func(p *a.Number, n *a.Number) *a.Number {
+		return p.Mul(n)
 	})
 }
 
 func div(c a.Context, args a.Sequence) a.Value {
 	f, r := fetchFirstNumber(c, args)
-	return reduce(c, r, f, func(p *big.Float, n *big.Float) *big.Float {
-		return p.Quo(p, n)
+	return reduce(c, r, f, func(p *a.Number, n *a.Number) *a.Number {
+		return p.Div(n)
 	})
 }
 
 func eq(c a.Context, args a.Sequence) a.Value {
-	return compare(c, args, func(p *big.Float, n *big.Float) bool {
-		return p.Cmp(n) == 0
+	return compare(c, args, func(p *a.Number, n *a.Number) bool {
+		return p.Cmp(n) == a.EqualTo
 	})
 }
 
@@ -84,28 +89,28 @@ func neq(c a.Context, args a.Sequence) a.Value {
 }
 
 func gt(c a.Context, args a.Sequence) a.Value {
-	return compare(c, args, func(p *big.Float, n *big.Float) bool {
-		return p.Cmp(n) == 1
+	return compare(c, args, func(p *a.Number, n *a.Number) bool {
+		return p.Cmp(n) == a.GreaterThan
 	})
 }
 
 func gte(c a.Context, args a.Sequence) a.Value {
-	return compare(c, args, func(p *big.Float, n *big.Float) bool {
+	return compare(c, args, func(p *a.Number, n *a.Number) bool {
 		r := p.Cmp(n)
-		return r == 0 || r == 1
+		return r == a.EqualTo || r == a.GreaterThan
 	})
 }
 
 func lt(c a.Context, args a.Sequence) a.Value {
-	return compare(c, args, func(p *big.Float, n *big.Float) bool {
-		return p.Cmp(n) == -1
+	return compare(c, args, func(p *a.Number, n *a.Number) bool {
+		return p.Cmp(n) == a.LessThan
 	})
 }
 
 func lte(c a.Context, args a.Sequence) a.Value {
-	return compare(c, args, func(p *big.Float, n *big.Float) bool {
+	return compare(c, args, func(p *a.Number, n *a.Number) bool {
 		r := p.Cmp(n)
-		return r == 0 || r == -1
+		return r == a.EqualTo || r == a.LessThan
 	})
 }
 

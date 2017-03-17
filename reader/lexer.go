@@ -1,7 +1,6 @@
 package reader
 
 import (
-	"math/big"
 	"regexp"
 
 	a "github.com/kode4food/sputter/api"
@@ -84,10 +83,11 @@ func init() {
 		{re(`^'`), tokenState(QuoteMarker)},
 
 		{re(`^"(\\.|[^"])*"`), stringState},
-		{re(`^[^0-9(){}\[\]\s,][^(){}\[\]\s,]*`), tokenState(Identifier)},
 
 		{re(`^[+-]?[1-9]\d*/[1-9]\d*`), ratioState},
-		{re(`^[+-]?(0|[1-9]\d*(\.\d+)?([eE][+-]?\d+)?)`), numberState},
+		{re(`^[+-]?((0|[1-9]\d*)(\.\d+)?([eE][+-]?\d+)?)`), numberState},
+
+		{re(`^[^(){}\[\]\s,]+`), tokenState(Identifier)},
 
 		{re(`^.`), endState(Error)},
 	}
@@ -181,15 +181,13 @@ func stringState(l *lispLexer) stateFunc {
 }
 
 func ratioState(l *lispLexer) stateFunc {
-	v := big.NewRat(1, 1)
-	v.SetString(l.currentToken())
+	v := a.ParseNumber(l.currentToken())
 	l.emitValue(Ratio, v)
 	return initState
 }
 
 func numberState(l *lispLexer) stateFunc {
-	v := big.NewFloat(0)
-	v.SetString(l.currentToken())
+	v := a.ParseNumber(l.currentToken())
 	l.emitValue(Number, v)
 	return initState
 }

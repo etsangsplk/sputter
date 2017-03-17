@@ -1,7 +1,6 @@
 package api_test
 
 import (
-	"math/big"
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
@@ -13,7 +12,7 @@ func TestAssertSequence(t *testing.T) {
 	a.AssertSequence(a.NewList("hello"))
 
 	defer expectError(as, a.ExpectedSequence)
-	a.AssertSequence(big.NewFloat(99))
+	a.AssertSequence(a.NewFloat(99))
 }
 
 type noCountSequence struct{}

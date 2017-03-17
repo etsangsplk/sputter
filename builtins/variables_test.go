@@ -1,7 +1,6 @@
 package builtins_test
 
 import (
-	"math/big"
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
@@ -30,5 +29,5 @@ func TestScopeQualifiers(t *testing.T) {
 		(def foo 99)
 		(let [foo 100]
 			(+ foo user:foo))
-	`, big.NewFloat(199))
+	`, a.NewFloat(199))
 }

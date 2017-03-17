@@ -1,7 +1,6 @@
 package builtins_test
 
 import (
-	"math/big"
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
@@ -18,6 +17,10 @@ func runCode(src string) a.Value {
 
 func testCode(t *testing.T, src string, expect a.Value) {
 	as := assert.New(t)
+	if expectNum, ok := expect.(*a.Number); ok {
+		as.Equal(a.EqualTo, expectNum.Cmp(runCode(src).(*a.Number)))
+		return
+	}
 	as.Equal(expect, runCode(src), src)
 }
 
@@ -60,9 +63,9 @@ func TestQuote(t *testing.T) {
 		as.Fail("first element is not a symbol")
 	}
 	as.Equal(r1.Get(1), r2.Get(1), "second element same")
-	as.Equal(big.NewFloat(2.0), r1.Get(1), "second element correct")
+	as.Equal(a.EqualTo, a.NewFloat(2.0).Cmp(r1.Get(1).(*a.Number)), "second element correct")
 	as.Equal(r1.Get(2), r2.Get(2), "third element same")
-	as.Equal(big.NewFloat(3.0), r1.Get(2), "third element correct")
+	as.Equal(a.EqualTo, a.NewFloat(3.0).Cmp(r1.Get(2).(*a.Number)), "third element correct")
 }
 
 func TestDo(t *testing.T) {
@@ -74,7 +77,7 @@ func TestDo(t *testing.T) {
 			(print "how ")
 			(println "are" 66)
 			(if true 99 33))
-	`, big.NewFloat(99))
+	`, a.NewFloat(99))
 }
 
 func TestTrueFalse(t *testing.T) {

@@ -1,7 +1,6 @@
 package builtins_test
 
 import (
-	"math/big"
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
@@ -20,7 +19,7 @@ func TestNamespaces(t *testing.T) {
 		(with-ns bar
 			(def v1 100)
 			(+ v1 foo:v1))
-	`, big.NewFloat(199))
+	`, a.NewFloat(199))
 
 	testCode(t, `(ns foo)`, ns1)
 

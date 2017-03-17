@@ -2,7 +2,6 @@ package reader_test
 
 import (
 	"fmt"
-	"math/big"
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
@@ -24,9 +23,9 @@ func TestReadInteger(t *testing.T) {
 	c := a.NewContext()
 	tr := r.NewReader(c, l)
 	v := tr.Next()
-	f, ok := v.(*big.Float)
+	f, ok := v.(*a.Number)
 	as.True(ok)
-	as.Equal(0, f.Cmp(big.NewFloat(99)))
+	as.Equal(a.EqualTo, f.Cmp(a.NewFloat(99)))
 }
 
 func TestReadList(t *testing.T) {
@@ -41,7 +40,7 @@ func TestReadList(t *testing.T) {
 	i := a.Iterate(list)
 	val, ok := i.Next()
 	as.True(ok)
-	as.Equal(0, big.NewFloat(99).Cmp(val.(*big.Float)))
+	as.Equal(a.EqualTo, a.NewFloat(99).Cmp(val.(*a.Number)))
 
 	val, ok = i.Next()
 	as.True(ok)
@@ -49,7 +48,7 @@ func TestReadList(t *testing.T) {
 
 	val, ok = i.Next()
 	as.True(ok)
-	as.Equal(0, big.NewFloat(55.12).Cmp(val.(*big.Float)))
+	as.Equal(a.EqualTo, a.NewFloat(55.12).Cmp(val.(*a.Number)))
 
 	val, ok = i.Next()
 	as.False(ok)
@@ -63,9 +62,9 @@ func TestReadVector(t *testing.T) {
 	v := tr.Next()
 	vector, ok := v.(a.Vector)
 	as.True(ok)
-	as.Equal(0, big.NewFloat(99.0).Cmp(vector.Get(0).(*big.Float)))
+	as.Equal(a.EqualTo, a.NewFloat(99.0).Cmp(vector.Get(0).(*a.Number)))
 	as.Equal("hello", vector.Get(1))
-	as.Equal(0, big.NewFloat(55.120).Cmp(vector.Get(2).(*big.Float)))
+	as.Equal(a.EqualTo, a.NewFloat(55.120).Cmp(vector.Get(2).(*a.Number)))
 }
 
 func TestReadMap(t *testing.T) {
@@ -91,7 +90,7 @@ func TestReadNestedList(t *testing.T) {
 	i1 := a.Iterate(list)
 	val, ok := i1.Next()
 	as.True(ok)
-	as.Equal(0, big.NewFloat(99).Cmp(val.(*big.Float)))
+	as.Equal(a.EqualTo, a.NewFloat(99).Cmp(val.(*a.Number)))
 
 	// get nested list
 	val, ok = i1.Next()
@@ -102,7 +101,7 @@ func TestReadNestedList(t *testing.T) {
 	// iterate over the rest of top-level list
 	val, ok = i1.Next()
 	as.True(ok)
-	as.Equal(0, big.NewFloat(55.12).Cmp(val.(*big.Float)))
+	as.Equal(a.EqualTo, a.NewFloat(55.12).Cmp(val.(*a.Number)))
 
 	val, ok = i1.Next()
 	as.False(ok)
@@ -132,9 +131,9 @@ func TestSimpleData(t *testing.T) {
 	d, ok := v.(*a.Quote)
 	as.True(ok)
 
-	value, ok := d.Value.(*big.Float)
+	value, ok := d.Value.(*a.Number)
 	as.True(ok)
-	as.Equal(0, big.NewFloat(99).Cmp(value))
+	as.Equal(a.EqualTo, a.NewFloat(99).Cmp(value))
 }
 
 func TestListData(t *testing.T) {

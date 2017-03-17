@@ -1,8 +1,6 @@
 package builtins
 
 import (
-	"math/big"
-
 	a "github.com/kode4food/sputter/api"
 )
 
@@ -40,7 +38,7 @@ func cons(c a.Context, args a.Sequence) a.Value {
 func _len(c a.Context, args a.Sequence) a.Value {
 	s := fetchSequence(c, args)
 	l := a.Count(s)
-	return big.NewFloat(float64(l))
+	return a.NewFloat(float64(l))
 }
 
 func init() {

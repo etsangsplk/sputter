@@ -1,7 +1,6 @@
 package api_test
 
 import (
-	"math/big"
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
@@ -11,7 +10,7 @@ import (
 func getTestMap() a.ArrayMap {
 	return a.ArrayMap{
 		a.Vector{a.NewKeyword("name"), "Sputter"},
-		a.Vector{a.NewKeyword("age"), big.NewFloat(99)},
+		a.Vector{a.NewKeyword("age"), a.NewFloat(99)},
 		a.Vector{"string", "value"},
 	}
 }
@@ -27,7 +26,7 @@ func TestArrayMap(t *testing.T) {
 
 	ageKey := a.NewKeyword("age")
 	ageValue := m1.Get(ageKey)
-	as.Equal(0, big.NewFloat(99).Cmp(ageValue.(*big.Float)), "get works")
+	as.Equal(a.EqualTo, a.NewFloat(99).Cmp(ageValue.(*a.Number)), "get works")
 
 	strValue := m1.Get("string")
 	as.Equal("value", strValue, "get works")
@@ -86,7 +85,7 @@ func TestArrayMapIterate(t *testing.T) {
 	if v, ok := i.Next(); ok {
 		vec := v.(a.Vector)
 		as.Equal(a.NewKeyword("age"), vec[0], "correct key")
-		as.Equal(0, big.NewFloat(99).Cmp(vec[1].(*big.Float)), "correct value")
+		as.Equal(a.EqualTo, a.NewFloat(99).Cmp(vec[1].(*a.Number)), "correct value")
 	} else {
 		as.Fail("couldn't get second element")
 	}
@@ -100,7 +99,7 @@ func TestArrayMapLookup(t *testing.T) {
 	c := a.NewContext()
 	args := a.NewList(m1)
 	as.Equal("Sputter", nameKey.Apply(c, args), "get works")
-	
+
 	defer expectError(as, a.ExpectedMapped)
 	nameKey.Apply(c, a.NewList(99))
 }
