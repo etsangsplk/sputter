@@ -2,6 +2,7 @@ package: github.com/kode4food/sputter
 import:
 - package: github.com/chzyer/readline
   version: ^1.4.0
+- package: github.com/cockroachdb/apd
 testImport:
 - package: github.com/stretchr/testify
   version: ^1.1.4

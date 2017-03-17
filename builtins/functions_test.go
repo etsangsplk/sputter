@@ -24,9 +24,9 @@ func TestFunction(t *testing.T) {
 }
 
 func TestBadFunction(t *testing.T) {
-	testBadCode(t, `(defn blah [name 99 bad] (name))`, a.ExpectedUnqualified)
+	testBadCode(t, `(defn blah [name 99 bad] (name))`, a.ExpectedSymbol)
 	testBadCode(t, `(defn blah 99 (name))`, a.ExpectedSequence)
-	testBadCode(t, `(defn 99 [x y] (+ x y))`, a.ExpectedUnqualified)
+	testBadCode(t, `(defn 99 [x y] (+ x y))`, a.ExpectedSymbol)
 }
 
 func TestBadFunctionArity(t *testing.T) {

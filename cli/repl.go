@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"math/rand"
+	"os"
 	"regexp"
 	"strings"
 	"time"
@@ -17,12 +18,13 @@ import (
 var anyChar = regexp.MustCompile(".")
 
 const (
-	red   = "\033[31m"
-	green = "\033[32m"
-	cyan  = "\033[36m"
-	gray  = "\033[90m"
-	bold  = "\033[1m"
-	reset = "\033[0m"
+	red    = "\033[31m"
+	green  = "\033[32m"
+	cyan   = "\033[36m"
+	yellow = "\033[33m"
+	gray   = "\033[90m"
+	bold   = "\033[1m"
+	reset  = "\033[0m"
 
 	domain = cyan + "%s" + reset + " "
 	prompt = domain + "[%d]> "
@@ -75,6 +77,7 @@ func (repl *REPL) Run() {
 	defer repl.rl.Close()
 
 	fmt.Println(a.Language, a.Version)
+	help(nil, nil)
 	repl.setInitialPrompt()
 
 	for {
@@ -102,12 +105,7 @@ func (repl *REPL) Run() {
 		repl.evalBuffer()
 		repl.reset()
 	}
-
-	t := time.Now().UTC().UnixNano()
-	rs := rand.NewSource(t)
-	r := rand.New(rs)
-	idx := r.Intn(len(farewells))
-	fmt.Println(farewells[idx])
+	shutdown(nil, nil)
 }
 
 func (repl *REPL) reset() {
@@ -156,7 +154,7 @@ func (repl *REPL) isBufferReadable() (ok bool) {
 func (repl *REPL) evalBuffer() {
 	defer func() {
 		if rec := recover(); rec != nil {
-			repl.output(bad, rec)
+			repl.error(rec)
 		}
 	}()
 
@@ -165,16 +163,24 @@ func (repl *REPL) evalBuffer() {
 
 	tr := r.NewReader(repl.ctx, l)
 	res := r.EvalReader(repl.ctx, tr)
-	repl.output(good, res)
+	repl.output(res)
 }
 
-func (repl *REPL) output(prefix string, v a.Value) {
-	res := a.String(v)
-	fmt.Println(fmt.Sprintf(prefix, repl.nsSpace(), repl.idx, res))
+func (repl *REPL) output(v a.Value) {
+	res := fmt.Sprintf(good, repl.nsSpace(), repl.idx, a.String(v))
+	fmt.Println(res)
+}
+
+func (repl *REPL) error(err a.Value) {
+	res := fmt.Sprintf(bad, repl.nsSpace(), repl.idx, err)
+	fmt.Println(res)
 }
 
 func (repl *REPL) registerREPLBuiltIns() {
 	repl.ctx.Put("use", &a.Function{Name: "use", Exec: use})
+	repl.ctx.Put("exit", &a.Function{Name: "exit", Exec: shutdown})
+	repl.ctx.Put("quit", &a.Function{Name: "quit", Exec: shutdown})
+	repl.ctx.Put("help", &a.Function{Name: "help", Exec: help})
 }
 
 func isEmpty(s string) bool {
@@ -195,4 +201,23 @@ func use(c a.Context, args a.Sequence) a.Value {
 	c.Delete(a.ContextDomain)
 	c.Put(a.ContextDomain, ns)
 	return ns
+}
+
+func shutdown(c a.Context, args a.Sequence) a.Value {
+	t := time.Now().UTC().UnixNano()
+	rs := rand.NewSource(t)
+	r := rand.New(rs)
+	idx := r.Intn(len(farewells))
+	fmt.Println(farewells[idx])
+	os.Exit(0)
+	return a.Nil
+}
+
+// TODO: Generate from docstrings when they exist
+func help(c a.Context, args a.Sequence) a.Value {
+	fmt.Println(yellow + "(help)   " + reset + "; Display this help")
+	fmt.Println(yellow + "(use ns) " + reset + "; Change the context Namespace")
+	fmt.Println(yellow + "(quit)   " + reset + "; Quit the REPL")
+	fmt.Println()
+	return a.Nil
 }

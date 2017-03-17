@@ -2,6 +2,7 @@ package api_test
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
@@ -11,17 +12,20 @@ import (
 func TestFunction(t *testing.T) {
 	as := assert.New(t)
 
-	f := &a.Function{
+	f1 := &a.Function{
 		Name: "test-function",
 		Exec: func(c a.Context, args a.Sequence) a.Value {
 			return "hello"
 		},
 	}
 
-	as.Equal("(fn :name test-function)", f.String(), "string returned")
+	f2 := &a.Function{}
+
+	as.Equal("(fn :name test-function)", f1.String(), "name returned")
+	as.True(strings.HasPrefix(f2.String(), "(fn :addr"), "address returned")
 
 	c := a.NewContext()
-	as.Equal("hello", f.Apply(c, a.EmptyList), "function executes")
+	as.Equal("hello", f1.Apply(c, a.EmptyList), "function executes")
 }
 
 func TestGoodArity(t *testing.T) {

@@ -1,6 +1,7 @@
 package api_test
 
 import (
+	"fmt"
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
@@ -61,8 +62,8 @@ func TestSymbolInterning(t *testing.T) {
 
 func TestUnknownSymbol(t *testing.T) {
 	as := assert.New(t)
-	
-	defer expectError(as, a.UnknownSymbol)
+
+	defer expectError(as, fmt.Sprintf(a.UnknownSymbol, "howdy"))
 	c := a.NewContext()
 	sym := &a.Symbol{Name: "howdy"}
 	sym.Eval(c)
@@ -93,6 +94,6 @@ func TestAssertUnqualified(t *testing.T) {
 	as := assert.New(t)
 	a.AssertUnqualified(&a.Symbol{Name: "hello"})
 
-	defer expectError(as, a.ExpectedUnqualified)
+	defer expectError(as, fmt.Sprintf(a.ExpectedUnqualified, "bar:hello"))
 	a.AssertUnqualified(&a.Symbol{Name: "hello", Domain: "bar"})
 }

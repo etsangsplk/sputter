@@ -32,13 +32,6 @@ type Function struct {
 	Exec SequenceProcessor
 }
 
-// Macro is a Value that can be used to transform a Value
-type Macro struct {
-	Name Name
-	Prep SequenceProcessor
-	Data bool
-}
-
 // ResolveAsApplicable either returns an Applicable as-is or tries
 // to perform a lookup if the Value is a Symbol
 func ResolveAsApplicable(c Context, v Value) (Applicable, bool) {
@@ -67,18 +60,6 @@ func (f *Function) String() string {
 		return "(fn :name " + string(f.Name) + ")"
 	}
 	return fmt.Sprintf("(fn :addr %p)", &f)
-}
-
-// Apply makes Macro Applicable
-func (m *Macro) Apply(c Context, args Sequence) Value {
-	return m.Prep(c, args)
-}
-
-func (m *Macro) String() string {
-	if m.Name != "" {
-		return "(macro :name " + string(m.Name) + ")"
-	}
-	return fmt.Sprintf("(macro :addr %p)", &m)
 }
 
 // AssertArity explodes if the arg count doesn't match provided arity

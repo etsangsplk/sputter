@@ -1,16 +1,19 @@
 package api
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
 const (
 	// UnknownSymbol is thrown if a symbol cannot be resolved
-	UnknownSymbol = "symbol has not been defined"
+	UnknownSymbol = "symbol '%s' has not been defined"
 
-	// BadQualifiedName is thrown when a name has too many components
-	BadQualifiedName = "expected a valid qualified name"
+	// ExpectedSymbol is thrown when a Value is not a unqualified Symbol
+	ExpectedSymbol = "value is not a symbol"
 
-	// ExpectedUnqualified is thrown when a Value is not a unqualified Symbol
-	ExpectedUnqualified = "value is not a symbol"
+	// ExpectedUnqualified is thrown when a Symbol is unexpectedly qualified
+	ExpectedUnqualified = "symbol '%s' should be unqualified"
 )
 
 // Symbol is an Identifier that can be resolved
@@ -68,7 +71,7 @@ func (s *Symbol) Eval(c Context) Value {
 	if r, ok := s.Resolve(c); ok {
 		return r
 	}
-	panic(UnknownSymbol)
+	panic(fmt.Sprintf(UnknownSymbol, s.Name))
 }
 
 // Namespace returns the Namespace for this Symbol
@@ -91,6 +94,7 @@ func AssertUnqualified(v Value) *Symbol {
 		if r.Domain == LocalDomain {
 			return r
 		}
+		panic(fmt.Sprintf(ExpectedUnqualified, r.Qualified()))
 	}
-	panic(ExpectedUnqualified)
+	panic(ExpectedSymbol)
 }
