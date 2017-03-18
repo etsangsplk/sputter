@@ -1,6 +1,9 @@
 package api
 
-import "fmt"
+import (
+	"bytes"
+	"fmt"
+)
 
 const (
 	// BadArity is thrown when a Function has a fixed arity
@@ -30,6 +33,7 @@ type Applicable interface {
 type Function struct {
 	Name Name
 	Exec SequenceProcessor
+	Doc  string
 }
 
 // ResolveAsApplicable either returns an Applicable as-is or tries
@@ -50,16 +54,29 @@ func ResolveAsApplicable(c Context, v Value) (Applicable, bool) {
 	return nil, false
 }
 
+// Docstring makes Function Documented
+func (f *Function) Docstring() string {
+	return f.Doc
+}
+
 // Apply makes Function Applicable
 func (f *Function) Apply(c Context, args Sequence) Value {
 	return f.Exec(c, args)
 }
 
 func (f *Function) String() string {
+	var b bytes.Buffer
+	b.WriteString("(fn")
 	if f.Name != "" {
-		return "(fn :name " + string(f.Name) + ")"
+		b.WriteString(" :name " + String(f.Name))
+	} else {
+		b.WriteString(fmt.Sprintf(" :addr %p", &f))
 	}
-	return fmt.Sprintf("(fn :addr %p)", &f)
+	if f.Doc != "" {
+		b.WriteString(" :doc " + String(f.Doc))
+	}
+	b.WriteString(")")
+	return b.String()
 }
 
 // AssertArity explodes if the arg count doesn't match provided arity

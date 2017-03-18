@@ -5,8 +5,14 @@ import "fmt"
 // Macro is a Value that can be used to transform a Value
 type Macro struct {
 	Name Name
+	Doc  string
 	Prep SequenceProcessor
 	Data bool
+}
+
+// Docstring makes Macro Documented
+func (m *Macro) Docstring() string {
+	return m.Doc
 }
 
 // Apply makes Macro Applicable

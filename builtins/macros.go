@@ -12,13 +12,20 @@ func defmacro(c a.Context, form a.Sequence) a.Value {
 	mv, _ := i.Next()
 	mn := a.AssertUnqualified(mv).Name
 
+	var ds string
 	av, _ := i.Next()
+	if vs, ok := av.(string); ok {
+		ds = vs
+		av, _ = i.Next()
+	}
 	an := a.AssertSequence(av)
+
 	fc := a.Count(an)
 	b, _ := i.Next()
 
 	m := &a.Macro{
 		Name: mn,
+		Doc:  ds,
 		Data: true,
 		Prep: func(c a.Context, form a.Sequence) a.Value {
 			i := a.Iterate(form)

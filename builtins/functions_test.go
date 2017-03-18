@@ -5,15 +5,21 @@ import (
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestFunction(t *testing.T) {
+	as := assert.New(t)
+
 	ns := a.GetNamespace(a.UserDomain)
 	ns.Delete("say-hello")
 	ns.Delete("identity")
 
 	testCode(t, `
-		(defn say-hello [] "Hello, World!")
+		(defn say-hello
+		  "this is a doc string"
+		  []
+		  "Hello, World!")
 		(say-hello)
 	`, "Hello, World!")
 
@@ -21,6 +27,10 @@ func TestFunction(t *testing.T) {
 		(defn identity [value] value)
 		(identity "foo")
 	`, "foo")
+
+	v, _ := ns.Get("say-hello")
+	fv := v.(*a.Function)
+	as.Equal("this is a doc string", fv.Docstring(), "documented")
 }
 
 func TestBadFunction(t *testing.T) {

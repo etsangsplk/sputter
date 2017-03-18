@@ -14,6 +14,7 @@ func TestFunction(t *testing.T) {
 
 	f1 := &a.Function{
 		Name: "test-function",
+		Doc:  "this is a test function",
 		Exec: func(c a.Context, args a.Sequence) a.Value {
 			return "hello"
 		},
@@ -22,6 +23,7 @@ func TestFunction(t *testing.T) {
 	f2 := &a.Function{}
 
 	as.Equal("(fn :name test-function)", f1.String(), "name returned")
+	as.Equal("this is a test function", f1.Docstring(), "doc returned")
 	as.True(strings.HasPrefix(f2.String(), "(fn :addr"), "address returned")
 
 	c := a.NewContext()

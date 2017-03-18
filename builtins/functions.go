@@ -4,6 +4,7 @@ import a "github.com/kode4food/sputter/api"
 
 type functionDefinition struct {
 	name     a.Name
+	doc      string
 	argNames a.Sequence
 	body     a.Sequence
 	closure  a.Context
@@ -27,6 +28,7 @@ func define(d *functionDefinition) *a.Function {
 
 	return &a.Function{
 		Name: d.name,
+		Doc:  d.doc,
 		Exec: func(c a.Context, args a.Sequence) a.Value {
 			a.AssertArity(args, ac)
 			l := a.ChildContext(dc)
@@ -47,11 +49,18 @@ func defn(c a.Context, args a.Sequence) a.Value {
 	i := a.Iterate(args)
 	fv, _ := i.Next()
 	fn := a.AssertUnqualified(fv).Name
+
+	var ds string
 	av, _ := i.Next()
+	if vs, ok := av.(string); ok {
+		ds = vs
+		av, _ = i.Next()
+	}
 	an := a.AssertSequence(av)
 
 	d := define(&functionDefinition{
 		name:     fn,
+		doc:      ds,
 		argNames: an,
 		body:     i.Rest(),
 		closure:  c,

@@ -17,6 +17,8 @@ import (
 
 var anyChar = regexp.MustCompile(".")
 
+const builtInNames = "*repl-names*"
+
 const (
 	red    = "\033[31m"
 	green  = "\033[32m"
@@ -68,7 +70,6 @@ func NewREPL() *REPL {
 	repl.ns = a.GetContextNamespace(repl.ctx)
 	repl.idx = 1
 
-	repl.registerREPLBuiltIns()
 	return repl
 }
 
@@ -176,13 +177,6 @@ func (repl *REPL) error(err a.Value) {
 	fmt.Println(res)
 }
 
-func (repl *REPL) registerREPLBuiltIns() {
-	repl.ctx.Put("use", &a.Function{Name: "use", Exec: use})
-	repl.ctx.Put("exit", &a.Function{Name: "exit", Exec: shutdown})
-	repl.ctx.Put("quit", &a.Function{Name: "quit", Exec: shutdown})
-	repl.ctx.Put("help", &a.Function{Name: "help", Exec: help})
-}
-
 func isEmpty(s string) bool {
 	return len(strings.TrimSpace(s)) == 0
 }
@@ -213,11 +207,55 @@ func shutdown(c a.Context, args a.Sequence) a.Value {
 	return a.Nil
 }
 
-// TODO: Generate from docstrings when they exist
 func help(c a.Context, args a.Sequence) a.Value {
-	fmt.Println(yellow + "(help)   " + reset + "; Display this help")
-	fmt.Println(yellow + "(use ns) " + reset + "; Change namespace")
-	fmt.Println(yellow + "(quit)   " + reset + "; Quit the REPL")
+	ns := getREPLNamespace()
+	v, _ := ns.Get(builtInNames)
+	i := a.Iterate(v.(a.Vector))
+	for v, ok := i.Next(); ok; v, ok = i.Next() {
+		n := v.(a.Name)
+		fv, _ := ns.Get(n)
+		f := fv.(*a.Function)
+		fn := fmt.Sprintf("%-8s", "("+string(n)+")")
+		fmt.Println(yellow + fn + reset + "; " + f.Docstring())
+	}
 	fmt.Println()
 	return a.Nil
+}
+
+func getREPLNamespace() a.Namespace {
+	return a.GetNamespace(a.UserDomain)
+}
+
+func putBuiltIn(f *a.Function) {
+	ns := getREPLNamespace()
+	if _, ok := ns.Get(builtInNames); !ok {
+		ns.Put(builtInNames, a.Vector{})
+	}
+	v, _ := ns.Get(builtInNames)
+	names := append(v.(a.Vector), f.Name)
+	ns.Delete(builtInNames)
+	ns.Put(builtInNames, names)
+	ns.Put(f.Name, f)
+}
+
+func registerREPLBuiltIns() {
+	putBuiltIn(&a.Function{
+		Name: "use",
+		Doc:  "Change namespace. Example: (use foo)",
+		Exec: use,
+	})
+	putBuiltIn(&a.Function{
+		Name: "quit",
+		Doc:  "Quit the REPL",
+		Exec: shutdown,
+	})
+	putBuiltIn(&a.Function{
+		Name: "help",
+		Doc:  "Display this help",
+		Exec: help,
+	})
+}
+
+func init() {
+	registerREPLBuiltIns()
 }

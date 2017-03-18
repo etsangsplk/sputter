@@ -20,6 +20,11 @@ type Name string
 type Value interface {
 }
 
+// Documented is implemented if a Value is Documented
+type Documented interface {
+	Docstring() string
+}
+
 // Variables represents a mapping from Name to Value
 type Variables map[Name]Value
 
@@ -38,5 +43,8 @@ func String(v Value) string {
 	if s, ok := v.(fmt.Stringer); ok {
 		return s.String()
 	}
-	return `"` + v.(string) + `"`
+	if n, ok := v.(Name); ok {
+		return string(n)
+	}
+	return fmt.Sprintf("%q", v.(string))
 }
