@@ -17,7 +17,7 @@ import (
 
 var anyChar = regexp.MustCompile(".")
 
-const replBuiltIns = "*repl-names*"
+const replBuiltIns = "*repl-builtins*"
 
 const (
 	red    = "\033[31m"
@@ -212,10 +212,8 @@ func help(c a.Context, args a.Sequence) a.Value {
 	v, _ := ns.Get(replBuiltIns)
 	i := a.Iterate(v.(a.Vector))
 	for v, ok := i.Next(); ok; v, ok = i.Next() {
-		n := v.(a.Name)
-		fv, _ := ns.Get(n)
-		f := fv.(*a.Function)
-		fn := fmt.Sprintf("%-8s", "("+string(n)+")")
+		f := v.(*a.Function)
+		fn := fmt.Sprintf("%-8s", "("+string(f.Name)+")")
 		fmt.Println(yellow + fn + reset + "; " + f.Docstring())
 	}
 	fmt.Println()
@@ -232,9 +230,9 @@ func putBuiltIn(f *a.Function) {
 		ns.Put(replBuiltIns, a.Vector{})
 	}
 	v, _ := ns.Get(replBuiltIns)
-	names := append(v.(a.Vector), f.Name)
+	bi := append(v.(a.Vector), f)
 	ns.Delete(replBuiltIns)
-	ns.Put(replBuiltIns, names)
+	ns.Put(replBuiltIns, bi)
 	ns.Put(f.Name, f)
 }
 
