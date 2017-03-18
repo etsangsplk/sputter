@@ -17,7 +17,7 @@ import (
 
 var anyChar = regexp.MustCompile(".")
 
-const builtInNames = "*repl-names*"
+const replBuiltIns = "*repl-names*"
 
 const (
 	red    = "\033[31m"
@@ -208,8 +208,8 @@ func shutdown(c a.Context, args a.Sequence) a.Value {
 }
 
 func help(c a.Context, args a.Sequence) a.Value {
-	ns := getREPLNamespace()
-	v, _ := ns.Get(builtInNames)
+	ns := getBuiltInsNamespace()
+	v, _ := ns.Get(replBuiltIns)
 	i := a.Iterate(v.(a.Vector))
 	for v, ok := i.Next(); ok; v, ok = i.Next() {
 		n := v.(a.Name)
@@ -222,19 +222,19 @@ func help(c a.Context, args a.Sequence) a.Value {
 	return a.Nil
 }
 
-func getREPLNamespace() a.Namespace {
-	return a.GetNamespace(a.UserDomain)
+func getBuiltInsNamespace() a.Namespace {
+	return a.GetNamespace(a.BuiltInDomain)
 }
 
 func putBuiltIn(f *a.Function) {
-	ns := getREPLNamespace()
-	if _, ok := ns.Get(builtInNames); !ok {
-		ns.Put(builtInNames, a.Vector{})
+	ns := getBuiltInsNamespace()
+	if _, ok := ns.Get(replBuiltIns); !ok {
+		ns.Put(replBuiltIns, a.Vector{})
 	}
-	v, _ := ns.Get(builtInNames)
+	v, _ := ns.Get(replBuiltIns)
 	names := append(v.(a.Vector), f.Name)
-	ns.Delete(builtInNames)
-	ns.Put(builtInNames, names)
+	ns.Delete(replBuiltIns)
+	ns.Put(replBuiltIns, names)
 	ns.Put(f.Name, f)
 }
 
