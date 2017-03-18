@@ -90,6 +90,12 @@ func TestSymbolParsing(t *testing.T) {
 
 }
 
+func TestAssertSymbol(t *testing.T) {
+	as := assert.New(t)
+	defer expectError(as, a.ExpectedSymbol)
+	a.AssertUnqualified(37)
+}
+
 func TestAssertUnqualified(t *testing.T) {
 	as := assert.New(t)
 	a.AssertUnqualified(&a.Symbol{Name: "hello"})

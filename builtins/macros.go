@@ -3,7 +3,7 @@ package builtins
 import a "github.com/kode4food/sputter/api"
 
 func defmacro(c a.Context, form a.Sequence) a.Value {
-	a.AssertArity(form, 4)
+	a.AssertArityRange(form, 4, 5)
 	ns := a.GetContextNamespace(c)
 
 	i := a.Iterate(form)

@@ -87,7 +87,7 @@ func init() {
 		{re(`^[+-]?[1-9]\d*/[1-9]\d*`), ratioState},
 		{re(`^[+-]?((0|[1-9]\d*)(\.\d+)?([eE][+-]?\d+)?)`), numberState},
 
-		{re(`^[^(){}\[\]\s,]+`), tokenState(Identifier)},
+		{re(`^[^(){}\[\]\s,'";]+`), tokenState(Identifier)},
 
 		{re(`^.`), endState(Error)},
 	}
