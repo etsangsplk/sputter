@@ -104,6 +104,10 @@ func NewLexer(src string) Lexer {
 	return l
 }
 
+func isNotWhitespace(t *Token) bool {
+	return t.Type != Whitespace && t.Type != Comment
+}
+
 // Next returns the next Token from the lexer's Token channel
 func (l *lispLexer) Next() *Token {
 	for {
@@ -111,7 +115,7 @@ func (l *lispLexer) Next() *Token {
 		if !ok {
 			panic(UnexpectedEndOfFile)
 		}
-		if t.Type != Whitespace {
+		if isNotWhitespace(t) {
 			return t
 		}
 	}

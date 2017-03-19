@@ -23,7 +23,7 @@ func TestMapFilter(t *testing.T) {
 	testCode(t, `
 		(def x '(1 2 3 4 5 6))
 		(def y
-			(map
+			(map ; will also test shadowing
 				(fn [x] (* x 2))
 				(filter (fn [x] (= x 6)) x)))
 		(first y)
