@@ -2,7 +2,7 @@ package builtins
 
 import a "github.com/kode4food/sputter/api"
 
-func _map(c a.Context, args a.Sequence) a.Value {
+func hashMap(c a.Context, args a.Sequence) a.Value {
 	l := a.Count(args)
 	if l%2 != 0 {
 		panic(a.ExpectedPair)
@@ -21,14 +21,14 @@ func _map(c a.Context, args a.Sequence) a.Value {
 	return r
 }
 
-func toMap(c a.Context, args a.Sequence) a.Value {
+func toHashMap(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
 	arg := a.Eval(c, args.First())
 	seq := a.AssertSequence(arg)
-	return _map(c, seq)
+	return hashMap(c, seq)
 }
 
-func isMap(c a.Context, args a.Sequence) a.Value {
+func isHashMap(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
 	v := args.First()
 	if _, ok := a.Eval(c, v).(a.Mapped); ok {
@@ -38,7 +38,7 @@ func isMap(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	registerFunction(&a.Function{Name: "map", Exec: _map})
-	registerFunction(&a.Function{Name: "to-map", Exec: toMap})
-	registerPredicate(&a.Function{Name: "map?", Exec: isMap})
+	registerFunction(&a.Function{Name: "hash-map", Exec: hashMap})
+	registerFunction(&a.Function{Name: "to-hash-map", Exec: toHashMap})
+	registerPredicate(&a.Function{Name: "hash-map?", Exec: isHashMap})
 }

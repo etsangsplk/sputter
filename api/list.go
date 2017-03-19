@@ -3,7 +3,7 @@ package api
 import "bytes"
 
 // EmptyList represents an empty List
-var EmptyList = &List{nil, nil}
+var EmptyList = &List{}
 
 // List contains a node to a singly-linked List
 type List struct {

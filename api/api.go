@@ -10,7 +10,7 @@ var (
 	False = &Atom{Label: "false"}
 
 	// Nil is a value that represents the absence of a Value
-	Nil = &Atom{Label: "nil"}
+	Nil Value
 )
 
 // Name is a Variable name
@@ -31,7 +31,7 @@ type Variables map[Name]Value
 // Truthy evaluates whether or not a Value is Truthy
 func Truthy(v Value) bool {
 	switch {
-	case v == Nil || v == False || v == nil || v == false:
+	case v == Nil || v == False || v == false:
 		return false
 	default:
 		return true
@@ -40,6 +40,9 @@ func Truthy(v Value) bool {
 
 // String either calls the String() method or tries to convert
 func String(v Value) string {
+	if v == nil {
+		return "nil"
+	}
 	if s, ok := v.(fmt.Stringer); ok {
 		return s.String()
 	}

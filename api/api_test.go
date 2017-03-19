@@ -20,3 +20,12 @@ func TestTruthy(t *testing.T) {
 	as.False(a.Truthy(a.False), "API False is not Truthy")
 	as.False(a.Truthy(false), "false is not Truthy")
 }
+
+func TestString(t *testing.T) {
+	as := assert.New(t)
+
+	as.Equal("true", a.String(a.True), "true stringifies correctly")
+	as.Equal("false", a.String(a.False), "true stringifies correctly")
+	as.Equal("nil", a.String(a.Nil), "nil stringifies correctly")
+	as.Equal("nil", a.String(nil), "nil stringifies correctly")
+}
