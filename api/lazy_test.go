@@ -12,7 +12,7 @@ func TestLazyMapper(t *testing.T) {
 
 	c := 0
 	l := a.NewList("last").Prepend("middle").Prepend("first")
-	w := a.NewLazyMapper(l, func(v a.Value) a.Value {
+	w := a.NewMapper(l, func(v a.Value) a.Value {
 		c++
 		return "this is the " + v.(string)
 	})
@@ -47,7 +47,7 @@ func TestLazyFilter(t *testing.T) {
 
 	c := 0
 	l := a.NewList("last").Prepend("filtered out").Prepend("first")
-	w := a.NewLazyFilter(l, func(v a.Value) bool {
+	w := a.NewFilter(l, func(v a.Value) bool {
 		c++
 		return v.(string) != "filtered out"
 	})
@@ -79,11 +79,11 @@ func TestLazyFilteredAndMapped(t *testing.T) {
 	c1 := 0
 	c2 := 0
 	l := a.NewList("last").Prepend("middle").Prepend("first")
-	w1 := a.NewLazyFilter(l, func(v a.Value) bool {
+	w1 := a.NewFilter(l, func(v a.Value) bool {
 		c1++
 		return v.(string) != "middle"
 	})
-	w2 := a.NewLazyMapper(w1, func(v a.Value) a.Value {
+	w2 := a.NewMapper(w1, func(v a.Value) a.Value {
 		c2++
 		return "this is the " + v.(string)
 	})

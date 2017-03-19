@@ -32,7 +32,9 @@ type Indexed interface {
 	Get(index int) Value
 }
 
-// Iterator is a stateful iteration interface for Sequences
+// Iterator is a stateful iteration interface for Sequences.  "Stateful"
+// is the key word here.  This data structure should not be used in any
+// concurrent or immutable situation
 type Iterator struct {
 	sequence Sequence
 }

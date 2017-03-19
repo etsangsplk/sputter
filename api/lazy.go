@@ -15,9 +15,9 @@ type lazyMapper struct {
 	rest     *lazyMapper
 }
 
-// NewLazyMapper creates a new lazy mapping Sequence that wraps the
-// original and only maps its values on demand
-func NewLazyMapper(s Sequence, m ValueMapper) Sequence {
+// NewMapper creates a new lazy mapping Sequence that wraps the
+// original and only maps its Values on demand
+func NewMapper(s Sequence, m ValueMapper) Sequence {
 	return &lazyMapper{
 		sequence: s,
 		mapper:   m,
@@ -75,9 +75,9 @@ type lazyFilter struct {
 	rest     *lazyFilter
 }
 
-// NewLazyFilter creates a new lazy filter Sequence that wraps the
+// NewFilter creates a new lazy filter Sequence that wraps the
 // original and only filters the next Value(s) on demand
-func NewLazyFilter(s Sequence, f ValueFilter) Sequence {
+func NewFilter(s Sequence, f ValueFilter) Sequence {
 	return &lazyFilter{
 		sequence: s,
 		filter:   f,
@@ -100,7 +100,6 @@ func (l *lazyFilter) resolve() *lazyFilter {
 			break
 		}
 	}
-
 	l.sequence = nil
 	l.filter = nil
 	return l
