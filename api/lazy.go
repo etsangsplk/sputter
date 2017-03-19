@@ -10,7 +10,6 @@ type ValueFilter func(Value) bool
 type lazyMapper struct {
 	sequence Sequence
 	mapper   ValueMapper
-	resolved bool
 	isSeq    bool
 	first    Value
 	rest     *lazyMapper
@@ -26,7 +25,7 @@ func NewLazyMapper(s Sequence, m ValueMapper) Sequence {
 }
 
 func (l *lazyMapper) resolve() *lazyMapper {
-	if l.resolved {
+	if l.sequence == nil {
 		return l
 	}
 
@@ -38,7 +37,6 @@ func (l *lazyMapper) resolve() *lazyMapper {
 			mapper:   l.mapper,
 		}
 	}
-	l.resolved = true
 	l.sequence = nil
 	l.mapper = nil
 	return l
@@ -62,10 +60,9 @@ func (l *lazyMapper) IsSequence() bool {
 // Prepend creates a new Sequence by prepending a Value (won't be mapped)
 func (l *lazyMapper) Prepend(v Value) Sequence {
 	return &lazyMapper{
-		first:    v,
-		rest:     l,
-		resolved: true,
-		isSeq:    true,
+		first: v,
+		rest:  l,
+		isSeq: true,
 	}
 }
 
@@ -73,7 +70,6 @@ func (l *lazyMapper) Prepend(v Value) Sequence {
 type lazyFilter struct {
 	sequence Sequence
 	filter   ValueFilter
-	resolved bool
 	isSeq    bool
 	first    Value
 	rest     *lazyFilter
@@ -89,7 +85,7 @@ func NewLazyFilter(s Sequence, f ValueFilter) Sequence {
 }
 
 func (l *lazyFilter) resolve() *lazyFilter {
-	if l.resolved {
+	if l.sequence == nil {
 		return l
 	}
 
@@ -105,7 +101,6 @@ func (l *lazyFilter) resolve() *lazyFilter {
 		}
 	}
 
-	l.resolved = true
 	l.sequence = nil
 	l.filter = nil
 	return l
@@ -129,9 +124,8 @@ func (l *lazyFilter) IsSequence() bool {
 // Prepend creates a new Sequence by prepending a Value (won't be mapped)
 func (l *lazyFilter) Prepend(v Value) Sequence {
 	return &lazyFilter{
-		first:    v,
-		rest:     l,
-		resolved: true,
-		isSeq:    true,
+		first: v,
+		rest:  l,
+		isSeq: true,
 	}
 }
