@@ -19,10 +19,6 @@ const (
 	ExpectedApplicable = "value does not support application"
 )
 
-// SequenceProcessor is the standard signature for a function that is
-// capable of transforming or validating a Sequence
-type SequenceProcessor func(Context, Sequence) Value
-
 // Applicable is the standard signature for any Value that can have
 // arguments applied to it
 type Applicable interface {

@@ -5,8 +5,12 @@ const (
 	ExpectedCountable = "sequence is not countable"
 
 	// ExpectedSequence is thrown when a Value is not a Sequence
-	ExpectedSequence = "value is not a list or vector"
+	ExpectedSequence = "value is not a sequence"
 )
+
+// SequenceProcessor is the standard signature for a function that is
+// capable of transforming or validating a Sequence
+type SequenceProcessor func(Context, Sequence) Value
 
 // Sequence interfaces expose a lazily resolved sequence of Values
 type Sequence interface {

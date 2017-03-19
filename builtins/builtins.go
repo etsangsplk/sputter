@@ -38,10 +38,5 @@ func quote(_ a.Context, args a.Sequence) a.Value {
 
 func init() {
 	registerFunction(&a.Function{Name: "do", Exec: do})
-
-	registerMacro(&a.Macro{
-		Name: "quote",
-		Prep: quote,
-		Data: true,
-	})
+	registerMacro(&a.Macro{Name: "quote", Prep: quote, Data: true})
 }
