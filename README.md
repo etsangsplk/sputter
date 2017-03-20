@@ -41,10 +41,11 @@ that will change rapidly.  The current built-in forms are:
   * Variables: `def`, `let`, `ns`, `with-ns`
   * Functions: `defn`, `fn`, `apply`
   * Predicates: `eq`, `!eq`, `nil?`, `!nil?`
-  * Sequences: `map`, `filter`, `cons`, `first`, `rest`, `seq?`, `!seq?`
+  * Sequences: `cons`, `first`, `rest`, `seq?`, `!seq?`
   * Lists: `list`, `list?`, `!list?`, `to-list`
   * Hash Maps: `hash-map`, `hash-map?`, `!hash-map?`, `to-hash-map`
   * Vectors: `vector`, `vector?`, `!vector?`, `to-vector`
+  * Comprehensions: `concat`, `map`, `filter`
   * I/O: `print`, `println`, `pr`, `prn`
 
 ## License (MIT License)

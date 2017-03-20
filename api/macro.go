@@ -1,6 +1,9 @@
 package api
 
-import "fmt"
+import (
+	"bytes"
+	"fmt"
+)
 
 // Macro is a Value that can be used to transform a Value
 type Macro struct {
@@ -21,8 +24,15 @@ func (m *Macro) Apply(c Context, args Sequence) Value {
 }
 
 func (m *Macro) String() string {
+	var b bytes.Buffer
+	b.WriteString("(macro")
 	if m.Name != "" {
-		return "(macro :name " + string(m.Name) + ")"
+		b.WriteString(" :name " + String(m.Name))
 	}
-	return fmt.Sprintf("(macro :addr %p)", &m)
+	b.WriteString(fmt.Sprintf(" :instance %p", &m))
+	if m.Doc != "" {
+		b.WriteString(" :doc " + String(m.Doc))
+	}
+	b.WriteString(")")
+	return b.String()
 }

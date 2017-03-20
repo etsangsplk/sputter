@@ -49,5 +49,8 @@ func String(v Value) string {
 	if n, ok := v.(Name); ok {
 		return string(n)
 	}
-	return fmt.Sprintf("%q", v.(string))
+	if s, ok := v.(string); ok {
+		return fmt.Sprintf("%q", s)
+	}
+	return fmt.Sprintf("(<anon> :instance %p)", &v)
 }

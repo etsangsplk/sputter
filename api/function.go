@@ -65,9 +65,8 @@ func (f *Function) String() string {
 	b.WriteString("(fn")
 	if f.Name != "" {
 		b.WriteString(" :name " + String(f.Name))
-	} else {
-		b.WriteString(fmt.Sprintf(" :addr %p", &f))
 	}
+	b.WriteString(fmt.Sprintf(" :instance %p", &f))
 	if f.Doc != "" {
 		b.WriteString(" :doc " + String(f.Doc))
 	}
@@ -76,27 +75,30 @@ func (f *Function) String() string {
 }
 
 // AssertArity explodes if the arg count doesn't match provided arity
-func AssertArity(args Sequence, arity int) {
+func AssertArity(args Sequence, arity int) int {
 	c := Count(args)
 	if c != arity {
 		panic(fmt.Sprintf(BadArity, arity, c))
 	}
+	return c
 }
 
 // AssertMinimumArity explodes if the arg count isn't at least arity
-func AssertMinimumArity(args Sequence, arity int) {
+func AssertMinimumArity(args Sequence, arity int) int {
 	c := Count(args)
 	if c < arity {
 		panic(fmt.Sprintf(BadMinimumArity, arity, c))
 	}
+	return c
 }
 
 // AssertArityRange explodes if the arg count isn't in the arity range
-func AssertArityRange(args Sequence, min int, max int) {
+func AssertArityRange(args Sequence, min int, max int) int {
 	c := Count(args)
 	if c < min || c > max {
 		panic(fmt.Sprintf(BadArityRange, min, max, c))
 	}
+	return c
 }
 
 // AssertApplicable will cast a Value into an Applicable or explode violently

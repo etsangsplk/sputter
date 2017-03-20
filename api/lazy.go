@@ -1,12 +1,13 @@
 package api
 
+import "fmt"
+
 // ValueMapper returns a mapped representation of the specified Value
 type ValueMapper func(Value) Value
 
 // ValueFilter returns true if the Value remains part of a filtered Sequence
 type ValueFilter func(Value) bool
 
-// lazyMapper will only resolve its first and rest when requested
 type lazyMapper struct {
 	sequence Sequence
 	mapper   ValueMapper
@@ -66,7 +67,10 @@ func (l *lazyMapper) Prepend(v Value) Sequence {
 	}
 }
 
-// lazyFilter will only resolve its first and rest when requested
+func (l *lazyMapper) String() string {
+	return fmt.Sprintf("(map :instance %p)", &l)
+}
+
 type lazyFilter struct {
 	sequence Sequence
 	filter   ValueFilter
@@ -127,4 +131,66 @@ func (l *lazyFilter) Prepend(v Value) Sequence {
 		rest:  l,
 		isSeq: true,
 	}
+}
+
+func (l *lazyFilter) String() string {
+	return fmt.Sprintf("(filter :instance %p)", &l)
+}
+
+type lazyConcat struct {
+	sequence Sequence
+	first    Value
+	rest     Sequence
+	isSeq    bool
+}
+
+// NewConcat creates a new sequence based on the content of
+// several provided Sequences.  The results are computed lazily
+func NewConcat(s Sequence) *lazyConcat {
+	return &lazyConcat{sequence: s}
+}
+
+func (l *lazyConcat) resolve() *lazyConcat {
+	if l.sequence == nil {
+		return l
+	}
+
+	for s := l.sequence; s.IsSequence(); s = s.Rest() {
+		if f := AssertSequence(s.First()); f.IsSequence() {
+			l.first = f.First()
+			l.rest = &lazyConcat{
+				sequence: s.Rest().Prepend(f.Rest()),
+			}
+			l.sequence = nil
+			l.isSeq = true
+			return l
+		}
+	}
+
+	l.sequence = nil
+	return l
+}
+
+func (l *lazyConcat) First() Value {
+	return l.resolve().first
+}
+
+func (l *lazyConcat) Rest() Sequence {
+	return l.resolve().rest
+}
+
+func (l *lazyConcat) IsSequence() bool {
+	return l.resolve().isSeq
+}
+
+func (l *lazyConcat) Prepend(v Value) Sequence {
+	return &lazyConcat{
+		first: v,
+		rest:  l,
+		isSeq: true,
+	}
+}
+
+func (l *lazyConcat) String() string {
+	return fmt.Sprintf("(concat :instance %p)", &l)
 }

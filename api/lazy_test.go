@@ -1,6 +1,7 @@
 package api_test
 
 import (
+	"fmt"
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
@@ -103,4 +104,39 @@ func TestLazyFilteredAndMapped(t *testing.T) {
 
 	r1 := w2.Rest().Rest()
 	as.False(r1.IsSequence(), "finished")
+}
+
+func testNext(as *assert.Assertions, i *a.Iterator, expected a.Value) {
+	v, ok := i.Next()
+	as.True(ok, "iterator has more values")
+	as.Equal(expected, v, fmt.Sprintf("%s expected", expected))
+}
+
+func TestLazyConcat(t *testing.T) {
+	as := assert.New(t)
+
+	l1 := a.NewList("last").Prepend("middle").Prepend("first")
+	l2 := a.EmptyList
+	l3 := a.Vector{1, 2, 3}
+	l4 := a.NewList("blah3").Prepend("blah2").Prepend("blah1")
+	l5 := a.EmptyList
+
+	w1 := a.NewConcat(a.Vector{l1, l2, l3, l4, l5})
+	w2 := w1.Prepend("I was prepended")
+
+	i := a.Iterate(w2)
+
+	testNext(as, i, "I was prepended")
+	testNext(as, i, "first")
+	testNext(as, i, "middle")
+	testNext(as, i, "last")
+	testNext(as, i, 1)
+	testNext(as, i, 2)
+	testNext(as, i, 3)
+	testNext(as, i, "blah1")
+	testNext(as, i, "blah2")
+	testNext(as, i, "blah3")
+
+	_, ok := i.Next()
+	as.False(ok, "end of sequence")
 }

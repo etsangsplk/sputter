@@ -21,11 +21,11 @@ func TestMapFilter(t *testing.T) {
 	ns.Delete("y")
 
 	testCode(t, `
-		(def x '(1 2 3 4 5 6))
+		(def x (concat '(1 2) (list 3 4)))
 		(def y
-			(map ; will also test shadowing
-				(fn [x] (* x 2))
-				(filter (fn [x] (= x 6)) x)))
-		(first y)
-	`, a.NewFloat(12))
+			(map (fn [x] (* x 2))
+				(filter (fn [x] (= x 6))
+					x [5 6])))
+		(+ (first x) (first y))
+	`, a.NewFloat(13))
 }

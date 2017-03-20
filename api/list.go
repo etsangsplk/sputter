@@ -9,11 +9,16 @@ var EmptyList = &List{}
 type List struct {
 	first Value
 	rest  *List
+	count int
 }
 
 // NewList creates a new List instance
 func NewList(v Value) Sequence {
-	return &List{v, EmptyList}
+	return &List{
+		first: v,
+		rest:  EmptyList,
+		count: 1,
+	}
 }
 
 // First returns the first element of a List
@@ -33,16 +38,16 @@ func (l *List) IsSequence() bool {
 
 // Prepend creates a new Sequence by prepending a Value
 func (l *List) Prepend(v Value) Sequence {
-	return &List{first: v, rest: l}
+	return &List{
+		first: v,
+		rest:  l,
+		count: l.count + 1,
+	}
 }
 
 // Count returns the length of the List
 func (l *List) Count() int {
-	r := 0
-	for e := l; e != EmptyList; e = e.rest {
-		r++
-	}
-	return r
+	return l.count
 }
 
 // Get returns the Value at the indexed position in the List

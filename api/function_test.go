@@ -24,7 +24,7 @@ func TestFunction(t *testing.T) {
 
 	as.True(strings.HasPrefix(f1.String(), "(fn :name"), "name returned")
 	as.Equal("this is a test function", f1.Docstring(), "doc returned")
-	as.True(strings.HasPrefix(f2.String(), "(fn :addr"), "address returned")
+	as.True(strings.HasPrefix(f2.String(), "(fn :inst"), "address returned")
 
 	c := a.NewContext()
 	as.Equal("hello", f1.Apply(c, a.EmptyList), "function executes")
@@ -40,11 +40,11 @@ func TestGoodArity(t *testing.T) {
 		}
 	}()
 
-	a.AssertArity(v, 3)
-	a.AssertArityRange(v, 2, 4)
-	a.AssertArityRange(v, 3, 3)
-	a.AssertMinimumArity(v, 3)
-	a.AssertMinimumArity(v, 2)
+	as.Equal(3, a.AssertArity(v, 3))
+	as.Equal(3, a.AssertArityRange(v, 2, 4))
+	as.Equal(3, a.AssertArityRange(v, 3, 3))
+	as.Equal(3, a.AssertMinimumArity(v, 3))
+	as.Equal(3, a.AssertMinimumArity(v, 2))
 }
 
 func TestBadArity(t *testing.T) {
