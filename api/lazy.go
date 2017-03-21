@@ -103,6 +103,7 @@ func (l *lazyFilter) resolve() *lazyFilter {
 			l.rest = &lazyFilter{
 				sequence: i.Rest(),
 				filter:   l.filter,
+				rest:     EmptyList,
 			}
 			break
 		}
