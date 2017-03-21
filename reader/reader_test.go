@@ -157,7 +157,7 @@ func TestListData(t *testing.T) {
 	}
 
 	if n, ok := value.Rest().(*a.List); ok {
-		b, ok := n.First().(*a.Atom)
+		b, ok := n.First().(a.Value)
 		as.True(ok)
 		as.Equal(a.True, b)
 

@@ -3,19 +3,35 @@ package builtins
 import a "github.com/kode4food/sputter/api"
 
 func hashMap(c a.Context, args a.Sequence) a.Value {
-	l := a.Count(args)
-	if l%2 != 0 {
-		panic(a.ExpectedPair)
+	if cnt, ok := args.(a.Countable); ok {
+		l := cnt.Count()
+		if l%2 != 0 {
+			panic(a.ExpectedPair)
+		}
+		ml := l / 2
+		r := make(a.ArrayMap, ml)
+		i := a.Iterate(args)
+		for idx := 0; idx < ml; idx++ {
+			k, _ := i.Next()
+			v, _ := i.Next()
+			r[idx] = a.Vector{
+				a.Eval(c, k),
+				a.Eval(c, v),
+			}
+		}
+		return r
 	}
-	ml := l / 2
-	r := make(a.ArrayMap, ml)
+
+	r := a.ArrayMap{}
 	i := a.Iterate(args)
-	for idx := 0; idx < ml; idx++ {
-		k, _ := i.Next()
-		v, _ := i.Next()
-		r[idx] = a.Vector{
-			a.Eval(c, k),
-			a.Eval(c, v),
+	for k, ok := i.Next(); ok; k, ok = i.Next() {
+		if v, ok := i.Next(); ok {
+			r = append(r, a.Vector{
+				a.Eval(c, k),
+				a.Eval(c, v),
+			})
+		} else {
+			panic(a.ExpectedPair)
 		}
 	}
 	return r

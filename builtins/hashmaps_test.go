@@ -18,5 +18,13 @@ func TestHashMap(t *testing.T) {
 	testCode(t, `(!hash-map? [:name "Sputter" :age 45])`, a.True)
 	testCode(t, `(:name {:name "Sputter" :age 45})`, "Sputter")
 
+	testCode(t, `
+		(:name (apply hash-map (concat '(:name "Sputter") '(:age 45))))
+	`, "Sputter")
+
 	testBadCode(t, `(hash-map :too "few" :args)`, a.ExpectedPair)
+
+	testBadCode(t, `
+		(apply hash-map (concat '(:name "Sputter") '(:age)))
+	`, a.ExpectedPair)
 }

@@ -2,15 +2,15 @@ package api
 
 import "bytes"
 
-// EmptyList represents an empty List
-var EmptyList = &List{}
-
 // List contains a node to a singly-linked List
 type List struct {
 	first Value
 	rest  *List
 	count int
 }
+
+// EmptyList represents an empty List
+var EmptyList *List
 
 // NewList creates a new List instance
 func NewList(v Value) Sequence {
@@ -88,4 +88,12 @@ func (l *List) String() string {
 	}
 	b.WriteString(")")
 	return b.String()
+}
+
+func init() {
+	EmptyList = &List{
+		first: Nil,
+		count: 0,
+	}
+	EmptyList.rest = EmptyList
 }

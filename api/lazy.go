@@ -13,7 +13,7 @@ type lazyMapper struct {
 	mapper   ValueMapper
 	isSeq    bool
 	first    Value
-	rest     *lazyMapper
+	rest     Sequence
 }
 
 // NewMapper creates a new lazy mapping Sequence that wraps the
@@ -22,6 +22,7 @@ func NewMapper(s Sequence, m ValueMapper) Sequence {
 	return &lazyMapper{
 		sequence: s,
 		mapper:   m,
+		rest:     EmptyList,
 	}
 }
 
@@ -36,6 +37,7 @@ func (l *lazyMapper) resolve() *lazyMapper {
 		l.rest = &lazyMapper{
 			sequence: l.sequence.Rest(),
 			mapper:   l.mapper,
+			rest:     EmptyList,
 		}
 	}
 	l.sequence = nil
@@ -76,7 +78,7 @@ type lazyFilter struct {
 	filter   ValueFilter
 	isSeq    bool
 	first    Value
-	rest     *lazyFilter
+	rest     Sequence
 }
 
 // NewFilter creates a new lazy filter Sequence that wraps the
@@ -85,6 +87,7 @@ func NewFilter(s Sequence, f ValueFilter) Sequence {
 	return &lazyFilter{
 		sequence: s,
 		filter:   f,
+		rest:     EmptyList,
 	}
 }
 
@@ -93,12 +96,12 @@ func (l *lazyFilter) resolve() *lazyFilter {
 		return l
 	}
 
-	for s := l.sequence; s.IsSequence(); s = s.Rest() {
-		if v := s.First(); l.filter(v) {
+	for i := l.sequence; i.IsSequence(); i = i.Rest() {
+		if v := i.First(); l.filter(v) {
 			l.isSeq = true
 			l.first = v
 			l.rest = &lazyFilter{
-				sequence: s.Rest(),
+				sequence: i.Rest(),
 				filter:   l.filter,
 			}
 			break
@@ -146,8 +149,11 @@ type lazyConcat struct {
 
 // NewConcat creates a new sequence based on the content of
 // several provided Sequences.  The results are computed lazily
-func NewConcat(s Sequence) *lazyConcat {
-	return &lazyConcat{sequence: s}
+func NewConcat(s Sequence) Sequence {
+	return &lazyConcat{
+		sequence: s,
+		rest:     EmptyList,
+	}
 }
 
 func (l *lazyConcat) resolve() *lazyConcat {
@@ -155,11 +161,12 @@ func (l *lazyConcat) resolve() *lazyConcat {
 		return l
 	}
 
-	for s := l.sequence; s.IsSequence(); s = s.Rest() {
-		if f := AssertSequence(s.First()); f.IsSequence() {
+	for i := l.sequence; i.IsSequence(); i = i.Rest() {
+		if f := AssertSequence(i.First()); f.IsSequence() {
 			l.first = f.First()
 			l.rest = &lazyConcat{
-				sequence: s.Rest().Prepend(f.Rest()),
+				sequence: i.Rest().Prepend(f.Rest()),
+				rest:     EmptyList,
 			}
 			l.sequence = nil
 			l.isSeq = true

@@ -38,12 +38,9 @@ func makeCond(b branches) a.SequenceProcessor {
 }
 
 func cond(_ a.Context, form a.Sequence) a.Value {
-	i := a.Iterate(form)
-	i.Next() // we're already here
-
 	b := []branch{}
-	for e, ok := i.Next(); ok; e, ok = i.Next() {
-		b = append(b, makeBranch(e))
+	for i := form.Rest(); i.IsSequence(); i = i.Rest() {
+		b = append(b, makeBranch(i.First()))
 	}
 
 	return a.NewList(&a.Function{Exec: makeCond(b)})

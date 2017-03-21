@@ -24,8 +24,8 @@ func TestMapFilter(t *testing.T) {
 		(def x (concat '(1 2) (list 3 4)))
 		(def y
 			(map (fn [x] (* x 2))
-				(filter (fn [x] (= x 6))
-					x [5 6])))
-		(+ (first x) (first y))
+			(filter (fn [x] (= x 6))
+				[5 6])))
+		(apply + (map (fn [z] (first z)) [x y]))
 	`, a.NewFloat(13))
 }

@@ -7,9 +7,8 @@ import (
 
 func list(c a.Context, args a.Sequence) a.Value {
 	s := u.NewStack()
-	i := a.Iterate(args)
-	for v, ok := i.Next(); ok; v, ok = i.Next() {
-		s.Push(a.Eval(c, v))
+	for i := args; i.IsSequence(); i = i.Rest() {
+		s.Push(a.Eval(c, i.First()))
 	}
 
 	e, ok := s.Pop()

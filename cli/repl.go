@@ -210,9 +210,8 @@ func shutdown(c a.Context, args a.Sequence) a.Value {
 func help(c a.Context, args a.Sequence) a.Value {
 	ns := getBuiltInsNamespace()
 	v, _ := ns.Get(replBuiltIns)
-	i := a.Iterate(v.(a.Vector))
-	for v, ok := i.Next(); ok; v, ok = i.Next() {
-		f := v.(*a.Function)
+	for _, e := range v.(a.Vector) {
+		f := e.(*a.Function)
 		fn := fmt.Sprintf("%-8s", "("+string(f.Name)+")")
 		fmt.Println(yellow + fn + reset + "; " + f.Docstring())
 	}

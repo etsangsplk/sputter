@@ -1,6 +1,7 @@
 package api_test
 
 import (
+	"strings"
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
@@ -21,6 +22,8 @@ func TestTruthy(t *testing.T) {
 	as.False(a.Truthy(false), "false is not Truthy")
 }
 
+type anon struct{}
+
 func TestString(t *testing.T) {
 	as := assert.New(t)
 
@@ -28,4 +31,5 @@ func TestString(t *testing.T) {
 	as.Equal("false", a.String(a.False), "true stringifies correctly")
 	as.Equal("nil", a.String(a.Nil), "nil stringifies correctly")
 	as.Equal("nil", a.String(nil), "nil stringifies correctly")
+	as.True(strings.HasPrefix(a.String(&anon{}), "(<anon>"))
 }

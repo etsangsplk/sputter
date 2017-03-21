@@ -32,7 +32,6 @@ func TestFunction(t *testing.T) {
 
 func TestGoodArity(t *testing.T) {
 	as := assert.New(t)
-	v := &a.Vector{1, 2, 3}
 
 	defer func() {
 		if rec := recover(); rec != nil {
@@ -40,11 +39,18 @@ func TestGoodArity(t *testing.T) {
 		}
 	}()
 
-	as.Equal(3, a.AssertArity(v, 3))
-	as.Equal(3, a.AssertArityRange(v, 2, 4))
-	as.Equal(3, a.AssertArityRange(v, 3, 3))
-	as.Equal(3, a.AssertMinimumArity(v, 3))
-	as.Equal(3, a.AssertMinimumArity(v, 2))
+	v1 := &a.Vector{1, 2, 3}
+	as.Equal(3, a.AssertArity(v1, 3))
+	as.Equal(3, a.AssertArityRange(v1, 2, 4))
+	as.Equal(3, a.AssertArityRange(v1, 3, 3))
+	as.Equal(3, a.AssertMinimumArity(v1, 3))
+	as.Equal(3, a.AssertMinimumArity(v1, 2))
+
+	v2 := a.NewConcat(a.Vector{
+		a.NewList(1),
+		a.Vector{2, 3},
+	})
+	as.Equal(3, a.AssertArity(v2, 3))
 }
 
 func TestBadArity(t *testing.T) {

@@ -7,15 +7,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestAtom(t *testing.T) {
-	as := assert.New(t)
-
-	v := &a.Atom{Label: "hello"}
-	c := a.NewContext()
-	as.Equal(v, v.Eval(c), "own value returned")
-	as.Equal("hello", v.String(), "label returned")
-}
-
 func TestQuote(t *testing.T) {
 	as := assert.New(t)
 

@@ -14,9 +14,8 @@ func identical(c a.Context, args a.Sequence) a.Value {
 
 func isNil(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
-	i := a.Iterate(args)
-	for v, ok := i.Next(); ok; v, ok = i.Next() {
-		if a.Eval(c, v) != a.Nil {
+	for i := args; i.IsSequence(); i = i.Rest() {
+		if a.Eval(c, i.First()) != a.Nil {
 			return a.False
 		}
 	}

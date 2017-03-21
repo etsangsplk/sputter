@@ -16,9 +16,8 @@ func Eval(c Context, v Value) Value {
 // EvalSequence evaluates each element of the provided Sequence
 func EvalSequence(c Context, s Sequence) Value {
 	var r Value = Nil
-	i := Iterate(s)
-	for v, ok := i.Next(); ok; v, ok = i.Next() {
-		r = Eval(c, v)
+	for i := s; i.IsSequence(); i = i.Rest() {
+		r = Eval(c, i.First())
 	}
 	return r
 }

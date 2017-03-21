@@ -7,10 +7,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNewVector(t *testing.T) {
+func TestVector(t *testing.T) {
 	as := assert.New(t)
-	r := runCode(`(vector 1 (- 5 3) (+ 1 2))`)
-	as.Equal("[1 2 3]", a.String(r), "correct vector")
+
+	r1 := runCode(`(vector 1 (- 5 3) (+ 1 2))`)
+	as.Equal("[1 2 3]", a.String(r1), "correct vector")
+
+	r2 := runCode(`(apply vector (concat '(1) '((- 5 3)) '((+ 1 2))))`)
+	as.Equal("[1 2 3]", a.String(r2), "correct vector")
 
 	testCode(t, `(vector? [1 2 3])`, a.True)
 	testCode(t, `(vector? (vector 1 2 3))`, a.True)

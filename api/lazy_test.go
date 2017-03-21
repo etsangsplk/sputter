@@ -2,6 +2,7 @@ package api_test
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
@@ -139,4 +140,16 @@ func TestLazyConcat(t *testing.T) {
 
 	_, ok := i.Next()
 	as.False(ok, "end of sequence")
+}
+
+func TestLazyToString(t *testing.T) {
+	as := assert.New(t)
+
+	id := func(v a.Value) a.Value { return v }
+	all := func(v a.Value) bool { return true }
+
+	v := a.Vector{}
+	as.True(strings.HasPrefix(a.String(a.NewConcat(v)), "(concat :instance"))
+	as.True(strings.HasPrefix(a.String(a.NewFilter(v, all)), "(filter :instance"))
+	as.True(strings.HasPrefix(a.String(a.NewMapper(v, id)), "(map :instance"))
 }

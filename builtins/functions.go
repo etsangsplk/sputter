@@ -12,9 +12,8 @@ type functionDefinition struct {
 
 func argNames(n a.Sequence) []a.Name {
 	an := []a.Name{}
-	i := a.Iterate(n)
-	for e, ok := i.Next(); ok; e, ok = i.Next() {
-		v := a.AssertUnqualified(e).Name
+	for i := n; i.IsSequence(); i = i.Rest() {
+		v := a.AssertUnqualified(i.First()).Name
 		an = append(an, v)
 	}
 	return an
@@ -72,13 +71,11 @@ func defn(c a.Context, args a.Sequence) a.Value {
 
 func fn(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
-	i := a.Iterate(args)
-	av, _ := i.Next()
-	an := a.AssertSequence(av)
+	an := a.AssertSequence(args.First())
 
 	return define(&functionDefinition{
 		argNames: an,
-		body:     i.Rest(),
+		body:     args.Rest(),
 		closure:  c,
 	})
 }

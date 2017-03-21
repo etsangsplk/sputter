@@ -3,12 +3,20 @@ package builtins
 import a "github.com/kode4food/sputter/api"
 
 func vector(c a.Context, args a.Sequence) a.Value {
-	l := a.Count(args)
-	r := make(a.Vector, l)
-	i := a.Iterate(args)
-	for idx := 0; idx < l; idx++ {
-		v, _ := i.Next()
-		r[idx] = a.Eval(c, v)
+	if cnt, ok := args.(a.Countable); ok {
+		l := cnt.Count()
+		r := make(a.Vector, l)
+		idx := 0
+		for i := args; i.IsSequence(); i = i.Rest() {
+			r[idx] = a.Eval(c, i.First())
+			idx++
+		}
+		return r
+	}
+
+	r := a.Vector{}
+	for i := args; i.IsSequence(); i = i.Rest() {
+		r = append(r, a.Eval(c, i.First()))
 	}
 	return r
 }

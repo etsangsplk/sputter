@@ -4,10 +4,10 @@ import "fmt"
 
 var (
 	// True represents the boolean value of True
-	True = &Atom{Label: "true"}
+	True Value = true
 
 	// False represents the boolean value of false
-	False = &Atom{Label: "false"}
+	False Value = false
 
 	// Nil is a value that represents the absence of a Value
 	Nil Value
@@ -31,7 +31,7 @@ type Variables map[Name]Value
 // Truthy evaluates whether or not a Value is Truthy
 func Truthy(v Value) bool {
 	switch {
-	case v == Nil || v == False || v == false:
+	case v == False || v == Nil:
 		return false
 	default:
 		return true
@@ -43,6 +43,13 @@ func String(v Value) string {
 	if v == nil {
 		return "nil"
 	}
+	if v == true {
+		return "true"
+	}
+	if v == false {
+		return "false"
+	}
+
 	if s, ok := v.(fmt.Stringer); ok {
 		return s.String()
 	}

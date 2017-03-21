@@ -74,9 +74,20 @@ func (f *Function) String() string {
 	return b.String()
 }
 
+func countUpTo(args Sequence, c int) int {
+	if cnt, ok := args.(Countable); ok {
+		return cnt.Count()
+	}
+	r := 0
+	for s := args; r < c && s.IsSequence(); s = s.Rest() {
+		r++
+	}
+	return r
+}
+
 // AssertArity explodes if the arg count doesn't match provided arity
 func AssertArity(args Sequence, arity int) int {
-	c := Count(args)
+	c := countUpTo(args, arity+1)
 	if c != arity {
 		panic(fmt.Sprintf(BadArity, arity, c))
 	}
@@ -85,7 +96,7 @@ func AssertArity(args Sequence, arity int) int {
 
 // AssertMinimumArity explodes if the arg count isn't at least arity
 func AssertMinimumArity(args Sequence, arity int) int {
-	c := Count(args)
+	c := countUpTo(args, arity)
 	if c < arity {
 		panic(fmt.Sprintf(BadMinimumArity, arity, c))
 	}
@@ -94,7 +105,7 @@ func AssertMinimumArity(args Sequence, arity int) int {
 
 // AssertArityRange explodes if the arg count isn't in the arity range
 func AssertArityRange(args Sequence, min int, max int) int {
-	c := Count(args)
+	c := countUpTo(args, max+1)
 	if c < min || c > max {
 		panic(fmt.Sprintf(BadArityRange, min, max, c))
 	}

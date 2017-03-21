@@ -28,9 +28,7 @@ func defmacro(c a.Context, form a.Sequence) a.Value {
 		Doc:  ds,
 		Data: true,
 		Prep: func(c a.Context, form a.Sequence) a.Value {
-			i := a.Iterate(form)
-			i.Next() // skip the macro name
-			a.AssertArity(i.Rest(), fc)
+			a.AssertArity(form.Rest(), fc)
 			return b
 		},
 	}
