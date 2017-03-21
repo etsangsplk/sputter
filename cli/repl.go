@@ -78,7 +78,7 @@ func (repl *REPL) Run() {
 	defer repl.rl.Close()
 
 	fmt.Println(a.Language, a.Version)
-	help(nil, nil)
+	displayStandardHelp()
 	repl.setInitialPrompt()
 
 	for {
@@ -106,7 +106,7 @@ func (repl *REPL) Run() {
 		repl.evalBuffer()
 		repl.reset()
 	}
-	shutdown(nil, nil)
+	shutdown(nil, a.EmptyList)
 }
 
 func (repl *REPL) reset() {
@@ -207,15 +207,32 @@ func shutdown(c a.Context, args a.Sequence) a.Value {
 	return a.Nil
 }
 
-func help(c a.Context, args a.Sequence) a.Value {
+func displayStandardHelp() {
 	ns := getBuiltInsNamespace()
 	v, _ := ns.Get(replBuiltIns)
 	for _, e := range v.(a.Vector) {
 		f := e.(*a.Function)
 		fn := fmt.Sprintf("%-8s", "("+string(f.Name)+")")
-		fmt.Println(yellow + fn + reset + "; " + f.Docstring())
+		fmt.Println(yellow + fn + reset + "; " + f.Documentation())
 	}
 	fmt.Println()
+}
+
+func help(c a.Context, args a.Sequence) (res a.Value) {
+	defer func() {
+		if recover() != nil {
+			displayStandardHelp()
+			res = a.Nil
+		}
+	}()
+
+	a.AssertMinimumArity(args, 1)
+	sym := a.AssertUnqualified(args.First())
+	if v, ok := c.Get(sym.Name); ok {
+		if d, ok := v.(a.Documented); ok {
+			return d.Documentation()
+		}
+	}
 	return a.Nil
 }
 

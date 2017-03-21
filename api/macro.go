@@ -13,8 +13,8 @@ type Macro struct {
 	Data bool
 }
 
-// Docstring makes Macro Documented
-func (m *Macro) Docstring() string {
+// Documentation makes Macro Documented
+func (m *Macro) Documentation() string {
 	return m.Doc
 }
 

@@ -50,8 +50,8 @@ func ResolveAsApplicable(c Context, v Value) (Applicable, bool) {
 	return nil, false
 }
 
-// Docstring makes Function Documented
-func (f *Function) Docstring() string {
+// Documentation makes Function Documented
+func (f *Function) Documentation() string {
 	return f.Doc
 }
 

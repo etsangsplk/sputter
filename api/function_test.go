@@ -23,7 +23,7 @@ func TestFunction(t *testing.T) {
 	f2 := &a.Function{}
 
 	as.True(strings.HasPrefix(f1.String(), "(fn :name"), "name returned")
-	as.Equal("this is a test function", f1.Docstring(), "doc returned")
+	as.Equal("this is a test function", f1.Documentation(), "doc returned")
 	as.True(strings.HasPrefix(f2.String(), "(fn :inst"), "address returned")
 
 	c := a.NewContext()

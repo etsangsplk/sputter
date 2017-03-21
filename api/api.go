@@ -22,7 +22,7 @@ type Value interface {
 
 // Documented is implemented if a Value is Documented
 type Documented interface {
-	Docstring() string
+	Documentation() string
 }
 
 // Variables represents a mapping from Name to Value

@@ -30,7 +30,7 @@ func TestFunction(t *testing.T) {
 
 	v, _ := ns.Get("say-hello")
 	fv := v.(*a.Function)
-	as.Equal("this is a doc string", fv.Docstring(), "documented")
+	as.Equal("this is a doc string", fv.Documentation(), "documented")
 }
 
 func TestBadFunction(t *testing.T) {
