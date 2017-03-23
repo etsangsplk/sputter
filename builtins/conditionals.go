@@ -1,36 +1,26 @@
 package builtins
 
-import a "github.com/kode4food/sputter/api"
+import (
+	"fmt"
+
+	a "github.com/kode4food/sputter/api"
+)
+
+// ExpectedCondResult is raised when a predicate is not paired
+const ExpectedCondResult = "expected result for predicate '%s'"
 
 type branch struct {
-	condition a.Value
-	steps     a.Vector
+	predicate a.Value
+	result    a.Value
 }
 
 type branches []branch
 
-func makeBranch(e a.Value) branch {
-	b := a.AssertSequence(e)
-	a.AssertMinimumArity(b, 2)
-	i := a.Iterate(b)
-
-	c, _ := i.Next()
-	s := make(a.Vector, 0)
-	for n, ok := i.Next(); ok; n, ok = i.Next() {
-		s = append(s, n)
-	}
-
-	return branch{
-		condition: c,
-		steps:     s,
-	}
-}
-
 func makeCond(b branches) a.SequenceProcessor {
 	return func(c a.Context, args a.Sequence) a.Value {
 		for _, e := range b {
-			if a.Truthy(a.Eval(c, e.condition)) {
-				return a.EvalSequence(c, e.steps)
+			if a.Truthy(a.Eval(c, e.predicate)) {
+				return a.Eval(c, e.result)
 			}
 		}
 		return a.Nil
@@ -39,10 +29,17 @@ func makeCond(b branches) a.SequenceProcessor {
 
 func cond(_ a.Context, form a.Sequence) a.Value {
 	b := []branch{}
-	for i := form.Rest(); i.IsSequence(); i = i.Rest() {
-		b = append(b, makeBranch(i.First()))
+	i := a.Iterate(form.Rest())
+	for p, ok := i.Next(); ok; p, ok = i.Next() {
+		if r, ok := i.Next(); ok {
+			b = append(b, branch{
+				predicate: p,
+				result:    r,
+			})
+		} else {
+			panic(fmt.Sprintf(ExpectedCondResult, a.String(p)))
+		}
 	}
-
 	return a.NewList(&a.Function{Exec: makeCond(b)})
 }
 

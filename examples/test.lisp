@@ -60,7 +60,7 @@
 (prn (if (nil? false nil ()) "nil" "no"))
 (prn (if (!nil? false nil ()) "nil" "no"))
 
-(sputter:defmacro foo [x] (prn "hello"))
+(sputter:defmacro foo [x] (prn "hello macro"))
 (prn "macro:" (foo blah))
 
 (with-ns foo

@@ -9,11 +9,7 @@ import (
 type outputFunc func(a.Value)
 
 func raw(v a.Value) {
-	if s, ok := v.(string); ok {
-		fmt.Print(`"` + s + `"`)
-	} else {
-		fmt.Print(v)
-	}
+	fmt.Print(a.String(v))
 }
 
 func pretty(v a.Value) {

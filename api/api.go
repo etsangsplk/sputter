@@ -40,13 +40,13 @@ func Truthy(v Value) bool {
 
 // String either calls the String() method or tries to convert
 func String(v Value) string {
-	if v == nil {
+	if v == Nil {
 		return "nil"
 	}
-	if v == true {
+	if v == True {
 		return "true"
 	}
-	if v == false {
+	if v == False {
 		return "false"
 	}
 
