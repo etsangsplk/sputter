@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
-	b "github.com/kode4food/sputter/builtins"
 )
 
 func TestCond(t *testing.T) {
@@ -32,24 +31,20 @@ func TestCond(t *testing.T) {
 			false "goodbye"
 			nil   "nope")
 	`, a.Nil)
-}
 
-func TestBadCond(t *testing.T) {
-	error99 := fmt.Sprintf(b.ExpectedCondResult, "99")
-
-	testBadCode(t, `(cond 99)`, error99)
-
-	testBadCode(t, `
+	testCode(t, `
 		(cond
 			true "hello"
 			99)
-	`, error99)
+	`, "hello")
 
-	testBadCode(t, `
+	testCode(t, `(cond 99)`, a.NewFloat(99))
+
+	testCode(t, `
 		(cond
 			false "hello"
 			99)
-	`, error99)
+	`, a.NewFloat(99))
 }
 
 func TestIf(t *testing.T) {

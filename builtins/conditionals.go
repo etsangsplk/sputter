@@ -1,46 +1,21 @@
 package builtins
 
 import (
-	"fmt"
-
 	a "github.com/kode4food/sputter/api"
 )
 
-// ExpectedCondResult is raised when a predicate is not paired
-const ExpectedCondResult = "expected result for predicate '%s'"
-
-type branch struct {
-	predicate a.Value
-	result    a.Value
-}
-
-type branches []branch
-
-func makeCond(b branches) a.SequenceProcessor {
-	return func(c a.Context, args a.Sequence) a.Value {
-		for _, e := range b {
-			if a.Truthy(a.Eval(c, e.predicate)) {
-				return a.Eval(c, e.result)
-			}
+func cond(c a.Context, args a.Sequence) a.Value {
+	for i := args; i.IsSequence(); i = i.Rest() {
+		p := a.Eval(c, i.First())
+		i = i.Rest()
+		if !i.IsSequence() {
+			return p
 		}
-		return a.Nil
-	}
-}
-
-func cond(_ a.Context, form a.Sequence) a.Value {
-	b := []branch{}
-	i := a.Iterate(form.Rest())
-	for p, ok := i.Next(); ok; p, ok = i.Next() {
-		if r, ok := i.Next(); ok {
-			b = append(b, branch{
-				predicate: p,
-				result:    r,
-			})
-		} else {
-			panic(fmt.Sprintf(ExpectedCondResult, a.String(p)))
+		if a.Truthy(p) {
+			return a.Eval(c, i.First())
 		}
 	}
-	return a.NewList(&a.Function{Exec: makeCond(b)})
+	return a.Nil
 }
 
 // this will be replaced by a macro -> cond
@@ -57,6 +32,6 @@ func _if(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	registerMacro(&a.Macro{Name: "cond", Prep: cond})
+	registerFunction(&a.Function{Name: "cond", Exec: cond})
 	registerFunction(&a.Function{Name: "if", Exec: _if})
 }
