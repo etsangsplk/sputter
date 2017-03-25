@@ -52,14 +52,15 @@ func (l *List) Count() int {
 
 // Get returns the Value at the indexed position in the List
 func (l *List) Get(index int) Value {
-	var i = 0
-	for e := l; e != EmptyList; e = e.rest {
-		if i == index {
-			return e.first
-		}
-		i++
+	if index > l.count-1 {
+		return Nil
 	}
-	return Nil
+
+	e := l
+	for i := 0; i < index; i++ {
+		e = e.rest
+	}
+	return e.first
 }
 
 // Eval makes a List Evaluable

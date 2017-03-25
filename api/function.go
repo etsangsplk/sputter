@@ -32,6 +32,11 @@ type Function struct {
 	Doc  string
 }
 
+// Macro is a Function that can be used for Reader transformation
+type Macro struct {
+	*Function
+}
+
 // ResolveAsApplicable either returns an Applicable as-is or tries
 // to perform a lookup if the Value is a Symbol
 func ResolveAsApplicable(c Context, v Value) (Applicable, bool) {
@@ -65,10 +70,22 @@ func (f *Function) String() string {
 	b.WriteString("(fn")
 	if f.Name != "" {
 		b.WriteString(" :name " + String(f.Name))
+	} else {
+		b.WriteString(fmt.Sprintf(" :instance %p", &f))
 	}
-	b.WriteString(fmt.Sprintf(" :instance %p", &f))
 	if f.Doc != "" {
 		b.WriteString(" :doc " + String(f.Doc))
+	}
+	b.WriteString(")")
+	return b.String()
+}
+
+func (m *Macro) String() string {
+	var b bytes.Buffer
+	b.WriteString("(macro ")
+	b.WriteString(" :name " + String(m.Name))
+	if m.Doc != "" {
+		b.WriteString(" :doc " + String(m.Doc))
 	}
 	b.WriteString(")")
 	return b.String()

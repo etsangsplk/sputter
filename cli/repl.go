@@ -218,22 +218,19 @@ func displayStandardHelp() {
 	fmt.Println()
 }
 
-func help(c a.Context, args a.Sequence) (res a.Value) {
-	defer func() {
-		if recover() != nil {
-			displayStandardHelp()
-			res = a.Nil
-		}
-	}()
-
-	a.AssertMinimumArity(args, 1)
+func help(c a.Context, args a.Sequence) a.Value {
+	if a.Count(args) == 0 {
+		displayStandardHelp()
+		return a.Nil
+	}
 	sym := a.AssertUnqualified(args.First())
 	if v, ok := c.Get(sym.Name); ok {
 		if d, ok := v.(a.Documented); ok {
 			return d.Documentation()
 		}
+		panic(fmt.Sprintf("Symbol '%s' is not documented", sym))
 	}
-	return a.Nil
+	panic(fmt.Sprintf("Could not resolve symbol '%s'", sym))
 }
 
 func getBuiltInsNamespace() a.Namespace {

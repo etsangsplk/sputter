@@ -32,7 +32,7 @@ func (v Vector) First() Value {
 
 // Rest returns the remaining elements of a Vector as a Sequence
 func (v Vector) Rest() Sequence {
-	return v[1:]
+	return Sequence(v[1:])
 }
 
 // Prepend creates a new Sequence by prepending a Value

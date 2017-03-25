@@ -19,7 +19,31 @@ func argNames(n a.Sequence) []a.Name {
 	return an
 }
 
-func define(d *functionDefinition) *a.Function {
+func getFunctionDefinition(c a.Context, args a.Sequence) *functionDefinition {
+	a.AssertMinimumArity(args, 3)
+
+	i := a.Iterate(args)
+	fv, _ := i.Next()
+	fn := a.AssertUnqualified(fv).Name
+
+	var ds string
+	av, _ := i.Next()
+	if vs, ok := av.(string); ok {
+		ds = vs
+		av, _ = i.Next()
+	}
+	an := a.AssertSequence(av)
+
+	return &functionDefinition{
+		name:     fn,
+		doc:      ds,
+		argNames: an,
+		body:     i.Rest(),
+		closure:  c,
+	}
+}
+
+func defineFunction(d *functionDefinition) *a.Function {
 	an := argNames(d.argNames)
 	ac := len(an)
 	dc := d.closure
@@ -42,38 +66,17 @@ func define(d *functionDefinition) *a.Function {
 }
 
 func defn(c a.Context, args a.Sequence) a.Value {
-	a.AssertMinimumArity(args, 3)
-	ns := a.GetContextNamespace(c)
-
-	i := a.Iterate(args)
-	fv, _ := i.Next()
-	fn := a.AssertUnqualified(fv).Name
-
-	var ds string
-	av, _ := i.Next()
-	if vs, ok := av.(string); ok {
-		ds = vs
-		av, _ = i.Next()
-	}
-	an := a.AssertSequence(av)
-
-	d := define(&functionDefinition{
-		name:     fn,
-		doc:      ds,
-		argNames: an,
-		body:     i.Rest(),
-		closure:  c,
-	})
-
-	ns.Put(fn, d)
-	return d
+	fd := getFunctionDefinition(c, args)
+	f := defineFunction(fd)
+	a.GetContextNamespace(fd.closure).Put(fd.name, f)
+	return f
 }
 
 func fn(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 	an := a.AssertSequence(args.First())
 
-	return define(&functionDefinition{
+	return defineFunction(&functionDefinition{
 		argNames: an,
 		body:     args.Rest(),
 		closure:  c,

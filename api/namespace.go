@@ -68,18 +68,18 @@ func (b *basicNamespace) String() string {
 }
 
 // GetNamespace returns the Namespace for the specified domain.
-func GetNamespace(domain Name) Namespace {
-	if ns, ok := namespaces[domain]; ok {
+func GetNamespace(n Name) Namespace {
+	if ns, ok := namespaces[n]; ok {
 		return ns
 	}
 	ns := &basicNamespace{
 		NewContext(),
 		&namespaceInfo{
-			domain:  domain,
+			domain:  n,
 			symbols: make(symbolMap, defaultSymbolEntries),
 		},
 	}
-	namespaces[domain] = ns
+	namespaces[n] = ns
 	return ns
 }
 

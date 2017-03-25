@@ -227,12 +227,14 @@ func TestReaderPrepare(t *testing.T) {
 	ns := a.GetContextNamespace(b)
 	ns.Delete("hello")
 	ns.Put("hello", &a.Macro{
-		Name: "hello",
-		Prep: func(c a.Context, l a.Sequence) a.Value {
-			if _, ok := l.(*a.List); !ok {
-				as.Fail("provided list is not a cons")
-			}
-			return a.Vector{"you"}
+		Function: &a.Function{
+			Name: "hello",
+			Exec: func(c a.Context, l a.Sequence) a.Value {
+				if _, ok := l.(*a.List); !ok {
+					as.Fail("provided list is not a cons")
+				}
+				return a.Vector{"you"}
+			},
 		},
 	})
 

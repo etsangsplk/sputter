@@ -4,7 +4,9 @@ import (
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
+	_ "github.com/kode4food/sputter/builtins"
 	r "github.com/kode4food/sputter/reader"
+
 	"github.com/stretchr/testify/assert"
 )
 
