@@ -98,12 +98,11 @@ func (repl *REPL) Run() {
 			continue
 		}
 
-		if !repl.isBufferReadable() {
+		if !repl.evalBuffer() {
 			repl.setContinuePrompt()
 			continue
 		}
 
-		repl.evalBuffer()
 		repl.reset()
 	}
 	shutdown(nil, a.EmptyList)
@@ -134,37 +133,23 @@ func (repl *REPL) nsSpace() string {
 	return anyChar.ReplaceAllString(ns, " ")
 }
 
-func (repl *REPL) isBufferReadable() (ok bool) {
+func (repl *REPL) evalBuffer() (completed bool) {
 	defer func() {
 		if rec := recover(); rec != nil {
 			if isRecoverable(rec) {
-				ok = false
+				completed = false
 				return
 			}
-			ok = true
-		}
-	}()
-
-	l := r.NewLexer(repl.buf.String())
-	tr := r.NewReader(a.ChildContext(repl.ctx), l)
-	for v := tr.Next(); v != r.EndOfReader; v = tr.Next() {
-	}
-	return true
-}
-
-func (repl *REPL) evalBuffer() {
-	defer func() {
-		if rec := recover(); rec != nil {
 			repl.error(rec)
+			completed = true
 		}
 	}()
 
 	l := r.NewLexer(repl.buf.String())
-	repl.buf.Reset()
-
 	tr := r.NewReader(repl.ctx, l)
 	res := r.EvalReader(repl.ctx, tr)
 	repl.output(res)
+	return true
 }
 
 func (repl *REPL) output(v a.Value) {

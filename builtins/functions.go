@@ -7,7 +7,6 @@ type functionDefinition struct {
 	doc      string
 	argNames a.Sequence
 	body     a.Sequence
-	closure  a.Context
 }
 
 func argNames(n a.Sequence) []a.Name {
@@ -19,7 +18,7 @@ func argNames(n a.Sequence) []a.Name {
 	return an
 }
 
-func getFunctionDefinition(c a.Context, args a.Sequence) *functionDefinition {
+func getFunctionDefinition(args a.Sequence) *functionDefinition {
 	a.AssertMinimumArity(args, 3)
 
 	i := a.Iterate(args)
@@ -39,14 +38,12 @@ func getFunctionDefinition(c a.Context, args a.Sequence) *functionDefinition {
 		doc:      ds,
 		argNames: an,
 		body:     i.Rest(),
-		closure:  c,
 	}
 }
 
-func defineFunction(d *functionDefinition) *a.Function {
+func defineFunction(closure a.Context, d *functionDefinition) *a.Function {
 	an := argNames(d.argNames)
 	ac := len(an)
-	dc := d.closure
 	db := d.body
 
 	return &a.Function{
@@ -54,7 +51,7 @@ func defineFunction(d *functionDefinition) *a.Function {
 		Doc:  d.doc,
 		Exec: func(c a.Context, args a.Sequence) a.Value {
 			a.AssertArity(args, ac)
-			l := a.ChildContext(dc)
+			l := a.ChildContext(closure)
 			i := a.Iterate(args)
 			for _, n := range an {
 				v, _ := i.Next()
@@ -66,9 +63,9 @@ func defineFunction(d *functionDefinition) *a.Function {
 }
 
 func defn(c a.Context, args a.Sequence) a.Value {
-	fd := getFunctionDefinition(c, args)
-	f := defineFunction(fd)
-	a.GetContextNamespace(fd.closure).Put(fd.name, f)
+	fd := getFunctionDefinition(args)
+	f := defineFunction(c, fd)
+	a.GetContextNamespace(c).Put(fd.name, f)
 	return f
 }
 
@@ -76,10 +73,9 @@ func fn(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 	an := a.AssertSequence(args.First())
 
-	return defineFunction(&functionDefinition{
+	return defineFunction(c, &functionDefinition{
 		argNames: an,
 		body:     args.Rest(),
-		closure:  c,
 	})
 }
 
