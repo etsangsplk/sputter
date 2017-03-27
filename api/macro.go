@@ -5,22 +5,24 @@ import "bytes"
 // Macro is a Function that can be used for Reader transformation
 type Macro interface {
 	Function
-	IsMacro() bool
+	DataMode() bool
 }
 
 type basicMacro struct {
 	Function
+	dataMode bool
 }
 
 // NewMacro instantiates f new Macro
 func NewMacro(e SequenceProcessor) Macro {
 	return &basicMacro{
 		Function: NewFunction(e),
+		dataMode: true,
 	}
 }
 
-func (m *basicMacro) IsMacro() bool {
-	return true
+func (m *basicMacro) DataMode() bool {
+	return m.dataMode
 }
 
 // WithMetadata copies the Function with new Metadata
