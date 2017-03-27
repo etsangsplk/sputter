@@ -5,26 +5,25 @@ import a "github.com/kode4food/sputter/api"
 // BuiltIns is a special Namespace for built-in identifiers
 var BuiltIns = a.GetNamespace(a.BuiltInDomain)
 
-func registerFunction(f *a.Function) {
-	BuiltIns.Put(f.Name, f)
+func registerAnnotated(v a.Annotated) {
+	n := v.Metadata()[a.MetaName].(a.Name)
+	BuiltIns.Put(n, v)
 }
 
-func registerMacro(f *a.Function) {
-	BuiltIns.Put(f.Name, &a.Macro{Function: f})
-}
-
-func registerPredicate(f *a.Function) {
-	registerFunction(f)
-	registerFunction(&a.Function{
-		Name: "!" + f.Name,
-		Exec: func(c a.Context, args a.Sequence) a.Value {
-			r := f.Apply(c, args)
-			if r == a.True {
-				return a.False
-			}
-			return a.True
-		},
+func registerPredicate(f a.Function) {
+	pn := a.Name("!" + f.Name())
+	p := a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
+		r := f.Apply(c, args)
+		if r == a.True {
+			return a.False
+		}
+		return a.True
+	}).WithMetadata(a.Variables{
+		a.MetaName: pn,
 	})
+
+	registerAnnotated(f)
+	registerAnnotated(p)
 }
 
 func do(c a.Context, args a.Sequence) a.Value {
@@ -37,6 +36,15 @@ func quote(_ a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	registerFunction(&a.Function{Name: "do", Exec: do})
-	registerMacro(&a.Function{Name: "quote", Exec: quote})
+	registerAnnotated(
+		a.NewFunction(do).WithMetadata(a.Variables{
+			a.MetaName: a.Name("do"),
+		}),
+	)
+
+	registerAnnotated(
+		a.NewMacro(quote).WithMetadata(a.Variables{
+			a.MetaName: a.Name("quote"),
+		}),
+	)
 }

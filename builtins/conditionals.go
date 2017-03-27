@@ -32,6 +32,15 @@ func _if(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	registerFunction(&a.Function{Name: "cond", Exec: cond})
-	registerFunction(&a.Function{Name: "if", Exec: _if})
+	registerAnnotated(
+		a.NewFunction(cond).WithMetadata(a.Variables{
+			a.MetaName: a.Name("cond"),
+		}),
+	)
+
+	registerAnnotated(
+		a.NewFunction(_if).WithMetadata(a.Variables{
+			a.MetaName: a.Name("if"),
+		}),
+	)
 }

@@ -185,15 +185,16 @@ func TestEvaluable(t *testing.T) {
 	as := assert.New(t)
 	c := a.NewContext()
 
-	hello := &a.Function{
-		Name: "hello",
-		Exec: func(c a.Context, args a.Sequence) a.Value {
+	hello := a.NewFunction(
+		func(c a.Context, args a.Sequence) a.Value {
 			i := a.Iterate(args)
 			arg, _ := i.Next()
 			v := evaluateToString(c, arg)
 			return "Hello, " + v + "!"
 		},
-	}
+	).WithMetadata(a.Variables{
+		a.MetaName: a.Name("hello"),
+	})
 
 	c.Put("hello", hello)
 	c.Put("name", "Bob")
@@ -207,12 +208,13 @@ func TestBuiltIns(t *testing.T) {
 
 	b := a.NewEvalContext()
 	ns := a.GetContextNamespace(b)
-	ns.Put("hello", &a.Function{
-		Name: "hello",
-		Exec: func(c a.Context, args a.Sequence) a.Value {
+	ns.Put("hello", a.NewFunction(
+		func(c a.Context, args a.Sequence) a.Value {
 			return "there"
 		},
-	})
+	).WithMetadata(a.Variables{
+		a.MetaName: a.Name("hello"),
+	}))
 
 	l := r.NewLexer(`(hello)`)
 	tr := r.NewReader(b, l)
@@ -226,17 +228,16 @@ func TestReaderPrepare(t *testing.T) {
 	b := a.NewEvalContext()
 	ns := a.GetContextNamespace(b)
 	ns.Delete("hello")
-	ns.Put("hello", &a.Macro{
-		Function: &a.Function{
-			Name: "hello",
-			Exec: func(c a.Context, l a.Sequence) a.Value {
-				if _, ok := l.(*a.List); !ok {
-					as.Fail("provided list is not a cons")
-				}
-				return a.Vector{"you"}
-			},
+	ns.Put("hello", a.NewMacro(
+		func(c a.Context, l a.Sequence) a.Value {
+			if _, ok := l.(*a.List); !ok {
+				as.Fail("provided list is not a cons")
+			}
+			return a.Vector{"you"}
 		},
-	})
+	).WithMetadata(a.Variables{
+		a.MetaName: a.Name("hello"),
+	}))
 
 	l := r.NewLexer(`(hello)`)
 	tr := r.NewReader(b, l)

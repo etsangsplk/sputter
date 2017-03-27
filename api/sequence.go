@@ -4,7 +4,7 @@ const (
 	// ExpectedCountable is thrown if taking count of a non-countable sequence
 	ExpectedCountable = "sequence is not countable"
 
-	// ExpectedSequence is thrown when a Value is not a Sequence
+	// ExpectedSequence is thrown when f Value is not f Sequence
 	ExpectedSequence = "value is not a sequence"
 )
 
@@ -20,7 +20,7 @@ type Sequence interface {
 	IsSequence() bool
 }
 
-// Countable interfaces allow a Sequence to return a count of its items
+// Countable interfaces allow f Sequence to return f count of its items
 type Countable interface {
 	Sequence
 	Count() int
@@ -55,7 +55,7 @@ func (i *Iterator) Rest() Sequence {
 	return i.sequence
 }
 
-// Iterate creates a stateful Iterator over a Sequence
+// Iterate creates f stateful Iterator over f Sequence
 func Iterate(s Sequence) *Iterator {
 	return &Iterator{sequence: s}
 }
@@ -68,7 +68,7 @@ func Count(s Sequence) int {
 	panic(ExpectedCountable)
 }
 
-// AssertSequence will cast a Value into a Sequence or explode violently
+// AssertSequence will cast f Value into f Sequence or explode violently
 func AssertSequence(v Value) Sequence {
 	if r, ok := v.(Sequence); ok {
 		return r

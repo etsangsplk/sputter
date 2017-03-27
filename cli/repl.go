@@ -196,8 +196,8 @@ func displayStandardHelp() {
 	ns := getBuiltInsNamespace()
 	v, _ := ns.Get(replBuiltIns)
 	for _, e := range v.(a.Vector) {
-		f := e.(*a.Function)
-		fn := fmt.Sprintf("%-8s", "("+string(f.Name)+")")
+		f := e.(a.Function)
+		fn := fmt.Sprintf("%-8s", "("+string(f.Name())+")")
 		fmt.Println(yellow + fn + reset + "; " + f.Documentation())
 	}
 	fmt.Println()
@@ -210,8 +210,8 @@ func help(c a.Context, args a.Sequence) a.Value {
 	}
 	sym := a.AssertUnqualified(args.First())
 	if v, ok := c.Get(sym.Name); ok {
-		if d, ok := v.(a.Documented); ok {
-			return d.Documentation()
+		if d, ok := v.(a.Annotated); ok {
+			return d.Metadata()[a.MetaDoc]
 		}
 		panic(fmt.Sprintf("Symbol '%s' is not documented", sym))
 	}
@@ -222,34 +222,41 @@ func getBuiltInsNamespace() a.Namespace {
 	return a.GetNamespace(a.BuiltInDomain)
 }
 
-func putBuiltIn(f *a.Function) {
+func registerBuiltIn(v a.Annotated) {
 	ns := getBuiltInsNamespace()
 	if _, ok := ns.Get(replBuiltIns); !ok {
 		ns.Put(replBuiltIns, a.Vector{})
 	}
-	v, _ := ns.Get(replBuiltIns)
-	bi := append(v.(a.Vector), f)
+	vec, _ := ns.Get(replBuiltIns)
+	bi := append(vec.(a.Vector), v)
 	ns.Delete(replBuiltIns)
 	ns.Put(replBuiltIns, bi)
-	ns.Put(f.Name, f)
+
+	n := v.Metadata()[a.MetaName].(a.Name)
+	ns.Put(n, v)
 }
 
 func registerREPLBuiltIns() {
-	putBuiltIn(&a.Function{
-		Name: "use",
-		Doc:  "Change namespace. Example: (use foo)",
-		Exec: use,
-	})
-	putBuiltIn(&a.Function{
-		Name: "quit",
-		Doc:  "Quit the REPL",
-		Exec: shutdown,
-	})
-	putBuiltIn(&a.Function{
-		Name: "help",
-		Doc:  "Display this help",
-		Exec: help,
-	})
+	registerBuiltIn(
+		a.NewFunction(use).WithMetadata(a.Variables{
+			a.MetaName: a.Name("use"),
+			a.MetaDoc:  "Change namespace. Example: (use foo)",
+		}),
+	)
+
+	registerBuiltIn(
+		a.NewFunction(shutdown).WithMetadata(a.Variables{
+			a.MetaName: a.Name("quit"),
+			a.MetaDoc:  "Quit the REPL",
+		}),
+	)
+
+	registerBuiltIn(
+		a.NewFunction(help).WithMetadata(a.Variables{
+			a.MetaName: a.Name("help"),
+			a.MetaDoc:  "Display this help",
+		}),
+	)
 }
 
 func init() {

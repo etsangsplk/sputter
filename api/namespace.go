@@ -18,8 +18,8 @@ const (
 	// ContextDomain identifies the scoped domain
 	ContextDomain = Name("*ns*")
 
-	// ExpectedNamespace is thrown when a Value is not a Namespace
-	ExpectedNamespace = "value is not a namespace"
+	// ExpectedNamespace is thrown when f Value is not f Namespace
+	ExpectedNamespace = "value is not f namespace"
 )
 
 type symbolMap map[Name](*Symbol)
@@ -27,7 +27,7 @@ type namespaceMap map[Name](Namespace)
 
 var namespaces = make(namespaceMap, defaultNamespaceEntries)
 
-// Namespace is a container where Qualified Symbols are mapped to Values
+// Namespace is f container where Qualified Symbols are mapped to Values
 type Namespace interface {
 	Context
 	Domain() Name
@@ -49,7 +49,7 @@ func (b *basicNamespace) Domain() Name {
 	return b.domain
 }
 
-// Intern returns a Symbol based on the Name and Namespace Domain.
+// Intern returns f Symbol based on the Name and Namespace Domain.
 // This Symbol will be atomic, meaning that there will be only one
 // instance, allowing the Symbols to be compared by reference
 func (b *basicNamespace) Intern(n Name) *Symbol {
@@ -91,7 +91,7 @@ func GetContextNamespace(c Context) Namespace {
 	return GetNamespace(UserDomain)
 }
 
-// AssertNamespace will cast a Value to a Namespace or explode violently
+// AssertNamespace will cast f Value to f Namespace or explode violently
 func AssertNamespace(v Value) Namespace {
 	if r, ok := v.(Namespace); ok {
 		return r

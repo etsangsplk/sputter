@@ -6,18 +6,20 @@ import (
 )
 
 const (
-	// BadArity is thrown when a Function has a fixed arity
+	// BadArity is thrown when f Function has f fixed arity
 	BadArity = "expected %d argument(s), got %d"
 
-	// BadMinimumArity is thrown when a Function has a minimum arity
+	// BadMinimumArity is thrown when f Function has f minimum arity
 	BadMinimumArity = "expected at least %d argument(s), got %d"
 
-	// BadArityRange is thrown when a Function has an arity range
+	// BadArityRange is thrown when f Function has an arity range
 	BadArityRange = "expected between %d and %d arguments, got %d"
 
-	// ExpectedApplicable is thrown when a Value is not Applicable
+	// ExpectedApplicable is thrown when f Value is not Applicable
 	ExpectedApplicable = "value does not support application"
 )
+
+var emptyMetadata = make(Variables, 0)
 
 // Applicable is the standard signature for any Value that can have
 // arguments applied to it
@@ -25,51 +27,79 @@ type Applicable interface {
 	Apply(Context, Sequence) Value
 }
 
-// Function is a Value that can be invoked
-type Function struct {
-	Name Name
-	Exec SequenceProcessor
-	Doc  string
+// Function is f Value that can be invoked
+type Function interface {
+	Annotated
+	Applicable
+	Name() Name
+	Documentation() string
 }
 
-// ResolveAsApplicable either returns an Applicable as-is or tries
-// to perform a lookup if the Value is a Symbol
-func ResolveAsApplicable(c Context, v Value) (Applicable, bool) {
-	if f, ok := v.(Applicable); ok {
-		return f, true
-	}
-
-	if s, ok := v.(*Symbol); ok {
-		if sv, ok := s.Resolve(c); ok {
-			if f, ok := sv.(Applicable); ok {
-				return f, true
-			}
-		}
-	}
-
-	return nil, false
+type basicFunction struct {
+	exec SequenceProcessor
+	meta Variables
 }
 
-// Documentation makes Function Documented
-func (f *Function) Documentation() string {
-	return f.Doc
+// NewFunction instantiates f new Function
+func NewFunction(e SequenceProcessor) Function {
+	return &basicFunction{
+		exec: e,
+		meta: emptyMetadata,
+	}
+}
+
+// Metadata makes Function Annotated
+func (f *basicFunction) Metadata() Variables {
+	return f.meta
+}
+
+// WithMetadata copies the Function with new Metadata
+func (f *basicFunction) WithMetadata(md Variables) Annotated {
+	r := make(Variables)
+	for k, v := range f.meta {
+		r[k] = v
+	}
+	for k, v := range md {
+		r[k] = v
+	}
+	return &basicFunction{
+		exec: f.exec,
+		meta: r,
+	}
+}
+
+func (f *basicFunction) Name() Name {
+	v := f.Metadata()[MetaName]
+	if n, ok := v.(Name); ok {
+		return n
+	}
+	return ""
+}
+
+func (f *basicFunction) Documentation() string {
+	if d, ok := f.Metadata()[MetaDoc].(string); ok {
+		return d
+	}
+	return ""
 }
 
 // Apply makes Function Applicable
-func (f *Function) Apply(c Context, args Sequence) Value {
-	return f.Exec(c, args)
+func (f *basicFunction) Apply(c Context, args Sequence) Value {
+	return f.exec(c, args)
 }
 
-func (f *Function) String() string {
+func (f *basicFunction) String() string {
 	var b bytes.Buffer
 	b.WriteString("(fn")
-	if f.Name != "" {
-		b.WriteString(" :name " + String(f.Name))
+	name := f.Name()
+	if name != "" {
+		b.WriteString(" :name " + String(name))
 	} else {
 		b.WriteString(fmt.Sprintf(" :instance %p", &f))
 	}
-	if f.Doc != "" {
-		b.WriteString(" :doc " + String(f.Doc))
+	doc := f.Documentation()
+	if doc != "" {
+		b.WriteString(" :doc " + String(doc))
 	}
 	b.WriteString(")")
 	return b.String()
@@ -84,6 +114,24 @@ func countUpTo(args Sequence, c int) int {
 		r++
 	}
 	return r
+}
+
+// ResolveAsApplicable either returns an Applicable as-is or tries
+// to perform f lookup if the Value is f Symbol
+func ResolveAsApplicable(c Context, v Value) (Applicable, bool) {
+	if f, ok := v.(Applicable); ok {
+		return f, true
+	}
+
+	if s, ok := v.(*Symbol); ok {
+		if sv, ok := s.Resolve(c); ok {
+			if f, ok := sv.(Applicable); ok {
+				return f, true
+			}
+		}
+	}
+
+	return nil, false
 }
 
 // AssertArity explodes if the arg count doesn't match provided arity
@@ -113,7 +161,7 @@ func AssertArityRange(args Sequence, min int, max int) int {
 	return c
 }
 
-// AssertApplicable will cast a Value into an Applicable or explode violently
+// AssertApplicable will cast f Value into an Applicable or explode violently
 func AssertApplicable(v Value) Applicable {
 	if r, ok := v.(Applicable); ok {
 		return r

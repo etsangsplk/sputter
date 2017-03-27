@@ -51,8 +51,27 @@ func _println(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	registerFunction(&a.Function{Name: "pr", Exec: pr})
-	registerFunction(&a.Function{Name: "prn", Exec: prn})
-	registerFunction(&a.Function{Name: "print", Exec: _print})
-	registerFunction(&a.Function{Name: "println", Exec: _println})
+	registerAnnotated(
+		a.NewFunction(pr).WithMetadata(a.Variables{
+			a.MetaName: a.Name("pr"),
+		}),
+	)
+
+	registerAnnotated(
+		a.NewFunction(prn).WithMetadata(a.Variables{
+			a.MetaName: a.Name("prn"),
+		}),
+	)
+
+	registerAnnotated(
+		a.NewFunction(_print).WithMetadata(a.Variables{
+			a.MetaName: a.Name("print"),
+		}),
+	)
+
+	registerAnnotated(
+		a.NewFunction(_println).WithMetadata(a.Variables{
+			a.MetaName: a.Name("println"),
+		}),
+	)
 }

@@ -31,6 +31,15 @@ func let(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	registerFunction(&a.Function{Name: "def", Exec: def})
-	registerFunction(&a.Function{Name: "let", Exec: let})
+	registerAnnotated(
+		a.NewFunction(def).WithMetadata(a.Variables{
+			a.MetaName: a.Name("def"),
+		}),
+	)
+
+	registerAnnotated(
+		a.NewFunction(let).WithMetadata(a.Variables{
+			a.MetaName: a.Name("let"),
+		}),
+	)
 }

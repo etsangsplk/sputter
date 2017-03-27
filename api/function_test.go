@@ -12,19 +12,28 @@ import (
 func TestFunction(t *testing.T) {
 	as := assert.New(t)
 
-	f1 := &a.Function{
-		Name: "test-function",
-		Doc:  "this is a test function",
-		Exec: func(c a.Context, args a.Sequence) a.Value {
+	f1 := a.NewFunction(
+		func(c a.Context, args a.Sequence) a.Value {
 			return "hello"
 		},
-	}
+	).WithMetadata(a.Variables{
+		a.MetaName: a.Name("test-function"),
+		a.MetaDoc:  "this is a test function",
+	}).(a.Function)
 
-	f2 := &a.Function{}
+	f2 := a.NewFunction(nil)
+	f3 := f1.WithMetadata(a.Variables{a.MetaDoc: "modified"})
 
-	as.True(strings.HasPrefix(f1.String(), "(fn :name"), "name returned")
+	as.NotNil(f1.Metadata())
+	as.NotNil(f2.Metadata())
+	as.NotEqual(f1.Metadata(), f3.Metadata())
+
+	as.Equal("this is a test function", f1.Metadata()[a.MetaDoc], "not modified")
+	as.Equal("modified", f3.Metadata()[a.MetaDoc], "modified")
+
+	as.True(strings.HasPrefix(a.String(f1), "(fn :name"), "name returned")
 	as.Equal("this is a test function", f1.Documentation(), "doc returned")
-	as.True(strings.HasPrefix(f2.String(), "(fn :inst"), "address returned")
+	as.True(strings.HasPrefix(a.String(f2), "(fn :inst"), "address returned")
 
 	c := a.NewContext()
 	as.Equal("hello", f1.Apply(c, a.EmptyList), "function executes")
@@ -79,7 +88,7 @@ func TestArityRange(t *testing.T) {
 
 func TestAssertApplicable(t *testing.T) {
 	as := assert.New(t)
-	a.AssertApplicable(&a.Function{})
+	a.AssertApplicable(a.NewFunction(nil))
 
 	defer expectError(as, a.ExpectedApplicable)
 	a.AssertApplicable(&a.Symbol{})

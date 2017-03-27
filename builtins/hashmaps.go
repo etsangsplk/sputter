@@ -54,7 +54,21 @@ func isHashMap(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	registerFunction(&a.Function{Name: "hash-map", Exec: hashMap})
-	registerFunction(&a.Function{Name: "to-hash-map", Exec: toHashMap})
-	registerPredicate(&a.Function{Name: "hash-map?", Exec: isHashMap})
+	registerAnnotated(
+		a.NewFunction(hashMap).WithMetadata(a.Variables{
+			a.MetaName: a.Name("hash-map"),
+		}),
+	)
+
+	registerAnnotated(
+		a.NewFunction(toHashMap).WithMetadata(a.Variables{
+			a.MetaName: a.Name("to-hash-map"),
+		}),
+	)
+
+	registerPredicate(
+		a.NewFunction(isHashMap).WithMetadata(a.Variables{
+			a.MetaName: a.Name("hash-map?"),
+		}).(a.Function),
+	)
 }

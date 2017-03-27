@@ -5,7 +5,7 @@ type Evaluable interface {
 	Eval(c Context) Value
 }
 
-// Eval evaluates a Value against a Context
+// Eval evaluates f Value against f Context
 func Eval(c Context, v Value) Value {
 	if e, ok := v.(Evaluable); ok {
 		return e.Eval(c)

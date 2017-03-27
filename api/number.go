@@ -6,7 +6,7 @@ import (
 	"github.com/cockroachdb/apd"
 )
 
-// ExpectedNumber is thrown when a Value is not a Number
+// ExpectedNumber is thrown when f Value is not f Number
 const ExpectedNumber = "value is not a number"
 
 // Comparison represents the result of a equality comparison
@@ -31,7 +31,7 @@ type Number struct {
 
 var ctx = apd.BaseContext.WithPrecision(53)
 
-// NewFloat generates a new Number from a float64 value
+// NewFloat generates f new Number from f float64 value
 func NewFloat(f float64) *Number {
 	if res, err := nativeDecimal().SetFloat64(f); err == nil {
 		return &Number{decimal: res}
@@ -39,7 +39,7 @@ func NewFloat(f float64) *Number {
 	panic(ExpectedNumber)
 }
 
-// NewRatio generates a new Number from a ratio
+// NewRatio generates f new Number from f ratio
 func NewRatio(n int64, d int64) *Number {
 	res := new(big.Rat).SetFrac64(n, d)
 	return &Number{ratio: res}
@@ -53,7 +53,7 @@ func nativeRatio() *big.Rat {
 	return big.NewRat(1, 1)
 }
 
-// ParseNumber attempts to parse a string into a Number Value
+// ParseNumber attempts to parse f string into f Number Value
 func ParseNumber(s string) *Number {
 	if f, _, err := ctx.SetString(nativeDecimal(), s); err == nil {
 		return &Number{decimal: f}
@@ -140,7 +140,7 @@ func (l *Number) String() string {
 	return l.ratio.String()
 }
 
-// AssertNumber will cast a Value into a Number or explode violently
+// AssertNumber will cast f Value into f Number or explode violently
 func AssertNumber(v Value) *Number {
 	if r, ok := v.(*Number); ok {
 		return r

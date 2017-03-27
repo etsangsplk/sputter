@@ -8,15 +8,16 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var helloName = &a.Function{
-	Name: "hello",
-	Exec: func(c a.Context, args a.Sequence) a.Value {
+var helloName = a.NewFunction(
+	func(c a.Context, args a.Sequence) a.Value {
 		i := a.Iterate(args)
 		a, _ := i.Next()
 		v := evaluateToString(c, a)
 		return "Hello, " + v + "!"
 	},
-}
+).WithMetadata(a.Variables{
+	a.MetaName: a.Name("hello"),
+})
 
 func evaluateToString(c a.Context, v a.Value) string {
 	return fmt.Sprint(a.Eval(c, v))

@@ -23,6 +23,15 @@ func isNil(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	registerPredicate(&a.Function{Name: "eq", Exec: identical})
-	registerPredicate(&a.Function{Name: "nil?", Exec: isNil})
+	registerPredicate(
+		a.NewFunction(identical).WithMetadata(a.Variables{
+			a.MetaName: a.Name("eq"),
+		}).(a.Function),
+	)
+
+	registerPredicate(
+		a.NewFunction(isNil).WithMetadata(a.Variables{
+			a.MetaName: a.Name("nil?"),
+		}).(a.Function),
+	)
 }

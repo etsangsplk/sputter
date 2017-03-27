@@ -41,25 +41,24 @@ func getFunctionDefinition(args a.Sequence) *functionDefinition {
 	}
 }
 
-func defineFunction(closure a.Context, d *functionDefinition) *a.Function {
+func defineFunction(closure a.Context, d *functionDefinition) a.Function {
 	an := argNames(d.argNames)
 	ac := len(an)
 	db := d.body
 
-	return &a.Function{
-		Name: d.name,
-		Doc:  d.doc,
-		Exec: func(c a.Context, args a.Sequence) a.Value {
-			a.AssertArity(args, ac)
-			l := a.ChildContext(closure)
-			i := a.Iterate(args)
-			for _, n := range an {
-				v, _ := i.Next()
-				l.Put(n, a.Eval(c, v))
-			}
-			return a.EvalSequence(l, db)
-		},
-	}
+	return a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
+		a.AssertArity(args, ac)
+		l := a.ChildContext(closure)
+		i := a.Iterate(args)
+		for _, n := range an {
+			v, _ := i.Next()
+			l.Put(n, a.Eval(c, v))
+		}
+		return a.EvalSequence(l, db)
+	}).WithMetadata(a.Variables{
+		a.MetaName: d.name,
+		a.MetaDoc:  d.doc,
+	}).(a.Function)
 }
 
 func defn(c a.Context, args a.Sequence) a.Value {
@@ -87,7 +86,21 @@ func apply(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	registerFunction(&a.Function{Name: "defn", Exec: defn})
-	registerFunction(&a.Function{Name: "fn", Exec: fn})
-	registerFunction(&a.Function{Name: "apply", Exec: apply})
+	registerAnnotated(
+		a.NewFunction(defn).WithMetadata(a.Variables{
+			a.MetaName: a.Name("defn"),
+		}),
+	)
+
+	registerAnnotated(
+		a.NewFunction(fn).WithMetadata(a.Variables{
+			a.MetaName: a.Name("fn"),
+		}),
+	)
+
+	registerAnnotated(
+		a.NewFunction(apply).WithMetadata(a.Variables{
+			a.MetaName: a.Name("apply"),
+		}),
+	)
 }

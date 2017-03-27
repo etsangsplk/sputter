@@ -7,12 +7,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var helloThere = &a.Function{
-	Name: "hello",
-	Exec: func(c a.Context, args a.Sequence) a.Value {
+var helloThere = a.NewFunction(
+	func(c a.Context, args a.Sequence) a.Value {
 		return "there"
 	},
-}
+).WithMetadata(a.Variables{
+	a.MetaName: a.Name("hello"),
+}).(a.Function)
 
 func TestSimpleList(t *testing.T) {
 	as := assert.New(t)
@@ -77,7 +78,7 @@ func TestListEval(t *testing.T) {
 	as := assert.New(t)
 
 	c := a.NewContext()
-	c.Put(helloThere.Name, helloThere)
+	c.Put(helloThere.Name(), helloThere)
 
 	fl := a.NewList(helloThere)
 	as.Equal("there", a.Eval(c, fl), "function-based list eval")

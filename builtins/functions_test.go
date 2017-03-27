@@ -29,7 +29,7 @@ func TestFunction(t *testing.T) {
 	`, "foo")
 
 	v, _ := ns.Get("say-hello")
-	fv := v.(*a.Function)
+	fv := v.(a.Function)
 	as.Equal("this is a doc string", fv.Documentation(), "documented")
 }
 

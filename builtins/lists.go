@@ -40,7 +40,21 @@ func isList(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	registerFunction(&a.Function{Name: "list", Exec: list})
-	registerFunction(&a.Function{Name: "to-list", Exec: toList})
-	registerPredicate(&a.Function{Name: "list?", Exec: isList})
+	registerAnnotated(
+		a.NewFunction(list).WithMetadata(a.Variables{
+			a.MetaName: a.Name("list"),
+		}),
+	)
+
+	registerAnnotated(
+		a.NewFunction(toList).WithMetadata(a.Variables{
+			a.MetaName: a.Name("to-list"),
+		}),
+	)
+
+	registerPredicate(
+		a.NewFunction(isList).WithMetadata(a.Variables{
+			a.MetaName: a.Name("list?"),
+		}).(a.Function),
+	)
 }

@@ -30,12 +30,12 @@ func (v Vector) First() Value {
 	return v[0]
 }
 
-// Rest returns the remaining elements of a Vector as a Sequence
+// Rest returns the remaining elements of f Vector as f Sequence
 func (v Vector) Rest() Sequence {
 	return Sequence(v[1:])
 }
 
-// Prepend creates a new Sequence by prepending a Value
+// Prepend creates f new Sequence by prepending f Value
 func (v Vector) Prepend(p Value) Sequence {
 	return append(Vector{p}, v...)
 }

@@ -127,7 +127,7 @@ func (r *tokenReader) readList(m mode) a.Value {
 	first = func() a.Value {
 		t := r.lexer.Next()
 		if f, ok := r.function(t); ok {
-			if mac, ok := f.(*a.Macro); ok {
+			if mac, ok := f.(a.Macro); ok {
 				return mac.Apply(r.context, rest(true))
 			}
 			return rest(m).Prepend(f)

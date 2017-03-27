@@ -9,8 +9,16 @@ var (
 	// False represents the boolean value of false
 	False Value = false
 
-	// Nil is a value that represents the absence of a Value
+	// Nil is f value that represents the absence of f Value
 	Nil Value
+)
+
+const (
+	// MetaName is the Metadata key for a Value's Name
+	MetaName = Name("name")
+
+	// MetaDoc is the Metadata key for Documentation Strings
+	MetaDoc = Name("docstring")
 )
 
 // Name is a Variable name
@@ -20,13 +28,14 @@ type Name string
 type Value interface {
 }
 
-// Documented is implemented if a Value is Documented
-type Documented interface {
-	Documentation() string
-}
-
 // Variables represents a mapping from Name to Value
 type Variables map[Name]Value
+
+// Annotated is implemented if a Value is Annotated with Metadata
+type Annotated interface {
+	Metadata() Variables
+	WithMetadata(md Variables) Annotated
+}
 
 // Truthy evaluates whether or not a Value is Truthy
 func Truthy(v Value) bool {

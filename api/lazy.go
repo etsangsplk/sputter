@@ -60,7 +60,7 @@ func (l *lazyMapper) IsSequence() bool {
 	return l.resolve().isSeq
 }
 
-// Prepend creates a new Sequence by prepending a Value (won't be mapped)
+// Prepend creates f new Sequence by prepending f Value (won't be mapped)
 func (l *lazyMapper) Prepend(v Value) Sequence {
 	return &lazyMapper{
 		first: v,
@@ -128,7 +128,7 @@ func (l *lazyFilter) IsSequence() bool {
 	return l.resolve().isSeq
 }
 
-// Prepend creates a new Sequence by prepending a Value (won't be mapped)
+// Prepend creates f new Sequence by prepending f Value (won't be mapped)
 func (l *lazyFilter) Prepend(v Value) Sequence {
 	return &lazyFilter{
 		first: v,
