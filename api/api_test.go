@@ -8,6 +8,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestAssertApplicable(t *testing.T) {
+	as := assert.New(t)
+	a.AssertApplicable(a.NewFunction(nil))
+
+	defer expectError(as, a.ExpectedApplicable)
+	a.AssertApplicable(&a.Symbol{})
+}
+
 func TestTruthy(t *testing.T) {
 	as := assert.New(t)
 

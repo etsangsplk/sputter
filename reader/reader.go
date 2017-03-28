@@ -151,7 +151,7 @@ func (r *tokenReader) function(t *Token) (a.Applicable, bool) {
 }
 
 func (r *tokenReader) readVector(m mode) a.Vector {
-	var res = make(a.Vector, 0)
+	res := make(a.Vector, 0)
 
 	for {
 		t := r.lexer.Next()
@@ -168,8 +168,8 @@ func (r *tokenReader) readVector(m mode) a.Vector {
 }
 
 func (r *tokenReader) readMap(m mode) a.ArrayMap {
-	var res = make(a.ArrayMap, 0)
-	var mp = make(a.Vector, 2)
+	res := make(a.ArrayMap, 0)
+	mp := make(a.Vector, 2)
 
 	for idx := 0; ; idx++ {
 		t := r.lexer.Next()

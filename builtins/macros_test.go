@@ -11,11 +11,11 @@ func TestMacroReplace(t *testing.T) {
 	a.GetNamespace(a.UserDomain).Delete("foo")
 
 	testCode(t, `
-	    (def hello "you")
-        (defmacro foo
-        	"this is the macro foo"
-        	[]
-        	'hello)
-        (foo)
-    `, "you")
+		(def hello "you")
+		(defmacro foo
+			"this is the macro foo"
+			[]
+			'hello)
+		(foo)
+	`, "you")
 }

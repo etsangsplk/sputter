@@ -22,6 +22,7 @@ func TestArrayMap(t *testing.T) {
 	as.Equal(3, a.Count(m1), "count works")
 
 	nameKey := a.NewKeyword("name")
+	as.Equal(a.Name("name"), nameKey.Name(), "Name() works")
 	as.Equal("Sputter", m1.Get(nameKey), "get works")
 
 	ageKey := a.NewKeyword("age")

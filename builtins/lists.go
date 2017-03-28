@@ -16,7 +16,7 @@ func list(c a.Context, args a.Sequence) a.Value {
 		return a.EmptyList
 	}
 
-	var l = a.NewList(e)
+	l := a.NewList(e)
 	for v, ok := s.Pop(); ok; v, ok = s.Pop() {
 		l = l.Prepend(v)
 	}

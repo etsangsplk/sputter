@@ -167,7 +167,7 @@ func tokenState(t TokenType) stateFunc {
 }
 
 func initState(l *lispLexer) stateFunc {
-	var state = l.matchState()
+	state := l.matchState()
 	return state(l)
 }
 

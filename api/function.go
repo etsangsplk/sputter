@@ -1,9 +1,6 @@
 package api
 
-import (
-	"bytes"
-	"fmt"
-)
+import "fmt"
 
 const (
 	// BadArity is thrown when f Function has f fixed arity
@@ -14,17 +11,12 @@ const (
 
 	// BadArityRange is thrown when f Function has an arity range
 	BadArityRange = "expected between %d and %d arguments, got %d"
-
-	// ExpectedApplicable is thrown when f Value is not Applicable
-	ExpectedApplicable = "value does not support application"
 )
 
-var emptyMetadata = make(Variables, 0)
-
-// Applicable is the standard signature for any Value that can have
-// arguments applied to it
-type Applicable interface {
-	Apply(Context, Sequence) Value
+var defaultFunctionMetadata = Variables{
+	MetaName: Name("<anon>"),
+	MetaType: "function",
+	MetaDoc:  "",
 }
 
 // Function is f Value that can be invoked
@@ -44,7 +36,7 @@ type basicFunction struct {
 func NewFunction(e SequenceProcessor) Function {
 	return &basicFunction{
 		exec: e,
-		meta: emptyMetadata,
+		meta: defaultFunctionMetadata,
 	}
 }
 
@@ -55,54 +47,23 @@ func (f *basicFunction) Metadata() Variables {
 
 // WithMetadata copies the Function with new Metadata
 func (f *basicFunction) WithMetadata(md Variables) Annotated {
-	r := make(Variables)
-	for k, v := range f.meta {
-		r[k] = v
-	}
-	for k, v := range md {
-		r[k] = v
-	}
 	return &basicFunction{
 		exec: f.exec,
-		meta: r,
+		meta: f.meta.Merge(md),
 	}
 }
 
 func (f *basicFunction) Name() Name {
-	v := f.Metadata()[MetaName]
-	if n, ok := v.(Name); ok {
-		return n
-	}
-	return ""
+	return f.Metadata()[MetaName].(Name)
 }
 
 func (f *basicFunction) Documentation() string {
-	if d, ok := f.Metadata()[MetaDoc].(string); ok {
-		return d
-	}
-	return ""
+	return f.Metadata()[MetaDoc].(string)
 }
 
 // Apply makes Function Applicable
 func (f *basicFunction) Apply(c Context, args Sequence) Value {
 	return f.exec(c, args)
-}
-
-func (f *basicFunction) String() string {
-	var b bytes.Buffer
-	b.WriteString("(fn")
-	name := f.Name()
-	if name != "" {
-		b.WriteString(" :name " + String(name))
-	} else {
-		b.WriteString(fmt.Sprintf(" :instance %p", &f))
-	}
-	doc := f.Documentation()
-	if doc != "" {
-		b.WriteString(" :doc " + String(doc))
-	}
-	b.WriteString(")")
-	return b.String()
 }
 
 func countUpTo(args Sequence, c int) int {

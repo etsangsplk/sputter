@@ -13,28 +13,13 @@ var (
 	Nil Value
 )
 
-const (
-	// MetaName is the Metadata key for a Value's Name
-	MetaName = Name("name")
+// ExpectedApplicable is thrown when f Value is not Applicable
+const ExpectedApplicable = "value does not support application"
 
-	// MetaDoc is the Metadata key for Documentation Strings
-	MetaDoc = Name("docstring")
-)
-
-// Name is a Variable name
-type Name string
-
-// Value is the generic interface for all 'Values'
-type Value interface {
-}
-
-// Variables represents a mapping from Name to Value
-type Variables map[Name]Value
-
-// Annotated is implemented if a Value is Annotated with Metadata
-type Annotated interface {
-	Metadata() Variables
-	WithMetadata(md Variables) Annotated
+// Applicable is the standard signature for any Value that can have
+// arguments applied to it
+type Applicable interface {
+	Apply(Context, Sequence) Value
 }
 
 // Truthy evaluates whether or not a Value is Truthy
@@ -49,18 +34,20 @@ func Truthy(v Value) bool {
 
 // String either calls the String() method or tries to convert
 func String(v Value) string {
-	if v == Nil {
+	switch {
+	case v == Nil:
 		return "nil"
-	}
-	if v == True {
+	case v == True:
 		return "true"
-	}
-	if v == False {
+	case v == False:
 		return "false"
 	}
 
 	if s, ok := v.(fmt.Stringer); ok {
 		return s.String()
+	}
+	if a, ok := v.(Annotated); ok {
+		return a.Metadata().String()
 	}
 	if n, ok := v.(Name); ok {
 		return string(n)

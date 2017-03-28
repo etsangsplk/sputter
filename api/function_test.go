@@ -31,9 +31,9 @@ func TestFunction(t *testing.T) {
 	as.Equal("this is a test function", f1.Metadata()[a.MetaDoc], "not modified")
 	as.Equal("modified", f3.Metadata()[a.MetaDoc], "modified")
 
-	as.True(strings.HasPrefix(a.String(f1), "(fn :name"), "name returned")
+	as.True(strings.Contains(a.String(f1), ":name test-function"), "name returned")
 	as.Equal("this is a test function", f1.Documentation(), "doc returned")
-	as.True(strings.HasPrefix(a.String(f2), "(fn :inst"), "address returned")
+	as.True(strings.Contains(a.String(f2), ":name <anon>"), "address returned")
 
 	c := a.NewContext()
 	as.Equal("hello", f1.Apply(c, a.EmptyList), "function executes")
@@ -84,12 +84,4 @@ func TestArityRange(t *testing.T) {
 
 	defer expectError(as, fmt.Sprintf(a.BadArityRange, 4, 7, 3))
 	a.AssertArityRange(v, 4, 7)
-}
-
-func TestAssertApplicable(t *testing.T) {
-	as := assert.New(t)
-	a.AssertApplicable(a.NewFunction(nil))
-
-	defer expectError(as, a.ExpectedApplicable)
-	a.AssertApplicable(&a.Symbol{})
 }

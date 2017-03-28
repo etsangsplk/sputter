@@ -1,6 +1,7 @@
 package api
 
-import "bytes"
+// MetaMacro is the Metadata key that identifies a Function as being a Macro
+const MetaMacro = "macro"
 
 // Macro is a Function that can be used for Reader transformation
 type Macro interface {
@@ -13,10 +14,15 @@ type basicMacro struct {
 	dataMode bool
 }
 
+var defaultMacroMetadata = Variables{
+	MetaMacro: true,
+}
+
 // NewMacro instantiates f new Macro
 func NewMacro(e SequenceProcessor) Macro {
+	f := NewFunction(e).WithMetadata(defaultMacroMetadata).(Function)
 	return &basicMacro{
-		Function: NewFunction(e),
+		Function: f,
 		dataMode: true,
 	}
 }
@@ -30,16 +36,4 @@ func (m *basicMacro) WithMetadata(md Variables) Annotated {
 	return &basicMacro{
 		Function: m.Function.WithMetadata(md).(Function),
 	}
-}
-
-func (m *basicMacro) String() string {
-	var b bytes.Buffer
-	b.WriteString("(macro ")
-	b.WriteString(" :name " + String(m.Name()))
-	doc := m.Documentation()
-	if doc != "" {
-		b.WriteString(" :doc " + String(doc))
-	}
-	b.WriteString(")")
-	return b.String()
 }

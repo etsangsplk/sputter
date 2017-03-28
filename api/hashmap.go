@@ -33,6 +33,10 @@ func NewKeyword(n Name) *Keyword {
 	return r
 }
 
+func (k *Keyword) Name() Name {
+	return k.name
+}
+
 // Eval makes Keyword Evaluable
 func (k *Keyword) Eval(c Context) Value {
 	return k
