@@ -9,11 +9,11 @@ var (
 	// False represents the boolean value of false
 	False Value = false
 
-	// Nil is f value that represents the absence of f Value
+	// Nil is a value that represents the absence of a Value
 	Nil Value
 )
 
-// ExpectedApplicable is thrown when f Value is not Applicable
+// ExpectedApplicable is thrown when a Value is not Applicable
 const ExpectedApplicable = "value does not support application"
 
 // Applicable is the standard signature for any Value that can have

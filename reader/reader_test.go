@@ -192,7 +192,7 @@ func TestEvaluable(t *testing.T) {
 			v := evaluateToString(c, arg)
 			return "Hello, " + v + "!"
 		},
-	).WithMetadata(a.Variables{
+	).WithMetadata(a.Metadata{
 		a.MetaName: a.Name("hello"),
 	})
 
@@ -212,7 +212,7 @@ func TestBuiltIns(t *testing.T) {
 		func(c a.Context, args a.Sequence) a.Value {
 			return "there"
 		},
-	).WithMetadata(a.Variables{
+	).WithMetadata(a.Metadata{
 		a.MetaName: a.Name("hello"),
 	}))
 
@@ -235,7 +235,7 @@ func TestReaderPrepare(t *testing.T) {
 			}
 			return a.Vector{"you"}
 		},
-	).WithMetadata(a.Variables{
+	).WithMetadata(a.Metadata{
 		a.MetaName: a.Name("hello"),
 	}))
 

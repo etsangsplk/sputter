@@ -112,61 +112,61 @@ func lte(c a.Context, args a.Sequence) a.Value {
 
 func init() {
 	registerAnnotated(
-		a.NewFunction(add).WithMetadata(a.Variables{
+		a.NewFunction(add).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("+"),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(sub).WithMetadata(a.Variables{
+		a.NewFunction(sub).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("-"),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(mul).WithMetadata(a.Variables{
+		a.NewFunction(mul).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("*"),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(div).WithMetadata(a.Variables{
+		a.NewFunction(div).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("/"),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(eq).WithMetadata(a.Variables{
+		a.NewFunction(eq).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("="),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(neq).WithMetadata(a.Variables{
+		a.NewFunction(neq).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("!="),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(gt).WithMetadata(a.Variables{
+		a.NewFunction(gt).WithMetadata(a.Metadata{
 			a.MetaName: a.Name(">"),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(gte).WithMetadata(a.Variables{
+		a.NewFunction(gte).WithMetadata(a.Metadata{
 			a.MetaName: a.Name(">="),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(lt).WithMetadata(a.Variables{
+		a.NewFunction(lt).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("<"),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(lte).WithMetadata(a.Variables{
+		a.NewFunction(lte).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("<="),
 		}),
 	)

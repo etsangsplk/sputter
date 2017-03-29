@@ -55,19 +55,19 @@ func isHashMap(c a.Context, args a.Sequence) a.Value {
 
 func init() {
 	registerAnnotated(
-		a.NewFunction(hashMap).WithMetadata(a.Variables{
+		a.NewFunction(hashMap).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("hash-map"),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(toHashMap).WithMetadata(a.Variables{
+		a.NewFunction(toHashMap).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("to-hash-map"),
 		}),
 	)
 
 	registerPredicate(
-		a.NewFunction(isHashMap).WithMetadata(a.Variables{
+		a.NewFunction(isHashMap).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("hash-map?"),
 		}).(a.Function),
 	)

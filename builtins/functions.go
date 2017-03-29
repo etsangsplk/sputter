@@ -55,7 +55,7 @@ func defineFunction(closure a.Context, d *functionDefinition) a.Function {
 			l.Put(n, a.Eval(c, v))
 		}
 		return a.EvalSequence(l, db)
-	}).WithMetadata(a.Variables{
+	}).WithMetadata(a.Metadata{
 		a.MetaName: d.name,
 		a.MetaDoc:  d.doc,
 	}).(a.Function)
@@ -87,19 +87,19 @@ func apply(c a.Context, args a.Sequence) a.Value {
 
 func init() {
 	registerAnnotated(
-		a.NewFunction(defn).WithMetadata(a.Variables{
+		a.NewFunction(defn).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("defn"),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(fn).WithMetadata(a.Variables{
+		a.NewFunction(fn).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("fn"),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(apply).WithMetadata(a.Variables{
+		a.NewFunction(apply).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("apply"),
 		}),
 	)

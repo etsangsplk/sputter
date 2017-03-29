@@ -16,12 +16,10 @@ func defineMacro(closure a.Context, d *functionDefinition) a.Macro {
 			l.Put(n, a.Eval(c, v))
 		}
 		return a.EvalSequence(l, db)
-	}).WithMetadata(
-		a.Variables{
-			a.MetaName: d.name,
-			a.MetaDoc:  d.doc,
-		},
-	).(a.Macro)
+	}).WithMetadata(a.Metadata{
+		a.MetaName: d.name,
+		a.MetaDoc:  d.doc,
+	}).(a.Macro)
 }
 
 func defmacro(c a.Context, args a.Sequence) a.Value {
@@ -33,7 +31,7 @@ func defmacro(c a.Context, args a.Sequence) a.Value {
 
 func init() {
 	registerAnnotated(
-		a.NewMacro(defmacro).WithMetadata(a.Variables{
+		a.NewMacro(defmacro).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("defmacro"),
 		}),
 	)

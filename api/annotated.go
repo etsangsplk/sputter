@@ -1,23 +1,57 @@
 package api
 
-const (
-	// ExpectedAnnotated is thrown if a Value is not Annotated
-	ExpectedAnnotated = "value is not annotated with metadata"
+import "bytes"
 
+// ExpectedAnnotated is thrown if a Value is not Annotated
+const ExpectedAnnotated = "value is not annotated with metadata"
+
+var (
 	// MetaName is the Metadata key for a Value's Name
-	MetaName = Name("name")
+	MetaName = NewKeyword("name")
 
 	// MetaType is the Metadata key for a Value's Type
-	MetaType = Name("type")
+	MetaType = NewKeyword("type")
 
 	// MetaDoc is the Metadata key for Documentation Strings
-	MetaDoc = Name("doc")
+	MetaDoc = NewKeyword("doc")
 )
+
+type Metadata map[Value]Value
 
 // Annotated is implemented if a Value is Annotated with Metadata
 type Annotated interface {
-	Metadata() Variables
-	WithMetadata(md Variables) Annotated
+	Metadata() Metadata
+	WithMetadata(md Metadata) Annotated
+}
+
+// Merge merges two Metadata sets into a new one
+func (v Metadata) Merge(nv Metadata) Metadata {
+	r := make(Metadata)
+	for k, v := range v {
+		r[k] = v
+	}
+	for k, v := range nv {
+		r[k] = v
+	}
+	return r
+}
+
+func (v Metadata) String() string {
+	var b bytes.Buffer
+	c := false
+	b.WriteString("{")
+	for k, v := range v {
+		if c {
+			b.WriteString(", ")
+		} else {
+			c = true
+		}
+		b.WriteString(String(k))
+		b.WriteString(" ")
+		b.WriteString(String(v))
+	}
+	b.WriteString("}")
+	return b.String()
 }
 
 func AssertAnnotated(v Value) Annotated {

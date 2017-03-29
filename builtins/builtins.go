@@ -18,7 +18,7 @@ func registerPredicate(f a.Function) {
 			return a.False
 		}
 		return a.True
-	}).WithMetadata(a.Variables{
+	}).WithMetadata(a.Metadata{
 		a.MetaName: pn,
 	})
 
@@ -37,13 +37,13 @@ func quote(_ a.Context, args a.Sequence) a.Value {
 
 func init() {
 	registerAnnotated(
-		a.NewFunction(do).WithMetadata(a.Variables{
+		a.NewFunction(do).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("do"),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewMacro(quote).WithMetadata(a.Variables{
+		a.NewMacro(quote).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("quote"),
 		}),
 	)

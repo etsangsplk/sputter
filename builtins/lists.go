@@ -41,19 +41,19 @@ func isList(c a.Context, args a.Sequence) a.Value {
 
 func init() {
 	registerAnnotated(
-		a.NewFunction(list).WithMetadata(a.Variables{
+		a.NewFunction(list).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("list"),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(toList).WithMetadata(a.Variables{
+		a.NewFunction(toList).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("to-list"),
 		}),
 	)
 
 	registerPredicate(
-		a.NewFunction(isList).WithMetadata(a.Variables{
+		a.NewFunction(isList).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("list?"),
 		}).(a.Function),
 	)

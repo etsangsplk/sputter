@@ -3,23 +3,23 @@ package api
 import "fmt"
 
 const (
-	// BadArity is thrown when f Function has f fixed arity
+	// BadArity is thrown when a Function has a fixed arity
 	BadArity = "expected %d argument(s), got %d"
 
-	// BadMinimumArity is thrown when f Function has f minimum arity
+	// BadMinimumArity is thrown when a Function has a minimum arity
 	BadMinimumArity = "expected at least %d argument(s), got %d"
 
-	// BadArityRange is thrown when f Function has an arity range
+	// BadArityRange is thrown when a Function has an arity range
 	BadArityRange = "expected between %d and %d arguments, got %d"
 )
 
-var defaultFunctionMetadata = Variables{
+var defaultFunctionMetadata = Metadata{
 	MetaName: Name("<anon>"),
 	MetaType: "function",
 	MetaDoc:  "",
 }
 
-// Function is f Value that can be invoked
+// Function is a Value that can be invoked
 type Function interface {
 	Annotated
 	Applicable
@@ -29,10 +29,10 @@ type Function interface {
 
 type basicFunction struct {
 	exec SequenceProcessor
-	meta Variables
+	meta Metadata
 }
 
-// NewFunction instantiates f new Function
+// NewFunction instantiates a new Function
 func NewFunction(e SequenceProcessor) Function {
 	return &basicFunction{
 		exec: e,
@@ -41,12 +41,12 @@ func NewFunction(e SequenceProcessor) Function {
 }
 
 // Metadata makes Function Annotated
-func (f *basicFunction) Metadata() Variables {
+func (f *basicFunction) Metadata() Metadata {
 	return f.meta
 }
 
 // WithMetadata copies the Function with new Metadata
-func (f *basicFunction) WithMetadata(md Variables) Annotated {
+func (f *basicFunction) WithMetadata(md Metadata) Annotated {
 	return &basicFunction{
 		exec: f.exec,
 		meta: f.meta.Merge(md),
@@ -78,7 +78,7 @@ func countUpTo(args Sequence, c int) int {
 }
 
 // ResolveAsApplicable either returns an Applicable as-is or tries
-// to perform f lookup if the Value is f Symbol
+// to perform a lookup if the Value is a Symbol
 func ResolveAsApplicable(c Context, v Value) (Applicable, bool) {
 	if f, ok := v.(Applicable); ok {
 		return f, true
@@ -122,7 +122,7 @@ func AssertArityRange(args Sequence, min int, max int) int {
 	return c
 }
 
-// AssertApplicable will cast f Value into an Applicable or explode violently
+// AssertApplicable will cast a Value into an Applicable or explode violently
 func AssertApplicable(v Value) Applicable {
 	if r, ok := v.(Applicable); ok {
 		return r

@@ -39,19 +39,19 @@ func isVector(c a.Context, args a.Sequence) a.Value {
 
 func init() {
 	registerAnnotated(
-		a.NewFunction(vector).WithMetadata(a.Variables{
+		a.NewFunction(vector).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("vector"),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(toVector).WithMetadata(a.Variables{
+		a.NewFunction(toVector).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("to-vector"),
 		}),
 	)
 
 	registerPredicate(
-		a.NewFunction(isVector).WithMetadata(a.Variables{
+		a.NewFunction(isVector).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("vector?"),
 		}).(a.Function),
 	)

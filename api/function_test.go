@@ -16,13 +16,13 @@ func TestFunction(t *testing.T) {
 		func(c a.Context, args a.Sequence) a.Value {
 			return "hello"
 		},
-	).WithMetadata(a.Variables{
+	).WithMetadata(a.Metadata{
 		a.MetaName: a.Name("test-function"),
 		a.MetaDoc:  "this is a test function",
 	}).(a.Function)
 
 	f2 := a.NewFunction(nil)
-	f3 := f1.WithMetadata(a.Variables{a.MetaDoc: "modified"})
+	f3 := f1.WithMetadata(a.Metadata{a.MetaDoc: "modified"})
 
 	as.NotNil(f1.Metadata())
 	as.NotNil(f2.Metadata())

@@ -21,13 +21,13 @@ func getNamespace(c a.Context, args a.Sequence) a.Value {
 
 func init() {
 	registerAnnotated(
-		a.NewFunction(withNamespace).WithMetadata(a.Variables{
+		a.NewFunction(withNamespace).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("with-ns"),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(getNamespace).WithMetadata(a.Variables{
+		a.NewFunction(getNamespace).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("ns"),
 		}),
 	)

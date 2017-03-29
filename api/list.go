@@ -2,7 +2,7 @@ package api
 
 import "bytes"
 
-// List contains f node to f singly-linked List
+// List contains a node to a singly-linked List
 type List struct {
 	first Value
 	rest  *List
@@ -12,7 +12,7 @@ type List struct {
 // EmptyList represents an empty List
 var EmptyList *List
 
-// NewList creates f new List instance
+// NewList creates a new List instance
 func NewList(v Value) Sequence {
 	return &List{
 		first: v,
@@ -21,22 +21,22 @@ func NewList(v Value) Sequence {
 	}
 }
 
-// First returns the first element of f List
+// First returns the first element of a List
 func (l *List) First() Value {
 	return l.first
 }
 
-// Rest returns the rest of the List as f Sequence
+// Rest returns the rest of the List as a Sequence
 func (l *List) Rest() Sequence {
 	return l.rest
 }
 
-// IsSequence returns whether this instance is f consumable Sequence
+// IsSequence returns whether this instance is a consumable Sequence
 func (l *List) IsSequence() bool {
 	return l != EmptyList
 }
 
-// Prepend creates f new Sequence by prepending f Value
+// Prepend creates a new Sequence by prepending a Value
 func (l *List) Prepend(v Value) Sequence {
 	return &List{
 		first: v,
@@ -63,7 +63,7 @@ func (l *List) Get(index int) Value {
 	return e.first
 }
 
-// Eval makes f List Evaluable
+// Eval makes a List Evaluable
 func (l *List) Eval(ctx Context) Value {
 	if l == EmptyList {
 		return EmptyList

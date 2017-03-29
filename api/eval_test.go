@@ -15,7 +15,7 @@ var helloName = a.NewFunction(
 		v := evaluateToString(c, a)
 		return "Hello, " + v + "!"
 	},
-).WithMetadata(a.Variables{
+).WithMetadata(a.Metadata{
 	a.MetaName: a.Name("hello"),
 })
 

@@ -52,25 +52,25 @@ func _println(c a.Context, args a.Sequence) a.Value {
 
 func init() {
 	registerAnnotated(
-		a.NewFunction(pr).WithMetadata(a.Variables{
+		a.NewFunction(pr).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("pr"),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(prn).WithMetadata(a.Variables{
+		a.NewFunction(prn).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("prn"),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(_print).WithMetadata(a.Variables{
+		a.NewFunction(_print).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("print"),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(_println).WithMetadata(a.Variables{
+		a.NewFunction(_println).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("println"),
 		}),
 	)

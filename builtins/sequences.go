@@ -71,49 +71,49 @@ func filter(c a.Context, args a.Sequence) a.Value {
 
 func init() {
 	registerPredicate(
-		a.NewFunction(isSequence).WithMetadata(a.Variables{
+		a.NewFunction(isSequence).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("seq?"),
 		}).(a.Function),
 	)
 
 	registerAnnotated(
-		a.NewFunction(first).WithMetadata(a.Variables{
+		a.NewFunction(first).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("first"),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(rest).WithMetadata(a.Variables{
+		a.NewFunction(rest).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("rest"),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(cons).WithMetadata(a.Variables{
+		a.NewFunction(cons).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("cons"),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(_len).WithMetadata(a.Variables{
+		a.NewFunction(_len).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("len"),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(concat).WithMetadata(a.Variables{
+		a.NewFunction(concat).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("concat"),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(_map).WithMetadata(a.Variables{
+		a.NewFunction(_map).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("map"),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(filter).WithMetadata(a.Variables{
+		a.NewFunction(filter).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("filter"),
 		}),
 	)

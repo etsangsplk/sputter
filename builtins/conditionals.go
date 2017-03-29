@@ -33,13 +33,13 @@ func _if(c a.Context, args a.Sequence) a.Value {
 
 func init() {
 	registerAnnotated(
-		a.NewFunction(cond).WithMetadata(a.Variables{
+		a.NewFunction(cond).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("cond"),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(_if).WithMetadata(a.Variables{
+		a.NewFunction(_if).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("if"),
 		}),
 	)

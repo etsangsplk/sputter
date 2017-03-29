@@ -238,21 +238,21 @@ func registerBuiltIn(v a.Annotated) {
 
 func registerREPLBuiltIns() {
 	registerBuiltIn(
-		a.NewFunction(use).WithMetadata(a.Variables{
+		a.NewFunction(use).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("use"),
 			a.MetaDoc:  "Change namespace. Example: (use foo)",
 		}),
 	)
 
 	registerBuiltIn(
-		a.NewFunction(shutdown).WithMetadata(a.Variables{
+		a.NewFunction(shutdown).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("quit"),
 			a.MetaDoc:  "Quit the REPL",
 		}),
 	)
 
 	registerBuiltIn(
-		a.NewFunction(help).WithMetadata(a.Variables{
+		a.NewFunction(help).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("help"),
 			a.MetaDoc:  "Display this help",
 		}),

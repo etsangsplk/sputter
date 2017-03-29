@@ -9,7 +9,7 @@ const (
 	// UnknownSymbol is thrown if a symbol cannot be resolved
 	UnknownSymbol = "symbol '%s' has not been defined"
 
-	// ExpectedSymbol is thrown when f Value is not f unqualified Symbol
+	// ExpectedSymbol is thrown when a Value is not a unqualified Symbol
 	ExpectedSymbol = "value is not a symbol"
 
 	// ExpectedUnqualified is thrown when a Symbol is unexpectedly qualified
@@ -29,7 +29,7 @@ func qualifiedName(name Name, domain Name) Name {
 	return Name(domain + ":" + name)
 }
 
-// NewQualifiedSymbol returns f Qualified Symbol for f specific domain
+// NewQualifiedSymbol returns a Qualified Symbol for a specific domain
 func NewQualifiedSymbol(name Name, domain Name) *Symbol {
 	ns := GetNamespace(domain)
 	return ns.Intern(name)
@@ -40,7 +40,7 @@ func NewLocalSymbol(name Name) *Symbol {
 	return NewQualifiedSymbol(name, LocalDomain)
 }
 
-// ParseSymbol parses f qualified Name and produces f Symbol
+// ParseSymbol parses a qualified Name and produces a Symbol
 func ParseSymbol(n Name) *Symbol {
 	if i := strings.IndexRune(string(n), ':'); i != -1 {
 		return NewQualifiedSymbol(n[i+1:], n[:i])
@@ -53,7 +53,7 @@ func (s *Symbol) Qualified() Name {
 	return qualifiedName(s.Name, s.Domain)
 }
 
-// Resolve f Symbol against f Context
+// Resolve a Symbol against a Context
 func (s *Symbol) Resolve(c Context) (Value, bool) {
 	n := s.Name
 	d := s.Domain
@@ -87,7 +87,7 @@ func (s *Symbol) String() string {
 	return string(s.Qualified())
 }
 
-// AssertUnqualified will cast f Value into f Symbol and explode
+// AssertUnqualified will cast a Value into a Symbol and explode
 // violently if it's qualified with a domain
 func AssertUnqualified(v Value) *Symbol {
 	if r, ok := v.(*Symbol); ok {

@@ -11,7 +11,7 @@ var helloThere = a.NewFunction(
 	func(c a.Context, args a.Sequence) a.Value {
 		return "there"
 	},
-).WithMetadata(a.Variables{
+).WithMetadata(a.Metadata{
 	a.MetaName: a.Name("hello"),
 }).(a.Function)
 

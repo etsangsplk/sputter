@@ -32,13 +32,13 @@ func let(c a.Context, args a.Sequence) a.Value {
 
 func init() {
 	registerAnnotated(
-		a.NewFunction(def).WithMetadata(a.Variables{
+		a.NewFunction(def).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("def"),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(let).WithMetadata(a.Variables{
+		a.NewFunction(let).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("let"),
 		}),
 	)

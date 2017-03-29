@@ -99,7 +99,7 @@ func (m ArrayMap) Rest() Sequence {
 	return m[1:]
 }
 
-// Prepend creates f new Sequence by prepending f Value
+// Prepend creates a new Sequence by prepending a Value
 func (m ArrayMap) Prepend(v Value) Sequence {
 	if mp, ok := v.(Vector); ok {
 		AssertArity(mp, 2)
