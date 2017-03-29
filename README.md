@@ -45,6 +45,7 @@ that will change rapidly.  The current built-in forms are:
   * Lists: `list`, `list?`, `!list?`, `to-list`
   * Hash Maps: `hash-map`, `hash-map?`, `!hash-map?`, `to-hash-map`
   * Vectors: `vector`, `vector?`, `!vector?`, `to-vector`
+  * Metadata: `meta`, `with-meta`
   * Comprehensions: `concat`, `map`, `filter`
   * I/O: `print`, `println`, `pr`, `prn`
 
