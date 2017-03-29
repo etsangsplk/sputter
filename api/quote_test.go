@@ -13,8 +13,7 @@ func TestQuote(t *testing.T) {
 	f := a.NewFloat(99.0)
 	q := a.Quote(f)
 	c := a.NewContext()
-
-	as.Equal(f, q.Value(), "wrapped value returned with Value()")
+	
 	as.Equal(f, a.Eval(c, q), "wrapped value returned with Eval()")
 	as.Equal("99", a.String(q), "string returned")
 }

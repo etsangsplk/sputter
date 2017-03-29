@@ -1,9 +1,7 @@
 package api
 
 // Quoted identifies a Value as being in data mode (quoted)
-type Quoted interface {
-	Value() Value
-}
+type Quoted interface {}
 
 type quoted struct {
 	value Value
@@ -16,13 +14,8 @@ func Quote(v Value) Quoted {
 	}
 }
 
-// Value returns the Value that is Quoted
-func (q quoted) Value() Value {
-	return q.value
-}
-
 // Eval makes Quoted Evaluable
-func (q quoted) Eval(c Context) Value {
+func (q quoted) Eval(_ Context) Value {
 	return q.value
 }
 

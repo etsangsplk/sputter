@@ -131,7 +131,7 @@ func TestSimpleData(t *testing.T) {
 	d, ok := v.(a.Quoted)
 	as.True(ok)
 
-	value, ok := d.Value().(*a.Number)
+	value, ok := a.Eval(c, d).(*a.Number)
 	as.True(ok)
 	as.Equal(a.EqualTo, a.NewFloat(99).Cmp(value))
 }
@@ -147,7 +147,7 @@ func TestListData(t *testing.T) {
 	d, ok := v.(a.Quoted)
 	as.True(ok)
 
-	value, ok := d.Value().(*a.List)
+	value, ok := a.Eval(c, d).(*a.List)
 	as.True(ok)
 
 	if sym, ok := value.First().(*a.Symbol); ok {
