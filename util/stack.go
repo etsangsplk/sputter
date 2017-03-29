@@ -11,8 +11,8 @@ type Stack interface {
 	Pop() (v value, ok bool)
 }
 
-// basicStack implements a non-concurrent Stack
-type basicStack struct {
+// stack implements a non-concurrent Stack
+type stack struct {
 	head *entry
 }
 
@@ -23,11 +23,11 @@ type entry struct {
 
 // NewStack creates a new Stack instance
 func NewStack() Stack {
-	return &basicStack{}
+	return &stack{}
 }
 
 // Push a Value onto the Stack
-func (s *basicStack) Push(v value) {
+func (s *stack) Push(v value) {
 	if s.head == nil {
 		s.head = &entry{v, nil}
 		return
@@ -36,7 +36,7 @@ func (s *basicStack) Push(v value) {
 }
 
 // Peek the head of the Stack
-func (s *basicStack) Peek() (value, bool) {
+func (s *stack) Peek() (value, bool) {
 	e := s.head
 	if e != nil {
 		return e.value, true
@@ -45,7 +45,7 @@ func (s *basicStack) Peek() (value, bool) {
 }
 
 // Pop the head of the Stack
-func (s *basicStack) Pop() (value, bool) {
+func (s *stack) Pop() (value, bool) {
 	e := s.head
 	if e != nil {
 		s.head = e.next

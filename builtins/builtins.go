@@ -32,7 +32,7 @@ func do(c a.Context, args a.Sequence) a.Value {
 
 func quote(_ a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
-	return &a.Quote{Value: args.First()}
+	return a.Quote(args.First())
 }
 
 func init() {

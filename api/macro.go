@@ -9,7 +9,7 @@ type Macro interface {
 	DataMode() bool
 }
 
-type basicMacro struct {
+type macro struct {
 	Function
 	dataMode bool
 }
@@ -21,19 +21,19 @@ var defaultMacroMetadata = Metadata{
 // NewMacro instantiates a new Macro
 func NewMacro(e SequenceProcessor) Macro {
 	f := NewFunction(e).WithMetadata(defaultMacroMetadata).(Function)
-	return &basicMacro{
+	return &macro{
 		Function: f,
 		dataMode: true,
 	}
 }
 
-func (m *basicMacro) DataMode() bool {
+func (m *macro) DataMode() bool {
 	return m.dataMode
 }
 
 // WithMetadata copies the Function with new Metadata
-func (m *basicMacro) WithMetadata(md Metadata) Annotated {
-	return &basicMacro{
+func (m *macro) WithMetadata(md Metadata) Annotated {
+	return &macro{
 		Function: m.Function.WithMetadata(md).(Function),
 	}
 }

@@ -14,15 +14,15 @@ type Context interface {
 	Delete(n Name)
 }
 
-// basicContext is the most basic Context implementation
-type basicContext struct {
+// context is the most basic Context implementation
+type context struct {
 	parent Context
 	vars   Variables
 }
 
 // NewContext creates a new independent Context instance
 func NewContext() Context {
-	return &basicContext{
+	return &context{
 		parent: nil,
 		vars:   make(Variables, defaultContextEntries),
 	}
@@ -30,7 +30,7 @@ func NewContext() Context {
 
 // ChildContext creates a new child Context of the provided parent
 func ChildContext(parent Context) Context {
-	return &basicContext{
+	return &context{
 		parent: parent,
 		vars:   make(Variables, defaultContextEntries),
 	}
@@ -46,7 +46,7 @@ func NewEvalContext() Context {
 }
 
 // Get retrieves a value from the Context chain
-func (c *basicContext) Get(n Name) (Value, bool) {
+func (c *context) Get(n Name) (Value, bool) {
 	if v, ok := c.vars[n]; ok {
 		return v, true
 	}
@@ -57,7 +57,7 @@ func (c *basicContext) Get(n Name) (Value, bool) {
 }
 
 // Put puts a Value into the immediate Context
-func (c *basicContext) Put(n Name, v Value) {
+func (c *context) Put(n Name, v Value) {
 	if _, ok := c.vars[n]; ok {
 		panic(fmt.Sprintf(AlreadyBound, n))
 	}
@@ -65,6 +65,6 @@ func (c *basicContext) Put(n Name, v Value) {
 }
 
 // Delete removes a Value from the immediate Context
-func (c *basicContext) Delete(n Name) {
+func (c *context) Delete(n Name) {
 	delete(c.vars, n)
 }

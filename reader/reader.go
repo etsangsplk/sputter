@@ -76,7 +76,7 @@ func (r *tokenReader) nextData() a.Value {
 func (r *tokenReader) token(t *Token, m mode) a.Value {
 	switch t.Type {
 	case QuoteMarker:
-		return r.readQuote()
+		return r.readQuoted()
 	case ListStart:
 		return r.readList(m)
 	case VectorStart:
@@ -98,8 +98,8 @@ func (r *tokenReader) token(t *Token, m mode) a.Value {
 	}
 }
 
-func (r *tokenReader) readQuote() *a.Quote {
-	return &a.Quote{Value: r.nextData()}
+func (r *tokenReader) readQuoted() a.Quoted {
+	return a.Quote(r.nextData())
 }
 
 func (r *tokenReader) readList(m mode) a.Value {

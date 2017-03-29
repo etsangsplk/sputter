@@ -17,6 +17,7 @@ func NewKeyword(n Name) *Keyword {
 	return r
 }
 
+// Name returns the Name component of the Keyword
 func (k *Keyword) Name() Name {
 	return k.name
 }

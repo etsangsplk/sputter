@@ -16,6 +16,7 @@ var (
 	MetaDoc = NewKeyword("doc")
 )
 
+// Metadata stores metadata about an Annotated Value
 type Metadata map[Value]Value
 
 // Annotated is implemented if a Value is Annotated with Metadata
@@ -54,6 +55,7 @@ func (v Metadata) String() string {
 	return b.String()
 }
 
+// AssertAnnotated will cast a Value to Annotated or die trying
 func AssertAnnotated(v Value) Annotated {
 	if a, ok := v.(Annotated); ok {
 		return a

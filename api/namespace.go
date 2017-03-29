@@ -39,32 +39,32 @@ type namespaceInfo struct {
 	symbols symbolMap
 }
 
-type basicNamespace struct {
+type namespace struct {
 	Context
-	*namespaceInfo
+	namespaceInfo
 }
 
 // Domain returns the Domain of the Namespace
-func (b *basicNamespace) Domain() Name {
-	return b.domain
+func (ns *namespace) Domain() Name {
+	return ns.domain
 }
 
 // Intern returns a Symbol based on the Name and Namespace Domain.
 // This Symbol will be atomic, meaning that there will be only one
 // instance, allowing the Symbols to be compared by reference
-func (b *basicNamespace) Intern(n Name) *Symbol {
-	d := b.domain
+func (ns *namespace) Intern(n Name) *Symbol {
+	d := ns.domain
 	k := qualifiedName(n, d)
-	if s, ok := b.symbols[k]; ok {
+	if s, ok := ns.symbols[k]; ok {
 		return s
 	}
 	s := &Symbol{Name: n, Domain: d}
-	b.symbols[k] = s
+	ns.symbols[k] = s
 	return s
 }
 
-func (b *basicNamespace) String() string {
-	return "(ns " + string(b.domain) + ")"
+func (ns *namespace) String() string {
+	return "(ns " + string(ns.domain) + ")"
 }
 
 // GetNamespace returns the Namespace for the specified domain.
@@ -72,9 +72,9 @@ func GetNamespace(n Name) Namespace {
 	if ns, ok := namespaces[n]; ok {
 		return ns
 	}
-	ns := &basicNamespace{
+	ns := &namespace{
 		NewContext(),
-		&namespaceInfo{
+		namespaceInfo{
 			domain:  n,
 			symbols: make(symbolMap, defaultSymbolEntries),
 		},
@@ -103,17 +103,17 @@ func init() {
 	builtInContext := NewContext()
 	userContext := ChildContext(builtInContext)
 
-	namespaces[BuiltInDomain] = &basicNamespace{
+	namespaces[BuiltInDomain] = &namespace{
 		builtInContext,
-		&namespaceInfo{
+		namespaceInfo{
 			domain:  BuiltInDomain,
 			symbols: make(symbolMap, defaultSymbolEntries),
 		},
 	}
 
-	namespaces[UserDomain] = &basicNamespace{
+	namespaces[UserDomain] = &namespace{
 		userContext,
-		&namespaceInfo{
+		namespaceInfo{
 			domain:  UserDomain,
 			symbols: make(symbolMap, defaultSymbolEntries),
 		},

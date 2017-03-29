@@ -27,42 +27,42 @@ type Function interface {
 	Documentation() string
 }
 
-type basicFunction struct {
+type function struct {
 	exec SequenceProcessor
 	meta Metadata
 }
 
 // NewFunction instantiates a new Function
 func NewFunction(e SequenceProcessor) Function {
-	return &basicFunction{
+	return &function{
 		exec: e,
 		meta: defaultFunctionMetadata,
 	}
 }
 
 // Metadata makes Function Annotated
-func (f *basicFunction) Metadata() Metadata {
+func (f *function) Metadata() Metadata {
 	return f.meta
 }
 
 // WithMetadata copies the Function with new Metadata
-func (f *basicFunction) WithMetadata(md Metadata) Annotated {
-	return &basicFunction{
+func (f *function) WithMetadata(md Metadata) Annotated {
+	return &function{
 		exec: f.exec,
 		meta: f.meta.Merge(md),
 	}
 }
 
-func (f *basicFunction) Name() Name {
+func (f *function) Name() Name {
 	return f.Metadata()[MetaName].(Name)
 }
 
-func (f *basicFunction) Documentation() string {
+func (f *function) Documentation() string {
 	return f.Metadata()[MetaDoc].(string)
 }
 
 // Apply makes Function Applicable
-func (f *basicFunction) Apply(c Context, args Sequence) Value {
+func (f *function) Apply(c Context, args Sequence) Value {
 	return f.exec(c, args)
 }
 
