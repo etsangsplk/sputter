@@ -15,7 +15,7 @@ func TestSymbol(t *testing.T) {
 	c.Put("howdy", "ho")
 
 	sym := a.NewLocalSymbol("howdy")
-	as.Equal("ho", a.Eval(c, sym), "symbol value returned")
+	as.Equal("ho", sym.Eval(c), "symbol value returned")
 	as.Equal("howdy", a.String(sym), "symbol name returned")
 }
 
@@ -43,10 +43,10 @@ func TestQualifiedSymbol(t *testing.T) {
 	as.Equal(a.GetNamespace("ns2"), s2.Namespace(c1))
 	as.Equal(a.GetNamespace("ns1"), s3.Namespace(c1))
 
-	as.Equal("foo-ns1", a.Eval(empty, s1))
-	as.Equal("foo-ns2", a.Eval(empty, s2))
-	as.Equal("foo-ns1", a.Eval(c1, s3))
-	as.Equal("foo-ns2", a.Eval(c2, s3))
+	as.Equal("foo-ns1", s1.Eval(empty))
+	as.Equal("foo-ns2", s2.Eval(empty))
+	as.Equal("foo-ns1", s3.Eval(c1))
+	as.Equal("foo-ns2", s3.Eval(c2))
 }
 
 func TestSymbolInterning(t *testing.T) {

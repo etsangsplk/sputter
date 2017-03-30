@@ -29,7 +29,7 @@ func (k *keyword) Name() Name {
 }
 
 // Eval makes Keyword Evaluable
-func (k *keyword) Eval(c Context) Value {
+func (k *keyword) Eval(_ Context) Value {
 	return k
 }
 
