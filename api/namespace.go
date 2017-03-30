@@ -34,14 +34,10 @@ type Namespace interface {
 	Intern(n Name) Symbol
 }
 
-type namespaceInfo struct {
-	domain  Name
-	symbols symbolMap
-}
-
 type namespace struct {
 	Context
-	namespaceInfo
+	domain  Name
+	symbols symbolMap
 }
 
 // Domain returns the Domain of the Namespace
@@ -73,11 +69,9 @@ func GetNamespace(n Name) Namespace {
 		return ns
 	}
 	ns := &namespace{
-		NewContext(),
-		namespaceInfo{
-			domain:  n,
-			symbols: make(symbolMap, defaultSymbolEntries),
-		},
+		Context: NewContext(),
+		domain:  n,
+		symbols: make(symbolMap, defaultSymbolEntries),
 	}
 	namespaces[n] = ns
 	return ns
@@ -104,18 +98,14 @@ func init() {
 	userContext := ChildContext(builtInContext)
 
 	namespaces[BuiltInDomain] = &namespace{
-		builtInContext,
-		namespaceInfo{
-			domain:  BuiltInDomain,
-			symbols: make(symbolMap, defaultSymbolEntries),
-		},
+		Context: builtInContext,
+		domain:  BuiltInDomain,
+		symbols: make(symbolMap, defaultSymbolEntries),
 	}
 
 	namespaces[UserDomain] = &namespace{
-		userContext,
-		namespaceInfo{
-			domain:  UserDomain,
-			symbols: make(symbolMap, defaultSymbolEntries),
-		},
+		Context: userContext,
+		domain:  UserDomain,
+		symbols: make(symbolMap, defaultSymbolEntries),
 	}
 }

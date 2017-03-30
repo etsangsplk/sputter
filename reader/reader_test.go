@@ -177,22 +177,16 @@ func testCodeWithContext(as *assert.Assertions, code string, expect a.Value, con
 	as.Equal(expect, r.EvalReader(context, tr), code)
 }
 
-func evaluateToString(c a.Context, v a.Value) string {
-	return fmt.Sprint(a.Eval(c, v))
-}
-
 func TestEvaluable(t *testing.T) {
 	as := assert.New(t)
 	c := a.NewContext()
 
-	hello := a.NewFunction(
-		func(c a.Context, args a.Sequence) a.Value {
-			i := a.Iterate(args)
-			arg, _ := i.Next()
-			v := evaluateToString(c, arg)
-			return "Hello, " + v + "!"
-		},
-	).WithMetadata(a.Metadata{
+	hello := a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
+		i := a.Iterate(args)
+		arg, _ := i.Next()
+		v := a.Eval(c, arg)
+		return "Hello, " + a.String(v) + "!"
+	}).WithMetadata(a.Metadata{
 		a.MetaName: a.Name("hello"),
 	})
 
@@ -208,11 +202,9 @@ func TestBuiltIns(t *testing.T) {
 
 	b := a.NewEvalContext()
 	ns := a.GetContextNamespace(b)
-	ns.Put("hello", a.NewFunction(
-		func(c a.Context, args a.Sequence) a.Value {
-			return "there"
-		},
-	).WithMetadata(a.Metadata{
+	ns.Put("hello", a.NewFunction(func(_ a.Context, _ a.Sequence) a.Value {
+		return "there"
+	}).WithMetadata(a.Metadata{
 		a.MetaName: a.Name("hello"),
 	}))
 
@@ -228,14 +220,12 @@ func TestReaderPrepare(t *testing.T) {
 	b := a.NewEvalContext()
 	ns := a.GetContextNamespace(b)
 	ns.Delete("hello")
-	ns.Put("hello", a.NewMacro(
-		func(c a.Context, l a.Sequence) a.Value {
-			if _, ok := l.(*a.List); !ok {
-				as.Fail("provided list is not a cons")
-			}
-			return a.Vector{"you"}
-		},
-	).WithMetadata(a.Metadata{
+	ns.Put("hello", a.NewMacro(func(_ a.Context, l a.Sequence) a.Value {
+		if _, ok := l.(*a.List); !ok {
+			as.Fail("provided list is not a cons")
+		}
+		return a.Vector{"you"}
+	}).WithMetadata(a.Metadata{
 		a.MetaName: a.Name("hello"),
 	}))
 

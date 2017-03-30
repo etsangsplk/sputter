@@ -14,7 +14,6 @@ type Context interface {
 	Delete(n Name)
 }
 
-// context is the most basic Context implementation
 type context struct {
 	parent Context
 	vars   Variables

@@ -7,11 +7,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var helloThere = a.NewFunction(
-	func(c a.Context, args a.Sequence) a.Value {
-		return "there"
-	},
-).WithMetadata(a.Metadata{
+var helloThere = a.NewFunction(func(_ a.Context, _ a.Sequence) a.Value {
+	return "there"
+}).WithMetadata(a.Metadata{
 	a.MetaName: a.Name("hello"),
 }).(a.Function)
 

@@ -8,20 +8,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var helloName = a.NewFunction(
-	func(c a.Context, args a.Sequence) a.Value {
-		i := a.Iterate(args)
-		a, _ := i.Next()
-		v := evaluateToString(c, a)
-		return "Hello, " + v + "!"
-	},
-).WithMetadata(a.Metadata{
+var helloName = a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
+	i := a.Iterate(args)
+	n, _ := i.Next()
+	v := a.Eval(c, n)
+	return "Hello, " + a.String(v) + "!"
+}).WithMetadata(a.Metadata{
 	a.MetaName: a.Name("hello"),
 })
-
-func evaluateToString(c a.Context, v a.Value) string {
-	return fmt.Sprint(a.Eval(c, v))
-}
 
 func TestEvaluate(t *testing.T) {
 	as := assert.New(t)
@@ -43,4 +37,12 @@ func TestEvaluateSequence(t *testing.T) {
 	c := a.NewContext()
 	r := a.EvalSequence(c, l)
 	as.Equal("Hello, Foo!", r.(string), "last result")
+}
+
+func TestAssertApplicable(t *testing.T) {
+	as := assert.New(t)
+	a.AssertApplicable(a.NewFunction(nil))
+
+	defer expectError(as, a.ExpectedApplicable)
+	a.AssertApplicable(a.NewFloat(99))
 }

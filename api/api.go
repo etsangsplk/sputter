@@ -13,15 +13,6 @@ var (
 	Nil Value
 )
 
-// ExpectedApplicable is thrown when a Value is not Applicable
-const ExpectedApplicable = "value does not support application"
-
-// Applicable is the standard signature for any Value that can have
-// arguments applied to it
-type Applicable interface {
-	Apply(Context, Sequence) Value
-}
-
 // Truthy evaluates whether or not a Value is Truthy
 func Truthy(v Value) bool {
 	switch {

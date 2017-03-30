@@ -12,11 +12,9 @@ import (
 func TestFunction(t *testing.T) {
 	as := assert.New(t)
 
-	f1 := a.NewFunction(
-		func(c a.Context, args a.Sequence) a.Value {
-			return "hello"
-		},
-	).WithMetadata(a.Metadata{
+	f1 := a.NewFunction(func(_ a.Context, _ a.Sequence) a.Value {
+		return "hello"
+	}).WithMetadata(a.Metadata{
 		a.MetaName: a.Name("test-function"),
 		a.MetaDoc:  "this is a test function",
 	}).(a.Function)
