@@ -14,9 +14,9 @@ func TestSymbol(t *testing.T) {
 	c := a.NewContext()
 	c.Put("howdy", "ho")
 
-	sym := &a.Symbol{Name: "howdy"}
-	as.Equal("ho", sym.Eval(c), "symbol value returned")
-	as.Equal("howdy", sym.String(), "symbol name returned")
+	sym := a.NewLocalSymbol("howdy")
+	as.Equal("ho", a.Eval(c, sym), "symbol value returned")
+	as.Equal("howdy", a.String(sym), "symbol name returned")
 }
 
 func TestQualifiedSymbol(t *testing.T) {
@@ -43,10 +43,10 @@ func TestQualifiedSymbol(t *testing.T) {
 	as.Equal(a.GetNamespace("ns2"), s2.Namespace(c1))
 	as.Equal(a.GetNamespace("ns1"), s3.Namespace(c1))
 
-	as.Equal("foo-ns1", s1.Eval(empty))
-	as.Equal("foo-ns2", s2.Eval(empty))
-	as.Equal("foo-ns1", s3.Eval(c1))
-	as.Equal("foo-ns2", s3.Eval(c2))
+	as.Equal("foo-ns1", a.Eval(empty, s1))
+	as.Equal("foo-ns2", a.Eval(empty, s2))
+	as.Equal("foo-ns1", a.Eval(c1, s3))
+	as.Equal("foo-ns2", a.Eval(c2, s3))
 }
 
 func TestSymbolInterning(t *testing.T) {
@@ -65,28 +65,28 @@ func TestUnknownSymbol(t *testing.T) {
 
 	defer expectError(as, fmt.Sprintf(a.UnknownSymbol, "howdy"))
 	c := a.NewContext()
-	sym := &a.Symbol{Name: "howdy"}
-	sym.Eval(c)
+	sym := a.NewLocalSymbol("howdy")
+	a.Eval(c, sym)
 }
 
 func TestSymbolParsing(t *testing.T) {
 	as := assert.New(t)
 
 	s1 := a.ParseSymbol("domain:name1")
-	as.Equal("domain", string(s1.Domain))
-	as.Equal("name1", string(s1.Name))
+	as.Equal("domain", string(s1.Domain()))
+	as.Equal("name1", string(s1.Name()))
 
 	s2 := a.ParseSymbol(":name2")
-	as.Equal(a.LocalDomain, s2.Domain)
-	as.Equal("name2", string(s2.Name))
+	as.Equal(a.LocalDomain, s2.Domain())
+	as.Equal("name2", string(s2.Name()))
 
 	s3 := a.ParseSymbol("name3")
-	as.Equal(a.LocalDomain, s3.Domain)
-	as.Equal("name3", string(s3.Name))
+	as.Equal(a.LocalDomain, s3.Domain())
+	as.Equal("name3", string(s3.Name()))
 
 	s4 := a.ParseSymbol("one:too:")
-	as.Equal("one", string(s4.Domain))
-	as.Equal("too:", string(s4.Name))
+	as.Equal("one", string(s4.Domain()))
+	as.Equal("too:", string(s4.Name()))
 
 }
 
@@ -98,8 +98,8 @@ func TestAssertSymbol(t *testing.T) {
 
 func TestAssertUnqualified(t *testing.T) {
 	as := assert.New(t)
-	a.AssertUnqualified(&a.Symbol{Name: "hello"})
+	a.AssertUnqualified(a.NewLocalSymbol("hello"))
 
 	defer expectError(as, fmt.Sprintf(a.ExpectedUnqualified, "bar:hello"))
-	a.AssertUnqualified(&a.Symbol{Name: "hello", Domain: "bar"})
+	a.AssertUnqualified(a.NewQualifiedSymbol("hello", "bar"))
 }

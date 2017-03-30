@@ -83,7 +83,7 @@ func TestListEval(t *testing.T) {
 	fl := a.NewList(helloThere)
 	as.Equal("there", a.Eval(c, fl), "function-based list eval")
 
-	sl := a.NewList(&a.Symbol{Name: "hello"})
+	sl := a.NewList(a.NewLocalSymbol("hello"))
 	as.Equal("there", a.Eval(c, sl), "symbol-based list eval")
 
 	as.Equal(a.EmptyList, a.Eval(c, a.EmptyList), "empty list eval")
@@ -98,6 +98,6 @@ func testBrokenEval(t *testing.T, seq a.Sequence, err string) {
 }
 
 func TestNonFunction(t *testing.T) {
-	seq := a.NewList("foo").Prepend(&a.Symbol{Name: "unknown"})
+	seq := a.NewList("foo").Prepend(a.NewLocalSymbol("unknown"))
 	testBrokenEval(t, seq, a.ExpectedApplicable)
 }

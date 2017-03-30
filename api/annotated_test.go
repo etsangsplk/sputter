@@ -32,5 +32,5 @@ func TestAnnotated(t *testing.T) {
 	as.Equal(f, a.AssertAnnotated(f), "function asserts as annotated")
 
 	defer expectError(as, a.ExpectedAnnotated)
-	a.AssertAnnotated(&a.Symbol{})
+	a.AssertAnnotated(a.NewFloat(99))
 }

@@ -7,7 +7,7 @@ func def(c a.Context, args a.Sequence) a.Value {
 	ns := a.GetContextNamespace(c)
 
 	s := args.First()
-	n := a.AssertUnqualified(s).Name
+	n := a.AssertUnqualified(s).Name()
 	v := args.Rest().First()
 	ns.Put(n, a.Eval(c, v))
 	return s
@@ -21,7 +21,7 @@ func let(c a.Context, args a.Sequence) a.Value {
 
 	bi := a.Iterate(a.AssertSequence(b))
 	for s, ok := bi.Next(); ok; s, ok = bi.Next() {
-		n := a.AssertUnqualified(s).Name
+		n := a.AssertUnqualified(s).Name()
 		if v, ok := bi.Next(); ok {
 			l.Put(n, a.Eval(l, v))
 		}

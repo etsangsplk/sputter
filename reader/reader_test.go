@@ -150,8 +150,8 @@ func TestListData(t *testing.T) {
 	value, ok := a.Eval(c, d).(*a.List)
 	as.True(ok)
 
-	if sym, ok := value.First().(*a.Symbol); ok {
-		as.Equal("symbol", string(sym.Name), "symbol was literal")
+	if sym, ok := value.First().(a.Symbol); ok {
+		as.Equal("symbol", string(sym.Name()), "symbol was literal")
 	} else {
 		as.Fail("first element should be symbol")
 	}

@@ -3,32 +3,38 @@ package api
 var keywords = make(Variables, 4096)
 
 // Keyword is an Atom-like Value that represents a Name for mapping purposes
-type Keyword struct {
+type Keyword interface {
+	Applicable
+	Evaluable
+	Named
+}
+
+type keyword struct {
 	name Name
 }
 
 // NewKeyword returns an interned instance of a Keyword
-func NewKeyword(n Name) *Keyword {
+func NewKeyword(n Name) Keyword {
 	if r, ok := keywords[n]; ok {
-		return r.(*Keyword)
+		return r.(Keyword)
 	}
-	r := &Keyword{name: n}
+	r := &keyword{name: n}
 	keywords[n] = r
 	return r
 }
 
 // Name returns the Name component of the Keyword
-func (k *Keyword) Name() Name {
+func (k *keyword) Name() Name {
 	return k.name
 }
 
 // Eval makes Keyword Evaluable
-func (k *Keyword) Eval(c Context) Value {
+func (k *keyword) Eval(c Context) Value {
 	return k
 }
 
 // Apply makes Keyword Applicable
-func (k *Keyword) Apply(c Context, args Sequence) Value {
+func (k *keyword) Apply(c Context, args Sequence) Value {
 	AssertArity(args, 1)
 	if m, ok := Eval(c, args.First()).(Mapped); ok {
 		return m.Get(k)
@@ -36,6 +42,6 @@ func (k *Keyword) Apply(c Context, args Sequence) Value {
 	panic(ExpectedMapped)
 }
 
-func (k *Keyword) String() string {
+func (k *keyword) String() string {
 	return ":" + string(k.name)
 }

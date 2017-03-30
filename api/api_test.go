@@ -13,7 +13,7 @@ func TestAssertApplicable(t *testing.T) {
 	a.AssertApplicable(a.NewFunction(nil))
 
 	defer expectError(as, a.ExpectedApplicable)
-	a.AssertApplicable(&a.Symbol{})
+	a.AssertApplicable(a.NewFloat(99))
 }
 
 func TestTruthy(t *testing.T) {

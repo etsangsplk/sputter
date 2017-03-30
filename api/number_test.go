@@ -113,5 +113,5 @@ func TestAssertNumber(t *testing.T) {
 	a.AssertNumber(a.NewFloat(99))
 
 	defer expectError(as, a.ExpectedNumber)
-	a.AssertNumber(&a.Symbol{})
+	a.AssertNumber("not a number")
 }

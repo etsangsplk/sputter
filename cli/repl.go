@@ -175,7 +175,7 @@ func isRecoverable(err a.Value) bool {
 
 func use(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
-	n := a.AssertUnqualified(args.First()).Name
+	n := a.AssertUnqualified(args.First()).Name()
 	ns := a.GetNamespace(n)
 	c.Delete(a.ContextDomain)
 	c.Put(a.ContextDomain, ns)
@@ -209,7 +209,7 @@ func help(c a.Context, args a.Sequence) a.Value {
 		return a.Nil
 	}
 	sym := a.AssertUnqualified(args.First())
-	if v, ok := c.Get(sym.Name); ok {
+	if v, ok := c.Get(sym.Name()); ok {
 		if d, ok := v.(a.Annotated); ok {
 			return d.Metadata()[a.MetaDoc]
 		}

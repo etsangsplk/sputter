@@ -23,7 +23,7 @@ var defaultFunctionMetadata = Metadata{
 type Function interface {
 	Annotated
 	Applicable
-	Name() Name
+	Named
 	Documentation() string
 }
 
@@ -84,7 +84,7 @@ func ResolveAsApplicable(c Context, v Value) (Applicable, bool) {
 		return f, true
 	}
 
-	if s, ok := v.(*Symbol); ok {
+	if s, ok := v.(Symbol); ok {
 		if sv, ok := s.Resolve(c); ok {
 			if f, ok := sv.(Applicable); ok {
 				return f, true

@@ -5,7 +5,7 @@ import a "github.com/kode4food/sputter/api"
 func withNamespace(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 
-	n := a.AssertUnqualified(args.First()).Name
+	n := a.AssertUnqualified(args.First()).Name()
 	ns := a.GetNamespace(n)
 
 	sc := a.ChildContext(c)
@@ -15,7 +15,7 @@ func withNamespace(c a.Context, args a.Sequence) a.Value {
 
 func getNamespace(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
-	n := a.AssertUnqualified(args.First()).Name
+	n := a.AssertUnqualified(args.First()).Name()
 	return a.GetNamespace(n)
 }
 

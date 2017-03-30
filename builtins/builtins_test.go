@@ -61,7 +61,7 @@ func TestQuote(t *testing.T) {
 	r2 := runCode("'(blah 2 3)").(*a.List)
 
 	as.Equal(r1.Get(0), r2.Get(0), "first element same")
-	if _, ok := r1.Get(0).(*a.Symbol); !ok {
+	if _, ok := r1.Get(0).(a.Symbol); !ok {
 		as.Fail("first element is not a symbol")
 	}
 	as.Equal(r1.Get(1), r2.Get(1), "second element same")

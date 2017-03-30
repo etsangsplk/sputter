@@ -12,7 +12,7 @@ type functionDefinition struct {
 func argNames(n a.Sequence) []a.Name {
 	an := []a.Name{}
 	for i := n; i.IsSequence(); i = i.Rest() {
-		v := a.AssertUnqualified(i.First()).Name
+		v := a.AssertUnqualified(i.First()).Name()
 		an = append(an, v)
 	}
 	return an
@@ -23,7 +23,7 @@ func getFunctionDefinition(args a.Sequence) *functionDefinition {
 
 	i := a.Iterate(args)
 	fv, _ := i.Next()
-	fn := a.AssertUnqualified(fv).Name
+	fn := a.AssertUnqualified(fv).Name()
 
 	var ds string
 	av, _ := i.Next()

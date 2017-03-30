@@ -1,7 +1,9 @@
 package api
 
 // Quoted identifies a Value as being in data mode (quoted)
-type Quoted interface {}
+type Quoted interface {
+	Evaluable
+}
 
 type quoted struct {
 	value Value

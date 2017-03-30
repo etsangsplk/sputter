@@ -22,7 +22,7 @@ const (
 	ExpectedNamespace = "value is not a namespace"
 )
 
-type symbolMap map[Name](*Symbol)
+type symbolMap map[Name](Symbol)
 type namespaceMap map[Name](Namespace)
 
 var namespaces = make(namespaceMap, defaultNamespaceEntries)
@@ -31,7 +31,7 @@ var namespaces = make(namespaceMap, defaultNamespaceEntries)
 type Namespace interface {
 	Context
 	Domain() Name
-	Intern(n Name) *Symbol
+	Intern(n Name) Symbol
 }
 
 type namespaceInfo struct {
@@ -52,13 +52,13 @@ func (ns *namespace) Domain() Name {
 // Intern returns a Symbol based on the Name and Namespace Domain.
 // This Symbol will be atomic, meaning that there will be only one
 // instance, allowing the Symbols to be compared by reference
-func (ns *namespace) Intern(n Name) *Symbol {
+func (ns *namespace) Intern(n Name) Symbol {
 	d := ns.domain
 	k := qualifiedName(n, d)
 	if s, ok := ns.symbols[k]; ok {
 		return s
 	}
-	s := &Symbol{Name: n, Domain: d}
+	s := &symbol{name: n, domain: d}
 	ns.symbols[k] = s
 	return s
 }
