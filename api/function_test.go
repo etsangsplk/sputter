@@ -16,7 +16,7 @@ func TestFunction(t *testing.T) {
 		return "hello"
 	}).WithMetadata(a.Metadata{
 		a.MetaName: a.Name("test-function"),
-		a.MetaDoc:  "this is a test function",
+		a.MetaDoc:  "this is a test",
 	}).(a.Function)
 
 	f2 := a.NewFunction(nil)
@@ -26,12 +26,12 @@ func TestFunction(t *testing.T) {
 	as.NotNil(f2.Metadata())
 	as.NotEqual(f1.Metadata(), f3.Metadata())
 
-	as.Equal("this is a test function", f1.Metadata()[a.MetaDoc], "not modified")
+	as.Equal("this is a test", f1.Metadata()[a.MetaDoc], "not modified")
 	as.Equal("modified", f3.Metadata()[a.MetaDoc], "modified")
 
-	as.True(strings.Contains(a.String(f1), ":name test-function"), "name returned")
-	as.Equal("this is a test function", f1.Documentation(), "doc returned")
-	as.True(strings.Contains(a.String(f2), ":name <anon>"), "address returned")
+	as.True(strings.Contains(a.String(f1), ":name test-function"), "name")
+	as.Equal("this is a test", f1.Documentation(), "doc returned")
+	as.True(strings.Contains(a.String(f2), ":name <anon>"), "anon")
 
 	c := a.NewContext()
 	as.Equal("hello", f1.Apply(c, a.EmptyList), "function executes")

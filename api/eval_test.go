@@ -1,7 +1,6 @@
 package api_test
 
 import (
-	"fmt"
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
@@ -12,7 +11,7 @@ var helloName = a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
 	i := a.Iterate(args)
 	n, _ := i.Next()
 	v := a.Eval(c, n)
-	return "Hello, " + a.String(v) + "!"
+	return "Hello, " + v.(string) + "!"
 }).WithMetadata(a.Metadata{
 	a.MetaName: a.Name("hello"),
 })

@@ -3,7 +3,7 @@ package api
 import "bytes"
 
 // ExpectedAnnotated is thrown if a Value is not Annotated
-const ExpectedAnnotated = "value is not annotated with metadata"
+const ExpectedAnnotated = "value does not support annotation"
 
 var (
 	// MetaName is the Metadata key for a Value's Name

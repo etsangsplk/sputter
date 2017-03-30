@@ -1,7 +1,6 @@
 package reader_test
 
 import (
-	"fmt"
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
@@ -170,11 +169,11 @@ func TestListData(t *testing.T) {
 	}
 }
 
-func testCodeWithContext(as *assert.Assertions, code string, expect a.Value, context a.Context) {
+func testCodeWithContext(
+	as *assert.Assertions, code string, expect a.Value, c a.Context) {
 	l := r.NewLexer(code)
-	c := a.NewContext()
-	tr := r.NewReader(c, l)
-	as.Equal(expect, r.EvalReader(context, tr), code)
+	tr := r.NewReader(a.NewContext(), l)
+	as.Equal(expect, r.EvalReader(c, tr), code)
 }
 
 func TestEvaluable(t *testing.T) {
@@ -185,7 +184,7 @@ func TestEvaluable(t *testing.T) {
 		i := a.Iterate(args)
 		arg, _ := i.Next()
 		v := a.Eval(c, arg)
-		return "Hello, " + a.String(v) + "!"
+		return "Hello, " + v.(string) + "!"
 	}).WithMetadata(a.Metadata{
 		a.MetaName: a.Name("hello"),
 	})

@@ -77,16 +77,16 @@ func TestArrayMapIterate(t *testing.T) {
 	i := a.Iterate(m1)
 	if v, ok := i.Next(); ok {
 		vec := v.(a.Vector)
-		as.Equal(a.NewKeyword("name"), vec[0], "correct key")
-		as.Equal("Sputter", vec[1], "correct value")
+		as.Equal(a.NewKeyword("name"), vec[0], "key")
+		as.Equal("Sputter", vec[1], "value")
 	} else {
 		as.Fail("couldn't get first element")
 	}
 
 	if v, ok := i.Next(); ok {
 		vec := v.(a.Vector)
-		as.Equal(a.NewKeyword("age"), vec[0], "correct key")
-		as.Equal(a.EqualTo, a.NewFloat(99).Cmp(vec[1].(*a.Number)), "correct value")
+		as.Equal(a.NewKeyword("age"), vec[0], "key")
+		as.Equal(a.EqualTo, a.NewFloat(99).Cmp(vec[1].(*a.Number)), "value")
 	} else {
 		as.Fail("couldn't get second element")
 	}

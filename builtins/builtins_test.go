@@ -65,9 +65,9 @@ func TestQuote(t *testing.T) {
 		as.Fail("first element is not a symbol")
 	}
 	as.Equal(r1.Get(1), r2.Get(1), "second element same")
-	as.Equal(a.EqualTo, a.NewFloat(2.0).Cmp(r1.Get(1).(*a.Number)), "second element correct")
+	as.Equal(a.EqualTo, a.NewFloat(2.0).Cmp(r1.Get(1).(*a.Number)), "second")
 	as.Equal(r1.Get(2), r2.Get(2), "third element same")
-	as.Equal(a.EqualTo, a.NewFloat(3.0).Cmp(r1.Get(2).(*a.Number)), "third element correct")
+	as.Equal(a.EqualTo, a.NewFloat(3.0).Cmp(r1.Get(2).(*a.Number)), "third")
 }
 
 func TestDo(t *testing.T) {
