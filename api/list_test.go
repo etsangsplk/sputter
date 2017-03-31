@@ -1,6 +1,7 @@
 package api_test
 
 import (
+	"fmt"
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
@@ -96,6 +97,7 @@ func testBrokenEval(t *testing.T, seq a.Sequence, err string) {
 }
 
 func TestNonFunction(t *testing.T) {
+	err := fmt.Sprintf(a.ExpectedApplicable, "unknown")
 	seq := a.NewList("foo").Prepend(a.NewLocalSymbol("unknown"))
-	testBrokenEval(t, seq, a.ExpectedApplicable)
+	testBrokenEval(t, seq, err)
 }

@@ -7,13 +7,13 @@ import (
 
 const (
 	// UnknownSymbol is thrown if a symbol cannot be resolved
-	UnknownSymbol = "symbol '%s' has not been defined"
+	UnknownSymbol = "symbol has not been defined: %s"
 
 	// ExpectedSymbol is thrown when a Value is not a unqualified Symbol
-	ExpectedSymbol = "value '%s' is not a symbol"
+	ExpectedSymbol = "value is not a symbol: %s"
 
 	// ExpectedUnqualified is thrown when a Symbol is unexpectedly qualified
-	ExpectedUnqualified = "symbol '%s' should be unqualified"
+	ExpectedUnqualified = "symbol should be unqualified: %s"
 )
 
 // Symbol is a qualified identifier that can be resolved

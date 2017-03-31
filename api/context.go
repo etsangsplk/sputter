@@ -5,7 +5,7 @@ import "fmt"
 const defaultContextEntries = 16
 
 // AlreadyBound is thrown when an attempt is made to rebind a Name
-const AlreadyBound = "symbol '%s' is already bound in this context"
+const AlreadyBound = "symbol is already bound in this context: %s"
 
 // Context represents a variable scope
 type Context interface {

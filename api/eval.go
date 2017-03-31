@@ -3,7 +3,7 @@ package api
 import "fmt"
 
 // ExpectedApplicable is thrown when a Value is not Applicable
-const ExpectedApplicable = "value '%s' does not support application"
+const ExpectedApplicable = "value does not support application: %s"
 
 // Evaluable can be evaluated against a Context
 type Evaluable interface {

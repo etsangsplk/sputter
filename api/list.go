@@ -1,6 +1,9 @@
 package api
 
-import "bytes"
+import (
+	"bytes"
+	"fmt"
+)
 
 // List contains a node to a singly-linked List
 type List struct {
@@ -71,7 +74,7 @@ func (l *List) Eval(ctx Context) Value {
 	if f, ok := ResolveAsApplicable(ctx, l.first); ok {
 		return f.Apply(ctx, l.rest)
 	}
-	panic(ExpectedApplicable)
+	panic(fmt.Sprintf(ExpectedApplicable, String(l.first)))
 }
 
 func (l *List) String() string {

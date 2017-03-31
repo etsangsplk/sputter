@@ -8,7 +8,7 @@ import (
 )
 
 // ExpectedNumber is thrown when a Value is not a Number
-const ExpectedNumber = "value '%s' is not a number"
+const ExpectedNumber = "value is not a number: %s"
 
 // Comparison represents the result of a equality comparison
 type Comparison int
@@ -37,7 +37,7 @@ func NewFloat(f float64) *Number {
 	if res, err := nativeDecimal().SetFloat64(f); err == nil {
 		return &Number{decimal: res}
 	}
-	panic(ExpectedNumber)
+	panic(fmt.Sprintf(ExpectedNumber, fmt.Sprintf("%f", f)))
 }
 
 // NewRatio generates a new Number from a ratio
@@ -62,7 +62,7 @@ func ParseNumber(s string) *Number {
 	if r, ok := nativeRatio().SetString(s); ok {
 		return &Number{ratio: r}
 	}
-	panic(ExpectedNumber)
+	panic(fmt.Sprintf(ExpectedNumber, String(s)))
 }
 
 func (l *Number) toDecimal() *apd.Decimal {
@@ -74,7 +74,7 @@ func (l *Number) toDecimal() *apd.Decimal {
 	if res, err := nativeDecimal().SetFloat64(rf); err == nil {
 		return res
 	}
-	panic(ExpectedNumber)
+	panic(fmt.Sprintf(ExpectedNumber, l.ratio.String()))
 }
 
 // Cmp compares this Number Value to another Value

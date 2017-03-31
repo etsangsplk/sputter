@@ -17,7 +17,7 @@ func TestParseNumber(t *testing.T) {
 	as.Equal(a.EqualTo, n1.Cmp(n2))
 	as.Equal(a.EqualTo, n2.Cmp(n3))
 
-	defer expectError(as, a.ExpectedNumber)
+	defer expectError(as, fmt.Sprintf(a.ExpectedNumber, `"'splosion!"`))
 	a.ParseNumber("'splosion!")
 }
 

@@ -6,7 +6,7 @@ import (
 )
 
 // ExpectedAnnotated is thrown if a Value is not Annotated
-const ExpectedAnnotated = "value '%s' does not support annotation"
+const ExpectedAnnotated = "value does not support annotation: %s"
 
 var (
 	// MetaName is the Metadata key for a Value's Name

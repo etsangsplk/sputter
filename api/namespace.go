@@ -21,7 +21,7 @@ const (
 	ContextDomain = Name("*ns*")
 
 	// ExpectedNamespace is thrown when a Value is not a Namespace
-	ExpectedNamespace = "value '%s' is not a namespace"
+	ExpectedNamespace = "value is not a namespace: %s"
 )
 
 type symbolMap map[Name](Symbol)
