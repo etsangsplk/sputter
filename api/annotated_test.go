@@ -1,7 +1,6 @@
 package api_test
 
 import (
-	"fmt"
 	"strings"
 	"testing"
 
@@ -32,6 +31,6 @@ func TestAnnotated(t *testing.T) {
 	f := a.NewFunction(nil)
 	as.Equal(f, a.AssertAnnotated(f), "function asserts as annotated")
 
-	defer expectError(as, fmt.Sprintf(a.ExpectedAnnotated, "99"))
+	defer expectError(as, a.Err(a.ExpectedAnnotated, "99"))
 	a.AssertAnnotated(a.NewFloat(99))
 }

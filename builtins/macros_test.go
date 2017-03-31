@@ -14,8 +14,9 @@ func TestMacroReplace(t *testing.T) {
 		(def hello "you")
 		(defmacro foo
 			"this is the macro foo"
-			[]
+			[x y]
+			(+ x y)
 			'hello)
-		(foo)
+		(foo 1 2)
 	`, "you")
 }

@@ -34,8 +34,8 @@ func TestFunction(t *testing.T) {
 }
 
 func TestBadFunction(t *testing.T) {
-	symErr := fmt.Sprintf(a.ExpectedSymbol, "99")
-	seqErr := fmt.Sprintf(a.ExpectedSequence, "99")
+	symErr := a.Err(a.ExpectedSymbol, "99")
+	seqErr := a.Err(a.ExpectedSequence, "99")
 	testBadCode(t, `(defn blah [name 99 bad] (name))`, symErr)
 	testBadCode(t, `(defn blah 99 (name))`, seqErr)
 	testBadCode(t, `(defn 99 [x y] (+ x y))`, symErr)
@@ -53,8 +53,7 @@ func TestBadFunctionArity(t *testing.T) {
 }
 
 func TestLambda(t *testing.T) {
-	ns := a.GetNamespace(a.UserDomain)
-	ns.Delete("call")
+	a.GetNamespace(a.UserDomain).Delete("call")
 
 	testCode(t, `
 		(defn call [func] (func))
@@ -65,7 +64,7 @@ func TestLambda(t *testing.T) {
 }
 
 func TestBadLambda(t *testing.T) {
-	testBadCode(t, `(fn 99 "hello")`, fmt.Sprintf(a.ExpectedSequence, "99"))
+	testBadCode(t, `(fn 99 "hello")`, a.Err(a.ExpectedSequence, "99"))
 }
 
 func TestApply(t *testing.T) {
@@ -76,6 +75,6 @@ func TestApply(t *testing.T) {
 			[1 2 3])
 	`, a.NewFloat(6))
 
-	appErr := fmt.Sprintf(a.ExpectedApplicable, "32")
+	appErr := a.Err(a.ExpectedApplicable, "32")
 	testBadCode(t, `(apply 32 [1 2 3])`, appErr)
 }

@@ -1,7 +1,5 @@
 package api
 
-import "fmt"
-
 const (
 	defaultNamespaceEntries = 128
 	defaultSymbolEntries    = 4096
@@ -92,7 +90,7 @@ func AssertNamespace(v Value) Namespace {
 	if r, ok := v.(Namespace); ok {
 		return r
 	}
-	panic(fmt.Sprintf(ExpectedNamespace, String(v)))
+	panic(Err(ExpectedNamespace, String(v)))
 }
 
 func init() {

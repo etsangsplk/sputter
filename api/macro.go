@@ -35,5 +35,6 @@ func (m *macro) DataMode() bool {
 func (m *macro) WithMetadata(md Metadata) Annotated {
 	return &macro{
 		Function: m.Function.WithMetadata(md).(Function),
+		dataMode: m.dataMode,
 	}
 }

@@ -1,7 +1,5 @@
 package api
 
-import "fmt"
-
 const defaultContextEntries = 16
 
 // AlreadyBound is thrown when an attempt is made to rebind a Name
@@ -58,7 +56,7 @@ func (c *context) Get(n Name) (Value, bool) {
 // Put puts a Value into the immediate Context
 func (c *context) Put(n Name, v Value) {
 	if _, ok := c.vars[n]; ok {
-		panic(fmt.Sprintf(AlreadyBound, n))
+		panic(Err(AlreadyBound, n))
 	}
 	c.vars[n] = v
 }

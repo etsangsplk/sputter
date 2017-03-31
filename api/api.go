@@ -11,6 +11,9 @@ var (
 
 	// Nil is a value that represents the absence of a Value
 	Nil Value
+
+	// EmptyString represents the zero value of a string
+	EmptyString string
 )
 
 // Truthy evaluates whether or not a Value is Truthy
@@ -47,4 +50,9 @@ func String(v Value) string {
 		return fmt.Sprintf("%q", s)
 	}
 	return fmt.Sprintf("(<anon> :instance %p)", &v)
+}
+
+// Err generates a standard interpreter error
+func Err(s string, args ...interface{}) string {
+	return fmt.Sprintf(s, args...)
 }

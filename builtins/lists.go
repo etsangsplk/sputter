@@ -30,13 +30,11 @@ func toList(c a.Context, args a.Sequence) a.Value {
 	return list(c, seq)
 }
 
-func isList(c a.Context, args a.Sequence) a.Value {
-	a.AssertArity(args, 1)
-	v := args.First()
-	if _, ok := a.Eval(c, v).(*a.List); ok {
-		return a.True
+func isList(v a.Value) bool {
+	if _, ok := v.(*a.List); ok {
+		return true
 	}
-	return a.False
+	return false
 }
 
 func init() {
@@ -52,9 +50,7 @@ func init() {
 		}),
 	)
 
-	registerPredicate(
-		a.NewFunction(isList).WithMetadata(a.Metadata{
-			a.MetaName: a.Name("list?"),
-		}).(a.Function),
-	)
+	registerSequencePredicate(isList, a.Metadata{
+		a.MetaName: a.Name("list?"),
+	})
 }

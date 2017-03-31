@@ -2,15 +2,11 @@ package builtins
 
 import a "github.com/kode4food/sputter/api"
 
-func isSequence(c a.Context, args a.Sequence) a.Value {
-	a.AssertArity(args, 1)
-	v := args.First()
-	if s, ok := a.Eval(c, v).(a.Sequence); ok {
-		if s.IsSequence() {
-			return a.True
-		}
+func isSequence(v a.Value) bool {
+	if s, ok := v.(a.Sequence); ok {
+		return s.IsSequence()
 	}
-	return a.False
+	return false
 }
 
 func fetchSequence(c a.Context, args a.Sequence) a.Sequence {
@@ -70,11 +66,9 @@ func filter(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	registerPredicate(
-		a.NewFunction(isSequence).WithMetadata(a.Metadata{
-			a.MetaName: a.Name("seq?"),
-		}).(a.Function),
-	)
+	registerSequencePredicate(isSequence, a.Metadata{
+		a.MetaName: a.Name("seq?"),
+	})
 
 	registerAnnotated(
 		a.NewFunction(first).WithMetadata(a.Metadata{

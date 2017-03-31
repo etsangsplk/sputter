@@ -1,7 +1,6 @@
 package builtins_test
 
 import (
-	"fmt"
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
@@ -26,5 +25,5 @@ func TestNamespaces(t *testing.T) {
 
 	testBadCode(t, `
 		(ns foo:bar)
-	`, fmt.Sprintf(a.ExpectedUnqualified, "foo:bar"))
+	`, a.Err(a.ExpectedUnqualified, "foo:bar"))
 }

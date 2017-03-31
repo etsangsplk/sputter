@@ -1,7 +1,6 @@
 package builtins_test
 
 import (
-	"fmt"
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
@@ -27,7 +26,7 @@ func TestNestedNumber(t *testing.T) {
 }
 
 func TestNonNumber(t *testing.T) {
-	helloErr := fmt.Sprintf(a.ExpectedNumber, `"hello"`)
+	helloErr := a.Err(a.ExpectedNumber, `"hello"`)
 	testBadCode(t, `(+ 99 "hello")`, helloErr)
 	testBadCode(t, `(+ "hello")`, helloErr)
 }
@@ -63,7 +62,7 @@ func TestCompare(t *testing.T) {
 }
 
 func TestBadCompare(t *testing.T) {
-	helloErr := fmt.Sprintf(a.ExpectedNumber, `"hello"`)
+	helloErr := a.Err(a.ExpectedNumber, `"hello"`)
 	testBadCode(t, `(< 99 "hello")`, helloErr)
 	testBadCode(t, `(< "hello" "there")`, helloErr)
 }

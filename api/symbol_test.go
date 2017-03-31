@@ -92,7 +92,7 @@ func TestSymbolParsing(t *testing.T) {
 
 func TestAssertSymbol(t *testing.T) {
 	as := assert.New(t)
-	defer expectError(as, fmt.Sprintf(a.ExpectedSymbol, "37"))
+	defer expectError(as, a.Err(a.ExpectedSymbol, "37"))
 	a.AssertUnqualified(a.NewFloat(37))
 }
 
@@ -100,6 +100,6 @@ func TestAssertUnqualified(t *testing.T) {
 	as := assert.New(t)
 	a.AssertUnqualified(a.NewLocalSymbol("hello"))
 
-	defer expectError(as, fmt.Sprintf(a.ExpectedUnqualified, "bar:hello"))
+	defer expectError(as, a.Err(a.ExpectedUnqualified, "bar:hello"))
 	a.AssertUnqualified(a.NewQualifiedSymbol("hello", "bar"))
 }

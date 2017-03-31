@@ -44,13 +44,11 @@ func toHashMap(c a.Context, args a.Sequence) a.Value {
 	return hashMap(c, seq)
 }
 
-func isHashMap(c a.Context, args a.Sequence) a.Value {
-	a.AssertArity(args, 1)
-	v := args.First()
-	if _, ok := a.Eval(c, v).(a.Mapped); ok {
-		return a.True
+func isHashMap(v a.Value) bool {
+	if _, ok := v.(a.Mapped); ok {
+		return true
 	}
-	return a.False
+	return false
 }
 
 func init() {
@@ -66,9 +64,7 @@ func init() {
 		}),
 	)
 
-	registerPredicate(
-		a.NewFunction(isHashMap).WithMetadata(a.Metadata{
-			a.MetaName: a.Name("hash-map?"),
-		}).(a.Function),
-	)
+	registerSequencePredicate(isHashMap, a.Metadata{
+		a.MetaName: a.Name("hash-map?"),
+	})
 }

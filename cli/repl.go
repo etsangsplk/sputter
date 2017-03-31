@@ -213,9 +213,9 @@ func help(c a.Context, args a.Sequence) a.Value {
 		if d, ok := v.(a.Annotated); ok {
 			return d.Metadata()[a.MetaDoc]
 		}
-		panic(fmt.Sprintf("Symbol is not documented: %s", sym))
+		panic(a.Err("Symbol is not documented: %s", sym))
 	}
-	panic(fmt.Sprintf("Could not resolve symbol: %s", sym))
+	panic(a.Err("Could not resolve symbol: %s", sym))
 }
 
 func getBuiltInsNamespace() a.Namespace {

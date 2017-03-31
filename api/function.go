@@ -1,7 +1,5 @@
 package api
 
-import "fmt"
-
 const (
 	// BadArity is thrown when a Function has a fixed arity
 	BadArity = "expected %d argument(s), got %d"
@@ -14,9 +12,9 @@ const (
 )
 
 var defaultFunctionMetadata = Metadata{
-	MetaName: Name("<anon>"),
+	MetaName: Name("<lambda>"),
 	MetaType: "function",
-	MetaDoc:  "",
+	MetaDoc:  EmptyString,
 }
 
 // Function is a Value that can be invoked
@@ -81,7 +79,7 @@ func countUpTo(args Sequence, c int) int {
 func AssertArity(args Sequence, arity int) int {
 	c := countUpTo(args, arity+1)
 	if c != arity {
-		panic(fmt.Sprintf(BadArity, arity, c))
+		panic(Err(BadArity, arity, c))
 	}
 	return c
 }
@@ -90,7 +88,7 @@ func AssertArity(args Sequence, arity int) int {
 func AssertMinimumArity(args Sequence, arity int) int {
 	c := countUpTo(args, arity)
 	if c < arity {
-		panic(fmt.Sprintf(BadMinimumArity, arity, c))
+		panic(Err(BadMinimumArity, arity, c))
 	}
 	return c
 }
@@ -99,7 +97,7 @@ func AssertMinimumArity(args Sequence, arity int) int {
 func AssertArityRange(args Sequence, min int, max int) int {
 	c := countUpTo(args, max+1)
 	if c < min || c > max {
-		panic(fmt.Sprintf(BadArityRange, min, max, c))
+		panic(Err(BadArityRange, min, max, c))
 	}
 	return c
 }

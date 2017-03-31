@@ -1,6 +1,9 @@
 package api
 
-import "fmt"
+import (
+	"fmt"
+	"sync"
+)
 
 // ValueMapper returns a mapped representation of the specified Value
 type ValueMapper func(Value) Value
@@ -201,4 +204,13 @@ func (l *lazyConcat) Prepend(v Value) Sequence {
 
 func (l *lazyConcat) String() string {
 	return fmt.Sprintf("(concat :instance %p)", &l)
+}
+
+type channel struct {
+	ch   chan Value
+	cond *sync.Cond
+
+	isSeq bool
+	first Value
+	rest  Sequence
 }

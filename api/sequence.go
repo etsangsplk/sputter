@@ -1,7 +1,5 @@
 package api
 
-import "fmt"
-
 const (
 	// ExpectedCountable is thrown if taking count of a non-countable sequence
 	ExpectedCountable = "sequence is not countable"
@@ -75,5 +73,5 @@ func AssertSequence(v Value) Sequence {
 	if r, ok := v.(Sequence); ok {
 		return r
 	}
-	panic(fmt.Sprintf(ExpectedSequence, String(v)))
+	panic(Err(ExpectedSequence, String(v)))
 }

@@ -1,7 +1,6 @@
 package api_test
 
 import (
-	"fmt"
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
@@ -17,7 +16,7 @@ func TestParseNumber(t *testing.T) {
 	as.Equal(a.EqualTo, n1.Cmp(n2))
 	as.Equal(a.EqualTo, n2.Cmp(n3))
 
-	defer expectError(as, fmt.Sprintf(a.ExpectedNumber, `"'splosion!"`))
+	defer expectError(as, a.Err(a.ExpectedNumber, `"'splosion!"`))
 	a.ParseNumber("'splosion!")
 }
 
@@ -113,6 +112,6 @@ func TestAssertNumber(t *testing.T) {
 	as := assert.New(t)
 	a.AssertNumber(a.NewFloat(99))
 
-	defer expectError(as, fmt.Sprintf(a.ExpectedNumber, `"not a number"`))
+	defer expectError(as, a.Err(a.ExpectedNumber, `"not a number"`))
 	a.AssertNumber("not a number")
 }

@@ -3,10 +3,9 @@ package builtins
 import a "github.com/kode4food/sputter/api"
 
 type functionDefinition struct {
-	name     a.Name
-	doc      string
-	argNames a.Sequence
-	body     a.Sequence
+	args a.Sequence
+	body a.Sequence
+	meta a.Metadata
 }
 
 func argNames(n a.Sequence) []a.Name {
@@ -34,15 +33,17 @@ func getFunctionDefinition(args a.Sequence) *functionDefinition {
 	an := a.AssertSequence(av)
 
 	return &functionDefinition{
-		name:     fn,
-		doc:      ds,
-		argNames: an,
-		body:     i.Rest(),
+		args: an,
+		body: i.Rest(),
+		meta: a.Metadata{
+			a.MetaName: fn,
+			a.MetaDoc:  ds,
+		},
 	}
 }
 
 func defineFunction(closure a.Context, d *functionDefinition) a.Function {
-	an := argNames(d.argNames)
+	an := argNames(d.args)
 	ac := len(an)
 	db := d.body
 
@@ -55,16 +56,13 @@ func defineFunction(closure a.Context, d *functionDefinition) a.Function {
 			l.Put(n, a.Eval(c, v))
 		}
 		return a.EvalSequence(l, db)
-	}).WithMetadata(a.Metadata{
-		a.MetaName: d.name,
-		a.MetaDoc:  d.doc,
-	}).(a.Function)
+	}).WithMetadata(d.meta).(a.Function)
 }
 
 func defn(c a.Context, args a.Sequence) a.Value {
 	fd := getFunctionDefinition(args)
 	f := defineFunction(c, fd)
-	a.GetContextNamespace(c).Put(fd.name, f)
+	a.GetContextNamespace(c).Put(f.Name(), f)
 	return f
 }
 
@@ -73,8 +71,9 @@ func fn(c a.Context, args a.Sequence) a.Value {
 	an := a.AssertSequence(args.First())
 
 	return defineFunction(c, &functionDefinition{
-		argNames: an,
-		body:     args.Rest(),
+		args: an,
+		body: args.Rest(),
+		meta: a.Metadata{},
 	})
 }
 

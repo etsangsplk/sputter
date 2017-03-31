@@ -15,6 +15,9 @@ type Named interface {
 // Variables represents a mapping from Name to Value
 type Variables map[Name]Value
 
+// EmptyName represents a Name that hasn't been assigned (zero value)
+var EmptyName Name
+
 // Name makes Name Named
 func (n Name) Name() Name {
 	return n

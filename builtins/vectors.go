@@ -28,13 +28,11 @@ func toVector(c a.Context, args a.Sequence) a.Value {
 	return vector(c, seq)
 }
 
-func isVector(c a.Context, args a.Sequence) a.Value {
-	a.AssertArity(args, 1)
-	v := args.First()
-	if _, ok := a.Eval(c, v).(a.Vector); ok {
-		return a.True
+func isVector(v a.Value) bool {
+	if _, ok := v.(a.Vector); ok {
+		return true
 	}
-	return a.False
+	return false
 }
 
 func init() {
@@ -50,9 +48,7 @@ func init() {
 		}),
 	)
 
-	registerPredicate(
-		a.NewFunction(isVector).WithMetadata(a.Metadata{
-			a.MetaName: a.Name("vector?"),
-		}).(a.Function),
-	)
+	registerSequencePredicate(isVector, a.Metadata{
+		a.MetaName: a.Name("vector?"),
+	})
 }

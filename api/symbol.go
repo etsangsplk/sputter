@@ -1,9 +1,6 @@
 package api
 
-import (
-	"fmt"
-	"strings"
-)
+import "strings"
 
 const (
 	// UnknownSymbol is thrown if a symbol cannot be resolved
@@ -99,7 +96,7 @@ func (s symbol) Eval(c Context) Value {
 	if r, ok := s.Resolve(c); ok {
 		return r
 	}
-	panic(fmt.Sprintf(UnknownSymbol, s.name))
+	panic(Err(UnknownSymbol, s.name))
 }
 
 func (s symbol) String() string {
@@ -113,7 +110,7 @@ func AssertUnqualified(v Value) Symbol {
 		if r.Domain() == LocalDomain {
 			return r
 		}
-		panic(fmt.Sprintf(ExpectedUnqualified, r.Qualified()))
+		panic(Err(ExpectedUnqualified, r.Qualified()))
 	}
-	panic(fmt.Sprintf(ExpectedSymbol, String(v)))
+	panic(Err(ExpectedSymbol, String(v)))
 }

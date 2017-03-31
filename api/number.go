@@ -37,7 +37,7 @@ func NewFloat(f float64) *Number {
 	if res, err := nativeDecimal().SetFloat64(f); err == nil {
 		return &Number{decimal: res}
 	}
-	panic(fmt.Sprintf(ExpectedNumber, fmt.Sprintf("%f", f)))
+	panic(Err(ExpectedNumber, fmt.Sprintf("%f", f)))
 }
 
 // NewRatio generates a new Number from a ratio
@@ -62,7 +62,7 @@ func ParseNumber(s string) *Number {
 	if r, ok := nativeRatio().SetString(s); ok {
 		return &Number{ratio: r}
 	}
-	panic(fmt.Sprintf(ExpectedNumber, String(s)))
+	panic(Err(ExpectedNumber, String(s)))
 }
 
 func (l *Number) toDecimal() *apd.Decimal {
@@ -74,7 +74,7 @@ func (l *Number) toDecimal() *apd.Decimal {
 	if res, err := nativeDecimal().SetFloat64(rf); err == nil {
 		return res
 	}
-	panic(fmt.Sprintf(ExpectedNumber, l.ratio.String()))
+	panic(Err(ExpectedNumber, l.ratio.String()))
 }
 
 // Cmp compares this Number Value to another Value
@@ -146,5 +146,5 @@ func AssertNumber(v Value) *Number {
 	if r, ok := v.(*Number); ok {
 		return r
 	}
-	panic(fmt.Sprintf(ExpectedNumber, String(v)))
+	panic(Err(ExpectedNumber, String(v)))
 }

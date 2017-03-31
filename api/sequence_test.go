@@ -1,7 +1,6 @@
 package api_test
 
 import (
-	"fmt"
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
@@ -12,7 +11,7 @@ func TestAssertSequence(t *testing.T) {
 	as := assert.New(t)
 	a.AssertSequence(a.NewList("hello"))
 
-	defer expectError(as, fmt.Sprintf(a.ExpectedSequence, "99"))
+	defer expectError(as, a.Err(a.ExpectedSequence, "99"))
 	a.AssertSequence(a.NewFloat(99))
 }
 

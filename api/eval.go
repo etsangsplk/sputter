@@ -1,7 +1,5 @@
 package api
 
-import "fmt"
-
 // ExpectedApplicable is thrown when a Value is not Applicable
 const ExpectedApplicable = "value does not support application: %s"
 
@@ -56,5 +54,5 @@ func AssertApplicable(v Value) Applicable {
 	if r, ok := v.(Applicable); ok {
 		return r
 	}
-	panic(fmt.Sprintf(ExpectedApplicable, String(v)))
+	panic(Err(ExpectedApplicable, String(v)))
 }

@@ -10,22 +10,6 @@ func registerAnnotated(v a.Annotated) {
 	BuiltIns.Put(n, v)
 }
 
-func registerPredicate(f a.Function) {
-	pn := a.Name("!" + f.Name())
-	p := a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
-		r := f.Apply(c, args)
-		if r == a.True {
-			return a.False
-		}
-		return a.True
-	}).WithMetadata(a.Metadata{
-		a.MetaName: pn,
-	})
-
-	registerAnnotated(f)
-	registerAnnotated(p)
-}
-
 func do(c a.Context, args a.Sequence) a.Value {
 	return a.EvalSequence(c, args)
 }

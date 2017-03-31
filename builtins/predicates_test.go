@@ -8,12 +8,12 @@ import (
 )
 
 func TestPredicates(t *testing.T) {
-	testCode(t, `(eq true true)`, a.True)
-	testCode(t, `(eq true false)`, a.False)
-	testCode(t, `(eq false false)`, a.True)
+	testCode(t, `(eq true true true)`, a.True)
+	testCode(t, `(eq true false true)`, a.False)
+	testCode(t, `(eq false false false)`, a.True)
 	testCode(t, `(eq 1 1)`, a.False)
 
-	testCode(t, `(!eq true true)`, a.False)
+	testCode(t, `(!eq true true true)`, a.False)
 	testCode(t, `(!eq true false)`, a.True)
 	testCode(t, `(!eq false false)`, a.False)
 	testCode(t, `(!eq 1 1)`, a.True)

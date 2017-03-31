@@ -2,20 +2,56 @@ package builtins
 
 import a "github.com/kode4food/sputter/api"
 
-func identical(c a.Context, args a.Sequence) a.Value {
-	a.AssertArity(args, 2)
-	l := args.First()
-	r := args.Rest().First()
-	if a.Eval(c, l) == a.Eval(c, r) {
-		return a.True
-	}
-	return a.False
+func registerPredicate(f a.Function) {
+	registerAnnotated(f)
+
+	registerAnnotated(
+		a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
+			if f.Apply(c, args) == a.True {
+				return a.False
+			}
+			return a.True
+		}).WithMetadata(a.Metadata{
+			a.MetaName: a.Name("!" + f.Name()),
+		}),
+	)
 }
 
-func isNil(c a.Context, args a.Sequence) a.Value {
-	a.AssertMinimumArity(args, 1)
-	for i := args; i.IsSequence(); i = i.Rest() {
-		if a.Eval(c, i.First()) != a.Nil {
+func registerSequencePredicate(f a.ValueFilter, md a.Metadata) {
+	registerAnnotated(
+		a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
+			a.AssertMinimumArity(args, 1)
+			for i := args; i.IsSequence(); i = i.Rest() {
+				v := a.Eval(c, i.First())
+				if !f(v) {
+					return a.False
+				}
+			}
+			return a.True
+		}).WithMetadata(md),
+	)
+
+	registerAnnotated(
+		a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
+			a.AssertMinimumArity(args, 1)
+			for i := args; i.IsSequence(); i = i.Rest() {
+				v := a.Eval(c, i.First())
+				if f(v) {
+					return a.False
+				}
+			}
+			return a.True
+		}).WithMetadata(md.Merge(a.Metadata{
+			a.MetaName: a.Name("!" + md[a.MetaName].(a.Name)),
+		})),
+	)
+}
+
+func identical(c a.Context, args a.Sequence) a.Value {
+	a.AssertMinimumArity(args, 2)
+	l := a.Eval(c, args.First())
+	for i := args.Rest(); i.IsSequence(); i = i.Rest() {
+		if l != a.Eval(c, i.First()) {
 			return a.False
 		}
 	}
@@ -29,9 +65,9 @@ func init() {
 		}).(a.Function),
 	)
 
-	registerPredicate(
-		a.NewFunction(isNil).WithMetadata(a.Metadata{
-			a.MetaName: a.Name("nil?"),
-		}).(a.Function),
-	)
+	registerSequencePredicate(func(v a.Value) bool {
+		return v == a.Nil
+	}, a.Metadata{
+		a.MetaName: a.Name("nil?"),
+	})
 }
