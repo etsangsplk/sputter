@@ -1,5 +1,7 @@
 package api
 
+import "fmt"
+
 const (
 	defaultNamespaceEntries = 128
 	defaultSymbolEntries    = 4096
@@ -19,7 +21,7 @@ const (
 	ContextDomain = Name("*ns*")
 
 	// ExpectedNamespace is thrown when a Value is not a Namespace
-	ExpectedNamespace = "value is not a namespace"
+	ExpectedNamespace = "value '%s' is not a namespace"
 )
 
 type symbolMap map[Name](Symbol)
@@ -90,7 +92,7 @@ func AssertNamespace(v Value) Namespace {
 	if r, ok := v.(Namespace); ok {
 		return r
 	}
-	panic(ExpectedNamespace)
+	panic(fmt.Sprintf(ExpectedNamespace, String(v)))
 }
 
 func init() {

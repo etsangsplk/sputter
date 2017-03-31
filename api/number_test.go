@@ -1,6 +1,7 @@
 package api_test
 
 import (
+	"fmt"
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
@@ -112,6 +113,6 @@ func TestAssertNumber(t *testing.T) {
 	as := assert.New(t)
 	a.AssertNumber(a.NewFloat(99))
 
-	defer expectError(as, a.ExpectedNumber)
+	defer expectError(as, fmt.Sprintf(a.ExpectedNumber, `"not a number"`))
 	a.AssertNumber("not a number")
 }

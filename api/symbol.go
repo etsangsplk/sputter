@@ -10,7 +10,7 @@ const (
 	UnknownSymbol = "symbol '%s' has not been defined"
 
 	// ExpectedSymbol is thrown when a Value is not a unqualified Symbol
-	ExpectedSymbol = "value is not a symbol"
+	ExpectedSymbol = "value '%s' is not a symbol"
 
 	// ExpectedUnqualified is thrown when a Symbol is unexpectedly qualified
 	ExpectedUnqualified = "symbol '%s' should be unqualified"
@@ -115,5 +115,5 @@ func AssertUnqualified(v Value) Symbol {
 		}
 		panic(fmt.Sprintf(ExpectedUnqualified, r.Qualified()))
 	}
-	panic(ExpectedSymbol)
+	panic(fmt.Sprintf(ExpectedSymbol, String(v)))
 }

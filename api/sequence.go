@@ -1,11 +1,13 @@
 package api
 
+import "fmt"
+
 const (
 	// ExpectedCountable is thrown if taking count of a non-countable sequence
 	ExpectedCountable = "sequence is not countable"
 
 	// ExpectedSequence is thrown when a Value is not a Sequence
-	ExpectedSequence = "value is not a sequence"
+	ExpectedSequence = "value '%s' is not a sequence"
 )
 
 // SequenceProcessor is the standard signature for a function that is
@@ -73,5 +75,5 @@ func AssertSequence(v Value) Sequence {
 	if r, ok := v.(Sequence); ok {
 		return r
 	}
-	panic(ExpectedSequence)
+	panic(fmt.Sprintf(ExpectedSequence, String(v)))
 }

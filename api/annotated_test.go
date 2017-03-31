@@ -1,11 +1,12 @@
 package api_test
 
 import (
+	"fmt"
+	"strings"
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
 	"github.com/stretchr/testify/assert"
-	"strings"
 )
 
 func TestMetadata(t *testing.T) {
@@ -31,6 +32,6 @@ func TestAnnotated(t *testing.T) {
 	f := a.NewFunction(nil)
 	as.Equal(f, a.AssertAnnotated(f), "function asserts as annotated")
 
-	defer expectError(as, a.ExpectedAnnotated)
+	defer expectError(as, fmt.Sprintf(a.ExpectedAnnotated, "99"))
 	a.AssertAnnotated(a.NewFloat(99))
 }

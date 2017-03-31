@@ -1,13 +1,14 @@
 package api
 
 import (
+	"fmt"
 	"math/big"
 
 	"github.com/cockroachdb/apd"
 )
 
 // ExpectedNumber is thrown when a Value is not a Number
-const ExpectedNumber = "value is not a number"
+const ExpectedNumber = "value '%s' is not a number"
 
 // Comparison represents the result of a equality comparison
 type Comparison int
@@ -145,5 +146,5 @@ func AssertNumber(v Value) *Number {
 	if r, ok := v.(*Number); ok {
 		return r
 	}
-	panic(ExpectedNumber)
+	panic(fmt.Sprintf(ExpectedNumber, String(v)))
 }

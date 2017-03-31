@@ -1,9 +1,12 @@
 package api
 
-import "bytes"
+import (
+	"bytes"
+	"fmt"
+)
 
 // ExpectedAnnotated is thrown if a Value is not Annotated
-const ExpectedAnnotated = "value does not support annotation"
+const ExpectedAnnotated = "value '%s' does not support annotation"
 
 var (
 	// MetaName is the Metadata key for a Value's Name
@@ -60,5 +63,5 @@ func AssertAnnotated(v Value) Annotated {
 	if a, ok := v.(Annotated); ok {
 		return a
 	}
-	panic(ExpectedAnnotated)
+	panic(fmt.Sprintf(ExpectedAnnotated, String(v)))
 }

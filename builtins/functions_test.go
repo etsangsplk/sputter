@@ -34,9 +34,11 @@ func TestFunction(t *testing.T) {
 }
 
 func TestBadFunction(t *testing.T) {
-	testBadCode(t, `(defn blah [name 99 bad] (name))`, a.ExpectedSymbol)
-	testBadCode(t, `(defn blah 99 (name))`, a.ExpectedSequence)
-	testBadCode(t, `(defn 99 [x y] (+ x y))`, a.ExpectedSymbol)
+	symErr := fmt.Sprintf(a.ExpectedSymbol, "99")
+	seqErr := fmt.Sprintf(a.ExpectedSequence, "99")
+	testBadCode(t, `(defn blah [name 99 bad] (name))`, symErr)
+	testBadCode(t, `(defn blah 99 (name))`, seqErr)
+	testBadCode(t, `(defn 99 [x y] (+ x y))`, symErr)
 }
 
 func TestBadFunctionArity(t *testing.T) {
@@ -63,7 +65,7 @@ func TestLambda(t *testing.T) {
 }
 
 func TestBadLambda(t *testing.T) {
-	testBadCode(t, `(fn 99 "hello")`, a.ExpectedSequence)
+	testBadCode(t, `(fn 99 "hello")`, fmt.Sprintf(a.ExpectedSequence, "99"))
 }
 
 func TestApply(t *testing.T) {
@@ -74,5 +76,6 @@ func TestApply(t *testing.T) {
 			[1 2 3])
 	`, a.NewFloat(6))
 
-	testBadCode(t, `(apply 32 [1 2 3])`, a.ExpectedApplicable)
+	appErr := fmt.Sprintf(a.ExpectedApplicable, "32")
+	testBadCode(t, `(apply 32 [1 2 3])`, appErr)
 }

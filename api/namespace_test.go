@@ -1,6 +1,7 @@
 package api_test
 
 import (
+	"fmt"
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
@@ -22,6 +23,6 @@ func TestAssertNamespace(t *testing.T) {
 	as := assert.New(t)
 	a.AssertNamespace(a.GetNamespace("hello"))
 
-	defer expectError(as, a.ExpectedNamespace)
+	defer expectError(as, fmt.Sprintf(a.ExpectedNamespace, a.String("hello")))
 	a.AssertNamespace("hello")
 }
