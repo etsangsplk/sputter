@@ -9,16 +9,12 @@ import (
 func TestChannel(t *testing.T) {
 	ns := a.GetNamespace(a.UserDomain)
 	ns.Delete("c")
-	ns.Delete("e")
-	ns.Delete("s")
 
 	testCode(t, `
-		(def c (channel))
-		(def e (:emit c))
-		(def s (:seq c))
-
-		(go (e "hello"))
-		(first s)
+		(def c (channel 1))
+		(apply (:emit c) '("hello")) ; buffer of 1
+		(apply (:close c) ())
+		(first (:seq c))
 	`, "hello")
 }
 

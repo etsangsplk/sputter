@@ -3,12 +3,23 @@ package builtins
 import a "github.com/kode4food/sputter/api"
 
 var (
-	// MetaEmitter is the key used to retrieve the Emitter from a Channel
+	// MetaEmitter is the key used to emit to a Channel
 	MetaEmitter = a.NewKeyword("emit")
+
+	// MetaClose is the key used to close a Channel
+	MetaClose = a.NewKeyword("close")
 
 	// MetaSequence is the key used to retrieve the Sequence from a Channel
 	MetaSequence = a.NewKeyword("seq")
 )
+
+func closeFunction(e a.Emitter) a.Function {
+	return a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
+		a.AssertArity(args, 0)
+		e.Close()
+		return a.Nil
+	}).(a.Function)
+}
 
 func emitFunction(e a.Emitter) a.Function {
 	return a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
@@ -23,18 +34,24 @@ func emitFunction(e a.Emitter) a.Function {
 }
 
 func channel(_ a.Context, args a.Sequence) a.Value {
-	a.AssertArity(args, 0)
-	e, s := a.NewChannel()
+	buf := 0
+	if a.AssertArityRange(args, 0, 1) == 1 {
+		v := a.AssertNumber(args.First())
+		f, _ := v.Float64()
+		buf = int(f)
+	}
+	e, s := a.NewChannel(buf)
 
 	return a.ArrayMap{
 		a.Vector{MetaEmitter, emitFunction(e)},
+		a.Vector{MetaClose, closeFunction(e)},
 		a.Vector{MetaSequence, s},
 	}
 }
 
 func _go(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
-	e, s := a.NewChannel()
+	e, s := a.NewChannel(0)
 
 	l := a.ChildContext(c)
 	l.Put("emit", emitFunction(e))

@@ -26,8 +26,8 @@ type channelSequence struct {
 }
 
 // NewChannel produces a Emitter and Sequence pair
-func NewChannel() (Emitter, Sequence) {
-	ch := make(chan Value)
+func NewChannel(buf int) (Emitter, Sequence) {
+	ch := make(chan Value, buf)
 	return NewChannelEmitter(ch), NewChannelSequence(ch)
 }
 

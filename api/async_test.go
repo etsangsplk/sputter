@@ -12,7 +12,7 @@ import (
 func TestChannel(t *testing.T) {
 	as := assert.New(t)
 
-	e, s := a.NewChannel()
+	e, s := a.NewChannel(1)
 	s = s.Prepend(1)
 
 	var wg sync.WaitGroup
