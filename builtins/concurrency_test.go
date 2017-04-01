@@ -7,6 +7,10 @@ import (
 )
 
 func TestGoConcurrency(t *testing.T) {
+	ns := a.GetNamespace(a.UserDomain)
+	ns.Delete("x")
+	ns.Delete("r")
+
 	testCode(t, `
 		(def x (go
 			(emit 99)
