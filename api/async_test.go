@@ -12,20 +12,20 @@ import (
 func TestChannel(t *testing.T) {
 	as := assert.New(t)
 
-	ch := make(chan a.Value)
-	s := a.NewChannel(ch).Prepend(1)
+	e, s := a.NewChannel()
+	s = s.Prepend(1)
 
 	var wg sync.WaitGroup
 
 	gen := func() {
-		ch <- 2
+		e.Emit(2)
 		time.Sleep(time.Millisecond * 50)
-		ch <- 3
+		e.Emit(3)
 		time.Sleep(time.Millisecond * 30)
-		ch <- "foo"
+		e.Emit("foo")
 		time.Sleep(time.Millisecond * 10)
-		ch <- "bar"
-		close(ch)
+		e.Emit("bar")
+		e.Close()
 		wg.Done()
 	}
 

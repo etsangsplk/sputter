@@ -1,8 +1,21 @@
 package api
 
-import "sync"
+import (
+	"runtime"
+	"sync"
+)
 
-type channel struct {
+// Emitter is an interface that is used to emit Values to a Channel
+type Emitter interface {
+	Emit(Value) Emitter
+	Close() Emitter
+}
+
+type emitter struct {
+	ch chan Value
+}
+
+type channelSequence struct {
 	ch    chan Value
 	cond  *sync.Cond
 	ready bool
@@ -12,16 +25,53 @@ type channel struct {
 	rest  Sequence
 }
 
-// NewChannel produces a new Sequence whose Values come from a Go chan
-func NewChannel(ch chan Value) Sequence {
-	return &channel{
+// NewChannel produces a Emitter and Sequence pair
+func NewChannel() (Emitter, Sequence) {
+	ch := make(chan Value)
+	return NewChannelEmitter(ch), NewChannelSequence(ch)
+}
+
+// NewChannelEmitter produces an Emitter for sending Values to a Go chan
+func NewChannelEmitter(ch chan Value) Emitter {
+	r := &emitter{
+		ch: ch,
+	}
+	runtime.SetFinalizer(r, func(e *emitter) {
+		if e.ch != nil {
+			close(e.ch)
+			e.ch = nil
+		}
+	})
+	return r
+}
+
+// Emit will send a Value to the Go chan
+func (e *emitter) Emit(v Value) Emitter {
+	if e.ch != nil {
+		e.ch <- v
+	}
+	return e
+}
+
+// Close will close the Go chan
+func (e *emitter) Close() Emitter {
+	if e.ch != nil {
+		close(e.ch)
+		e.ch = nil
+	}
+	return e
+}
+
+// NewChannelSequence produces a new Sequence whose Values come from a Go chan
+func NewChannelSequence(ch chan Value) Sequence {
+	return &channelSequence{
 		ch:   ch,
 		cond: &sync.Cond{L: &sync.Mutex{}},
 		rest: EmptyList,
 	}
 }
 
-func (c *channel) resolve() *channel {
+func (c *channelSequence) resolve() *channelSequence {
 	if c.ready {
 		return c
 	}
@@ -41,7 +91,7 @@ func (c *channel) resolve() *channel {
 	if first, isSeq := <-ch; isSeq {
 		c.isSeq = isSeq
 		c.first = first
-		c.rest = NewChannel(ch)
+		c.rest = NewChannelSequence(ch)
 	}
 
 	c.ready = true
@@ -51,20 +101,20 @@ func (c *channel) resolve() *channel {
 	return c
 }
 
-func (c *channel) IsSequence() bool {
+func (c *channelSequence) IsSequence() bool {
 	return c.resolve().isSeq
 }
 
-func (c *channel) First() Value {
+func (c *channelSequence) First() Value {
 	return c.resolve().first
 }
 
-func (c *channel) Rest() Sequence {
+func (c *channelSequence) Rest() Sequence {
 	return c.resolve().rest
 }
 
-func (c *channel) Prepend(v Value) Sequence {
-	return &channel{
+func (c *channelSequence) Prepend(v Value) Sequence {
+	return &channelSequence{
 		ready: true,
 		isSeq: true,
 		first: v,
