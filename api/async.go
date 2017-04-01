@@ -2,6 +2,16 @@ package api
 
 import "sync"
 
+type channel struct {
+	ch    chan Value
+	cond  *sync.Cond
+	ready bool
+
+	isSeq bool
+	first Value
+	rest  Sequence
+}
+
 // NewChannel produces a new Sequence whose Values come from a Go chan
 func NewChannel(ch chan Value) Sequence {
 	return &channel{
@@ -12,6 +22,10 @@ func NewChannel(ch chan Value) Sequence {
 }
 
 func (c *channel) resolve() *channel {
+	if c.ready {
+		return c
+	}
+
 	c.cond.L.Lock()
 	if c.ch == nil {
 		c.cond.Wait()
@@ -29,6 +43,7 @@ func (c *channel) resolve() *channel {
 		c.rest = NewChannel(ch)
 	}
 
+	c.ready = true
 	c.cond.Broadcast()
 	return c
 }
@@ -47,7 +62,8 @@ func (c *channel) Rest() Sequence {
 
 func (c *channel) Prepend(v Value) Sequence {
 	return &channel{
-		cond:  &sync.Cond{L: &sync.Mutex{}},
+		ready: true,
+		isSeq: true,
 		first: v,
 		rest:  c,
 	}

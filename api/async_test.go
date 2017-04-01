@@ -1,6 +1,7 @@
 package api_test
 
 import (
+	"sync"
 	"testing"
 	"time"
 
@@ -9,9 +10,14 @@ import (
 )
 
 func TestChannel(t *testing.T) {
-	ch := make(chan a.Value)
+	as := assert.New(t)
 
-	go func() {
+	ch := make(chan a.Value)
+	s := a.NewChannel(ch).Prepend(1)
+
+	var wg sync.WaitGroup
+
+	gen := func() {
 		ch <- 2
 		time.Sleep(time.Millisecond * 50)
 		ch <- 3
@@ -20,11 +26,10 @@ func TestChannel(t *testing.T) {
 		time.Sleep(time.Millisecond * 10)
 		ch <- "bar"
 		close(ch)
-	}()
+		wg.Done()
+	}
 
 	check := func() {
-		as := assert.New(t)
-		s := a.NewChannel(ch).Prepend(1)
 		as.Equal(1, s.First(), "first is right")
 		as.Equal(2, s.Rest().First(), "second is right")
 		as.Equal(3, s.Rest().Rest().First(), "third is right")
@@ -33,8 +38,12 @@ func TestChannel(t *testing.T) {
 		as.True(s.Rest().Rest().Rest().Rest().IsSequence(), "more!")
 		as.Equal("bar", s.Rest().Rest().Rest().Rest().First(), "bar is right")
 		as.False(s.Rest().Rest().Rest().Rest().Rest().IsSequence(), "eof")
+		wg.Done()
 	}
 
+	wg.Add(3)
 	go check()
 	go check()
+	go gen()
+	wg.Wait()
 }
