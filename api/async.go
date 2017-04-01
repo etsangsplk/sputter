@@ -26,16 +26,17 @@ func (c *channel) resolve() *channel {
 		return c
 	}
 
-	c.cond.L.Lock()
+	cond := c.cond
+	cond.L.Lock()
 	if c.ch == nil {
-		c.cond.Wait()
-		c.cond.L.Unlock()
+		cond.Wait()
+		cond.L.Unlock()
 		return c
 	}
 
 	ch := c.ch
 	c.ch = nil
-	c.cond.L.Unlock()
+	cond.L.Unlock()
 
 	if first, isSeq := <-ch; isSeq {
 		c.isSeq = isSeq
@@ -44,7 +45,9 @@ func (c *channel) resolve() *channel {
 	}
 
 	c.ready = true
-	c.cond.Broadcast()
+	c.cond = nil
+	cond.Broadcast()
+
 	return c
 }
 

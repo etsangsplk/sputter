@@ -41,9 +41,10 @@ func TestChannel(t *testing.T) {
 		wg.Done()
 	}
 
-	wg.Add(3)
+	wg.Add(4)
 	go check()
 	go check()
 	go gen()
+	go check()
 	wg.Wait()
 }
