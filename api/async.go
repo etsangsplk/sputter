@@ -58,6 +58,7 @@ func (e *emitter) Close() Emitter {
 	if e.ch != nil {
 		close(e.ch)
 		e.ch = nil
+		runtime.SetFinalizer(e, nil)
 	}
 	return e
 }
