@@ -11,13 +11,13 @@ func TestChannel(t *testing.T) {
 	ns.Delete("c")
 	ns.Delete("e")
 	ns.Delete("s")
-	
+
 	testCode(t, `
 		(def c (channel))
 		(def e (:emit c))
 		(def s (:seq c))
-		
-		(go (e "hello"))	
+
+		(go (e "hello"))
 		(first s)
 	`, "hello")
 }
@@ -25,13 +25,11 @@ func TestChannel(t *testing.T) {
 func TestGoConcurrency(t *testing.T) {
 	ns := a.GetNamespace(a.UserDomain)
 	ns.Delete("g")
-	ns.Delete("r")
 
 	testCode(t, `
 		(def g (go
 			(emit 99)
 			(emit 100 1000)))
-		(def r (to-vector g))
-		(+ (first r) (first (rest r)) (first (rest (rest r))))
+		(apply + g)
 	`, a.NewFloat(1199))
 }
