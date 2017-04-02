@@ -5,10 +5,19 @@ import (
 	"sync"
 )
 
+// ExpectedUndelivered is thrown on an attempt to deliver a Promise twice
+const ExpectedUndelivered = "Can't deliver a Promise twice"
+
 // Emitter is an interface that is used to emit Values to a Channel
 type Emitter interface {
 	Emit(Value) Emitter
 	Close() Emitter
+}
+
+// Promise represents a Value that will eventually be resolved
+type Promise interface {
+	Deliver(Value)
+	Value() Value
 }
 
 type emitter struct {
@@ -23,6 +32,12 @@ type channelSequence struct {
 	isSeq bool
 	first Value
 	rest  Sequence
+}
+
+type promise struct {
+	cond  *sync.Cond
+	ready bool
+	val   Value
 }
 
 // NewChannel produces a Emitter and Sequence pair
@@ -79,6 +94,7 @@ func (c *channelSequence) resolve() *channelSequence {
 
 	cond := c.cond
 	cond.L.Lock()
+
 	if c.ch == nil {
 		cond.Wait()
 		cond.L.Unlock()
@@ -121,4 +137,41 @@ func (c *channelSequence) Prepend(v Value) Sequence {
 		first: v,
 		rest:  c,
 	}
+}
+
+// NewPromise instantiates a new Promise
+func NewPromise() Promise {
+	return &promise{
+		cond: &sync.Cond{L: &sync.Mutex{}},
+	}
+}
+
+func (p *promise) Value() Value {
+	if p.ready {
+		return p.val
+	}
+
+	cond := p.cond
+	cond.L.Lock()
+	cond.Wait()
+	cond.L.Unlock()
+	return p.val
+}
+
+func (p *promise) Deliver(v Value) {
+	cond := p.cond
+	cond.L.Lock()
+
+	if p.ready {
+		cond.L.Unlock()
+		if v == p.val {
+			return
+		}
+		panic(ExpectedUndelivered)
+	}
+
+	p.val = v
+	p.ready = true
+	cond.L.Unlock()
+	cond.Broadcast()
 }

@@ -48,3 +48,20 @@ func TestChannel(t *testing.T) {
 	go check()
 	wg.Wait()
 }
+
+func TestPromise(t *testing.T) {
+	as := assert.New(t)
+	p1 := a.NewPromise()
+
+	go func() {
+		time.Sleep(time.Millisecond * 50)
+		p1.Deliver("hello")
+	}()
+
+	as.Equal("hello", p1.Value(), "returned correctly")
+	p1.Deliver("hello")
+	as.Equal("hello", p1.Value(), "still okay")
+
+	defer expectError(as, a.ExpectedUndelivered)
+	p1.Deliver("goodybye")
+}
