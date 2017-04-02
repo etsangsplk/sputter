@@ -63,5 +63,5 @@ func TestPromise(t *testing.T) {
 	as.Equal("hello", p1.Value(), "still okay")
 
 	defer expectError(as, a.ExpectedUndelivered)
-	p1.Deliver("goodybye")
+	p1.Deliver("goodbye")
 }
