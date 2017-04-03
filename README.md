@@ -47,7 +47,7 @@ that will change rapidly.  The current built-in forms are:
   * Vectors: `vector`, `vector?`, `!vector?`, `to-vector`
   * Metadata: `meta`, `with-meta`
   * Comprehensions: `concat`, `map`, `filter`
-  * Concurrency: `channel`, `go`
+  * Concurrency: `channel`, `async`, `promise`, `future`
   * I/O: `print`, `println`, `pr`, `prn`
 
 ## License (MIT License)

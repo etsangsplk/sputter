@@ -1,6 +1,9 @@
 package builtins
 
-import a "github.com/kode4food/sputter/api"
+import (
+	a "github.com/kode4food/sputter/api"
+	d "github.com/kode4food/sputter/docstring"
+)
 
 var (
 	// MetaEmitter is the key used to emit to a Channel
@@ -11,6 +14,18 @@ var (
 
 	// MetaSequence is the key used to retrieve the Sequence from a Channel
 	MetaSequence = a.NewKeyword("seq")
+
+	// MetaPromise is the key used to identify a Promise
+	MetaPromise = a.NewKeyword("promise")
+
+	// MetaFuture is the key used to identify a Future
+	MetaFuture = a.NewKeyword("future")
+)
+
+var (
+	emitterMetadata = a.Metadata{MetaEmitter: a.True}
+	promiseMetadata = a.Metadata{MetaPromise: a.True}
+	futureMetadata  = a.Metadata{MetaFuture: a.True}
 )
 
 func closeFunction(e a.Emitter) a.Function {
@@ -28,9 +43,7 @@ func emitFunction(e a.Emitter) a.Function {
 			e.Emit(a.Eval(c, i.First()))
 		}
 		return a.Nil
-	}).WithMetadata(a.Metadata{
-		MetaEmitter: a.True,
-	}).(a.Function)
+	}).WithMetadata(emitterMetadata).(a.Function)
 }
 
 func channel(_ a.Context, args a.Sequence) a.Value {
@@ -49,7 +62,7 @@ func channel(_ a.Context, args a.Sequence) a.Value {
 	}
 }
 
-func _go(c a.Context, args a.Sequence) a.Value {
+func async(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
 	e, s := a.NewChannel(0)
 
@@ -64,6 +77,34 @@ func _go(c a.Context, args a.Sequence) a.Value {
 	return s
 }
 
+func promise(_ a.Context, args a.Sequence) a.Value {
+	a.AssertArity(args, 0)
+	p := a.NewPromise()
+
+	return a.NewFunction(
+		func(c a.Context, args a.Sequence) a.Value {
+			if a.AssertArityRange(args, 0, 1) == 1 {
+				return p.Deliver(a.Eval(c, args.First()))
+			}
+			return p.Value()
+		},
+	).WithMetadata(promiseMetadata).(a.Function)
+}
+
+func future(c a.Context, args a.Sequence) a.Value {
+	a.AssertMinimumArity(args, 1)
+	p := a.NewPromise()
+
+	go p.Deliver(a.EvalSequence(c, args))
+
+	return a.NewFunction(
+		func(_ a.Context, args a.Sequence) a.Value {
+			a.AssertArity(args, 0)
+			return p.Value()
+		},
+	).WithMetadata(futureMetadata).(a.Function)
+}
+
 func init() {
 	registerAnnotated(
 		a.NewFunction(channel).WithMetadata(a.Metadata{
@@ -72,8 +113,23 @@ func init() {
 	)
 
 	registerAnnotated(
-		a.NewFunction(_go).WithMetadata(a.Metadata{
-			a.MetaName: a.Name("go"),
+		a.NewFunction(async).WithMetadata(a.Metadata{
+			a.MetaName: a.Name("async"),
+			a.MetaDoc:  string(d.MustAsset("docstring/async.md")),
+		}),
+	)
+
+	registerAnnotated(
+		a.NewFunction(promise).WithMetadata(a.Metadata{
+			a.MetaName: a.Name("promise"),
+			a.MetaDoc:  string(d.MustAsset("docstring/promise.md")),
+		}),
+	)
+
+	registerAnnotated(
+		a.NewFunction(future).WithMetadata(a.Metadata{
+			a.MetaName: a.Name("future"),
+			a.MetaDoc:  string(d.MustAsset("docstring/future.md")),
 		}),
 	)
 }

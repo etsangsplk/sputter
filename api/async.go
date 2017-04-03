@@ -6,7 +6,15 @@ import (
 )
 
 // ExpectedUndelivered is thrown on an attempt to deliver a Promise twice
-const ExpectedUndelivered = "Can't deliver a Promise twice"
+const ExpectedUndelivered = "Can't deliver a promise twice"
+
+type asyncState int
+
+const (
+	undeliveredState asyncState = iota
+	deliveringState
+	deliveredState
+)
 
 // Emitter is an interface that is used to emit Values to a Channel
 type Emitter interface {
@@ -16,7 +24,7 @@ type Emitter interface {
 
 // Promise represents a Value that will eventually be resolved
 type Promise interface {
-	Deliver(Value)
+	Deliver(Value) Value
 	Value() Value
 }
 
@@ -25,9 +33,9 @@ type emitter struct {
 }
 
 type channelSequence struct {
-	ch    chan Value
 	cond  *sync.Cond
-	ready bool
+	state asyncState
+	ch    chan Value
 
 	isSeq bool
 	first Value
@@ -36,7 +44,7 @@ type channelSequence struct {
 
 type promise struct {
 	cond  *sync.Cond
-	ready bool
+	state asyncState
 	val   Value
 }
 
@@ -81,26 +89,28 @@ func (e *emitter) Close() Emitter {
 // NewChannelSequence produces a new Sequence whose Values come from a Go chan
 func NewChannelSequence(ch chan Value) Sequence {
 	return &channelSequence{
-		ch:   ch,
-		cond: &sync.Cond{L: &sync.Mutex{}},
-		rest: EmptyList,
+		cond:  &sync.Cond{L: &sync.Mutex{}},
+		state: undeliveredState,
+		ch:    ch,
+		rest:  EmptyList,
 	}
 }
 
 func (c *channelSequence) resolve() *channelSequence {
-	if c.ready {
+	if c.state == deliveredState {
 		return c
 	}
 
 	cond := c.cond
 	cond.L.Lock()
 
-	if c.ch == nil {
+	if c.state == deliveringState {
 		cond.Wait()
 		cond.L.Unlock()
 		return c
 	}
 
+	c.state = deliveringState
 	ch := c.ch
 	c.ch = nil
 	cond.L.Unlock()
@@ -111,7 +121,7 @@ func (c *channelSequence) resolve() *channelSequence {
 		c.rest = NewChannelSequence(ch)
 	}
 
-	c.ready = true
+	c.state = deliveredState
 	c.cond = nil
 	cond.Broadcast()
 
@@ -132,7 +142,7 @@ func (c *channelSequence) Rest() Sequence {
 
 func (c *channelSequence) Prepend(v Value) Sequence {
 	return &channelSequence{
-		ready: true,
+		state: deliveredState,
 		isSeq: true,
 		first: v,
 		rest:  c,
@@ -142,12 +152,13 @@ func (c *channelSequence) Prepend(v Value) Sequence {
 // NewPromise instantiates a new Promise
 func NewPromise() Promise {
 	return &promise{
-		cond: &sync.Cond{L: &sync.Mutex{}},
+		cond:  &sync.Cond{L: &sync.Mutex{}},
+		state: undeliveredState,
 	}
 }
 
 func (p *promise) Value() Value {
-	if p.ready {
+	if p.state == deliveredState {
 		return p.val
 	}
 
@@ -158,20 +169,33 @@ func (p *promise) Value() Value {
 	return p.val
 }
 
-func (p *promise) Deliver(v Value) {
-	cond := p.cond
-	cond.L.Lock()
+func (p *promise) checkNewValue(v Value) Value {
+	if v == p.val {
+		return p.val
+	}
+	panic(ExpectedUndelivered)
+}
 
-	if p.ready {
-		cond.L.Unlock()
-		if v == p.val {
-			return
-		}
-		panic(ExpectedUndelivered)
+func (p *promise) Deliver(v Value) Value {
+	if p.state == deliveredState {
+		return p.checkNewValue(v)
 	}
 
-	p.val = v
-	p.ready = true
+	cond := p.cond
+	cond.L.Lock()
+	if p.state == deliveringState {
+		cond.Wait()
+		cond.L.Unlock()
+		return p.checkNewValue(v)
+	}
+
+	p.state = deliveringState
 	cond.L.Unlock()
+
+	p.val = v
+	p.state = deliveredState
+	p.cond = nil
 	cond.Broadcast()
+
+	return v
 }

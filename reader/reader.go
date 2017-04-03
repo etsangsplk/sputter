@@ -1,3 +1,4 @@
+// Package reader provides the Lexer and Reader for the Sputter interpreter.
 package reader
 
 import (
