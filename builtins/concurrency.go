@@ -115,21 +115,21 @@ func init() {
 	registerAnnotated(
 		a.NewFunction(async).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("async"),
-			a.MetaDoc:  string(d.MustAsset("docstring/async.md")),
+			a.MetaDoc:  string(d.MustAsset("async.md")),
 		}),
 	)
 
 	registerAnnotated(
 		a.NewFunction(promise).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("promise"),
-			a.MetaDoc:  string(d.MustAsset("docstring/promise.md")),
+			a.MetaDoc:  string(d.MustAsset("promise.md")),
 		}),
 	)
 
 	registerAnnotated(
 		a.NewFunction(future).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("future"),
-			a.MetaDoc:  string(d.MustAsset("docstring/future.md")),
+			a.MetaDoc:  string(d.MustAsset("future.md")),
 		}),
 	)
 }

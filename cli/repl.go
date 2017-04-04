@@ -211,7 +211,8 @@ func help(c a.Context, args a.Sequence) a.Value {
 	sym := a.AssertUnqualified(args.First())
 	if v, ok := c.Get(sym.Name()); ok {
 		if d, ok := v.(a.Annotated); ok {
-			return d.Metadata()[a.MetaDoc]
+			fmt.Println(d.Metadata()[a.MetaDoc])
+			return a.Nil
 		}
 		panic(a.Err("Symbol is not documented: %s", sym))
 	}
