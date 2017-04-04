@@ -49,7 +49,7 @@ that will change rapidly. The current built-in forms are:
   * Comprehensions: `concat`, `map`, `filter`
   * Concurrency: `channel`, `async`, `promise`, `future`
   * I/O: `print`, `println`, `pr`, `prn`
-
+ 
 ## License (MIT License)
 Copyright (c) 2017 Thomas S. Bradford
 
