@@ -194,6 +194,7 @@ func shutdown(c a.Context, args a.Sequence) a.Value {
 
 func displayStandardHelp() {
 	ns := getBuiltInsNamespace()
+	fmt.Println()
 	v, _ := ns.Get(replBuiltIns)
 	for _, e := range v.(a.Vector) {
 		f := e.(a.Function)

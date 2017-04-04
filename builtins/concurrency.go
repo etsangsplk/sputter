@@ -109,6 +109,7 @@ func init() {
 	registerAnnotated(
 		a.NewFunction(channel).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("channel"),
+			a.MetaDoc:  string(d.MustAsset("channel.md")),
 		}),
 	)
 
