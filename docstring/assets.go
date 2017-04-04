@@ -95,7 +95,7 @@ func asyncMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "async.md", size: 354, mode: os.FileMode(420), modTime: time.Unix(1491315603, 0)}
+	info := bindataFileInfo{name: "async.md", size: 354, mode: os.FileMode(420), modTime: time.Unix(1491327304, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -115,7 +115,7 @@ func channelMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "channel.md", size: 840, mode: os.FileMode(420), modTime: time.Unix(1491314517, 0)}
+	info := bindataFileInfo{name: "channel.md", size: 840, mode: os.FileMode(420), modTime: time.Unix(1491327304, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -135,7 +135,7 @@ func concatMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "concat.md", size: 244, mode: os.FileMode(420), modTime: time.Unix(1491317536, 0)}
+	info := bindataFileInfo{name: "concat.md", size: 244, mode: os.FileMode(420), modTime: time.Unix(1491327304, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -155,7 +155,7 @@ func filterMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "filter.md", size: 389, mode: os.FileMode(420), modTime: time.Unix(1491317365, 0)}
+	info := bindataFileInfo{name: "filter.md", size: 389, mode: os.FileMode(420), modTime: time.Unix(1491327304, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -175,7 +175,7 @@ func futureMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "future.md", size: 390, mode: os.FileMode(420), modTime: time.Unix(1491314517, 0)}
+	info := bindataFileInfo{name: "future.md", size: 390, mode: os.FileMode(420), modTime: time.Unix(1491327304, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -195,7 +195,7 @@ func ifMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "if.md", size: 326, mode: os.FileMode(420), modTime: time.Unix(1491323432, 0)}
+	info := bindataFileInfo{name: "if.md", size: 326, mode: os.FileMode(420), modTime: time.Unix(1491327304, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -215,7 +215,7 @@ func mapMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "map.md", size: 261, mode: os.FileMode(420), modTime: time.Unix(1491317322, 0)}
+	info := bindataFileInfo{name: "map.md", size: 261, mode: os.FileMode(420), modTime: time.Unix(1491327304, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -235,7 +235,7 @@ func promiseMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "promise.md", size: 339, mode: os.FileMode(420), modTime: time.Unix(1491314517, 0)}
+	info := bindataFileInfo{name: "promise.md", size: 339, mode: os.FileMode(420), modTime: time.Unix(1491327304, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -255,7 +255,7 @@ func replClsMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "repl-cls.md", size: 97, mode: os.FileMode(420), modTime: time.Unix(1491314517, 0)}
+	info := bindataFileInfo{name: "repl-cls.md", size: 97, mode: os.FileMode(420), modTime: time.Unix(1491327304, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -275,7 +275,7 @@ func replDocMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "repl-doc.md", size: 162, mode: os.FileMode(420), modTime: time.Unix(1491315628, 0)}
+	info := bindataFileInfo{name: "repl-doc.md", size: 162, mode: os.FileMode(420), modTime: time.Unix(1491327304, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -295,7 +295,7 @@ func replHelpMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "repl-help.md", size: 421, mode: os.FileMode(420), modTime: time.Unix(1491326087, 0)}
+	info := bindataFileInfo{name: "repl-help.md", size: 421, mode: os.FileMode(420), modTime: time.Unix(1491327304, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -315,7 +315,7 @@ func replQuitMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "repl-quit.md", size: 90, mode: os.FileMode(420), modTime: time.Unix(1491314517, 0)}
+	info := bindataFileInfo{name: "repl-quit.md", size: 90, mode: os.FileMode(420), modTime: time.Unix(1491327304, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -335,7 +335,7 @@ func replUseMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "repl-use.md", size: 126, mode: os.FileMode(420), modTime: time.Unix(1491315641, 0)}
+	info := bindataFileInfo{name: "repl-use.md", size: 126, mode: os.FileMode(420), modTime: time.Unix(1491327304, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
