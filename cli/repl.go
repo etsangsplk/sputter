@@ -256,7 +256,7 @@ func registerREPLBuiltIns() {
 	registerBuiltIn(
 		a.NewFunction(help).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("help"),
-			a.MetaDoc:  "Display this help",
+			a.MetaDoc:  "Display help. Example: (help async)",
 		}),
 	)
 }
