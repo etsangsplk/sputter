@@ -30,7 +30,7 @@ cat somefile.lisp | sputter
 Sputter has a very crude Read-Eval-Print Loop that will be more than
 happy to start if you call it with no arguments from the terminal:
 
-<img src="doc/repl.png" />
+<img src="doc/repl.jpeg" />
 
 ## Current Status
 I just started this thing and it's still pretty fragile, but
