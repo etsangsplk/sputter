@@ -1,5 +1,5 @@
 
-(channel) returns a unidirectional channel
+(channel) creates a unidirectional channel
 
 A channel is a data structure that is used to generate a lazy
 sequence of values.  It consists of an `emit` function, a
