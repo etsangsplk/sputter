@@ -2,6 +2,7 @@ package builtins
 
 import (
 	a "github.com/kode4food/sputter/api"
+	d "github.com/kode4food/sputter/docstring"
 )
 
 func cond(c a.Context, args a.Sequence) a.Value {
@@ -41,6 +42,7 @@ func init() {
 	registerAnnotated(
 		a.NewFunction(_if).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("if"),
+			a.MetaDoc:  d.Get("if"),
 		}),
 	)
 }

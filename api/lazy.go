@@ -149,7 +149,7 @@ type lazyConcat struct {
 }
 
 // NewConcat creates a new sequence based on the content of
-// several provided Sequences.  The results are computed lazily
+// several provided Sequences. The results are computed lazily
 func NewConcat(s Sequence) Sequence {
 	return &lazyConcat{
 		sequence: s,

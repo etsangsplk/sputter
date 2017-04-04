@@ -1,6 +1,9 @@
 package builtins
 
-import a "github.com/kode4food/sputter/api"
+import (
+	a "github.com/kode4food/sputter/api"
+	d "github.com/kode4food/sputter/docstring"
+)
 
 func isSequence(v a.Value) bool {
 	if s, ok := v.(a.Sequence); ok {
@@ -97,18 +100,21 @@ func init() {
 	registerAnnotated(
 		a.NewFunction(concat).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("concat"),
+			a.MetaDoc:  d.Get("concat"),
 		}),
 	)
 
 	registerAnnotated(
 		a.NewFunction(_map).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("map"),
+			a.MetaDoc:  d.Get("map"),
 		}),
 	)
 
 	registerAnnotated(
 		a.NewFunction(filter).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("filter"),
+			a.MetaDoc:  d.Get("filter"),
 		}),
 	)
 }

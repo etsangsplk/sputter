@@ -9,10 +9,10 @@ import (
 	"strings"
 	"time"
 
-	a "github.com/kode4food/sputter/api"
-	r "github.com/kode4food/sputter/reader"
-
 	"github.com/chzyer/readline"
+	a "github.com/kode4food/sputter/api"
+	d "github.com/kode4food/sputter/docstring"
+	r "github.com/kode4food/sputter/reader"
 )
 
 var anyChar = regexp.MustCompile(".")
@@ -20,22 +20,18 @@ var anyChar = regexp.MustCompile(".")
 const replBuiltIns = "*repl-builtins*"
 
 const (
-	red    = "\033[31m"
-	green  = "\033[32m"
-	cyan   = "\033[36m"
-	yellow = "\033[33m"
-	gray   = "\033[90m"
-	bold   = "\033[1m"
-	reset  = "\033[0m"
-
 	domain = cyan + "%s" + reset + " "
-	prompt = domain + "[%d]> "
-	cont   = domain + "[%d]" + gray + "␤   " + reset
+	prompt = domain + "[%d]> " + code
+	cont   = domain + "[%d]" + dgray + "␤   " + code
 
 	output = bold + "%s" + reset
 	good   = domain + green + "[%d]= " + output
 	bad    = domain + red + "[%d]! " + output
 )
+
+type empty struct{}
+
+var nothing = &empty{}
 
 var farewells = []string{
 	"Until next time...",
@@ -78,15 +74,16 @@ func (repl *REPL) Run() {
 	defer repl.rl.Close()
 
 	fmt.Println(a.Language, a.Version)
-	displayStandardHelp()
+	help(nil, a.EmptyList)
 	repl.setInitialPrompt()
 
 	for {
 		line, err := repl.rl.Readline()
 		repl.buf.WriteString(line + "\n")
+		fmt.Print(reset)
 
 		if err != nil {
-			emptyBuffer := isEmpty(repl.buf.String())
+			emptyBuffer := isEmptyString(repl.buf.String())
 			if err == readline.ErrInterrupt && !emptyBuffer {
 				repl.reset()
 				continue
@@ -94,7 +91,7 @@ func (repl *REPL) Run() {
 			break
 		}
 
-		if isEmpty(line) {
+		if isEmptyString(line) {
 			continue
 		}
 
@@ -153,6 +150,9 @@ func (repl *REPL) evalBuffer() (completed bool) {
 }
 
 func (repl *REPL) output(v a.Value) {
+	if v == nothing {
+		return
+	}
 	res := fmt.Sprintf(good, repl.nsSpace(), repl.idx, a.String(v))
 	fmt.Println(res)
 }
@@ -162,7 +162,7 @@ func (repl *REPL) error(err a.Value) {
 	fmt.Println(res)
 }
 
-func isEmpty(s string) bool {
+func isEmptyString(s string) bool {
 	return len(strings.TrimSpace(s)) == 0
 }
 
@@ -182,38 +182,55 @@ func use(c a.Context, args a.Sequence) a.Value {
 	return ns
 }
 
-func shutdown(c a.Context, args a.Sequence) a.Value {
+func shutdown(_ a.Context, args a.Sequence) a.Value {
+	a.AssertArity(args, 0)
 	t := time.Now().UTC().UnixNano()
 	rs := rand.NewSource(t)
 	r := rand.New(rs)
 	idx := r.Intn(len(farewells))
 	fmt.Println(farewells[idx])
 	os.Exit(0)
-	return a.Nil
+	return nothing
 }
 
-func displayStandardHelp() {
-	ns := getBuiltInsNamespace()
-	fmt.Println()
-	v, _ := ns.Get(replBuiltIns)
-	for _, e := range v.(a.Vector) {
-		f := e.(a.Function)
-		fn := fmt.Sprintf("%-8s", "("+string(f.Name())+")")
-		fmt.Println(yellow + fn + reset + "; " + f.Documentation())
-	}
-	fmt.Println()
+func cls(_ a.Context, args a.Sequence) a.Value {
+	a.AssertArity(args, 0)
+	fmt.Println(clear)
+	return nothing
 }
 
-func help(c a.Context, args a.Sequence) a.Value {
-	if a.Count(args) == 0 {
-		displayStandardHelp()
-		return a.Nil
+func formatForREPL(s string) string {
+	md := formatMarkdown(s)
+	lines := strings.Split(md, "\n")
+	var out []string
+	out = append(out, "")
+	for _, l := range lines {
+		if isEmptyString(l) {
+			out = append(out, l)
+		} else {
+			out = append(out, "  "+l)
+		}
 	}
+	out = append(out, "")
+	return strings.Join(out, "\n")
+}
+
+func help(_ a.Context, args a.Sequence) a.Value {
+	a.AssertArity(args, 0)
+	md := d.Get("repl-help")
+	fmt.Println(formatForREPL(md))
+	return nothing
+}
+
+func doc(c a.Context, args a.Sequence) a.Value {
+	a.AssertArity(args, 1)
 	sym := a.AssertUnqualified(args.First())
 	if v, ok := c.Get(sym.Name()); ok {
 		if d, ok := v.(a.Annotated); ok {
-			fmt.Println(d.Metadata()[a.MetaDoc])
-			return a.Nil
+			md := d.Metadata()
+			f := formatForREPL(md[a.MetaDoc].(string))
+			fmt.Println(f)
+			return nothing
 		}
 		panic(a.Err("Symbol is not documented: %s", sym))
 	}
@@ -242,21 +259,35 @@ func registerREPLBuiltIns() {
 	registerBuiltIn(
 		a.NewFunction(use).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("use"),
-			a.MetaDoc:  "Change namespace. Example: (use foo)",
+			a.MetaDoc:  d.Get("repl-use"),
 		}),
 	)
 
 	registerBuiltIn(
 		a.NewFunction(shutdown).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("quit"),
-			a.MetaDoc:  "Quit the REPL",
+			a.MetaDoc:  d.Get("repl-quit"),
+		}),
+	)
+
+	registerBuiltIn(
+		a.NewFunction(cls).WithMetadata(a.Metadata{
+			a.MetaName: a.Name("cls"),
+			a.MetaDoc:  d.Get("repl-cls"),
 		}),
 	)
 
 	registerBuiltIn(
 		a.NewFunction(help).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("help"),
-			a.MetaDoc:  "Display help. Example: (help async)",
+			a.MetaDoc:  d.Get("repl-help"),
+		}),
+	)
+
+	registerBuiltIn(
+		a.NewFunction(doc).WithMetadata(a.Metadata{
+			a.MetaName: a.Name("doc"),
+			a.MetaDoc:  d.Get("repl-doc"),
 		}),
 	)
 }

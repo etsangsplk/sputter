@@ -2,7 +2,7 @@
 Sputter is a simple Lisp Interpreter written in
 [Go](https://golang.org/). Basically, it's just me having some fun
 and trying to improve my Go skills. That means you're unlikely to
-find something you'd want to use in production here.  On the other
+find something you'd want to use in production here. On the other
 hand, if you want to join in on the fun, you're more than welcome
 to.
 
@@ -19,11 +19,11 @@ Once you've installed the package, you can run it from `GOPATH/bin`
 like so:
 
 ```bash
-sputter ./examples/test.lisp
+sputter somefile.lisp
 
 # or
 
-cat ./examples/test.lisp | sputter
+cat somefile.lisp | sputter
 ```
 
 ## How To Invoke The REPL
@@ -34,7 +34,7 @@ happy to start if you call it with no arguments from the terminal:
 
 ## Current Status
 I just started this thing and it's still pretty fragile, but
-that will change rapidly.  The current built-in forms are:
+that will change rapidly. The current built-in forms are:
 
   * Control and Branching: `if`, `cond`, `quote`, `do`
   * Numeric: `+`, `-`, `*`, `/`, `!=`, `=`, `<`, `<=`, `>`, `>=`
