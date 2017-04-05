@@ -4,4 +4,5 @@ main: assets
 	go build
 
 assets:
-	go-bindata -o docstring/assets.go -pkg="docstring" -prefix="docstring/" docstring/*.md
+	go-bindata -o docstring/assets.go -pkg="docstring" \
+	-prefix="docstring/" docstring/*.md

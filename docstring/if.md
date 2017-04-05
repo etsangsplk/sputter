@@ -1,7 +1,5 @@
 # (if pred then else?) implements simple branching
-If the evaluated predicate is truthy (not false, not nil) then the
-'then' form is evaluated and returned, otherwise the 'else' form, 
-if any, will be evaluated and returned.
+If the evaluated predicate is truthy (not false, not nil) then the 'then' form is evaluated and returned, otherwise the 'else' form, if any, will be evaluated and returned.
 
 ## An Example
 

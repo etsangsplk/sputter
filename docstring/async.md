@@ -1,7 +1,5 @@
 # (async form+) generates an asynchronous sequence
-Evaluates the specified forms in a separate thread of execution.
-Returns a sequence that will iterate over any of the values that are
-emitted using a locally scoped function called `emit`.
+Evaluates the specified forms in a separate thread of execution.  Returns a sequence that will iterate over any of the values that are emitted using a locally scoped function called `emit`.
 
 ## An Example
 

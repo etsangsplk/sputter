@@ -1,8 +1,11 @@
 package cli
 
 import (
+	"bytes"
 	"regexp"
 	"strings"
+
+	term "github.com/wayneashleyberry/terminal-dimensions"
 )
 
 const (
@@ -33,6 +36,11 @@ const (
 	code = lblue
 )
 
+// This is *not* a full-featured markdown formatter, or even a compliant
+// one for that matter.  It only supports the productions that are
+// currently used by documentation strings, and will likely not evolve
+// much beyond that
+
 type formatter func(string) string
 
 var markdownFormatters = map[*regexp.Regexp]formatter{
@@ -43,10 +51,45 @@ var markdownFormatters = map[*regexp.Regexp]formatter{
 	regexp.MustCompile("([*].*[*])"): formatBold,
 }
 
+func getWidth() int {
+	if w, err := term.Width(); err == nil {
+		return int(w) - 4
+	}
+	return 76
+}
+
+func wrapLine(s string, w int) []string {
+	r := []string{}
+	var b bytes.Buffer
+	for _, e := range strings.Split(s, " ") {
+		l := b.Len()
+		if l > 0 {
+			if l+len(e)+1 >= w {
+				r = append(r, b.String())
+				b.Reset()
+			} else {
+				b.WriteString(" ")
+			}
+		}
+		b.WriteString(e)
+	}
+	r = append(r, b.String())
+	return r
+}
+
+func wrapLines(s []string) []string {
+	w := getWidth()
+	r := []string{}
+	for _, e := range s {
+		r = append(r, wrapLine(e, w)...)
+	}
+	return r
+}
+
 func formatMarkdown(s string) string {
 	lines := strings.Split(strings.TrimSpace(s), "\n")
 	var out []string
-	for _, l := range lines {
+	for _, l := range wrapLines(lines) {
 		for r, f := range markdownFormatters {
 			l = r.ReplaceAllStringFunc(l, f)
 		}

@@ -1,12 +1,5 @@
 # (channel size?) creates a unidirectional channel
-A channel is a data structure that is used to generate a lazy
-sequence of values. If a size is specified, the channel will be
-buffered. The result is a hash-map consisting of an `emit` function,
-a `close` function, and a sequence. Retrieving an element from the
-sequence will *block*, waiting for the next value to be emitted or
-for the channel to be closed. Emitting a value to a channel will
-also block if the buffer hasn't been flushed as a result of
-iterating over the sequence.
+A channel is a data structure that is used to generate a lazy sequence of values. If a size is specified, the channel will be buffered. The result is a hash-map consisting of an `emit` function, a `close` function, and a sequence. Retrieving an element from the sequence will *block*, waiting for the next value to be emitted or for the channel to be closed. Emitting a value to a channel will also block if the buffer hasn't been flushed as a result of iterating over the sequence.
 
 ## Channel Keys
 
