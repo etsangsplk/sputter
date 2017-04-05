@@ -2,7 +2,10 @@
 // standard runtime for the Sputter interpreter.
 package builtins
 
-import a "github.com/kode4food/sputter/api"
+import (
+	a "github.com/kode4food/sputter/api"
+	d "github.com/kode4food/sputter/docstring"
+)
 
 // BuiltIns is a special Namespace for built-in identifiers
 var BuiltIns = a.GetNamespace(a.BuiltInDomain)
@@ -25,16 +28,14 @@ func init() {
 	registerAnnotated(
 		a.NewFunction(do).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("do"),
-			a.MetaDoc: "(do form*) evaluates multiple forms, returning the " +
-				"final evaluation as its result",
+			a.MetaDoc:  d.Get("do"),
 		}),
 	)
 
 	registerAnnotated(
 		a.NewMacro(quote).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("quote"),
-			a.MetaDoc: "(quote form) returns the specified form in data " +
-				"mode, meaning that lists and symbols will not be evaluated",
+			a.MetaDoc:  d.Get("quote"),
 		}),
 	)
 }

@@ -3,9 +3,9 @@ A channel is a data structure that is used to generate a lazy sequence of values
 
 ## Channel Keys
 
-  :seq   <the sequence to be generated>
-  :emit  an emit function of the form `(emit value)`
-  :close a function to close the channel `(close)`
+*:seq*     the sequence to be generated
+*:emit*    an emitter function of the form `(emit value)`
+*:close*   a function to close the channel `(close)`
 
 ## An Example
 

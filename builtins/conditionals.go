@@ -36,6 +36,7 @@ func init() {
 	registerAnnotated(
 		a.NewFunction(cond).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("cond"),
+			a.MetaDoc:  d.Get("cond"),
 		}),
 	)
 

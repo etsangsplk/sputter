@@ -37,18 +37,28 @@ const (
 )
 
 // This is *not* a full-featured markdown formatter, or even a compliant
-// one for that matter.  It only supports the productions that are
+// one for that matter. It only supports the productions that are
 // currently used by documentation strings, and will likely not evolve
 // much beyond that
 
 type formatter func(string) string
 
-var markdownFormatters = map[*regexp.Regexp]formatter{
-	regexp.MustCompile("^# .*$"):     formatHeader1,
-	regexp.MustCompile("^## .*$"):    formatHeader2,
-	regexp.MustCompile("^  .*$"):     formatIndent,
-	regexp.MustCompile("(`.*`)"):     formatCode,
-	regexp.MustCompile("([*].*[*])"): formatBold,
+var (
+	indent = regexp.MustCompile("^##? |^  +")
+	hashes = regexp.MustCompile("^##? ")
+	ticks  = regexp.MustCompile("`[^`]+`")
+	stars  = regexp.MustCompile("[*][^*]+[*]")
+)
+
+var lineFormatters = map[*regexp.Regexp]formatter{
+	regexp.MustCompile("^# .*$"):  formatHeader1,
+	regexp.MustCompile("^## .*$"): formatHeader2,
+	regexp.MustCompile("^  .*$"):  formatIndent,
+}
+
+var docFormatters = map[*regexp.Regexp]formatter{
+	ticks: formatCode,
+	stars: formatBold,
 }
 
 func getWidth() int {
@@ -58,23 +68,39 @@ func getWidth() int {
 	return 76
 }
 
+func strippedLength(s string) int {
+	s = ticks.ReplaceAllStringFunc(s, trimEnds)
+	s = stars.ReplaceAllStringFunc(s, trimEnds)
+	s = hashes.ReplaceAllString(s, "")
+	return len(s)
+}
+
+func lineIndent(s string) (string, string) {
+	l := indent.FindString(s)
+	return l, s[len(l):]
+}
+
 func wrapLine(s string, w int) []string {
 	r := []string{}
+	i, s := lineIndent(s)
+	il := strippedLength(i)
+
 	var b bytes.Buffer
+	b.WriteString(i)
 	for _, e := range strings.Split(s, " ") {
-		l := b.Len()
-		if l > 0 {
-			if l+len(e)+1 >= w {
+		bl := strippedLength(b.String())
+		if bl > il {
+			if bl+strippedLength(e) >= w {
 				r = append(r, b.String())
 				b.Reset()
-			} else {
+				b.WriteString(i)
+			} else if !isEmptyString(b.String()) {
 				b.WriteString(" ")
 			}
 		}
 		b.WriteString(e)
 	}
-	r = append(r, b.String())
-	return r
+	return append(r, b.String())
 }
 
 func wrapLines(s []string) []string {
@@ -90,12 +116,21 @@ func formatMarkdown(s string) string {
 	lines := strings.Split(strings.TrimSpace(s), "\n")
 	var out []string
 	for _, l := range wrapLines(lines) {
-		for r, f := range markdownFormatters {
+		for r, f := range lineFormatters {
 			l = r.ReplaceAllStringFunc(l, f)
 		}
 		out = append(out, l)
 	}
-	return strings.Join(out, "\n")
+
+	d := strings.Join(out, "\n")
+	for r, f := range docFormatters {
+		d = r.ReplaceAllStringFunc(d, f)
+	}
+	return d
+}
+
+func trimEnds(s string) string {
+	return s[1 : len(s)-1]
 }
 
 func formatHeader1(s string) string {
@@ -111,9 +146,9 @@ func formatIndent(s string) string {
 }
 
 func formatCode(s string) string {
-	return code + s[1:len(s)-1] + reset
+	return code + trimEnds(s) + reset
 }
 
 func formatBold(s string) string {
-	return bold + s[1:len(s)-1] + reset
+	return bold + trimEnds(s) + reset
 }
