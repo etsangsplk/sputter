@@ -8,6 +8,8 @@ import (
 	term "github.com/wayneashleyberry/terminal-dimensions"
 )
 
+const defaultWidth = 76
+
 const (
 	esc      = "\033["
 	red      = esc + "31m"
@@ -28,12 +30,10 @@ const (
 	bold     = esc + "1m"
 	reset    = esc + "0m"
 	clear    = esc + "2J" + esc + "f"
-)
 
-const (
-	h1   = lyellow
-	h2   = yellow
-	code = lblue
+	h1   	 = lyellow
+	h2   	 = yellow
+	code 	 = lblue
 )
 
 // This is *not* a full-featured markdown formatter, or even a compliant
@@ -42,13 +42,6 @@ const (
 // much beyond that
 
 type formatter func(string) string
-
-var (
-	indent = regexp.MustCompile("^##? |^  +")
-	hashes = regexp.MustCompile("^##? ")
-	ticks  = regexp.MustCompile("`[^`]+`")
-	stars  = regexp.MustCompile("[*][^*]+[*]")
-)
 
 var lineFormatters = map[*regexp.Regexp]formatter{
 	regexp.MustCompile("^# .*$"):  formatHeader1,
@@ -61,23 +54,44 @@ var docFormatters = map[*regexp.Regexp]formatter{
 	stars: formatBold,
 }
 
+var (
+	indent = regexp.MustCompile("^##? |^  +")
+	hashes = regexp.MustCompile("^##? ")
+	ticks  = regexp.MustCompile("`[^`]+`")
+	stars  = regexp.MustCompile("[*][^*]+[*]")
+)
+
+func formatMarkdown(s string) string {
+	lines := strings.Split(strings.TrimSpace(s), "\n")
+	var out []string
+	for _, l := range wrapLines(lines) {
+		for r, f := range lineFormatters {
+			l = r.ReplaceAllStringFunc(l, f)
+		}
+		out = append(out, l)
+	}
+
+	d := strings.Join(out, "\n")
+	for r, f := range docFormatters {
+		d = r.ReplaceAllStringFunc(d, f)
+	}
+	return d
+}
+
 func getWidth() int {
 	if w, err := term.Width(); err == nil {
 		return int(w) - 4
 	}
-	return 76
+	return defaultWidth
 }
 
-func strippedLength(s string) int {
-	s = ticks.ReplaceAllStringFunc(s, trimEnds)
-	s = stars.ReplaceAllStringFunc(s, trimEnds)
-	s = hashes.ReplaceAllString(s, "")
-	return len(s)
-}
-
-func lineIndent(s string) (string, string) {
-	l := indent.FindString(s)
-	return l, s[len(l):]
+func wrapLines(s []string) []string {
+	w := getWidth()
+	r := []string{}
+	for _, e := range s {
+		r = append(r, wrapLine(e, w)...)
+	}
+	return r
 }
 
 func wrapLine(s string, w int) []string {
@@ -103,30 +117,16 @@ func wrapLine(s string, w int) []string {
 	return append(r, b.String())
 }
 
-func wrapLines(s []string) []string {
-	w := getWidth()
-	r := []string{}
-	for _, e := range s {
-		r = append(r, wrapLine(e, w)...)
-	}
-	return r
+func lineIndent(s string) (string, string) {
+	l := indent.FindString(s)
+	return l, s[len(l):]
 }
 
-func formatMarkdown(s string) string {
-	lines := strings.Split(strings.TrimSpace(s), "\n")
-	var out []string
-	for _, l := range wrapLines(lines) {
-		for r, f := range lineFormatters {
-			l = r.ReplaceAllStringFunc(l, f)
-		}
-		out = append(out, l)
-	}
-
-	d := strings.Join(out, "\n")
-	for r, f := range docFormatters {
-		d = r.ReplaceAllStringFunc(d, f)
-	}
-	return d
+func strippedLength(s string) int {
+	s = ticks.ReplaceAllStringFunc(s, trimEnds)
+	s = stars.ReplaceAllStringFunc(s, trimEnds)
+	s = hashes.ReplaceAllString(s, "")
+	return len(s)
 }
 
 func trimEnds(s string) string {

@@ -98,7 +98,7 @@ func asyncMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "async.md", size: 367, mode: os.FileMode(420), modTime: time.Unix(1491404447, 0)}
+	info := bindataFileInfo{name: "async.md", size: 367, mode: os.FileMode(420), modTime: time.Unix(1491410747, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -118,7 +118,7 @@ func channelMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "channel.md", size: 847, mode: os.FileMode(420), modTime: time.Unix(1491404450, 0)}
+	info := bindataFileInfo{name: "channel.md", size: 847, mode: os.FileMode(420), modTime: time.Unix(1491410752, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -178,7 +178,7 @@ func doMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "do.md", size: 181, mode: os.FileMode(420), modTime: time.Unix(1491410712, 0)}
+	info := bindataFileInfo{name: "do.md", size: 181, mode: os.FileMode(420), modTime: time.Unix(1491410754, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -238,7 +238,7 @@ func ifMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "if.md", size: 317, mode: os.FileMode(420), modTime: time.Unix(1491408137, 0)}
+	info := bindataFileInfo{name: "if.md", size: 317, mode: os.FileMode(420), modTime: time.Unix(1491410756, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -298,7 +298,7 @@ func quoteMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "quote.md", size: 329, mode: os.FileMode(420), modTime: time.Unix(1491410540, 0)}
+	info := bindataFileInfo{name: "quote.md", size: 329, mode: os.FileMode(420), modTime: time.Unix(1491410831, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
