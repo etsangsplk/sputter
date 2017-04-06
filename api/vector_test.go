@@ -21,6 +21,9 @@ func TestVector(t *testing.T) {
 	as.Equal(4, v1.Count(), "vector 1 count is still correct")
 	as.Equal("oh", v2.Get(0), "get by index is correct")
 	as.Equal("are", v2.Get(3), "get by index is correct")
+
+	c := a.NewEvalContext()
+	as.Equal("are", v1.Apply(c, a.NewList(a.NewFloat(2))))
 }
 
 type testEvaluable struct{}

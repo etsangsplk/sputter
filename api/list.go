@@ -63,6 +63,13 @@ func (l *List) Get(index int) Value {
 	return e.first
 }
 
+// Apply makes List applicable
+func (l *List) Apply(c Context, args Sequence) Value {
+	AssertArity(args, 1)
+	idx := AssertInteger(Eval(c, args.First()))
+	return l.Get(int(idx))
+}
+
 // Eval makes a List Evaluable
 func (l *List) Eval(ctx Context) Value {
 	if l == EmptyList {

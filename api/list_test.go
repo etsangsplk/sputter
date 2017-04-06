@@ -41,6 +41,9 @@ func TestList(t *testing.T) {
 	as.Equal(2, a.Count(l2), "2nd list general count is correct")
 
 	as.Equal(a.Nil, a.EmptyList.Get(1), "get from empty list")
+
+	c := a.NewEvalContext()
+	as.Equal(a.NewFloat(12), l2.Apply(c, a.NewList(a.NewFloat(1))))
 }
 
 func TestIterator(t *testing.T) {

@@ -22,6 +22,12 @@ func TestHashMap(t *testing.T) {
 		(:name (apply hash-map (concat '(:name "Sputter") '(:age 45))))
 	`, "Sputter")
 
+	a.GetNamespace(a.UserDomain).Delete("x")
+	testCode(t, `
+		(def x {:name "bob" :age 45})
+		(x :name)
+	`, "bob")
+	
 	testBadCode(t, `(hash-map :too "few" :args)`, a.ExpectedPair)
 
 	testBadCode(t, `

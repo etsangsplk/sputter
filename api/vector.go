@@ -15,6 +15,13 @@ func (v Vector) Get(index int) Value {
 	return v[index]
 }
 
+// Apply makes Vector applicable
+func (v Vector) Apply(c Context, args Sequence) Value {
+	AssertArity(args, 1)
+	idx := AssertInteger(Eval(c, args.First()))
+	return v.Get(int(idx))
+}
+
 // Eval makes a Vector Evaluable
 func (v Vector) Eval(c Context) Value {
 	l := len(v)

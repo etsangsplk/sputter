@@ -97,14 +97,14 @@ func wrapLines(s []string) []string {
 func wrapLine(s string, w int) []string {
 	r := []string{}
 	i, s := lineIndent(s)
-	il := strippedLength(i)
+	il := strippedLen(i)
 
 	var b bytes.Buffer
 	b.WriteString(i)
 	for _, e := range strings.Split(s, " ") {
-		bl := strippedLength(b.String())
+		bl := strippedLen(b.String())
 		if bl > il {
-			if bl+strippedLength(e) >= w {
+			if bl+strippedLen(e) >= w {
 				r = append(r, b.String())
 				b.Reset()
 				b.WriteString(i)
@@ -122,11 +122,14 @@ func lineIndent(s string) (string, string) {
 	return l, s[len(l):]
 }
 
-func strippedLength(s string) int {
+func stripped(s string) string {
 	s = ticks.ReplaceAllStringFunc(s, trimEnds)
 	s = stars.ReplaceAllStringFunc(s, trimEnds)
-	s = hashes.ReplaceAllString(s, "")
-	return len(s)
+	return hashes.ReplaceAllString(s, "")
+}
+
+func strippedLen(s string) int {
+	return len(stripped(s))
 }
 
 func trimEnds(s string) string {

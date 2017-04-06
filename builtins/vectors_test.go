@@ -27,4 +27,10 @@ func TestVector(t *testing.T) {
 	testCode(t, `(!vector? 99)`, a.True)
 
 	testCode(t, `(vector? (to-vector (list 1 2 3)))`, a.True)
+
+	a.GetNamespace(a.UserDomain).Delete("x")
+	testCode(t, `
+		(def x [1 2 3 4])
+		(x 2)
+	`, a.NewFloat(3))	
 }

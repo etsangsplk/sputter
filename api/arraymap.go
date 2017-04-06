@@ -36,6 +36,13 @@ func (m ArrayMap) Get(key Value) Value {
 	return Nil
 }
 
+// Apply makes ArrayMap applicable
+func (m ArrayMap) Apply(c Context, args Sequence) Value {
+	AssertArity(args, 1)
+	key := Eval(c, args.First())
+	return m.Get(key)
+}
+
 // Eval makes an ArrayMap Evaluable
 func (m ArrayMap) Eval(c Context) Value {
 	l := len(m)

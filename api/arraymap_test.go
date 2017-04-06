@@ -33,6 +33,9 @@ func TestArrayMap(t *testing.T) {
 	as.Equal("value", strValue, "get works")
 
 	as.Equal(a.Nil, m1.Get("missing"), "miss works")
+
+	c := a.NewEvalContext()
+	as.Equal("Sputter", m1.Apply(c, a.NewList(nameKey)))
 }
 
 func TestArrayMapSequence(t *testing.T) {

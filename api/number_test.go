@@ -115,3 +115,11 @@ func TestAssertNumber(t *testing.T) {
 	defer expectError(as, a.Err(a.ExpectedNumber, `"not a number"`))
 	a.AssertNumber("not a number")
 }
+
+func TestAssertInteger(t *testing.T) {
+	as := assert.New(t)
+	a.AssertInteger(a.NewFloat(99))
+
+	defer expectError(as, a.Err(a.ExpectedInteger, `99.5`))
+	a.AssertInteger(a.NewFloat(99.5))
+}
