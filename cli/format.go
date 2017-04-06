@@ -122,18 +122,21 @@ func lineIndent(s string) (string, string) {
 	return l, s[len(l):]
 }
 
-func stripped(s string) string {
-	s = ticks.ReplaceAllStringFunc(s, trimEnds)
-	s = stars.ReplaceAllStringFunc(s, trimEnds)
+func stripDelimited(s string) string {
+	s = ticks.ReplaceAllStringFunc(s, trimDelimited)
+	s = stars.ReplaceAllStringFunc(s, trimDelimited)
 	return hashes.ReplaceAllString(s, "")
 }
 
 func strippedLen(s string) int {
-	return len(stripped(s))
+	return len(stripDelimited(s))
 }
 
-func trimEnds(s string) string {
-	return s[1 : len(s)-1]
+func trimDelimited(s string) string {
+	if len(s) > 2 {
+		return s[1 : len(s)-1]
+	}
+	return s[:1]
 }
 
 func formatHeader1(s string) string {
@@ -149,15 +152,17 @@ func formatIndent(s string) string {
 }
 
 func formatCode(s string) string {
-	if len(s) > 2 {
-		return code + trimEnds(s) + reset
+	t := trimDelimited(s)
+	if t == "`" {
+		return t
 	}
-	return "'"
+	return code + t + reset
 }
 
 func formatBold(s string) string {
-	if len(s) > 2 {
-		return bold + trimEnds(s) + reset
+	t := trimDelimited(s)
+	if t == "*" {
+		return t
 	}
-	return "*"
+	return bold + t + reset
 }
