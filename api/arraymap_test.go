@@ -34,7 +34,7 @@ func TestArrayMap(t *testing.T) {
 
 	as.Equal(a.Nil, m1.Get("missing"), "miss works")
 
-	c := a.NewEvalContext()
+	c := a.NewContext()
 	as.Equal("Sputter", m1.Apply(c, a.NewList(nameKey)))
 }
 

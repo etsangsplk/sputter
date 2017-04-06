@@ -42,7 +42,7 @@ func TestList(t *testing.T) {
 
 	as.Equal(a.Nil, a.EmptyList.Get(1), "get from empty list")
 
-	c := a.NewEvalContext()
+	c := a.NewContext()
 	as.Equal(a.NewFloat(12), l2.Apply(c, a.NewList(a.NewFloat(1))))
 }
 

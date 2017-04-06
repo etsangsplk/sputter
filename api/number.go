@@ -7,26 +7,12 @@ import (
 	"github.com/cockroachdb/apd"
 )
 
-// Comparison represents the result of a equality comparison
-type Comparison int
-
 const (
 	// ExpectedNumber is thrown when a Value is not a Number
 	ExpectedNumber = "value is not a number: %s"
 
 	// ExpectedInteger is thrown when a Value is not an Integer
 	ExpectedInteger = "value is not an integer: %s"
-)
-
-const (
-	// LessThan means left Number is less than right Number
-	LessThan Comparison = -1
-
-	// EqualTo means left Number is equal to right Number
-	EqualTo Comparison = 0
-
-	// GreaterThan means left Number is greater than right Number
-	GreaterThan Comparison = 1
 )
 
 // Number can represent either floating point or rational numbers
@@ -157,9 +143,9 @@ func AssertNumber(v Value) *Number {
 // AssertInteger will cast a Value into an Integer or explode violently
 func AssertInteger(v Value) int64 {
 	n := AssertNumber(v)
-	f, _ := n.Float64() 
+	f, _ := n.Float64()
 	i := int64(f)
-	if f - float64(i) == 0 {
+	if f-float64(i) == 0 {
 		return i
 	}
 	panic(Err(ExpectedInteger, n.String()))

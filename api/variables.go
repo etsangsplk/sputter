@@ -7,6 +7,25 @@ type Name string
 type Value interface {
 }
 
+// Comparison represents the result of a equality comparison
+type Comparison int
+
+const (
+	// LessThan means left Value is less than right Value
+	LessThan Comparison = -1
+
+	// EqualTo means left Value is equal to right Value
+	EqualTo Comparison = 0
+
+	// GreaterThan means left Value is greater than right Value
+	GreaterThan Comparison = 1
+)
+
+// Comparable is an interface for a Value capable of being compared.
+type Comparable interface {
+	Compare(Comparable) Comparison
+}
+
 // Named is the generic interface for Values that are named
 type Named interface {
 	Name() Name
@@ -14,9 +33,6 @@ type Named interface {
 
 // Variables represents a mapping from Name to Value
 type Variables map[Name]Value
-
-// EmptyName represents a Name that hasn't been assigned (zero value)
-var EmptyName Name
 
 // Name makes Name Named
 func (n Name) Name() Name {
