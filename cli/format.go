@@ -31,9 +31,9 @@ const (
 	reset    = esc + "0m"
 	clear    = esc + "2J" + esc + "f"
 
-	h1   	 = lyellow
-	h2   	 = yellow
-	code 	 = lblue
+	h1   = lyellow
+	h2   = yellow
+	code = lblue
 )
 
 // This is *not* a full-featured markdown formatter, or even a compliant
@@ -42,6 +42,13 @@ const (
 // much beyond that
 
 type formatter func(string) string
+
+var (
+	indent = regexp.MustCompile("^##? |^  +")
+	hashes = regexp.MustCompile("^##? ")
+	ticks  = regexp.MustCompile("`[^`]*`")
+	stars  = regexp.MustCompile("[*][^*]*[*]")
+)
 
 var lineFormatters = map[*regexp.Regexp]formatter{
 	regexp.MustCompile("^# .*$"):  formatHeader1,
@@ -53,13 +60,6 @@ var docFormatters = map[*regexp.Regexp]formatter{
 	ticks: formatCode,
 	stars: formatBold,
 }
-
-var (
-	indent = regexp.MustCompile("^##? |^  +")
-	hashes = regexp.MustCompile("^##? ")
-	ticks  = regexp.MustCompile("`[^`]+`")
-	stars  = regexp.MustCompile("[*][^*]+[*]")
-)
 
 func formatMarkdown(s string) string {
 	lines := strings.Split(strings.TrimSpace(s), "\n")
@@ -149,9 +149,15 @@ func formatIndent(s string) string {
 }
 
 func formatCode(s string) string {
-	return code + trimEnds(s) + reset
+	if len(s) > 2 {
+		return code + trimEnds(s) + reset
+	}
+	return "'"
 }
 
 func formatBold(s string) string {
-	return bold + trimEnds(s) + reset
+	if len(s) > 2 {
+		return bold + trimEnds(s) + reset
+	}
+	return "*"
 }

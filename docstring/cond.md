@@ -1,4 +1,4 @@
-# (cond <pred then>*) performs conditional branching
+# (cond <pred then>**) performs conditional branching
 For each `<pred then>` branch, the predicate will be evaluated, and if it is truthy (not false, not nil) the 'then' form is evaluated and returned, otherwise the next branch is processed.
 
 ## An Example
