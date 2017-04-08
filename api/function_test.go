@@ -46,7 +46,7 @@ func TestGoodArity(t *testing.T) {
 		}
 	}()
 
-	v1 := &a.Vector{1, 2, 3}
+	v1 := a.Vector{1, 2, 3}
 	as.Equal(3, a.AssertArity(v1, 3))
 	as.Equal(3, a.AssertArityRange(v1, 2, 4))
 	as.Equal(3, a.AssertArityRange(v1, 3, 3))
@@ -62,7 +62,7 @@ func TestGoodArity(t *testing.T) {
 
 func TestBadArity(t *testing.T) {
 	as := assert.New(t)
-	v := &a.Vector{1, 2, 3}
+	v := a.Vector{1, 2, 3}
 
 	defer expectError(as, fmt.Sprintf(a.BadArity, 4, 3))
 	a.AssertArity(v, 4)
@@ -70,7 +70,7 @@ func TestBadArity(t *testing.T) {
 
 func TestMinimumArity(t *testing.T) {
 	as := assert.New(t)
-	v := &a.Vector{1, 2, 3}
+	v := a.Vector{1, 2, 3}
 
 	defer expectError(as, fmt.Sprintf(a.BadMinimumArity, 4, 3))
 	a.AssertMinimumArity(v, 4)
@@ -78,7 +78,7 @@ func TestMinimumArity(t *testing.T) {
 
 func TestArityRange(t *testing.T) {
 	as := assert.New(t)
-	v := &a.Vector{1, 2, 3}
+	v := a.Vector{1, 2, 3}
 
 	defer expectError(as, fmt.Sprintf(a.BadArityRange, 4, 7, 3))
 	a.AssertArityRange(v, 4, 7)

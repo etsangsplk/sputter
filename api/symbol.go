@@ -80,12 +80,12 @@ func (s symbol) Namespace(c Context) Namespace {
 
 // Resolve a Symbol against a Context
 func (s symbol) Resolve(c Context) (Value, bool) {
-	n := s.name
 	d := s.domain
 	if d != LocalDomain {
-		return GetNamespace(d).Get(n)
+		return GetNamespace(d).Get(s.name)
 	}
-	if r, ok := c.Get(s.name); ok {
+	n := s.name
+	if r, ok := c.Get(n); ok {
 		return r, true
 	}
 	return GetContextNamespace(c).Get(n)

@@ -10,7 +10,7 @@ import (
 func TestVector(t *testing.T) {
 	as := assert.New(t)
 
-	v1 := &a.Vector{"hello", "how", "are", "you?"}
+	v1 := a.Vector{"hello", "how", "are", "you?"}
 	as.Equal(4, v1.Count(), "vector 1 count is correct")
 	as.Equal(4, a.Count(v1), "vector 1 general count is correct")
 	as.Equal("are", v1.Get(2), "get by index is correct")
@@ -35,7 +35,7 @@ func (t *testEvaluable) Eval(c a.Context) a.Value {
 func TestVectorEval(t *testing.T) {
 	as := assert.New(t)
 
-	v := &a.Vector{"hello", "how", &testEvaluable{}, "you?"}
+	v := a.Vector{"hello", "how", &testEvaluable{}, "you?"}
 	c := a.NewContext()
 	r := v.Eval(c)
 
@@ -50,7 +50,7 @@ func TestVectorEval(t *testing.T) {
 func TestIterate(t *testing.T) {
 	as := assert.New(t)
 
-	v := &a.Vector{"hello", "how", "are", "you?"}
+	v := a.Vector{"hello", "how", "are", "you?"}
 	i := a.Iterate(v)
 	e1, _ := i.Next()
 	s1 := i.Rest()
@@ -70,4 +70,14 @@ func TestIterate(t *testing.T) {
 
 	as.Equal(a.Nil, e5, "fifth element is nil")
 	as.False(ok, "fifth element was false")
+}
+
+func TestAssertVector(t *testing.T) {
+	as := assert.New(t)
+
+	v := a.Vector{"hello", "how", "are", "you?"}
+	a.AssertVector(v)
+
+	defer expectError(as, a.Err(a.ExpectedVector, "99"))
+	a.AssertVector(a.NewFloat(99))
 }

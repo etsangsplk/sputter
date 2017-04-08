@@ -3,9 +3,9 @@ Evaluates the specified forms in a separate thread of execution. Returns a seque
 
 ## An Example
 
-  (def aseq (async
+  (def colors (async
     (emit "red")
     (emit "orange")
     (emit "yellow")))
 
-  (to-vector aseq)
+  (to-vector colors)

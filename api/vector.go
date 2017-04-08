@@ -2,6 +2,9 @@ package api
 
 import "bytes"
 
+// ExpectedVector is raised if a value is not a Vector
+const ExpectedVector = "value is not a vector: %s"
+
 // Vector is a fixed-length Array of Values
 type Vector []Value
 
@@ -65,4 +68,12 @@ func (v Vector) String() string {
 	}
 	b.WriteString("]")
 	return b.String()
+}
+
+// AssertVector will cast the Value into a Vector or die trying
+func AssertVector(v Value) Vector {
+	if r, ok := v.(Vector); ok {
+		return r
+	}
+	panic(Err(ExpectedVector, String(v)))
 }

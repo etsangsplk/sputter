@@ -10,14 +10,15 @@ func hashMap(c a.Context, args a.Sequence) a.Value {
 		}
 		ml := l / 2
 		r := make(a.ArrayMap, ml)
-		i := a.Iterate(args)
+		i := args
 		for idx := 0; idx < ml; idx++ {
-			k, _ := i.Next()
-			v, _ := i.Next()
-			r[idx] = a.Vector{
-				a.Eval(c, k),
-				a.Eval(c, v),
-			}
+			k := a.Eval(c, i.First())
+			i = i.Rest()
+
+			v := a.Eval(c, i.First())
+			i = i.Rest()
+
+			r[idx] = a.Vector{k, v}
 		}
 		return r
 	}

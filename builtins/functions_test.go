@@ -35,9 +35,9 @@ func TestFunction(t *testing.T) {
 
 func TestBadFunction(t *testing.T) {
 	symErr := a.Err(a.ExpectedSymbol, "99")
-	seqErr := a.Err(a.ExpectedSequence, "99")
+	vecErr := a.Err(a.ExpectedVector, "99")
 	testBadCode(t, `(defn blah [name 99 bad] (name))`, symErr)
-	testBadCode(t, `(defn blah 99 (name))`, seqErr)
+	testBadCode(t, `(defn blah 99 (name))`, vecErr)
 	testBadCode(t, `(defn 99 [x y] (+ x y))`, symErr)
 }
 
@@ -64,7 +64,7 @@ func TestLambda(t *testing.T) {
 }
 
 func TestBadLambda(t *testing.T) {
-	testBadCode(t, `(fn 99 "hello")`, a.Err(a.ExpectedSequence, "99"))
+	testBadCode(t, `(fn 99 "hello")`, a.Err(a.ExpectedVector, "99"))
 }
 
 func TestApply(t *testing.T) {

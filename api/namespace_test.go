@@ -18,6 +18,27 @@ func TestNamespace(t *testing.T) {
 	as.Equal("(ns user)", a.String(ns1), "correct string representation")
 }
 
+func TestWithNamespace(t *testing.T) {
+	as := assert.New(t)
+
+	ns1 := a.GetNamespace(a.UserDomain)
+	ns2 := a.GetNamespace("foo")
+
+	ns1.Delete("foo")
+	ns2.Delete("foo")
+
+	ns1.Put("foo", "outer")
+	c1 := a.ChildContext(ns1)
+	c2 := a.WithNamespace(c1, ns2)
+	ns2.Put("foo", "inner")
+
+	v1, _ := c1.Get("foo")
+	v2, _ := c2.Get("foo")
+
+	as.Equal("outer", v1, "outer is correct")
+	as.Equal("inner", v2, "inner is correct")
+}
+
 func TestAssertNamespace(t *testing.T) {
 	as := assert.New(t)
 	a.AssertNamespace(a.GetNamespace("hello"))

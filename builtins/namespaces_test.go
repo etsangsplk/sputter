@@ -23,6 +23,15 @@ func TestNamespaces(t *testing.T) {
 
 	testCode(t, `(ns foo)`, ns1)
 
+	a.GetNamespace(a.UserDomain).Delete("x")
+	a.GetNamespace("my-namespace").Delete("x")
+	testCode(t, `
+		(def x "outside the namespace")
+		(with-ns my-namespace
+			(def x "x in the namespace")
+			x)
+	`, "x in the namespace")
+
 	testBadCode(t, `
 		(ns foo:bar)
 	`, a.Err(a.ExpectedUnqualified, "foo:bar"))

@@ -4,9 +4,10 @@ import (
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
+	b "github.com/kode4food/sputter/builtins"
 )
 
-func TestVariables(t *testing.T) {
+func TestDefinitions(t *testing.T) {
 	ns := a.GetNamespace(a.UserDomain)
 	ns.Delete("foo")
 	ns.Delete("return-local")
@@ -23,11 +24,19 @@ func TestVariables(t *testing.T) {
 	`, "local")
 }
 
-func TestScopeQualifiers(t *testing.T) {
+func TestLetBindings(t *testing.T) {
 	a.GetNamespace(a.UserDomain).Delete("foo")
 	testCode(t, `
 		(def foo 99)
 		(let [foo 100]
 			(+ foo user:foo))
 	`, a.NewFloat(199))
+
+	testBadCode(t, `
+		(let 99 "hello")
+	`, a.Err(a.ExpectedVector, "99"))
+
+	testBadCode(t, `
+		(let [a blah b] "hello")
+	`, b.ExpectedBindings)
 }

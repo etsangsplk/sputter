@@ -1,9 +1,12 @@
 package builtins
 
-import a "github.com/kode4food/sputter/api"
+import (
+	a "github.com/kode4food/sputter/api"
+	d "github.com/kode4food/sputter/docstring"
+)
 
 type functionDefinition struct {
-	args a.Sequence
+	args a.Vector
 	body a.Sequence
 	meta a.Metadata
 }
@@ -20,21 +23,19 @@ func argNames(n a.Sequence) []a.Name {
 func getFunctionDefinition(args a.Sequence) *functionDefinition {
 	a.AssertMinimumArity(args, 3)
 
-	i := a.Iterate(args)
-	fv, _ := i.Next()
-	fn := a.AssertUnqualified(fv).Name()
+	fn := a.AssertUnqualified(args.First()).Name()
+	r := args.Rest()
 
 	var ds string
-	av, _ := i.Next()
-	if vs, ok := av.(string); ok {
+	if vs, ok := r.First().(string); ok {
 		ds = vs
-		av, _ = i.Next()
+		r = r.Rest()
 	}
-	an := a.AssertSequence(av)
+	an := a.AssertVector(r.First())
 
 	return &functionDefinition{
 		args: an,
-		body: i.Rest(),
+		body: r.Rest(),
 		meta: a.Metadata{
 			a.MetaName: fn,
 			a.MetaDoc:  ds,
@@ -50,10 +51,10 @@ func defineFunction(closure a.Context, d *functionDefinition) a.Function {
 	return a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
 		a.AssertArity(args, ac)
 		l := a.ChildContext(closure)
-		i := a.Iterate(args)
+		i := args
 		for _, n := range an {
-			v, _ := i.Next()
-			l.Put(n, a.Eval(c, v))
+			l.Put(n, a.Eval(c, i.First()))
+			i = i.Rest()
 		}
 		return a.EvalSequence(l, db)
 	}).WithMetadata(d.meta).(a.Function)
@@ -68,7 +69,7 @@ func defn(c a.Context, args a.Sequence) a.Value {
 
 func fn(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
-	an := a.AssertSequence(args.First())
+	an := a.AssertVector(args.First())
 
 	return defineFunction(c, &functionDefinition{
 		args: an,
@@ -88,18 +89,21 @@ func init() {
 	registerAnnotated(
 		a.NewFunction(defn).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("defn"),
+			a.MetaDoc:  d.Get("defn"),
 		}),
 	)
 
 	registerAnnotated(
 		a.NewFunction(fn).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("fn"),
+			a.MetaDoc:  d.Get("fn"),
 		}),
 	)
 
 	registerAnnotated(
 		a.NewFunction(apply).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("apply"),
+			a.MetaDoc:  d.Get("apply"),
 		}),
 	)
 }

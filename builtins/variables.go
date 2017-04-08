@@ -1,6 +1,12 @@
 package builtins
 
-import a "github.com/kode4food/sputter/api"
+import (
+	a "github.com/kode4food/sputter/api"
+	d "github.com/kode4food/sputter/docstring"
+)
+
+// ExpectedBindings is raised if a binding vector isn't an even number
+const ExpectedBindings = "expected bindings in the form: name value"
 
 func def(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
@@ -16,30 +22,34 @@ func def(c a.Context, args a.Sequence) a.Value {
 func let(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 	l := a.ChildContext(c)
-	i := a.Iterate(args)
-	b, _ := i.Next()
 
-	bi := a.Iterate(a.AssertSequence(b))
-	for s, ok := bi.Next(); ok; s, ok = bi.Next() {
-		n := a.AssertUnqualified(s).Name()
-		if v, ok := bi.Next(); ok {
-			l.Put(n, a.Eval(l, v))
-		}
+	b := a.AssertVector(args.First())
+	bc := b.Count()
+	if bc%2 != 0 {
+		panic(ExpectedBindings)
 	}
 
-	return a.EvalSequence(l, i.Rest())
+	for i := 0; i < bc; i++ {
+		n := a.AssertUnqualified(b[i]).Name()
+		i++
+		l.Put(n, a.Eval(l, b[i]))
+	}
+
+	return a.EvalSequence(l, args.Rest())
 }
 
 func init() {
 	registerAnnotated(
 		a.NewFunction(def).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("def"),
+			a.MetaDoc:  d.Get("def"),
 		}),
 	)
 
 	registerAnnotated(
 		a.NewFunction(let).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("let"),
+			a.MetaDoc:  d.Get("let"),
 		}),
 	)
 }

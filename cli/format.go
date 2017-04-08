@@ -38,7 +38,7 @@ const (
 
 // This is *not* a full-featured markdown formatter, or even a compliant
 // one for that matter. It only supports the productions that are
-// currently used by documentation strings, and will likely not evolve
+// currently used by documentation strings and will likely not evolve
 // much beyond that
 
 type formatter func(string) string

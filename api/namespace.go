@@ -40,6 +40,11 @@ type namespace struct {
 	symbols symbolMap
 }
 
+type withNamespace struct {
+	Context
+	ns Namespace
+}
+
 // Domain returns the Domain of the Namespace
 func (ns *namespace) Domain() Name {
 	return ns.domain
@@ -83,6 +88,23 @@ func GetContextNamespace(c Context) Namespace {
 		return AssertNamespace(v)
 	}
 	return GetNamespace(UserDomain)
+}
+
+// WithNamespace creates a child Context that performs a Namespace lookup
+// before checking the Context's parent
+func WithNamespace(c Context, ns Namespace) Context {
+	return ChildContext(&withNamespace{
+		Context: c,
+		ns:      ns,
+	})
+}
+
+// Get retrieves a value from the Context chain
+func (w *withNamespace) Get(n Name) (v Value, bound bool) {
+	if v, ok := w.ns.Get(n); ok {
+		return v, true
+	}
+	return w.Context.Get(n)
 }
 
 // AssertNamespace will cast a Value to a Namespace or explode violently

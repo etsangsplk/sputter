@@ -19,17 +19,17 @@ func cond(c a.Context, args a.Sequence) a.Value {
 	return a.Nil
 }
 
-// this will be replaced by a macro -> cond
 func _if(c a.Context, args a.Sequence) a.Value {
-	a.AssertArityRange(args, 2, 3)
-	i := a.Iterate(args)
-	condVal, _ := i.Next()
-	cond := a.Eval(c, condVal)
-	if !a.Truthy(cond) {
-		i.Next()
+	i := a.AssertArityRange(args, 2, 3)
+	cond := a.Eval(c, args.First())
+	rest := args.Rest()
+	if a.Truthy(cond) {
+		return a.Eval(c, rest.First())
 	}
-	result, _ := i.Next()
-	return a.Eval(c, result)
+	if i == 3 {
+		return a.Eval(c, rest.Rest().First())
+	}
+	return a.Nil
 }
 
 func init() {
