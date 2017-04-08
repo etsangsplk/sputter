@@ -53,6 +53,7 @@ func TestIf(t *testing.T) {
 	testCode(t, `(if nil 1 0)`, a.NewFloat(0))
 	testCode(t, `(if () 1 0)`, a.NewFloat(1))
 	testCode(t, `(if "hello" 1 0)`, a.NewFloat(1))
+	testCode(t, `(if false 1)`, a.Nil)
 }
 
 func TestBadIfArity(t *testing.T) {

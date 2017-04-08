@@ -27,16 +27,20 @@ func TestWithNamespace(t *testing.T) {
 	ns1.Delete("foo")
 	ns2.Delete("foo")
 
-	ns1.Put("foo", "outer")
 	c1 := a.ChildContext(ns1)
 	c2 := a.WithNamespace(c1, ns2)
+
+	ns1.Put("foo", "outer")
+	c1.Put("bar", "skipped")
 	ns2.Put("foo", "inner")
 
 	v1, _ := c1.Get("foo")
 	v2, _ := c2.Get("foo")
+	v3, _ := c2.Get("bar")
 
 	as.Equal("outer", v1, "outer is correct")
 	as.Equal("inner", v2, "inner is correct")
+	as.Equal("skipped", v3, "skipped is correct")
 }
 
 func TestAssertNamespace(t *testing.T) {
