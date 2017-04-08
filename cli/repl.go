@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
+	"os/user"
+	"path"
 	"regexp"
 	"strings"
 	"time"
@@ -56,7 +58,10 @@ type REPL struct {
 func NewREPL() *REPL {
 	repl := &REPL{}
 
-	rl, err := readline.NewEx(&readline.Config{})
+	rl, err := readline.NewEx(&readline.Config{
+		HistoryFile: getHistoryFile(),
+	})
+
 	if err != nil {
 		panic(err)
 	}
@@ -290,6 +295,14 @@ func registerREPLBuiltIns() {
 			a.MetaDoc:  d.Get("repl-doc"),
 		}),
 	)
+}
+
+func getHistoryFile() string {
+	usr, err := user.Current()
+	if err != nil {
+		return ""
+	}
+	return path.Join(usr.HomeDir, ".sputter-history")
 }
 
 func init() {
