@@ -1,0 +1,7 @@
+# (ns name) returns a namespace
+Will return a namespace context based on its name. If the namespace does not already exist, it will be created before being returned.
+
+## An Example
+
+  (let [n (ns some-new-namespace)]
+    (prn n))
