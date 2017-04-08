@@ -16,19 +16,19 @@ type Mapped interface {
 	Get(key Value) Value
 }
 
-// ArrayMap is a Mappable that is implemented atop an array
-type ArrayMap []Vector
+// Associative is a Mappable that is implemented atop an array
+type Associative []Vector
 
-// Count returns the number of key/value pairs in this ArrayMap
-func (m ArrayMap) Count() int {
-	return len(m)
+// Count returns the number of key/value pairs in this Associative
+func (a Associative) Count() int {
+	return len(a)
 }
 
-// Get returns the Value corresponding to the key in the ArrayMap
-func (m ArrayMap) Get(key Value) Value {
-	l := len(m)
+// Get returns the Value corresponding to the key in the Associative
+func (a Associative) Get(key Value) Value {
+	l := len(a)
 	for i := 0; i < l; i++ {
-		mp := m[i]
+		mp := a[i]
 		if mp[0] == key {
 			return mp[1]
 		}
@@ -36,19 +36,19 @@ func (m ArrayMap) Get(key Value) Value {
 	return Nil
 }
 
-// Apply makes ArrayMap applicable
-func (m ArrayMap) Apply(c Context, args Sequence) Value {
+// Apply makes Associative applicable
+func (a Associative) Apply(c Context, args Sequence) Value {
 	AssertArity(args, 1)
 	key := Eval(c, args.First())
-	return m.Get(key)
+	return a.Get(key)
 }
 
-// Eval makes an ArrayMap Evaluable
-func (m ArrayMap) Eval(c Context) Value {
-	l := len(m)
-	r := make(ArrayMap, l)
+// Eval makes an Associative Evaluable
+func (a Associative) Eval(c Context) Value {
+	l := len(a)
+	r := make(Associative, l)
 	for i := 0; i < l; i++ {
-		mp := m[i]
+		mp := a[i]
 		r[i] = Vector{
 			Eval(c, mp[0]),
 			Eval(c, mp[1]),
@@ -57,40 +57,40 @@ func (m ArrayMap) Eval(c Context) Value {
 	return r
 }
 
-// First returns the first key/value pair of an ArrayMap
-func (m ArrayMap) First() Value {
-	return m[0]
+// First returns the first key/value pair of an Associative
+func (a Associative) First() Value {
+	return a[0]
 }
 
-// Rest returns the remaining elements of an ArrayMap as a Sequence
-func (m ArrayMap) Rest() Sequence {
-	return m[1:]
+// Rest returns the remaining elements of an Associative as a Sequence
+func (a Associative) Rest() Sequence {
+	return a[1:]
 }
 
 // Prepend creates a new Sequence by prepending a Value
-func (m ArrayMap) Prepend(v Value) Sequence {
+func (a Associative) Prepend(v Value) Sequence {
 	if mp, ok := v.(Vector); ok {
 		AssertArity(mp, 2)
-		return append(ArrayMap{mp}, m...)
+		return append(Associative{mp}, a...)
 	}
 	panic(ExpectedPair)
 }
 
 // IsSequence returns whether this instance is a consumable Sequence
-func (m ArrayMap) IsSequence() bool {
-	return len(m) > 0
+func (a Associative) IsSequence() bool {
+	return len(a) > 0
 }
 
-func (m ArrayMap) String() string {
+func (a Associative) String() string {
 	var b bytes.Buffer
-	l := len(m)
+	l := len(a)
 
 	b.WriteString("{")
 	for i := 0; i < l; i++ {
 		if i > 0 {
 			b.WriteString(", ")
 		}
-		mp := m[i]
+		mp := a[i]
 		b.WriteString(String(mp[0]))
 		b.WriteString(" ")
 		b.WriteString(String(mp[1]))

@@ -602,29 +602,29 @@ func AssetNames() []string {
 
 // _bindata is a table, holding each asset generator, mapped to its name.
 var _bindata = map[string]func() (*asset, error){
-	"apply.md":     applyMd,
-	"async.md":     asyncMd,
-	"channel.md":   channelMd,
-	"concat.md":    concatMd,
-	"cond.md":      condMd,
-	"def.md":       defMd,
-	"defn.md":      defnMd,
-	"do.md":        doMd,
-	"filter.md":    filterMd,
-	"fn.md":        fnMd,
-	"future.md":    futureMd,
-	"if.md":        ifMd,
-	"let.md":       letMd,
-	"map.md":       mapMd,
-	"ns.md":        nsMd,
-	"promise.md":   promiseMd,
-	"quote.md":     quoteMd,
-	"repl-cls.md":  replClsMd,
-	"repl-doc.md":  replDocMd,
+	"apply.md": applyMd,
+	"async.md": asyncMd,
+	"channel.md": channelMd,
+	"concat.md": concatMd,
+	"cond.md": condMd,
+	"def.md": defMd,
+	"defn.md": defnMd,
+	"do.md": doMd,
+	"filter.md": filterMd,
+	"fn.md": fnMd,
+	"future.md": futureMd,
+	"if.md": ifMd,
+	"let.md": letMd,
+	"map.md": mapMd,
+	"ns.md": nsMd,
+	"promise.md": promiseMd,
+	"quote.md": quoteMd,
+	"repl-cls.md": replClsMd,
+	"repl-doc.md": replDocMd,
 	"repl-help.md": replHelpMd,
 	"repl-quit.md": replQuitMd,
-	"repl-use.md":  replUseMd,
-	"with-ns.md":   withNsMd,
+	"repl-use.md": replUseMd,
+	"with-ns.md": withNsMd,
 }
 
 // AssetDir returns the file names below a certain
@@ -666,31 +666,30 @@ type bintree struct {
 	Func     func() (*asset, error)
 	Children map[string]*bintree
 }
-
 var _bintree = &bintree{nil, map[string]*bintree{
-	"apply.md":     &bintree{applyMd, map[string]*bintree{}},
-	"async.md":     &bintree{asyncMd, map[string]*bintree{}},
-	"channel.md":   &bintree{channelMd, map[string]*bintree{}},
-	"concat.md":    &bintree{concatMd, map[string]*bintree{}},
-	"cond.md":      &bintree{condMd, map[string]*bintree{}},
-	"def.md":       &bintree{defMd, map[string]*bintree{}},
-	"defn.md":      &bintree{defnMd, map[string]*bintree{}},
-	"do.md":        &bintree{doMd, map[string]*bintree{}},
-	"filter.md":    &bintree{filterMd, map[string]*bintree{}},
-	"fn.md":        &bintree{fnMd, map[string]*bintree{}},
-	"future.md":    &bintree{futureMd, map[string]*bintree{}},
-	"if.md":        &bintree{ifMd, map[string]*bintree{}},
-	"let.md":       &bintree{letMd, map[string]*bintree{}},
-	"map.md":       &bintree{mapMd, map[string]*bintree{}},
-	"ns.md":        &bintree{nsMd, map[string]*bintree{}},
-	"promise.md":   &bintree{promiseMd, map[string]*bintree{}},
-	"quote.md":     &bintree{quoteMd, map[string]*bintree{}},
-	"repl-cls.md":  &bintree{replClsMd, map[string]*bintree{}},
-	"repl-doc.md":  &bintree{replDocMd, map[string]*bintree{}},
+	"apply.md": &bintree{applyMd, map[string]*bintree{}},
+	"async.md": &bintree{asyncMd, map[string]*bintree{}},
+	"channel.md": &bintree{channelMd, map[string]*bintree{}},
+	"concat.md": &bintree{concatMd, map[string]*bintree{}},
+	"cond.md": &bintree{condMd, map[string]*bintree{}},
+	"def.md": &bintree{defMd, map[string]*bintree{}},
+	"defn.md": &bintree{defnMd, map[string]*bintree{}},
+	"do.md": &bintree{doMd, map[string]*bintree{}},
+	"filter.md": &bintree{filterMd, map[string]*bintree{}},
+	"fn.md": &bintree{fnMd, map[string]*bintree{}},
+	"future.md": &bintree{futureMd, map[string]*bintree{}},
+	"if.md": &bintree{ifMd, map[string]*bintree{}},
+	"let.md": &bintree{letMd, map[string]*bintree{}},
+	"map.md": &bintree{mapMd, map[string]*bintree{}},
+	"ns.md": &bintree{nsMd, map[string]*bintree{}},
+	"promise.md": &bintree{promiseMd, map[string]*bintree{}},
+	"quote.md": &bintree{quoteMd, map[string]*bintree{}},
+	"repl-cls.md": &bintree{replClsMd, map[string]*bintree{}},
+	"repl-doc.md": &bintree{replDocMd, map[string]*bintree{}},
 	"repl-help.md": &bintree{replHelpMd, map[string]*bintree{}},
 	"repl-quit.md": &bintree{replQuitMd, map[string]*bintree{}},
-	"repl-use.md":  &bintree{replUseMd, map[string]*bintree{}},
-	"with-ns.md":   &bintree{withNsMd, map[string]*bintree{}},
+	"repl-use.md": &bintree{replUseMd, map[string]*bintree{}},
+	"with-ns.md": &bintree{withNsMd, map[string]*bintree{}},
 }}
 
 // RestoreAsset restores an asset under the given directory
@@ -739,3 +738,4 @@ func _filePath(dir, name string) string {
 	cannonicalName := strings.Replace(name, "\\", "/", -1)
 	return filepath.Join(append([]string{dir}, strings.Split(cannonicalName, "/")...)...)
 }
+

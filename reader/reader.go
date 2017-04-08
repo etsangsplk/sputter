@@ -168,8 +168,8 @@ func (r *tokenReader) readVector(m mode) a.Vector {
 	}
 }
 
-func (r *tokenReader) readMap(m mode) a.ArrayMap {
-	res := make(a.ArrayMap, 0)
+func (r *tokenReader) readMap(m mode) a.Associative {
+	res := make(a.Associative, 0)
 	mp := make(a.Vector, 2)
 
 	for idx := 0; ; idx++ {

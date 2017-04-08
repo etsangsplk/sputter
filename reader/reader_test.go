@@ -72,7 +72,7 @@ func TestReadMap(t *testing.T) {
 	c := a.NewContext()
 	tr := r.NewReader(c, l)
 	v := tr.Next()
-	m, ok := v.(a.ArrayMap)
+	m, ok := v.(a.Associative)
 	as.True(ok)
 	as.Equal(2, m.Count(), "map count is correct")
 }

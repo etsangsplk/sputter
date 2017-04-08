@@ -13,7 +13,10 @@ func vector(c a.Context, args a.Sequence) a.Value {
 		}
 		return r
 	}
+	return vectorFromUncounted(c, args)
+}
 
+func vectorFromUncounted(c a.Context, args a.Sequence) a.Value {
 	r := a.Vector{}
 	for i := args; i.IsSequence(); i = i.Rest() {
 		r = append(r, a.Eval(c, i.First()))

@@ -55,7 +55,7 @@ func channel(_ a.Context, args a.Sequence) a.Value {
 	}
 	e, s := a.NewChannel(buf)
 
-	return a.ArrayMap{
+	return a.Associative{
 		a.Vector{MetaEmitter, emitFunction(e)},
 		a.Vector{MetaClose, closeFunction(e)},
 		a.Vector{MetaSequence, s},

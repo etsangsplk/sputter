@@ -43,8 +43,8 @@ that will change rapidly. The current built-in forms are:
   * Predicates: `eq`, `!eq`, `nil?`, `!nil?`
   * Sequences: `cons`, `first`, `rest`, `seq?`, `!seq?`
   * Lists: `list`, `list?`, `!list?`, `to-list`
-  * Hash Maps: `hash-map`, `hash-map?`, `!hash-map?`, `to-hash-map`
   * Vectors: `vector`, `vector?`, `!vector?`, `to-vector`
+  * Associative Arrays: `assoc`, `assoc?`, `!assoc?`, `to-assoc`
   * Metadata: `meta`, `with-meta`
   * Comprehensions: `concat`, `map`, `filter`
   * Concurrency: `channel`, `async`, `promise`, `future`

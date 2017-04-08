@@ -7,15 +7,15 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func getTestMap() a.ArrayMap {
-	return a.ArrayMap{
+func getTestMap() a.Associative {
+	return a.Associative{
 		a.Vector{a.NewKeyword("name"), "Sputter"},
 		a.Vector{a.NewKeyword("age"), a.NewFloat(99)},
 		a.Vector{"string", "value"},
 	}
 }
 
-func TestArrayMap(t *testing.T) {
+func TestAssociative(t *testing.T) {
 	as := assert.New(t)
 	m1 := getTestMap()
 
@@ -38,7 +38,7 @@ func TestArrayMap(t *testing.T) {
 	as.Equal("Sputter", m1.Apply(c, a.NewList(nameKey)))
 }
 
-func TestArrayMapSequence(t *testing.T) {
+func TestAssociativeSequence(t *testing.T) {
 	as := assert.New(t)
 	m1 := getTestMap()
 
@@ -55,25 +55,25 @@ func TestArrayMapSequence(t *testing.T) {
 
 }
 
-func TestArrayMapPrepend(t *testing.T) {
+func TestAssociativePrepend(t *testing.T) {
 	as := assert.New(t)
 	m1 := getTestMap()
 
-	m2 := m1.Prepend(a.Vector{a.NewKeyword("foo"), "bar"}).(a.ArrayMap)
+	m2 := m1.Prepend(a.Vector{a.NewKeyword("foo"), "bar"}).(a.Associative)
 	as.NotEqual(m1, m2, "prepended map not the same")
 	as.Equal("bar", m2.Get(a.NewKeyword("foo")), "prepended get works")
 
-	if e2, ok := a.Eval(a.NewContext(), m2).(a.ArrayMap); ok {
+	if e2, ok := a.Eval(a.NewContext(), m2).(a.Associative); ok {
 		as.True(&e2 != &m2, "evaluated map not the same")
 	} else {
-		as.Fail("map.Eval() didn't return an ArrayMap")
+		as.Fail("map.Eval() didn't return an Associative")
 	}
 
 	defer expectError(as, a.ExpectedPair)
 	m2.Prepend(99)
 }
 
-func TestArrayMapIterate(t *testing.T) {
+func TestAssociativeIterate(t *testing.T) {
 	as := assert.New(t)
 	m1 := getTestMap()
 
@@ -95,7 +95,7 @@ func TestArrayMapIterate(t *testing.T) {
 	}
 }
 
-func TestArrayMapLookup(t *testing.T) {
+func TestAssociativeLookup(t *testing.T) {
 	as := assert.New(t)
 	m1 := getTestMap()
 

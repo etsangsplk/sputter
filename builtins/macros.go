@@ -10,10 +10,10 @@ func defineMacro(closure a.Context, d *functionDefinition) a.Macro {
 	return a.NewMacro(func(c a.Context, args a.Sequence) a.Value {
 		a.AssertArity(args, ac)
 		l := a.ChildContext(closure)
-		i := a.Iterate(args)
+		i := args
 		for _, n := range an {
-			v, _ := i.Next()
-			l.Put(n, a.Eval(c, v))
+			l.Put(n, a.Eval(c, i.First()))
+			i = i.Rest()
 		}
 		return a.EvalSequence(l, db)
 	}).WithMetadata(d.meta).(a.Macro)

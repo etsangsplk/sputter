@@ -17,9 +17,9 @@ func toMetadata(args a.Sequence) a.Metadata {
 }
 
 func fromMetadata(m a.Metadata) a.Value {
-	r := a.ArrayMap{}
+	r := a.Associative{}
 	for k, v := range m {
-		r = r.Prepend(a.Vector{k, v}).(a.ArrayMap)
+		r = r.Prepend(a.Vector{k, v}).(a.Associative)
 	}
 	return r
 }
