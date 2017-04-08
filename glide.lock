@@ -7,8 +7,6 @@ imports:
   version: 9d633bb047cfb1e374ce070ac2fcc5593de144a8
 - name: github.com/pkg/errors
   version: ff09b135c25aae272398c51a07235b90a75aa4f0
-- name: github.com/wayneashleyberry/terminal-dimensions
-  version: 29d939246793fbd8100dcf74700637adcb839bc5
 testImports:
 - name: github.com/davecgh/go-spew
   version: 6d212800a42e8ab5c146b8ace3490ee17e5225f9

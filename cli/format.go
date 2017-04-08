@@ -4,11 +4,9 @@ import (
 	"bytes"
 	"regexp"
 	"strings"
-
-	term "github.com/wayneashleyberry/terminal-dimensions"
 )
 
-const defaultWidth = 76
+const defaultFormatWidth = 76
 
 const (
 	esc      = "\033["
@@ -78,15 +76,18 @@ func formatMarkdown(s string) string {
 	return d
 }
 
-func getWidth() int {
-	if w, err := term.Width(); err == nil {
-		return int(w) - 4
-	}
-	return defaultWidth
+func getFormatWidth() (width int) {
+	defer func() {
+		if rec := recover(); rec != nil {
+			width = defaultFormatWidth
+		}
+	}()
+
+	return getScreenWidth() - 4
 }
 
 func wrapLines(s []string) []string {
-	w := getWidth()
+	w := getFormatWidth()
 	r := []string{}
 	for _, e := range s {
 		r = append(r, wrapLine(e, w)...)

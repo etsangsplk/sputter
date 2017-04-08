@@ -297,6 +297,10 @@ func registerREPLBuiltIns() {
 	)
 }
 
+func getScreenWidth() int {
+	return readline.GetScreenWidth()
+}
+
 func getHistoryFile() string {
 	usr, err := user.Current()
 	if err != nil {
