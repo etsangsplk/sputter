@@ -141,10 +141,10 @@ func AssertNumber(v Value) *Number {
 }
 
 // AssertInteger will cast a Value into an Integer or explode violently
-func AssertInteger(v Value) int64 {
+func AssertInteger(v Value) int {
 	n := AssertNumber(v)
 	f, _ := n.Float64()
-	i := int64(f)
+	i := int(f)
 	if f-float64(i) == 0 {
 		return i
 	}

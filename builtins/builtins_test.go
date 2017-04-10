@@ -60,14 +60,32 @@ func TestQuote(t *testing.T) {
 	r1 := runCode("(quote (blah 2 3))").(*a.List)
 	r2 := runCode("'(blah 2 3)").(*a.List)
 
-	as.Equal(r1.Get(0), r2.Get(0), "first element same")
-	if _, ok := r1.Get(0).(a.Symbol); !ok {
+	v1, ok := r1.Get(0)
+	v2, _ := r2.Get(0)
+	as.True(ok, "first element retrieved")
+	as.Equal(v1, v2, "first element same")
+
+	v1, ok = r1.Get(0)
+	as.True(ok, "first element retrieved")
+	if _, ok := v1.(a.Symbol); !ok {
 		as.Fail("first element is not a symbol")
 	}
-	as.Equal(r1.Get(1), r2.Get(1), "second element same")
-	as.Equal(a.EqualTo, a.NewFloat(2.0).Cmp(r1.Get(1).(*a.Number)), "second")
-	as.Equal(r1.Get(2), r2.Get(2), "third element same")
-	as.Equal(a.EqualTo, a.NewFloat(3.0).Cmp(r1.Get(2).(*a.Number)), "third")
+
+	v1, ok = r1.Get(1)
+	v2, _ = r2.Get(1)
+	as.True(ok, "first element retrieved")
+	as.Equal(v1, v2, "second element same")
+
+	v1, ok = r1.Get(1)
+	as.Equal(a.EqualTo, a.NewFloat(2.0).Cmp(v1.(*a.Number)), "second")
+
+	v1, ok = r1.Get(2)
+	v2, _ = r2.Get(2)
+	as.Equal(v1, v2, "third element same")
+
+	v1, ok = r1.Get(2)
+	as.True(ok, "third element retrieved")
+	as.Equal(a.EqualTo, a.NewFloat(3.0).Cmp(v1.(*a.Number)), "third")
 }
 
 func TestDo(t *testing.T) {

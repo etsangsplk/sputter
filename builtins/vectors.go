@@ -1,6 +1,9 @@
 package builtins
 
-import a "github.com/kode4food/sputter/api"
+import (
+	a "github.com/kode4food/sputter/api"
+	d "github.com/kode4food/sputter/docstring"
+)
 
 func vector(c a.Context, args a.Sequence) a.Value {
 	if cnt, ok := args.(a.Countable); ok {
@@ -25,10 +28,7 @@ func vectorFromUncounted(c a.Context, args a.Sequence) a.Value {
 }
 
 func toVector(c a.Context, args a.Sequence) a.Value {
-	a.AssertArity(args, 1)
-	arg := a.Eval(c, args.First())
-	seq := a.AssertSequence(arg)
-	return vector(c, seq)
+	return vector(c, concat(c, args).(a.Sequence))
 }
 
 func isVector(v a.Value) bool {
@@ -42,16 +42,19 @@ func init() {
 	registerAnnotated(
 		a.NewFunction(vector).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("vector"),
+			a.MetaDoc:  d.Get("vector"),
 		}),
 	)
 
 	registerAnnotated(
 		a.NewFunction(toVector).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("to-vector"),
+			a.MetaDoc:  d.Get("to-vector"),
 		}),
 	)
 
 	registerSequencePredicate(isVector, a.Metadata{
 		a.MetaName: a.Name("vector?"),
+		a.MetaDoc:  d.Get("is-vector"),
 	})
 }

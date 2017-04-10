@@ -23,16 +23,23 @@ func TestAssociative(t *testing.T) {
 
 	nameKey := a.NewKeyword("name")
 	as.Equal(a.Name("name"), nameKey.Name(), "Name() works")
-	as.Equal("Sputter", m1.Get(nameKey), "get works")
+
+	nameValue, ok := m1.Get(nameKey)
+	as.True(ok, "get works")
+	as.Equal("Sputter", nameValue, "get works")
 
 	ageKey := a.NewKeyword("age")
-	ageValue := m1.Get(ageKey)
+	ageValue, ok := m1.Get(ageKey)
+	as.True(ok, "get works")
 	as.Equal(a.EqualTo, a.NewFloat(99).Cmp(ageValue.(*a.Number)), "get works")
 
-	strValue := m1.Get("string")
+	strValue, ok := m1.Get("string")
+	as.True(ok, "get works")
 	as.Equal("value", strValue, "get works")
 
-	as.Equal(a.Nil, m1.Get("missing"), "miss works")
+	r, ok := m1.Get("missing")
+	as.False(ok, "miss works")
+	as.Equal(a.Nil, r, "miss works")
 
 	c := a.NewContext()
 	as.Equal("Sputter", m1.Apply(c, a.NewList(nameKey)))
@@ -61,7 +68,10 @@ func TestAssociativePrepend(t *testing.T) {
 
 	m2 := m1.Prepend(a.Vector{a.NewKeyword("foo"), "bar"}).(a.Associative)
 	as.NotEqual(m1, m2, "prepended map not the same")
-	as.Equal("bar", m2.Get(a.NewKeyword("foo")), "prepended get works")
+
+	r, ok := m2.Get(a.NewKeyword("foo"))
+	as.True(ok, "prepended get works")
+	as.Equal("bar", r, "prepended get works")
 
 	if e2, ok := a.Eval(a.NewContext(), m2).(a.Associative); ok {
 		as.True(&e2 != &m2, "evaluated map not the same")
@@ -106,4 +116,26 @@ func TestAssociativeLookup(t *testing.T) {
 
 	defer expectError(as, a.ExpectedMapped)
 	nameKey.Apply(c, a.NewList(99))
+}
+
+func TestAssociativeMiss(t *testing.T) {
+	as := assert.New(t)
+	m1 := getTestMap()
+
+	nameKey := a.NewKeyword("miss")
+	c := a.NewContext()
+
+	defer expectError(as, a.Err(a.KeyNotFound, a.String(nameKey)))
+	m1.Apply(c, a.NewList(nameKey))
+}
+
+func TestKeywordMiss(t *testing.T) {
+	as := assert.New(t)
+	m1 := getTestMap()
+
+	nameKey := a.NewKeyword("miss")
+	c := a.NewContext()
+
+	defer expectError(as, a.Err(a.KeyNotFound, a.String(nameKey)))
+	nameKey.Apply(c, a.NewList(m1))
 }

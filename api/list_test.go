@@ -37,10 +37,15 @@ func TestList(t *testing.T) {
 	as.Equal(n2, l2.First(), "2nd head is populated correctly")
 	as.Equal(l1, l2.Rest(), "2nd tail is populated correctly")
 	as.Equal(2, l2.Count(), "2nd list count is correct")
-	as.Equal(a.NewFloat(12), l2.Get(1), "get(int) works")
+
+	r, ok := l2.Get(1)
+	as.True(ok, "get(int) works")
+	as.Equal(a.NewFloat(12), r, "get(int) works")
 	as.Equal(2, a.Count(l2), "2nd list general count is correct")
 
-	as.Equal(a.Nil, a.EmptyList.Get(1), "get from empty list")
+	r, ok = a.EmptyList.Get(1)
+	as.False(ok, "get from empty list")
+	as.Equal(a.Nil, r, "get from empty list")
 
 	c := a.NewContext()
 	as.Equal(a.NewFloat(12), l2.Apply(c, a.NewList(a.NewFloat(1))))
@@ -102,4 +107,15 @@ func TestNonFunction(t *testing.T) {
 	err := a.Err(a.ExpectedApplicable, "unknown")
 	seq := a.NewList("foo").Prepend(a.NewLocalSymbol("unknown"))
 	testBrokenEval(t, seq, err)
+}
+
+func TestListExplosion(t *testing.T) {
+	as := assert.New(t)
+	
+	idx := a.NewFloat(3)
+	err := a.Err(a.IndexNotFound, a.String(idx))
+	defer expectError(as, err)
+
+	seq := a.NewList("foo").(a.Applicable)
+	seq.Apply(a.NewContext(), a.NewList(idx))
 }

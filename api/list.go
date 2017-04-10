@@ -51,23 +51,21 @@ func (l *List) Count() int {
 }
 
 // Get returns the Value at the indexed position in the List
-func (l *List) Get(index int) Value {
+func (l *List) Get(index int) (Value, bool) {
 	if index > l.count-1 {
-		return Nil
+		return Nil, false
 	}
 
 	e := l
 	for i := 0; i < index; i++ {
 		e = e.rest
 	}
-	return e.first
+	return e.first, true
 }
 
 // Apply makes List applicable
 func (l *List) Apply(c Context, args Sequence) Value {
-	AssertArity(args, 1)
-	idx := AssertInteger(Eval(c, args.First()))
-	return l.Get(int(idx))
+	return IndexedApply(l, c, args)
 }
 
 // Eval makes a List Evaluable

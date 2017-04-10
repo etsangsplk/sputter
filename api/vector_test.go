@@ -13,14 +13,23 @@ func TestVector(t *testing.T) {
 	v1 := a.Vector{"hello", "how", "are", "you?"}
 	as.Equal(4, v1.Count(), "vector 1 count is correct")
 	as.Equal(4, a.Count(v1), "vector 1 general count is correct")
-	as.Equal("are", v1.Get(2), "get by index is correct")
+
+	r, ok := v1.Get(2)
+	as.True(ok, "get by index is correct")
+	as.Equal("are", r, "get by index is correct")
 	as.Equal(`["hello" "how" "are" "you?"]`, v1.String(), "string is good")
 
 	v2 := v1.Prepend("oh").(a.Vector)
 	as.Equal(5, v2.Count(), "vector 2 count is correct")
 	as.Equal(4, v1.Count(), "vector 1 count is still correct")
-	as.Equal("oh", v2.Get(0), "get by index is correct")
-	as.Equal("are", v2.Get(3), "get by index is correct")
+
+	r, ok = v2.Get(0)
+	as.True(ok, "get by index is correct")
+	as.Equal("oh", r, "get by index is correct")
+
+	r, ok = v2.Get(3)
+	as.True(ok, "get by index is correct")
+	as.Equal("are", r, "get by index is correct")
 
 	c := a.NewContext()
 	as.Equal("are", v1.Apply(c, a.NewList(a.NewFloat(2))))
@@ -43,7 +52,9 @@ func TestVectorEval(t *testing.T) {
 		as.Fail("result is not a finite sequence")
 	}
 
-	as.Equal("are", r.(a.Indexed).Get(2), "get is working")
+	i, ok := r.(a.Indexed).Get(2)
+	as.True(ok, "indexed get is working")
+	as.Equal("are", i, "get is working")
 	as.Equal(`["hello" "how" "are" "you?"]`, a.String(r), "string is good")
 }
 
@@ -80,4 +91,15 @@ func TestAssertVector(t *testing.T) {
 
 	defer expectError(as, a.Err(a.ExpectedVector, "99"))
 	a.AssertVector(a.NewFloat(99))
+}
+
+func TestVectorExplosion(t *testing.T) {
+	as := assert.New(t)
+
+	idx := a.NewFloat(3)
+	err := a.Err(a.IndexNotFound, a.String(idx))
+	defer expectError(as, err)
+
+	v := a.Vector{"foo"}
+	v.Apply(a.NewContext(), a.NewList(idx))
 }

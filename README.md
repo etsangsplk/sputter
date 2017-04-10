@@ -45,6 +45,8 @@ that will change rapidly. The current built-in forms are:
   * Lists: `list`, `list?`, `!list?`, `to-list`
   * Vectors: `vector`, `vector?`, `!vector?`, `to-vector`
   * Associative Arrays: `assoc`, `assoc?`, `!assoc?`, `to-assoc`
+  * Indexed Sequences: `nth`, `indexed?`, `!indexed?`
+  * Mapped Sequences: `mapped?`, `!mapped?`
   * Metadata: `meta`, `with-meta`
   * Comprehensions: `concat`, `map`, `filter`
   * Concurrency: `channel`, `async`, `promise`, `future`

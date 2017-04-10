@@ -38,6 +38,12 @@ func _len(c a.Context, args a.Sequence) a.Value {
 	return a.NewFloat(float64(l))
 }
 
+func nth(c a.Context, args a.Sequence) a.Value {
+	a.AssertMinimumArity(args, 1)
+	s := a.AssertIndexed(a.Eval(c, args.First()))
+	return a.IndexedApply(s, c, args.Rest())
+}
+
 func concat(c a.Context, args a.Sequence) a.Value {
 	if a.AssertMinimumArity(args, 1) == 1 {
 		return a.AssertSequence(a.Eval(c, args.First()))
@@ -71,29 +77,41 @@ func filter(c a.Context, args a.Sequence) a.Value {
 func init() {
 	registerSequencePredicate(isSequence, a.Metadata{
 		a.MetaName: a.Name("seq?"),
+		a.MetaDoc:  d.Get("is-seq"),
 	})
 
 	registerAnnotated(
 		a.NewFunction(first).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("first"),
+			a.MetaDoc:  d.Get("first"),
 		}),
 	)
 
 	registerAnnotated(
 		a.NewFunction(rest).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("rest"),
+			a.MetaDoc:  d.Get("rest"),
 		}),
 	)
 
 	registerAnnotated(
 		a.NewFunction(cons).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("cons"),
+			a.MetaDoc:  d.Get("cons"),
 		}),
 	)
 
 	registerAnnotated(
 		a.NewFunction(_len).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("len"),
+			a.MetaDoc:  d.Get("len"),
+		}),
+	)
+
+	registerAnnotated(
+		a.NewFunction(nth).WithMetadata(a.Metadata{
+			a.MetaName: a.Name("nth"),
+			a.MetaDoc:  d.Get("nth"),
 		}),
 	)
 

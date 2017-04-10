@@ -7,14 +7,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestAssertSequence(t *testing.T) {
-	as := assert.New(t)
-	a.AssertSequence(a.NewList("hello"))
-
-	defer expectError(as, a.Err(a.ExpectedSequence, "99"))
-	a.AssertSequence(a.NewFloat(99))
-}
-
 type noCountSequence struct{}
 
 func (n *noCountSequence) First() a.Value               { return nil }
@@ -28,4 +20,20 @@ func TestNonCountableSequence(t *testing.T) {
 
 	defer expectError(as, a.ExpectedCountable)
 	a.Count(nc)
+}
+
+func TestAssertSequence(t *testing.T) {
+	as := assert.New(t)
+	a.AssertSequence(a.NewList("hello"))
+
+	defer expectError(as, a.Err(a.ExpectedSequence, "99"))
+	a.AssertSequence(a.NewFloat(99))
+}
+
+func TestAssertIndexed(t *testing.T) {
+	as := assert.New(t)
+	a.AssertIndexed(a.NewList("hello"))
+
+	defer expectError(as, a.Err(a.ExpectedIndexed, "99"))
+	a.AssertIndexed(a.NewFloat(99))
 }

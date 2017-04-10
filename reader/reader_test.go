@@ -61,9 +61,18 @@ func TestReadVector(t *testing.T) {
 	v := tr.Next()
 	vector, ok := v.(a.Vector)
 	as.True(ok)
-	as.Equal(a.EqualTo, a.NewFloat(99.0).Cmp(vector.Get(0).(*a.Number)))
-	as.Equal("hello", vector.Get(1))
-	as.Equal(a.EqualTo, a.NewFloat(55.120).Cmp(vector.Get(2).(*a.Number)))
+
+	r, ok := vector.Get(0)
+	as.True(ok, "get by index")
+	as.Equal(a.EqualTo, a.NewFloat(99.0).Cmp(r.(*a.Number)))
+
+	r, ok = vector.Get(1)
+	as.True(ok, "get by index")
+	as.Equal("hello", r)
+
+	r, ok = vector.Get(2)
+	as.True(ok, "get by index")
+	as.Equal(a.EqualTo, a.NewFloat(55.120).Cmp(r.(*a.Number)))
 }
 
 func TestReadMap(t *testing.T) {
@@ -233,7 +242,9 @@ func TestReaderPrepare(t *testing.T) {
 	v := tr.Next()
 
 	if rv, ok := v.(a.Vector); ok {
-		as.Equal("you", rv.Get(0), "prepared transformed into vector")
+		v1, ok := rv.Get(0)
+		as.True(ok, "prepared transformed into vector")
+		as.Equal("you", v1, "prepared transformed into vector")
 	} else {
 		as.Fail("prepare did not transform")
 	}

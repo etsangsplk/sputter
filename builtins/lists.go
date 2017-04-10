@@ -2,6 +2,7 @@ package builtins
 
 import (
 	a "github.com/kode4food/sputter/api"
+	d "github.com/kode4food/sputter/docstring"
 	u "github.com/kode4food/sputter/util"
 )
 
@@ -24,10 +25,7 @@ func list(c a.Context, args a.Sequence) a.Value {
 }
 
 func toList(c a.Context, args a.Sequence) a.Value {
-	a.AssertArity(args, 1)
-	arg := a.Eval(c, args.First())
-	seq := a.AssertSequence(arg)
-	return list(c, seq)
+	return list(c, concat(c, args).(a.Sequence))
 }
 
 func isList(v a.Value) bool {
@@ -41,16 +39,19 @@ func init() {
 	registerAnnotated(
 		a.NewFunction(list).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("list"),
+			a.MetaDoc:  d.Get("list"),
 		}),
 	)
 
 	registerAnnotated(
 		a.NewFunction(toList).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("to-list"),
+			a.MetaDoc:  d.Get("to-list"),
 		}),
 	)
 
 	registerSequencePredicate(isList, a.Metadata{
 		a.MetaName: a.Name("list?"),
+		a.MetaDoc:  d.Get("is-list"),
 	})
 }

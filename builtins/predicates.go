@@ -1,6 +1,9 @@
 package builtins
 
-import a "github.com/kode4food/sputter/api"
+import (
+	a "github.com/kode4food/sputter/api"
+	d "github.com/kode4food/sputter/docstring"
+)
 
 func registerPredicate(f a.Function) {
 	registerAnnotated(f)
@@ -62,6 +65,7 @@ func init() {
 	registerPredicate(
 		a.NewFunction(identical).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("eq"),
+			a.MetaDoc:  d.Get("eq"),
 		}).(a.Function),
 	)
 
@@ -69,5 +73,6 @@ func init() {
 		return v == a.Nil
 	}, a.Metadata{
 		a.MetaName: a.Name("nil?"),
+		a.MetaDoc:  d.Get("is-nil"),
 	})
 }

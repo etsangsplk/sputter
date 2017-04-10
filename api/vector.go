@@ -14,15 +14,16 @@ func (v Vector) Count() int {
 }
 
 // Get returns the Value at the indexed position in the Vector
-func (v Vector) Get(index int) Value {
-	return v[index]
+func (v Vector) Get(index int) (Value, bool) {
+	if index >= 0 && index < len(v) {
+		return v[index], true
+	}
+	return Nil, false
 }
 
 // Apply makes Vector applicable
 func (v Vector) Apply(c Context, args Sequence) Value {
-	AssertArity(args, 1)
-	idx := AssertInteger(Eval(c, args.First()))
-	return v.Get(int(idx))
+	return IndexedApply(v, c, args)
 }
 
 // Eval makes a Vector Evaluable

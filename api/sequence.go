@@ -1,11 +1,19 @@
 package api
 
+import "strconv"
+
 const (
 	// ExpectedCountable is thrown if taking count of a non-countable sequence
 	ExpectedCountable = "sequence is not countable"
 
 	// ExpectedSequence is thrown when a Value is not a Sequence
 	ExpectedSequence = "value is not a sequence: %s"
+
+	// ExpectedIndexed is thrown when a Value is not Indexed
+	ExpectedIndexed = "value is not an indexed sequence: %s"
+
+	// IndexNotFound is thrown if an index is not found in a sequence
+	IndexNotFound = "index not found in sequence: %s"
 )
 
 // SequenceProcessor is the standard signature for a function that is
@@ -29,7 +37,7 @@ type Countable interface {
 // Indexed interfaces allow a Sequence item to be retrieved by index
 type Indexed interface {
 	Sequence
-	Get(index int) Value
+	Get(index int) (Value, bool)
 }
 
 // Iterator is a stateful iteration interface for Sequences. "Stateful"
@@ -68,10 +76,31 @@ func Count(s Sequence) int {
 	panic(ExpectedCountable)
 }
 
+// IndexedApply provides 'nth' behavior for Indexed Sequences
+func IndexedApply(s Indexed, c Context, args Sequence) Value {
+	i := AssertArityRange(args, 1, 2)
+	idx := AssertInteger(Eval(c, args.First()))
+	if r, ok := s.Get(idx); ok {
+		return r
+	}
+	if i == 2 {
+		return Eval(c, args.Rest().First())
+	}
+	panic(Err(IndexNotFound, strconv.Itoa(idx)))
+}
+
 // AssertSequence will cast a Value into a Sequence or explode violently
 func AssertSequence(v Value) Sequence {
 	if r, ok := v.(Sequence); ok {
 		return r
 	}
 	panic(Err(ExpectedSequence, String(v)))
+}
+
+// AssertIndexed will cast a Value into an Indexed or explode violently
+func AssertIndexed(v Value) Indexed {
+	if r, ok := v.(Indexed); ok {
+		return r
+	}
+	panic(Err(ExpectedIndexed, String(v)))
 }

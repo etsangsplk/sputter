@@ -8,12 +8,15 @@ const (
 
 	// ExpectedMapped is thrown if the Value is not a Mapped item
 	ExpectedMapped = "expected a mapped value"
+
+	// KeyNotFound is thrown if a Key is not found in a Mapped item
+	KeyNotFound = "key not found in mapped sequence: %s"
 )
 
 // Mapped interfaces allow a Sequence item to be retrieved by Name
 type Mapped interface {
 	Sequence
-	Get(key Value) Value
+	Get(key Value) (Value, bool)
 }
 
 // Associative is a Mappable that is implemented atop an array
@@ -25,22 +28,25 @@ func (a Associative) Count() int {
 }
 
 // Get returns the Value corresponding to the key in the Associative
-func (a Associative) Get(key Value) Value {
+func (a Associative) Get(key Value) (Value, bool) {
 	l := len(a)
 	for i := 0; i < l; i++ {
 		mp := a[i]
 		if mp[0] == key {
-			return mp[1]
+			return mp[1], true
 		}
 	}
-	return Nil
+	return Nil, false
 }
 
 // Apply makes Associative applicable
 func (a Associative) Apply(c Context, args Sequence) Value {
 	AssertArity(args, 1)
-	key := Eval(c, args.First())
-	return a.Get(key)
+	k := Eval(c, args.First())
+	if r, ok := a.Get(k); ok {
+		return r
+	}
+	panic(Err(KeyNotFound, String(k)))
 }
 
 // Eval makes an Associative Evaluable

@@ -14,6 +14,10 @@ func TestSequence(t *testing.T) {
 	testCode(t, `(first '(1 2 3 4))`, a.NewFloat(1))
 	testCode(t, `(first (rest '(1 2 3 4)))`, a.NewFloat(2))
 	testCode(t, `(first (rest (cons 1 (list 2 3))))`, a.NewFloat(2))
+	
+	testCode(t, `(nth '(1 2 3) 1)`, a.NewFloat(2))
+	testCode(t, `(nth '(1 2 3) 5 "nope")`, "nope")
+	testBadCode(t, `(nth '(1 2 3) 5)`, a.Err(a.IndexNotFound, "5"))
 }
 
 func TestMapFilter(t *testing.T) {

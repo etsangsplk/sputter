@@ -8,4 +8,4 @@ Will assign a variable in the current namespace, which is 'user' by default. All
       (fn [y] y ** 2)
       seq1 seq2 seq3))
 
-This example will create a lazy map where each value of the three provided sequences is doubled upon request.  It will then assign that lazy map to the namespace variable 'x'.
+This example will create a lazy map where each value of the three provided sequences is doubled upon request. It will then assign that lazy map to the namespace variable 'x'.

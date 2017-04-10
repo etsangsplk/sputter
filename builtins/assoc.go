@@ -1,6 +1,9 @@
 package builtins
 
-import a "github.com/kode4food/sputter/api"
+import (
+	a "github.com/kode4food/sputter/api"
+	d "github.com/kode4food/sputter/docstring"
+)
 
 func assoc(c a.Context, args a.Sequence) a.Value {
 	if cnt, ok := args.(a.Countable); ok {
@@ -79,9 +82,11 @@ func init() {
 
 	registerSequencePredicate(isAssociative, a.Metadata{
 		a.MetaName: a.Name("assoc?"),
+		a.MetaDoc:  d.Get("is-assoc"),
 	})
 
 	registerSequencePredicate(isMapped, a.Metadata{
 		a.MetaName: a.Name("mapped?"),
+		a.MetaDoc:  d.Get("is-mapped"),
 	})
 }
