@@ -6,4 +6,4 @@ Evaluates the provided sequence and applies its values to the provided function 
   (def x '(1 2 3))
   (apply + x)
 
-This example will return *6*.
+This example will return _6_.

@@ -6,7 +6,7 @@ import (
 	"os"
 
 	a "github.com/kode4food/sputter/api"
-	r "github.com/kode4food/sputter/reader"
+	p "github.com/kode4food/sputter/parser"
 )
 
 const fileNotFound = "File not found: %s"
@@ -34,9 +34,9 @@ func EvaluateFile() {
 
 func evalBuffer(src []byte) a.Value {
 	c := a.NewEvalContext()
-	l := r.NewLexer(string(src))
-	tr := r.NewReader(c, l)
-	return r.EvalReader(a.ChildContext(c), tr)
+	l := p.NewLexer(string(src))
+	tr := p.NewReader(c, l)
+	return p.EvalReader(a.ChildContext(c), tr)
 }
 
 func exitWithError() {

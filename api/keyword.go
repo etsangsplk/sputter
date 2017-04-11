@@ -36,13 +36,14 @@ func (k *keyword) Eval(_ Context) Value {
 // Apply makes Keyword Applicable
 func (k *keyword) Apply(c Context, args Sequence) Value {
 	AssertArity(args, 1)
-	if m, ok := Eval(c, args.First()).(Mapped); ok {
+	v := Eval(c, args.First())
+	if m, ok := v.(Mapped); ok {
 		if v, ok := m.Get(k); ok {
 			return v
 		}
 		panic(Err(KeyNotFound, String(k)))
 	}
-	panic(ExpectedMapped)
+	panic(Err(ExpectedMapped, String(v)))
 }
 
 func (k *keyword) String() string {

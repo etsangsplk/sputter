@@ -7,12 +7,12 @@ import (
 	d "github.com/kode4food/sputter/docstring"
 )
 
-// BuiltIns is a special Namespace for built-in identifiers
-var BuiltIns = a.GetNamespace(a.BuiltInDomain)
+// Namespace is a special Namespace for built-in identifiers
+var Namespace = a.GetNamespace(a.BuiltInDomain)
 
 func registerAnnotated(v a.Annotated) {
 	n := v.Metadata()[a.MetaName].(a.Name)
-	BuiltIns.Put(n, v)
+	Namespace.Put(n, v)
 }
 
 func do(c a.Context, args a.Sequence) a.Value {

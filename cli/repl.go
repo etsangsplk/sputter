@@ -14,7 +14,7 @@ import (
 	"github.com/chzyer/readline"
 	a "github.com/kode4food/sputter/api"
 	d "github.com/kode4food/sputter/docstring"
-	r "github.com/kode4food/sputter/reader"
+	p "github.com/kode4food/sputter/parser"
 )
 
 var anyChar = regexp.MustCompile(".")
@@ -27,8 +27,14 @@ const (
 	cont   = domain + "[%d]" + dgray + "␤   " + code
 
 	output = bold + "%s" + reset
-	good   = domain + green + "[%d]= " + output
+	good   = domain + result + "[%d]= " + output
 	bad    = domain + red + "[%d]! " + output
+
+	pair     = esc + "7m" + esc + "1m"
+	save     = esc + "s"
+	forward  = esc + "%dC"
+	backward = esc + "%dD"
+	restore  = esc + "u" + reset
 )
 
 type empty struct{}
@@ -38,11 +44,15 @@ var nothing = &empty{}
 var farewells = []string{
 	"Until next time...",
 	"Ciao!",
+	"Adiós!",
+	"Au revoir",
+	"Auf Wiedersehen",
 	"Bye!",
 	"Bye for now!",
 	"Have a wonderful day!",
-	"Goodbye",
 	"B'bye!",
+	"再见",
+	"じゃあね",
 }
 
 // REPL manages a Read-Eval-Print Loop
@@ -60,6 +70,7 @@ func NewREPL() *REPL {
 
 	rl, err := readline.NewEx(&readline.Config{
 		HistoryFile: getHistoryFile(),
+		Listener:    repl,
 	})
 
 	if err != nil {
@@ -142,19 +153,19 @@ func (repl *REPL) evalBuffer() (completed bool) {
 				completed = false
 				return
 			}
-			repl.error(rec)
+			repl.outputError(rec)
 			completed = true
 		}
 	}()
 
-	l := r.NewLexer(repl.buf.String())
-	tr := r.NewReader(repl.ctx, l)
-	res := r.EvalReader(repl.ctx, tr)
-	repl.output(res)
+	l := p.NewLexer(repl.buf.String())
+	tr := p.NewReader(repl.ctx, l)
+	res := p.EvalReader(repl.ctx, tr)
+	repl.outputResult(res)
 	return true
 }
 
-func (repl *REPL) output(v a.Value) {
+func (repl *REPL) outputResult(v a.Value) {
 	if v == nothing {
 		return
 	}
@@ -162,9 +173,61 @@ func (repl *REPL) output(v a.Value) {
 	fmt.Println(res)
 }
 
-func (repl *REPL) error(err a.Value) {
+func (repl *REPL) outputError(err a.Value) {
 	res := fmt.Sprintf(bad, repl.nsSpace(), repl.idx, err)
 	fmt.Println(res)
+}
+
+var (
+	openers = map[rune]rune{')': '(', ']': '[', '}': '{'}
+	closers = map[rune]rune{'(': ')', '[': ']', '{': '}'}
+)
+
+// OnChange implements the readline Listener interface
+func (repl *REPL) OnChange(
+	line []rune, pos int, key rune) (newLine []rune, newPos int, ok bool) {
+	if _, ok := openers[key]; ok {
+		highlightOpener(line, pos, key)
+	} else if _, ok := closers[key]; ok {
+		highlightCloser(line, pos, key)
+	}
+	return line, pos, false
+}
+
+func highlightOpener(line []rune, pos int, key rune) {
+	o := openers[key]
+	d := 0
+	for i := pos - 1; i >= 0; i-- {
+		switch line[i] {
+		case key:
+			d++
+		case o:
+			d--
+			if d == 0 {
+				fmt.Print(save + fmt.Sprintf(backward, pos-i))
+				fmt.Print(pair + string(o) + restore)
+				return
+			}
+		}
+	}
+}
+
+func highlightCloser(line []rune, pos int, key rune) {
+	c := closers[key]
+	d := 0
+	for i := pos - 1; i < len(line); i++ {
+		switch line[i] {
+		case key:
+			d++
+		case c:
+			d--
+			if d == 0 {
+				fmt.Print(save + fmt.Sprintf(backward, i-pos))
+				fmt.Print(pair + string(c) + restore)
+				return
+			}
+		}
+	}
 }
 
 func isEmptyString(s string) bool {
@@ -172,10 +235,10 @@ func isEmptyString(s string) bool {
 }
 
 func isRecoverable(err a.Value) bool {
-	return err == r.ListNotClosed ||
-		err == r.VectorNotClosed ||
-		err == r.MapNotClosed ||
-		err == r.UnexpectedEndOfFile
+	return err == p.ListNotClosed ||
+		err == p.VectorNotClosed ||
+		err == p.MapNotClosed ||
+		err == p.UnexpectedEndOfFile
 }
 
 func use(c a.Context, args a.Sequence) a.Value {
@@ -191,8 +254,8 @@ func shutdown(_ a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 0)
 	t := time.Now().UTC().UnixNano()
 	rs := rand.NewSource(t)
-	r := rand.New(rs)
-	idx := r.Intn(len(farewells))
+	rg := rand.New(rs)
+	idx := rg.Intn(len(farewells))
 	fmt.Println(farewells[idx])
 	os.Exit(0)
 	return nothing
@@ -231,8 +294,8 @@ func doc(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
 	sym := a.AssertUnqualified(args.First())
 	if v, ok := c.Get(sym.Name()); ok {
-		if d, ok := v.(a.Annotated); ok {
-			md := d.Metadata()
+		if an, ok := v.(a.Annotated); ok {
+			md := an.Metadata()
 			f := formatForREPL(md[a.MetaDoc].(string))
 			fmt.Println(f)
 			return nothing

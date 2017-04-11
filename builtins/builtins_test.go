@@ -5,16 +5,16 @@ import (
 
 	a "github.com/kode4food/sputter/api"
 	_ "github.com/kode4food/sputter/builtins"
-	r "github.com/kode4food/sputter/reader"
+	p "github.com/kode4food/sputter/parser"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func runCode(src string) a.Value {
-	l := r.NewLexer(src)
+	l := p.NewLexer(src)
 	c := a.NewEvalContext()
-	tr := r.NewReader(c, l)
-	return r.EvalReader(c, tr)
+	tr := p.NewReader(c, l)
+	return p.EvalReader(c, tr)
 }
 
 func testCode(t *testing.T, src string, expect a.Value) {

@@ -6,4 +6,4 @@ This function will return the first element of the specified sequence, or nil if
   (def x '(99 64 32 48))
   (first x)
 
- This example will return *99*.
+ This example will return _99_.

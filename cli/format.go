@@ -6,10 +6,9 @@ import (
 	"strings"
 )
 
-const defaultFormatWidth = 76
-
 const (
 	esc      = "\033["
+	black    = esc + "30m"
 	red      = esc + "31m"
 	green    = esc + "32m"
 	yellow   = esc + "33m"
@@ -29,9 +28,10 @@ const (
 	reset    = esc + "0m"
 	clear    = esc + "2J" + esc + "f"
 
-	h1   = lyellow
-	h2   = yellow
-	code = lblue
+	h1     = lyellow
+	h2     = yellow
+	code   = lblue
+	result = green
 )
 
 // This is *not* a full-featured markdown formatter, or even a compliant
@@ -42,21 +42,23 @@ const (
 type formatter func(string) string
 
 var (
-	indent = regexp.MustCompile("^##? |^  +")
+	indent = regexp.MustCompile("^##? |^\\s\\s+")
 	hashes = regexp.MustCompile("^##? ")
 	ticks  = regexp.MustCompile("`[^`]*`")
+	unders = regexp.MustCompile("_[^_]*_")
 	stars  = regexp.MustCompile("[*][^*]*[*]")
 )
 
 var lineFormatters = map[*regexp.Regexp]formatter{
-	regexp.MustCompile("^# .*$"):  formatHeader1,
-	regexp.MustCompile("^## .*$"): formatHeader2,
-	regexp.MustCompile("^  .*$"):  formatIndent,
+	regexp.MustCompile("^#\\s.*$"):   formatHeader1,
+	regexp.MustCompile("^##\\s.*$"):  formatHeader2,
+	regexp.MustCompile("^\\s\\s.*$"): formatIndent,
 }
 
 var docFormatters = map[*regexp.Regexp]formatter{
-	ticks: formatCode,
-	stars: formatBold,
+	ticks:  trimmedFormatter("`", code),
+	unders: trimmedFormatter("_", result),
+	stars:  trimmedFormatter("*", bold),
 }
 
 func formatMarkdown(s string) string {
@@ -77,12 +79,6 @@ func formatMarkdown(s string) string {
 }
 
 func getFormatWidth() (width int) {
-	defer func() {
-		if rec := recover(); rec != nil {
-			width = defaultFormatWidth
-		}
-	}()
-
 	return getScreenWidth() - 4
 }
 
@@ -152,18 +148,12 @@ func formatIndent(s string) string {
 	return code + s + reset
 }
 
-func formatCode(s string) string {
-	t := trimDelimited(s)
-	if t == "`" {
-		return t
+func trimmedFormatter(delim string, prefix string) formatter {
+	return func(s string) string {
+		t := trimDelimited(s)
+		if t == delim {
+			return t
+		}
+		return prefix + t + reset
 	}
-	return code + t + reset
-}
-
-func formatBold(s string) string {
-	t := trimDelimited(s)
-	if t == "*" {
-		return t
-	}
-	return bold + t + reset
 }

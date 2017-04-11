@@ -81,8 +81,8 @@ func fn(c a.Context, args a.Sequence) a.Value {
 func apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 2)
 	f := a.AssertApplicable(a.Eval(c, args.First()))
-	a := a.AssertSequence(a.Eval(c, args.Rest().First()))
-	return f.Apply(c, a)
+	s := a.AssertSequence(a.Eval(c, args.Rest().First()))
+	return f.Apply(c, s)
 }
 
 func init() {

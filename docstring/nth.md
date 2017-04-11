@@ -6,7 +6,7 @@ Will return the value in a sequence that can be found at the specified index. If
   (def l '(1 2 3 4))
   (nth l 4 "wrong")
 
-This example returns *"wrong"* because index 4 (the 5th index) is beyond the end of the specified list.
+This example returns _"wrong"_ because index 4 (the 5th index) is beyond the end of the specified list.
 
 ## Indexed Sequence Application
 Instead of using the `nth` function, indexed sequences such as lists and vectors can also have arguments applied directly to them.

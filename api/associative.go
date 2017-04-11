@@ -7,7 +7,7 @@ const (
 	ExpectedPair = "expected a two element vector when prepending"
 
 	// ExpectedMapped is thrown if the Value is not a Mapped item
-	ExpectedMapped = "expected a mapped value"
+	ExpectedMapped = "expected a mapped sequence: %s"
 
 	// KeyNotFound is thrown if a Key is not found in a Mapped item
 	KeyNotFound = "key not found in mapped sequence: %s"
@@ -70,7 +70,7 @@ func (a Associative) First() Value {
 
 // Rest returns the remaining elements of an Associative as a Sequence
 func (a Associative) Rest() Sequence {
-	return a[1:]
+	return Sequence(a[1:])
 }
 
 // Prepend creates a new Sequence by prepending a Value
@@ -103,4 +103,12 @@ func (a Associative) String() string {
 	}
 	b.WriteString("}")
 	return b.String()
+}
+
+// AssertMapped will cast Value to a Mapped or explode violently
+func AssertMapped(v Value) Mapped {
+	if r, ok := v.(Mapped); ok {
+		return r
+	}
+	panic(Err(ExpectedMapped, String(v)))
 }

@@ -114,8 +114,8 @@ func TestAssociativeLookup(t *testing.T) {
 	args := a.NewList(m1)
 	as.Equal("Sputter", nameKey.Apply(c, args), "get works")
 
-	defer expectError(as, a.ExpectedMapped)
-	nameKey.Apply(c, a.NewList(99))
+	defer expectError(as, a.Err(a.ExpectedMapped, "99"))
+	nameKey.Apply(c, a.NewList(a.NewFloat(99)))
 }
 
 func TestAssociativeMiss(t *testing.T) {
@@ -138,4 +138,13 @@ func TestKeywordMiss(t *testing.T) {
 
 	defer expectError(as, a.Err(a.KeyNotFound, a.String(nameKey)))
 	nameKey.Apply(c, a.NewList(m1))
+}
+
+func TestAssertMapped(t *testing.T) {
+	as := assert.New(t)
+	m1 := getTestMap()
+	a.AssertMapped(m1)
+
+	defer expectError(as, a.Err(a.ExpectedMapped, "99"))
+	a.AssertMapped(a.NewFloat(99))
 }

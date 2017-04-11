@@ -5,4 +5,4 @@ Creates a lazy sequence whose content is the result of applying the provided fun
 
   (filter (fn [x] (< x 3)) [1 2 3 4])
 
-This will return the lazy sequence *(1 2)*
+This will return the lazy sequence _(1 2)_

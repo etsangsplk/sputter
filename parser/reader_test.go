@@ -1,26 +1,26 @@
-package reader_test
+package parser_test
 
 import (
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
-	r "github.com/kode4food/sputter/reader"
+	p "github.com/kode4food/sputter/parser"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestCreateReader(t *testing.T) {
 	as := assert.New(t)
-	l := r.NewLexer("99")
+	l := p.NewLexer("99")
 	c := a.NewContext()
-	tr := r.NewReader(c, l)
+	tr := p.NewReader(c, l)
 	as.NotNil(tr)
 }
 
 func TestReadInteger(t *testing.T) {
 	as := assert.New(t)
-	l := r.NewLexer("99")
+	l := p.NewLexer("99")
 	c := a.NewContext()
-	tr := r.NewReader(c, l)
+	tr := p.NewReader(c, l)
 	v := tr.Next()
 	f, ok := v.(*a.Number)
 	as.True(ok)
@@ -29,9 +29,9 @@ func TestReadInteger(t *testing.T) {
 
 func TestReadList(t *testing.T) {
 	as := assert.New(t)
-	l := r.NewLexer(`(99 "hello" 55.12)`)
+	l := p.NewLexer(`(99 "hello" 55.12)`)
 	c := a.NewContext()
-	tr := r.NewReader(c, l)
+	tr := p.NewReader(c, l)
 	v := tr.Next()
 	list, ok := v.(*a.List)
 	as.True(ok)
@@ -55,31 +55,31 @@ func TestReadList(t *testing.T) {
 
 func TestReadVector(t *testing.T) {
 	as := assert.New(t)
-	l := r.NewLexer(`[99 "hello" 55.12]`)
+	l := p.NewLexer(`[99 "hello" 55.12]`)
 	c := a.NewContext()
-	tr := r.NewReader(c, l)
+	tr := p.NewReader(c, l)
 	v := tr.Next()
 	vector, ok := v.(a.Vector)
 	as.True(ok)
 
-	r, ok := vector.Get(0)
+	res, ok := vector.Get(0)
 	as.True(ok, "get by index")
-	as.Equal(a.EqualTo, a.NewFloat(99.0).Cmp(r.(*a.Number)))
+	as.Equal(a.EqualTo, a.NewFloat(99.0).Cmp(res.(*a.Number)))
 
-	r, ok = vector.Get(1)
+	res, ok = vector.Get(1)
 	as.True(ok, "get by index")
-	as.Equal("hello", r)
+	as.Equal("hello", res)
 
-	r, ok = vector.Get(2)
+	res, ok = vector.Get(2)
 	as.True(ok, "get by index")
-	as.Equal(a.EqualTo, a.NewFloat(55.120).Cmp(r.(*a.Number)))
+	as.Equal(a.EqualTo, a.NewFloat(55.120).Cmp(res.(*a.Number)))
 }
 
 func TestReadMap(t *testing.T) {
 	as := assert.New(t)
-	l := r.NewLexer(`{:name "blah" :age 99}`)
+	l := p.NewLexer(`{:name "blah" :age 99}`)
 	c := a.NewContext()
-	tr := r.NewReader(c, l)
+	tr := p.NewReader(c, l)
 	v := tr.Next()
 	m, ok := v.(a.Associative)
 	as.True(ok)
@@ -88,9 +88,9 @@ func TestReadMap(t *testing.T) {
 
 func TestReadNestedList(t *testing.T) {
 	as := assert.New(t)
-	l := r.NewLexer(`(99 ("hello" "there") 55.12)`)
+	l := p.NewLexer(`(99 ("hello" "there") 55.12)`)
 	c := a.NewContext()
-	tr := r.NewReader(c, l)
+	tr := p.NewReader(c, l)
 	v := tr.Next()
 	list, ok := v.(*a.List)
 	as.True(ok)
@@ -131,9 +131,9 @@ func TestReadNestedList(t *testing.T) {
 func TestSimpleData(t *testing.T) {
 	as := assert.New(t)
 
-	l := r.NewLexer(`'99`)
+	l := p.NewLexer(`'99`)
 	c := a.NewContext()
-	tr := r.NewReader(c, l)
+	tr := p.NewReader(c, l)
 	v := tr.Next()
 
 	d, ok := v.(a.Quoted)
@@ -147,9 +147,9 @@ func TestSimpleData(t *testing.T) {
 func TestListData(t *testing.T) {
 	as := assert.New(t)
 
-	l := r.NewLexer(`'(symbol true)`)
+	l := p.NewLexer(`'(symbol true)`)
 	c := a.NewContext()
-	tr := r.NewReader(c, l)
+	tr := p.NewReader(c, l)
 	v := tr.Next()
 
 	d, ok := v.(a.Quoted)
@@ -180,9 +180,9 @@ func TestListData(t *testing.T) {
 
 func testCodeWithContext(
 	as *assert.Assertions, code string, expect a.Value, c a.Context) {
-	l := r.NewLexer(code)
-	tr := r.NewReader(a.NewContext(), l)
-	as.Equal(expect, r.EvalReader(c, tr), code)
+	l := p.NewLexer(code)
+	tr := p.NewReader(a.NewContext(), l)
+	as.Equal(expect, p.EvalReader(c, tr), code)
 }
 
 func TestEvaluable(t *testing.T) {
@@ -216,10 +216,10 @@ func TestBuiltIns(t *testing.T) {
 		a.MetaName: a.Name("hello"),
 	}))
 
-	l := r.NewLexer(`(hello)`)
-	tr := r.NewReader(b, l)
+	l := p.NewLexer(`(hello)`)
+	tr := p.NewReader(b, l)
 	c := a.ChildContext(b)
-	as.Equal("there", r.EvalReader(c, tr), "builtin called")
+	as.Equal("there", p.EvalReader(c, tr), "builtin called")
 }
 
 func TestReaderPrepare(t *testing.T) {
@@ -237,8 +237,8 @@ func TestReaderPrepare(t *testing.T) {
 		a.MetaName: a.Name("hello"),
 	}))
 
-	l := r.NewLexer(`(hello)`)
-	tr := r.NewReader(b, l)
+	l := p.NewLexer(`(hello)`)
+	tr := p.NewReader(b, l)
 	v := tr.Next()
 
 	if rv, ok := v.(a.Vector); ok {
@@ -262,18 +262,18 @@ func testReaderError(t *testing.T, src string, err string) {
 	}()
 
 	c := a.NewContext()
-	l := r.NewLexer(src)
-	tr := r.NewReader(c, l)
-	r.EvalReader(c, tr)
+	l := p.NewLexer(src)
+	tr := p.NewReader(c, l)
+	p.EvalReader(c, tr)
 }
 
 func TestReaderErrors(t *testing.T) {
-	testReaderError(t, "(99 100 ", r.ListNotClosed)
-	testReaderError(t, "[99 100 ", r.VectorNotClosed)
-	testReaderError(t, "{:key 99", r.MapNotClosed)
+	testReaderError(t, "(99 100 ", p.ListNotClosed)
+	testReaderError(t, "[99 100 ", p.VectorNotClosed)
+	testReaderError(t, "{:key 99", p.MapNotClosed)
 
-	testReaderError(t, "99 100)", r.UnmatchedListEnd)
-	testReaderError(t, "99 100]", r.UnmatchedVectorEnd)
-	testReaderError(t, "99}", r.UnmatchedMapEnd)
-	testReaderError(t, "{99}", r.MapNotPaired)
+	testReaderError(t, "99 100)", p.UnmatchedListEnd)
+	testReaderError(t, "99 100]", p.UnmatchedVectorEnd)
+	testReaderError(t, "99}", p.UnmatchedMapEnd)
+	testReaderError(t, "{99}", p.MapNotPaired)
 }

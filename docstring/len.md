@@ -5,4 +5,4 @@ Will return the number of elements in a countable sequence. If the sequence is l
 
   (len '(1 2 3 4))
 
-This example will return *4*.
+This example will return _4_.

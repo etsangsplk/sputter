@@ -10,7 +10,7 @@ For each `<pred then>` clause, the predicate will be evaluated, and if it is tru
     (> x 100) "was greater than 100"
               "was in between")
 
-In this case, "was in between" will be returned. Slightly more aesthetically pleasing would be to use an :else keyword:
+In this case, _"was in between"_ will be returned. Slightly more aesthetically pleasing would be to use an :else keyword:
 
   (cond
     (< x 50)  "was less than 50"
