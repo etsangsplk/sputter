@@ -47,10 +47,7 @@ func assocFromUncounted(c a.Context, args a.Sequence) a.Value {
 }
 
 func toAssoc(c a.Context, args a.Sequence) a.Value {
-	a.AssertArity(args, 1)
-	arg := a.Eval(c, args.First())
-	seq := a.AssertSequence(arg)
-	return assoc(c, seq)
+	return assoc(c, concat(c, args).(a.Sequence))
 }
 
 func isAssociative(v a.Value) bool {
@@ -71,12 +68,14 @@ func init() {
 	registerAnnotated(
 		a.NewFunction(assoc).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("assoc"),
+			a.MetaDoc:  d.Get("assoc"),
 		}),
 	)
 
 	registerAnnotated(
 		a.NewFunction(toAssoc).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("to-assoc"),
+			a.MetaDoc:  d.Get("to-assoc"),
 		}),
 	)
 
