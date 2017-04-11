@@ -210,7 +210,7 @@ func readIdentifier(t *Token) a.Value {
 
 // EvalReader evaluates each element of the provided Reader
 func EvalReader(c a.Context, reader Reader) a.Value {
-	var r a.Value
+	r := a.Nil
 	for v := reader.Next(); v != EndOfReader; v = reader.Next() {
 		r = a.Eval(c, v)
 	}

@@ -6,7 +6,7 @@ import (
 
 func toMetadata(args a.Sequence) a.Metadata {
 	r := make(a.Metadata)
-	for i := args.(a.Sequence); i.IsSequence(); i = i.Rest() {
+	for i := args; i.IsSequence(); i = i.Rest() {
 		p := a.AssertSequence(i.First())
 		a.AssertArity(p, 2)
 		k := p.First()

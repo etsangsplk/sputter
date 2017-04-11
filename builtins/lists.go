@@ -12,12 +12,7 @@ func list(c a.Context, args a.Sequence) a.Value {
 		s.Push(a.Eval(c, i.First()))
 	}
 
-	e, ok := s.Pop()
-	if !ok {
-		return a.EmptyList
-	}
-
-	l := a.NewList(e)
+	l := a.Sequence(a.EmptyList)
 	for v, ok := s.Pop(); ok; v, ok = s.Pop() {
 		l = l.Prepend(v)
 	}

@@ -5,4 +5,4 @@ Creates a lazy sequence whose values are the result of applying the provided fun
 
   (map (fn [x] (* x 2)) [1 2 3 4])
 
-This will return the sequence *(2 4 6 8)*
+This will return the lazy sequence *(2 4 6 8)*

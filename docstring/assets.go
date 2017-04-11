@@ -121,7 +121,7 @@ func applyMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "apply.md", size: 245, mode: os.FileMode(420), modTime: time.Unix(1491837121, 0)}
+	info := bindataFileInfo{name: "apply.md", size: 245, mode: os.FileMode(420), modTime: time.Unix(1491849590, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -141,7 +141,7 @@ func asyncMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "async.md", size: 371, mode: os.FileMode(420), modTime: time.Unix(1491549296, 0)}
+	info := bindataFileInfo{name: "async.md", size: 371, mode: os.FileMode(420), modTime: time.Unix(1491849590, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -161,7 +161,7 @@ func channelMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "channel.md", size: 847, mode: os.FileMode(420), modTime: time.Unix(1491547990, 0)}
+	info := bindataFileInfo{name: "channel.md", size: 847, mode: os.FileMode(420), modTime: time.Unix(1491849590, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -181,7 +181,7 @@ func concatMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "concat.md", size: 244, mode: os.FileMode(420), modTime: time.Unix(1491820519, 0)}
+	info := bindataFileInfo{name: "concat.md", size: 244, mode: os.FileMode(420), modTime: time.Unix(1491849590, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -201,7 +201,7 @@ func condMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "cond.md", size: 700, mode: os.FileMode(420), modTime: time.Unix(1491558142, 0)}
+	info := bindataFileInfo{name: "cond.md", size: 700, mode: os.FileMode(420), modTime: time.Unix(1491849590, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -221,7 +221,7 @@ func consMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "cons.md", size: 561, mode: os.FileMode(420), modTime: time.Unix(1491808160, 0)}
+	info := bindataFileInfo{name: "cons.md", size: 561, mode: os.FileMode(420), modTime: time.Unix(1491849590, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -241,7 +241,7 @@ func defMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "def.md", size: 580, mode: os.FileMode(420), modTime: time.Unix(1491839843, 0)}
+	info := bindataFileInfo{name: "def.md", size: 580, mode: os.FileMode(420), modTime: time.Unix(1491849590, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -261,7 +261,7 @@ func defnMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "defn.md", size: 487, mode: os.FileMode(420), modTime: time.Unix(1491580191, 0)}
+	info := bindataFileInfo{name: "defn.md", size: 487, mode: os.FileMode(420), modTime: time.Unix(1491849590, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -281,12 +281,12 @@ func doMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "do.md", size: 183, mode: os.FileMode(420), modTime: time.Unix(1491511515, 0)}
+	info := bindataFileInfo{name: "do.md", size: 183, mode: os.FileMode(420), modTime: time.Unix(1491849590, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
 
-var _eqMd = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x74\x90\x31\x6e\xeb\x40\x0c\x44\x7b\x9d\x62\x3e\x7e\xe1\xc4\x31\x74\x8f\x00\x01\x52\xa6\xa6\x56\xb3\x16\x91\x35\xd7\x5e\x72\x63\xe4\xf6\x81\x24\x17\x69\xd2\x90\x15\xe7\x3d\xce\x7f\x3c\xf1\x86\x5c\xdb\x65\x1b\x2f\xcf\x08\x7a\x38\x34\x43\xe0\x0c\xd4\x8c\x2f\x29\x9d\x0e\x69\x84\xce\xb4\xd0\x24\x05\x51\x11\x0b\x91\xb5\x79\x0c\x1f\x5a\x0a\x1a\xa3\x37\xc3\x31\x4b\x71\x1e\x21\x0e\xaf\xd5\xd6\xad\x01\x5a\xaa\xdd\x82\xcd\x21\x3b\x2e\x16\x09\xa8\xc3\x6a\xfc\x11\x3b\xe2\x3d\x16\xb6\xbb\x3a\x71\xff\x4d\x88\xd6\x79\x1c\x87\xe1\x4d\x3f\x89\x4b\xf5\xc0\xb5\x71\xd6\x24\x41\x3f\x21\x16\x75\xe4\x6e\x29\xb4\x1a\x92\x18\xa4\x78\xc5\x44\x18\xcf\x12\x9c\x31\x7d\xaf\x07\x57\xda\xac\x76\xde\x78\x87\x7f\x07\xa4\x45\x9a\xa4\x60\x1b\xf1\x6a\x7b\x4a\x12\xe7\xe9\xc1\xdb\x15\x26\x3e\x2c\x38\xaf\x1d\xad\xf2\x52\xca\xf6\xd1\xde\x10\x6f\x5d\xca\x38\xfc\x04\x00\x00\xff\xff\x33\x96\x3c\x50\x58\x01\x00\x00")
+var _eqMd = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x74\x90\xbd\x6e\x23\x31\x0c\x84\x7b\x3d\xc5\x9c\x5d\xf8\xe7\x8c\x7d\x87\x2b\xae\x08\x10\x20\x65\x6a\x5a\x3b\xb2\x84\xc8\x94\x2d\x72\xe3\xe4\xed\x83\xf5\x3a\x40\x9a\x34\x24\x30\x00\x67\x3e\xce\x1a\x5b\x5e\x91\x5a\x3f\xdf\xc7\xdf\x1d\x9c\xe6\x86\x92\x20\x30\x3a\x5a\xc2\xbb\xd4\x89\x06\xe9\x44\x19\xa9\x5e\xa2\x54\x78\x83\x67\x22\x95\x6e\x1e\x5e\x4b\xad\xe8\xf4\xa9\x2b\xf6\x49\xaa\x71\x0f\x31\x58\x6b\x3a\xef\xe2\xa0\xc6\x36\xa9\xb3\x1b\x64\x89\xf3\x2c\x8e\x62\xd0\xe6\xbf\xd8\x0e\x78\xf1\xcc\x7e\x2b\x46\xdc\x7e\x26\x78\x9f\xb8\x1f\x42\x58\xaf\xf1\x4f\xf1\xff\x43\xce\x97\xca\x10\x00\x60\x3b\x32\x21\x63\x95\x59\x6b\x5b\xed\x16\x8d\xd7\x6f\x01\x79\x17\xc2\x73\x79\x23\xce\xcd\x1c\x97\xce\xb1\x44\x71\xda\x01\x9e\x8b\x21\x4d\x1a\xbd\x34\x45\x14\x85\x54\x6b\x38\x12\xca\x93\x38\x47\x1c\x3f\xe7\x83\x0b\x75\x2c\x7a\xba\x63\x6e\xfe\x6c\x10\xb3\x74\x89\xce\x3e\xe0\x49\x17\x97\x28\xc6\xc3\x03\x73\x21\x3f\xf2\x01\xcf\x71\xae\x76\xfe\x59\x6a\xbd\x17\xb1\x14\xcb\xeb\x24\x75\x08\x5f\x01\x00\x00\xff\xff\x49\x01\x0e\x60\x8f\x01\x00\x00")
 
 func eqMdBytes() ([]byte, error) {
 	return bindataRead(
@@ -301,7 +301,7 @@ func eqMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "eq.md", size: 344, mode: os.FileMode(420), modTime: time.Unix(1491840717, 0)}
+	info := bindataFileInfo{name: "eq.md", size: 399, mode: os.FileMode(420), modTime: time.Unix(1491891935, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -321,7 +321,7 @@ func filterMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "filter.md", size: 389, mode: os.FileMode(420), modTime: time.Unix(1491820524, 0)}
+	info := bindataFileInfo{name: "filter.md", size: 389, mode: os.FileMode(420), modTime: time.Unix(1491849590, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -341,7 +341,7 @@ func firstMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "first.md", size: 352, mode: os.FileMode(420), modTime: time.Unix(1491820491, 0)}
+	info := bindataFileInfo{name: "first.md", size: 352, mode: os.FileMode(420), modTime: time.Unix(1491849590, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -361,7 +361,7 @@ func fnMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "fn.md", size: 478, mode: os.FileMode(420), modTime: time.Unix(1491578611, 0)}
+	info := bindataFileInfo{name: "fn.md", size: 478, mode: os.FileMode(420), modTime: time.Unix(1491849590, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -381,7 +381,7 @@ func futureMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "future.md", size: 390, mode: os.FileMode(420), modTime: time.Unix(1491378053, 0)}
+	info := bindataFileInfo{name: "future.md", size: 390, mode: os.FileMode(420), modTime: time.Unix(1491849590, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -401,7 +401,7 @@ func ifMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "if.md", size: 317, mode: os.FileMode(420), modTime: time.Unix(1491410756, 0)}
+	info := bindataFileInfo{name: "if.md", size: 317, mode: os.FileMode(420), modTime: time.Unix(1491849590, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -421,7 +421,7 @@ func isAssocMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "is-assoc.md", size: 565, mode: os.FileMode(420), modTime: time.Unix(1491840621, 0)}
+	info := bindataFileInfo{name: "is-assoc.md", size: 565, mode: os.FileMode(420), modTime: time.Unix(1491849590, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -441,7 +441,7 @@ func isListMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "is-list.md", size: 525, mode: os.FileMode(420), modTime: time.Unix(1491840621, 0)}
+	info := bindataFileInfo{name: "is-list.md", size: 525, mode: os.FileMode(420), modTime: time.Unix(1491849590, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -461,7 +461,7 @@ func isMappedMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "is-mapped.md", size: 561, mode: os.FileMode(420), modTime: time.Unix(1491840621, 0)}
+	info := bindataFileInfo{name: "is-mapped.md", size: 561, mode: os.FileMode(420), modTime: time.Unix(1491849590, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -481,7 +481,7 @@ func isNilMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "is-nil.md", size: 505, mode: os.FileMode(420), modTime: time.Unix(1491841740, 0)}
+	info := bindataFileInfo{name: "is-nil.md", size: 505, mode: os.FileMode(420), modTime: time.Unix(1491849590, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -501,7 +501,7 @@ func isSeqMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "is-seq.md", size: 511, mode: os.FileMode(420), modTime: time.Unix(1491840621, 0)}
+	info := bindataFileInfo{name: "is-seq.md", size: 511, mode: os.FileMode(420), modTime: time.Unix(1491849590, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -521,7 +521,7 @@ func isVectorMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "is-vector.md", size: 573, mode: os.FileMode(420), modTime: time.Unix(1491840621, 0)}
+	info := bindataFileInfo{name: "is-vector.md", size: 573, mode: os.FileMode(420), modTime: time.Unix(1491849590, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -541,7 +541,7 @@ func lenMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "len.md", size: 47, mode: os.FileMode(420), modTime: time.Unix(1491816499, 0)}
+	info := bindataFileInfo{name: "len.md", size: 47, mode: os.FileMode(420), modTime: time.Unix(1491849590, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -561,7 +561,7 @@ func letMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "let.md", size: 510, mode: os.FileMode(420), modTime: time.Unix(1491839865, 0)}
+	info := bindataFileInfo{name: "let.md", size: 510, mode: os.FileMode(420), modTime: time.Unix(1491849590, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -581,7 +581,7 @@ func listMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "list.md", size: 35, mode: os.FileMode(420), modTime: time.Unix(1491837772, 0)}
+	info := bindataFileInfo{name: "list.md", size: 35, mode: os.FileMode(420), modTime: time.Unix(1491849590, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -601,7 +601,7 @@ func mapMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "map.md", size: 261, mode: os.FileMode(420), modTime: time.Unix(1491820573, 0)}
+	info := bindataFileInfo{name: "map.md", size: 261, mode: os.FileMode(420), modTime: time.Unix(1491849590, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -621,7 +621,7 @@ func nsMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "ns.md", size: 230, mode: os.FileMode(420), modTime: time.Unix(1491580191, 0)}
+	info := bindataFileInfo{name: "ns.md", size: 230, mode: os.FileMode(420), modTime: time.Unix(1491849590, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -641,7 +641,7 @@ func nthMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "nth.md", size: 720, mode: os.FileMode(420), modTime: time.Unix(1491837677, 0)}
+	info := bindataFileInfo{name: "nth.md", size: 720, mode: os.FileMode(420), modTime: time.Unix(1491849590, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -661,7 +661,7 @@ func promiseMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "promise.md", size: 338, mode: os.FileMode(420), modTime: time.Unix(1491659396, 0)}
+	info := bindataFileInfo{name: "promise.md", size: 338, mode: os.FileMode(420), modTime: time.Unix(1491849590, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -681,7 +681,7 @@ func quoteMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "quote.md", size: 328, mode: os.FileMode(420), modTime: time.Unix(1491840352, 0)}
+	info := bindataFileInfo{name: "quote.md", size: 328, mode: os.FileMode(420), modTime: time.Unix(1491849590, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -701,7 +701,7 @@ func replClsMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "repl-cls.md", size: 97, mode: os.FileMode(420), modTime: time.Unix(1491378075, 0)}
+	info := bindataFileInfo{name: "repl-cls.md", size: 97, mode: os.FileMode(420), modTime: time.Unix(1491849590, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -721,7 +721,7 @@ func replDocMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "repl-doc.md", size: 162, mode: os.FileMode(420), modTime: time.Unix(1491378078, 0)}
+	info := bindataFileInfo{name: "repl-doc.md", size: 162, mode: os.FileMode(420), modTime: time.Unix(1491849590, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -741,7 +741,7 @@ func replHelpMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "repl-help.md", size: 419, mode: os.FileMode(420), modTime: time.Unix(1491839829, 0)}
+	info := bindataFileInfo{name: "repl-help.md", size: 419, mode: os.FileMode(420), modTime: time.Unix(1491849590, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -761,7 +761,7 @@ func replQuitMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "repl-quit.md", size: 90, mode: os.FileMode(420), modTime: time.Unix(1491327304, 0)}
+	info := bindataFileInfo{name: "repl-quit.md", size: 90, mode: os.FileMode(420), modTime: time.Unix(1491849590, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -781,7 +781,7 @@ func replUseMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "repl-use.md", size: 126, mode: os.FileMode(420), modTime: time.Unix(1491327304, 0)}
+	info := bindataFileInfo{name: "repl-use.md", size: 126, mode: os.FileMode(420), modTime: time.Unix(1491849590, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -801,12 +801,12 @@ func restMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "rest.md", size: 341, mode: os.FileMode(420), modTime: time.Unix(1491820600, 0)}
+	info := bindataFileInfo{name: "rest.md", size: 341, mode: os.FileMode(420), modTime: time.Unix(1491849590, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
 
-var _toListMd = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x4c\xcc\x41\x0a\xc2\x50\x0c\x84\xe1\xbd\xa7\x18\x70\xd3\x22\xf5\x3a\xae\xc3\x63\x84\x07\x21\xc1\x66\x14\xf4\xf4\x92\xae\xba\xfc\xe1\xe3\xbf\x62\x51\x6e\x3e\x4b\x28\xbe\x6e\x2b\x46\xc6\x87\xbb\xaa\xf3\xcd\x18\x2c\x28\x61\x68\x72\x79\x4c\xf7\x16\xc3\xc4\x30\x11\x86\xa2\x90\xcf\x93\x9e\x71\xf8\x56\x3b\x45\x2c\x91\xb1\xb9\xfd\xbe\xeb\xf1\xb8\xff\x03\x00\x00\xff\xff\x40\x66\x41\x46\x72\x00\x00\x00")
+var _toListMd = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x4c\x90\x4d\x4e\xc3\x40\x0c\x85\xf7\x73\x8a\x27\x65\xc1\x8c\x5a\x2a\x01\xbd\x00\x0b\x8e\x80\x58\x54\x95\x6a\x66\x1c\xc5\x62\x7e\x42\xc6\xa1\x49\x4f\x8f\x12\x20\x62\xe9\xe7\xef\xb3\x2d\x37\xb0\x5a\xee\xa3\x54\x45\xe5\xcf\x9d\x83\x2f\xf9\x8b\x07\xad\x4b\x39\x72\xf6\x5c\xa1\x05\x84\x05\x31\x6f\x12\xe3\x42\x78\x52\xce\xa4\x0c\x42\x65\x45\x69\xff\xd1\x92\x37\xfe\x80\xd7\x1c\xe5\x83\xa1\x1d\xa3\x2a\xe5\x40\x43\xc0\xe5\x67\xc0\x05\xed\x98\xbd\x4a\xc9\x7b\x5c\x3b\xf1\x1d\xa4\x22\xd2\x4d\xe2\x0c\x5f\x52\x3f\x2a\x87\xfd\x6a\x0e\x5c\xc7\xb8\x6e\xd1\x4e\xea\xa6\xe1\xba\x5c\xf3\xce\x48\xa4\x3c\x08\x45\xb9\x71\x80\xa4\xc4\x41\x48\x39\xce\x07\x63\x9a\x06\xcf\x19\x2f\x13\xa5\x3e\xb2\x31\x80\x0d\xdc\x62\xc2\xe9\x01\x8f\x78\xc2\xf1\xec\xfe\xb2\xd9\x00\x80\x4d\xd4\xc3\xb6\x19\xa7\xe9\x0c\xbb\xc3\x84\xa3\x73\x6b\xe7\xce\xfe\x2a\x6e\x0d\xb6\xaf\x4d\x98\x9d\xf9\x0e\x00\x00\xff\xff\x91\xac\x17\x34\x46\x01\x00\x00")
 
 func toListMdBytes() ([]byte, error) {
 	return bindataRead(
@@ -821,12 +821,12 @@ func toListMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "to-list.md", size: 114, mode: os.FileMode(420), modTime: time.Unix(1491838087, 0)}
+	info := bindataFileInfo{name: "to-list.md", size: 326, mode: os.FileMode(420), modTime: time.Unix(1491887765, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
 
-var _toVectorMd = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x4c\xcb\x31\x0a\xc4\x30\x0c\x44\xd1\xde\xa7\x18\xd8\x66\x97\x25\xb9\x4e\x6a\x21\x26\x60\x30\x12\xb1\x14\x9f\x3f\x98\x34\x2e\x3f\xbc\xff\xc1\x37\x7d\x1b\xd4\xf4\x8e\xe0\xf5\xff\x41\xdd\x06\x7b\xc6\xcc\x9b\xa6\x0c\xa4\x43\xf0\xa2\x72\xd4\xd6\xa6\x51\x49\x9a\x24\x21\x08\x26\xfc\x5c\x7c\xb5\xe5\xd8\xcb\x13\x00\x00\xff\xff\x61\xff\xe7\x03\x65\x00\x00\x00")
+var _toVectorMd = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x4c\x90\xc1\x4e\xc3\x30\x0c\x86\xef\x79\x8a\x5f\xda\x81\x74\x8c\x49\x0c\x5e\x80\x03\x8f\x80\x38\x20\xa4\x99\xc4\x55\x2d\x12\xa7\x34\xee\xd6\xed\xe9\x51\x3b\x09\x7a\xb4\xff\xef\xb3\x2d\x6f\xe0\xad\x3c\x9c\x38\x58\x19\x50\xf9\xe7\xbe\x41\x28\x7a\xe2\xc1\xea\x5c\x8e\xac\x81\x2b\xac\x80\x70\x83\xdc\xbb\xa4\x34\x33\x81\x8c\x95\x8c\x41\xa8\x6c\x28\xed\x8a\x17\x5d\x19\x7b\xbc\x69\x92\x6f\x86\x75\x8c\x6a\xa4\x91\x86\x88\xe3\x6d\xc4\x11\xed\xa8\xc1\xa4\xe8\x0e\xe7\x4e\x42\x07\xa9\x48\x74\x95\x74\x41\x28\xb9\x1f\x8d\xe3\x6e\x31\x07\xae\x63\x5a\xf6\x58\x27\xf5\x4f\xc3\x79\xbe\xe7\x8b\x91\xc9\x78\x10\x4a\x72\xe5\x08\xc9\x99\xa3\x90\x71\xba\xec\x9d\xdb\x6c\xf0\xa2\x78\x9d\x28\xf7\x89\x9d\x03\x7c\xe4\x16\x93\x03\x00\x9f\xa9\x87\x6f\x15\x1f\xd3\x27\xfc\x76\x8b\x09\x87\xa6\x59\xa2\x3b\xff\x88\x03\x9e\xf0\xdc\x2c\x8d\xd5\xa3\xfe\x13\x4c\x8d\xfb\x0d\x00\x00\xff\xff\x7e\xf3\xf4\x7f\x44\x01\x00\x00")
 
 func toVectorMdBytes() ([]byte, error) {
 	return bindataRead(
@@ -841,7 +841,7 @@ func toVectorMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "to-vector.md", size: 101, mode: os.FileMode(420), modTime: time.Unix(1491838101, 0)}
+	info := bindataFileInfo{name: "to-vector.md", size: 324, mode: os.FileMode(420), modTime: time.Unix(1491887843, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -861,7 +861,7 @@ func vectorMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "vector.md", size: 39, mode: os.FileMode(420), modTime: time.Unix(1491838125, 0)}
+	info := bindataFileInfo{name: "vector.md", size: 39, mode: os.FileMode(420), modTime: time.Unix(1491849590, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -881,7 +881,7 @@ func withNsMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "with-ns.md", size: 425, mode: os.FileMode(420), modTime: time.Unix(1491805794, 0)}
+	info := bindataFileInfo{name: "with-ns.md", size: 425, mode: os.FileMode(420), modTime: time.Unix(1491849590, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
