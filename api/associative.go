@@ -4,7 +4,7 @@ import "bytes"
 
 const (
 	// ExpectedPair is thrown if you prepend to a Map incorrectly
-	ExpectedPair = "expected a two element vector when prepending"
+	ExpectedPair = "expected two element vectors when prepending"
 
 	// ExpectedMapped is thrown if the Value is not a Mapped item
 	ExpectedMapped = "expected a mapped sequence: %s"
@@ -80,6 +80,11 @@ func (a Associative) Prepend(v Value) Sequence {
 		return append(Associative{mp}, a...)
 	}
 	panic(ExpectedPair)
+}
+
+// Conjoin implements the Conjoiner interface
+func (a Associative) Conjoin(v Value) Sequence {
+	return a.Prepend(v)
 }
 
 // IsSequence returns whether this instance is a consumable Sequence

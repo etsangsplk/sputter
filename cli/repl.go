@@ -42,16 +42,15 @@ type empty struct{}
 var nothing = &empty{}
 
 var farewells = []string{
-	"Until next time...",
-	"Ciao!",
 	"Adiós!",
-	"Au revoir",
+	"Au revoir!",
 	"Auf Wiedersehen",
+	"B'bye!",
 	"Bye!",
 	"Bye for now!",
+	"Ciao!",
 	"Have a wonderful day!",
-	"B'bye!",
-	"再见",
+	"再见!",
 	"じゃあね",
 }
 
@@ -199,8 +198,6 @@ func highlightOpener(line []rune, pos int, key rune) {
 	d := 0
 	for i := pos - 1; i >= 0; i-- {
 		switch line[i] {
-		case key:
-			d++
 		case o:
 			d--
 			if d == 0 {
@@ -208,6 +205,8 @@ func highlightOpener(line []rune, pos int, key rune) {
 				fmt.Print(pair + string(o) + restore)
 				return
 			}
+		case key:
+			d++
 		}
 	}
 }
@@ -217,8 +216,6 @@ func highlightCloser(line []rune, pos int, key rune) {
 	d := 0
 	for i := pos - 1; i < len(line); i++ {
 		switch line[i] {
-		case key:
-			d++
 		case c:
 			d--
 			if d == 0 {
@@ -226,6 +223,8 @@ func highlightCloser(line []rune, pos int, key rune) {
 				fmt.Print(pair + string(c) + restore)
 				return
 			}
+		case key:
+			d++
 		}
 	}
 }

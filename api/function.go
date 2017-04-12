@@ -12,7 +12,6 @@ const (
 )
 
 var defaultFunctionMetadata = Metadata{
-	MetaName: Name("<lambda>"),
 	MetaType: "function",
 	MetaDoc:  EmptyString,
 }
@@ -65,7 +64,7 @@ func (f *function) Apply(c Context, args Sequence) Value {
 }
 
 func countUpTo(args Sequence, c int) int {
-	if cnt, ok := args.(Countable); ok {
+	if cnt, ok := args.(Counter); ok {
 		return cnt.Count()
 	}
 	r := 0

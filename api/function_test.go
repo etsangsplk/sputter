@@ -31,7 +31,6 @@ func TestFunction(t *testing.T) {
 
 	as.True(strings.Contains(a.String(f1), ":name test-function"), "name")
 	as.Equal("this is a test", f1.Documentation(), "doc returned")
-	as.True(strings.Contains(a.String(f2), ":name <lambda>"), "lambda")
 
 	c := a.NewContext()
 	as.Equal("hello", f1.Apply(c, a.EmptyList), "function executes")

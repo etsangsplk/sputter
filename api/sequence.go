@@ -12,6 +12,9 @@ const (
 	// ExpectedIndexed is thrown when a Value is not Indexed
 	ExpectedIndexed = "value is not an indexed sequence: %s"
 
+	// ExpectedConjoiner is thrown when a Value is not a Conjoiner
+	ExpectedConjoiner = "value can not be conjoined: %s"
+
 	// IndexNotFound is thrown if an index is not found in a sequence
 	IndexNotFound = "index not found in sequence: %s"
 )
@@ -24,12 +27,12 @@ type SequenceProcessor func(Context, Sequence) Value
 type Sequence interface {
 	First() Value
 	Rest() Sequence
-	Prepend(v Value) Sequence
+	Prepend(Value) Sequence
 	IsSequence() bool
 }
 
-// Countable interfaces allow a Sequence to return a count of its items
-type Countable interface {
+// Counter interfaces allow a Sequence to return a count of its items
+type Counter interface {
 	Sequence
 	Count() int
 }
@@ -38,6 +41,12 @@ type Countable interface {
 type Indexed interface {
 	Sequence
 	Get(index int) (Value, bool)
+}
+
+// Conjoiner interfaces allow a Sequence to be added to
+type Conjoiner interface {
+	Sequence
+	Conjoin(Value) Sequence
 }
 
 // Iterator is a stateful iteration interface for Sequences. "Stateful"
@@ -68,9 +77,9 @@ func Iterate(s Sequence) *Iterator {
 	return &Iterator{sequence: s}
 }
 
-// Count will return the Count from a Countable Sequence or explode
+// Count will return the Count from a Counter Sequence or explode
 func Count(s Sequence) int {
-	if f, ok := s.(Countable); ok {
+	if f, ok := s.(Counter); ok {
 		return f.Count()
 	}
 	panic(ExpectedCountable)
@@ -103,4 +112,12 @@ func AssertIndexed(v Value) Indexed {
 		return r
 	}
 	panic(Err(ExpectedIndexed, String(v)))
+}
+
+// AssertConjoiner will cast a Value into a Conjoiner or explode violently
+func AssertConjoiner(v Value) Conjoiner {
+	if r, ok := v.(Conjoiner); ok {
+		return r
+	}
+	panic(Err(ExpectedConjoiner, String(v)))
 }

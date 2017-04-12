@@ -32,6 +32,16 @@ func cons(c a.Context, args a.Sequence) a.Value {
 	return a.AssertSequence(r).Prepend(f)
 }
 
+func conj(c a.Context, args a.Sequence) a.Value {
+	a.AssertMinimumArity(args, 2)
+	s := a.AssertConjoiner(a.Eval(c, args.First()))
+	for i := args.Rest(); i.IsSequence(); i = i.Rest() {
+		v := a.Eval(c, i.First())
+		s = s.Conjoin(v).(a.Conjoiner)
+	}
+	return s
+}
+
 func _len(c a.Context, args a.Sequence) a.Value {
 	s := fetchSequence(c, args)
 	l := a.Count(s)
@@ -98,6 +108,13 @@ func init() {
 		a.NewFunction(cons).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("cons"),
 			a.MetaDoc:  d.Get("cons"),
+		}),
+	)
+
+	registerAnnotated(
+		a.NewFunction(conj).WithMetadata(a.Metadata{
+			a.MetaName: a.Name("conj"),
+			a.MetaDoc:  d.Get("conj"),
 		}),
 	)
 

@@ -45,6 +45,11 @@ func (l *List) Prepend(v Value) Sequence {
 	}
 }
 
+// Conjoin implements the Conjoiner interface
+func (l *List) Conjoin(v Value) Sequence {
+	return l.Prepend(v)
+}
+
 // Count returns the length of the List
 func (l *List) Count() int {
 	return l.count

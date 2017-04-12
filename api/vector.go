@@ -51,6 +51,11 @@ func (v Vector) Prepend(p Value) Sequence {
 	return append(Vector{p}, v...)
 }
 
+// Conjoin implements the Conjoiner interface
+func (v Vector) Conjoin(a Value) Sequence {
+	return append(v, a)
+}
+
 // IsSequence returns whether this instance is a consumable Sequence
 func (v Vector) IsSequence() bool {
 	return len(v) > 0

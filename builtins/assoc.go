@@ -6,7 +6,7 @@ import (
 )
 
 func assoc(c a.Context, args a.Sequence) a.Value {
-	if cnt, ok := args.(a.Countable); ok {
+	if cnt, ok := args.(a.Counter); ok {
 		l := cnt.Count()
 		if l%2 != 0 {
 			panic(a.ExpectedPair)

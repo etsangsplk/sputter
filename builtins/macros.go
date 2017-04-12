@@ -20,7 +20,7 @@ func defineMacro(closure a.Context, d *functionDefinition) a.Macro {
 }
 
 func defmacro(c a.Context, args a.Sequence) a.Value {
-	fd := getFunctionDefinition(args)
+	fd := getFunctionDefinition(c, args)
 	m := defineMacro(c, fd)
 	a.GetContextNamespace(c).Put(m.Name(), m)
 	return m

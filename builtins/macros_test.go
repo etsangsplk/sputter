@@ -13,7 +13,7 @@ func TestMacroReplace(t *testing.T) {
 	testCode(t, `
 		(def hello "you")
 		(defmacro foo
-			"this is the macro foo"
+			{:doc "this is the macro foo"}
 			[x y]
 			(+ x y)
 			'hello)

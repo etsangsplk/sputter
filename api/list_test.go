@@ -111,7 +111,7 @@ func TestNonFunction(t *testing.T) {
 
 func TestListExplosion(t *testing.T) {
 	as := assert.New(t)
-	
+
 	idx := a.NewFloat(3)
 	err := a.Err(a.IndexNotFound, a.String(idx))
 	defer expectError(as, err)

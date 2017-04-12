@@ -17,7 +17,7 @@ func TestFunction(t *testing.T) {
 
 	testCode(t, `
 		(defn say-hello
-		  "this is a doc string"
+		  {:doc "this is a doc string"}
 		  []
 		  "Hello, World!")
 		(say-hello)

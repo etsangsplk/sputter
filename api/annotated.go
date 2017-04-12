@@ -9,6 +9,9 @@ var (
 	// MetaName is the Metadata key for a Value's Name
 	MetaName = NewKeyword("name")
 
+	// MetaArgs is the Metadata key for a Function's arguments
+	MetaArgs = NewKeyword("args")
+
 	// MetaType is the Metadata key for a Value's Type
 	MetaType = NewKeyword("type")
 
@@ -27,6 +30,9 @@ type Annotated interface {
 
 // Merge merges two Metadata sets into a new one
 func (v Metadata) Merge(nv Metadata) Metadata {
+	if len(v) == 0 {
+		return nv
+	}
 	r := make(Metadata)
 	for k, v := range v {
 		r[k] = v

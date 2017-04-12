@@ -11,6 +11,11 @@ type functionDefinition struct {
 	meta a.Metadata
 }
 
+var (
+	emptyMetadata = a.Metadata{}
+	defaultName   = a.Name("<lambda>")
+)
+
 func argNames(n a.Sequence) []a.Name {
 	an := []a.Name{}
 	for i := n; i.IsSequence(); i = i.Rest() {
@@ -20,26 +25,47 @@ func argNames(n a.Sequence) []a.Name {
 	return an
 }
 
-func getFunctionDefinition(args a.Sequence) *functionDefinition {
-	a.AssertMinimumArity(args, 3)
+func optionalMetadata(c a.Context, args a.Sequence) (a.Metadata, a.Sequence) {
+	r := args
+	var md a.Metadata
+	if s, ok := r.First().(string); ok {
+		md = a.Metadata{a.MetaDoc: s}
+		r = r.Rest()
+	} else {
+		md = emptyMetadata
+	}
 
-	fn := a.AssertUnqualified(args.First()).Name()
-	r := args.Rest()
-
-	var ds string
-	if vs, ok := r.First().(string); ok {
-		ds = vs
+	if m, ok := r.First().(a.Mapped); ok {
+		em := a.Eval(c, m).(a.Mapped)
+		md = md.Merge(toMetadata(em))
 		r = r.Rest()
 	}
+	return md, r
+}
+
+func optionalName(args a.Sequence) (a.Name, a.Sequence) {
+	if s, ok := args.First().(a.Symbol); ok {
+		if s.Domain() == a.LocalDomain {
+			return s.Name(), args.Rest()
+		}
+		panic(a.Err(a.ExpectedUnqualified, s.Qualified()))
+	}
+	return defaultName, args
+}
+
+func getFunctionDefinition(c a.Context, args a.Sequence) *functionDefinition {
+	a.AssertMinimumArity(args, 3)
+	fn := a.AssertUnqualified(args.First()).Name()
+	md, r := optionalMetadata(c, args.Rest())
 	an := a.AssertVector(r.First())
 
 	return &functionDefinition{
 		args: an,
 		body: r.Rest(),
-		meta: a.Metadata{
+		meta: md.Merge(a.Metadata{
 			a.MetaName: fn,
-			a.MetaDoc:  ds,
-		},
+			a.MetaArgs: an,
+		}),
 	}
 }
 
@@ -61,7 +87,7 @@ func defineFunction(closure a.Context, d *functionDefinition) a.Function {
 }
 
 func defn(c a.Context, args a.Sequence) a.Value {
-	fd := getFunctionDefinition(args)
+	fd := getFunctionDefinition(c, args)
 	f := defineFunction(c, fd)
 	a.GetContextNamespace(c).Put(f.Name(), f)
 	return f
@@ -69,12 +95,17 @@ func defn(c a.Context, args a.Sequence) a.Value {
 
 func fn(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
-	an := a.AssertVector(args.First())
+	fn, r := optionalName(args)
+	md, r := optionalMetadata(c, r)
+	an := a.AssertVector(r.First())
 
 	return defineFunction(c, &functionDefinition{
 		args: an,
-		body: args.Rest(),
-		meta: a.Metadata{},
+		body: r.Rest(),
+		meta: md.Merge(a.Metadata{
+			a.MetaName: fn,
+			a.MetaArgs: an,
+		}),
 	})
 }
 

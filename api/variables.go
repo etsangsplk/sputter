@@ -21,9 +21,9 @@ const (
 	GreaterThan Comparison = 1
 )
 
-// Comparable is an interface for a Value capable of being compared.
-type Comparable interface {
-	Compare(Comparable) Comparison
+// Comparer is an interface for a Value capable of comparing.
+type Comparer interface {
+	Compare(Comparer) Comparison
 }
 
 // Named is the generic interface for Values that are named

@@ -37,3 +37,11 @@ func TestAssertIndexed(t *testing.T) {
 	defer expectError(as, a.Err(a.ExpectedIndexed, "99"))
 	a.AssertIndexed(a.NewFloat(99))
 }
+
+func TestAssertConjoiner(t *testing.T) {
+	as := assert.New(t)
+	a.AssertConjoiner(a.NewList("hello"))
+
+	defer expectError(as, a.Err(a.ExpectedConjoiner, "99"))
+	a.AssertConjoiner(a.NewFloat(99))
+}
