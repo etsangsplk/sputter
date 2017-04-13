@@ -11,9 +11,7 @@ const (
 	BadArityRange = "expected between %d and %d arguments, got %d"
 )
 
-var defaultFunctionMetadata = Metadata{
-	MetaName: Name("<anon>"),
-}
+var functionMetadata = Metadata{MetaName: Name("<anon>")}
 
 // Function is a Value that can be invoked
 type Function interface {
@@ -32,7 +30,7 @@ type function struct {
 func NewFunction(e SequenceProcessor) Function {
 	return &function{
 		exec: e,
-		meta: defaultFunctionMetadata,
+		meta: functionMetadata,
 	}
 }
 

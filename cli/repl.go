@@ -219,7 +219,7 @@ func highlightCloser(line []rune, pos int, key rune) {
 		case c:
 			d--
 			if d == 0 {
-				fmt.Print(save + fmt.Sprintf(backward, i-pos))
+				fmt.Print(save + fmt.Sprintf(forward, i-pos))
 				fmt.Print(pair + string(c) + restore)
 				return
 			}

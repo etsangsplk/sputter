@@ -51,21 +51,21 @@ func String(v Value) string {
 }
 
 func stringDump(v Value) string {
-	md := Metadata{}
+	m := Metadata{}
 	if n, ok := v.(Named); ok {
-		md = md.Merge(Metadata{MetaName: n.Name()})
+		m = m.Merge(Metadata{MetaName: n.Name()})
 	}
 	if t, ok := v.(Typed); ok {
-		md = md.Merge(Metadata{MetaType: t.Type()})
+		m = m.Merge(Metadata{MetaType: t.Type()})
 	} else {
-		md = md.Merge(Metadata{MetaType: Native})
+		m = m.Merge(Metadata{MetaType: Native})
 	}
-	ptr := fmt.Sprintf("%p", &v)
-	md = md.Merge(Metadata{MetaInstance: ptr})
+	p := fmt.Sprintf("%p", &v)
+	m = m.Merge(Metadata{MetaInstance: p})
 	if a, ok := v.(Annotated); ok {
-		md = md.Merge(Metadata{MetaMeta: a.Metadata()})
+		m = m.Merge(Metadata{MetaMeta: a.Metadata()})
 	}
-	return md.String()
+	return m.String()
 }
 
 // Err generates a standard interpreter error

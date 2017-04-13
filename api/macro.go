@@ -14,13 +14,11 @@ type macro struct {
 	dataMode bool
 }
 
-var defaultMacroMetadata = Metadata{
-	MetaMacro: true,
-}
+var macroMetadata = Metadata{MetaMacro: true}
 
 // NewMacro instantiates a new Macro
 func NewMacro(e SequenceProcessor) Macro {
-	f := NewFunction(e).WithMetadata(defaultMacroMetadata).(Function)
+	f := NewFunction(e).WithMetadata(macroMetadata).(Function)
 	return &macro{
 		Function: f,
 		dataMode: true,
