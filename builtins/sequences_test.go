@@ -27,7 +27,7 @@ func TestMapFilter(t *testing.T) {
 	ns.Delete("y")
 
 	testCode(t, `
-	    ;; the conj below is invalid, but it's never evaluated
+	    ;; the conj below is invalid, but never evaluated
 		(def x (concat '(1 2) (conj 3 (list 4))))
 		(def y
 			(map 

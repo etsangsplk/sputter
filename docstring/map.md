@@ -3,6 +3,6 @@ Creates a lazy sequence whose values are the result of applying the provided fun
 
 ## An Example
 
-  (map (fn [x] (* x 2)) [1 2 3 4])
+  (map (fn [x] (** x 2)) [1 2 3 4])
 
 This will return the lazy sequence _(2 4 6 8)_.
