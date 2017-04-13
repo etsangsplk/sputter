@@ -80,7 +80,7 @@ func TestAssociativePrepend(t *testing.T) {
 	}
 
 	defer expectError(as, a.ExpectedPair)
-	m2.Prepend(99)
+	m2.Conjoin(99)
 }
 
 func TestAssociativeIterate(t *testing.T) {

@@ -60,7 +60,7 @@ func TestIterator(t *testing.T) {
 	as.False(l1.Rest().IsSequence(), "list terminated properly")
 
 	n2 := a.NewFloat(20.5)
-	l2 := l1.Prepend(n2)
+	l2 := l1.Conjoin(n2)
 	as.Equal(n2, l2.First(), "2nd head is populated correctly")
 	as.Equal(l1, l2.Rest(), "2nd tail is populated correctly")
 
@@ -112,10 +112,13 @@ func TestNonFunction(t *testing.T) {
 func TestListExplosion(t *testing.T) {
 	as := assert.New(t)
 
+	seq := a.NewList("foo")
 	idx := a.NewFloat(3)
 	err := a.Err(a.IndexNotFound, a.String(idx))
+	
+	v := seq.Apply(a.NewContext(), a.Vector{idx, "default"})
+	as.Equal("default", v, "defaults work")
+	
 	defer expectError(as, err)
-
-	seq := a.NewList("foo").(a.Applicable)
-	seq.Apply(a.NewContext(), a.NewList(idx))
+	seq.Apply(a.NewContext(), a.Vector{idx})
 }

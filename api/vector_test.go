@@ -23,11 +23,17 @@ func TestVector(t *testing.T) {
 	as.Equal(5, v2.Count(), "vector 2 count is correct")
 	as.Equal(4, v1.Count(), "vector 1 count is still correct")
 
-	r, ok = v2.Get(0)
+	v3 := v2.Conjoin("good?").(a.Vector)
+	r, ok = v3.Get(5)
+	as.True(ok, "get by index is correct")
+	as.Equal("good?", r, "get by index is correct")
+	as.Equal(6, v3.Count(), "vector 3 count is correct")
+	
+	r, ok = v3.Get(0)
 	as.True(ok, "get by index is correct")
 	as.Equal("oh", r, "get by index is correct")
 
-	r, ok = v2.Get(3)
+	r, ok = v3.Get(3)
 	as.True(ok, "get by index is correct")
 	as.Equal("are", r, "get by index is correct")
 

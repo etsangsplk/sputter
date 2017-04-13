@@ -17,7 +17,8 @@ func TestFunction(t *testing.T) {
 
 	testCode(t, `
 		(defn say-hello
-		  {:doc "this is a doc string"}
+		  "this is a doc string"
+		  {:test true}
 		  []
 		  "Hello, World!")
 		(say-hello)
@@ -64,14 +65,18 @@ func TestLambda(t *testing.T) {
 }
 
 func TestBadLambda(t *testing.T) {
-	testBadCode(t, `(fn 99 "hello")`, a.Err(a.ExpectedVector, "99"))
+	err := a.Err(a.ExpectedVector, "99")
+	testBadCode(t, `(fn 99 "hello")`, err)
+	
+	err = a.Err(a.ExpectedUnqualified, "foo:bar")
+	testBadCode(t, `(fn foo:bar [] "hello")`, err)
 }
 
 func TestApply(t *testing.T) {
 	testCode(t, `(apply + [1 2 3])`, a.NewFloat(6))
 	testCode(t, `
 		(apply
-			(fn [x y z] (+ x y z))
+			(fn add {:test true} [x y z] (+ x y z))
 			[1 2 3])
 	`, a.NewFloat(6))
 

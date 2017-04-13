@@ -13,7 +13,7 @@ type List struct {
 var EmptyList *List
 
 // NewList creates a new List instance
-func NewList(v Value) Sequence {
+func NewList(v Value) *List {
 	return &List{
 		first: v,
 		rest:  EmptyList,

@@ -14,6 +14,7 @@ func TestSequence(t *testing.T) {
 	testCode(t, `(first '(1 2 3 4))`, a.NewFloat(1))
 	testCode(t, `(first (rest '(1 2 3 4)))`, a.NewFloat(2))
 	testCode(t, `(first (rest (cons 1 (list 2 3))))`, a.NewFloat(2))
+	testCode(t, `(first (rest (conj (list 2 3) 1)))`, a.NewFloat(2))
 	
 	testCode(t, `(nth '(1 2 3) 1)`, a.NewFloat(2))
 	testCode(t, `(nth '(1 2 3) 5 "nope")`, "nope")
@@ -26,11 +27,16 @@ func TestMapFilter(t *testing.T) {
 	ns.Delete("y")
 
 	testCode(t, `
-		(def x (concat '(1 2) (list 3 4)))
+		(def x (concat '(1 2) (conj 3 (list 4))))
 		(def y
-			(map (fn [x] (* x 2))
-			(filter (fn [x] (= x 6))
-				[5 6])))
-		(apply + (map (fn [z] (first z)) [x y]))
+			(map 
+				(fn [x] (* x 2))
+				(filter 
+					(fn [x] (= x 6))
+					[5 6])))
+		(apply + 
+			(map
+				(fn [z] (first z))
+				[x y]))
 	`, a.NewFloat(13))
 }
