@@ -1,7 +1,5 @@
 package api
 
-import "fmt"
-
 // ValueMapper returns a mapped representation of the specified Value
 type ValueMapper func(Value) Value
 
@@ -69,8 +67,8 @@ func (l *lazyMapper) Prepend(v Value) Sequence {
 	}
 }
 
-func (l *lazyMapper) String() string {
-	return fmt.Sprintf("(map :instance %p)", &l)
+func (l *lazyMapper) Type() Name {
+	return "map"
 }
 
 type lazyFilter struct {
@@ -137,8 +135,8 @@ func (l *lazyFilter) Prepend(v Value) Sequence {
 	}
 }
 
-func (l *lazyFilter) String() string {
-	return fmt.Sprintf("(filter :instance %p)", &l)
+func (l *lazyFilter) Type() Name {
+	return "filter"
 }
 
 type lazyConcat struct {
@@ -199,6 +197,6 @@ func (l *lazyConcat) Prepend(v Value) Sequence {
 	}
 }
 
-func (l *lazyConcat) String() string {
-	return fmt.Sprintf("(concat :instance %p)", &l)
+func (l *lazyConcat) Type() Name {
+	return "concat"
 }

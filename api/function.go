@@ -12,8 +12,7 @@ const (
 )
 
 var defaultFunctionMetadata = Metadata{
-	MetaType: "function",
-	MetaDoc:  EmptyString,
+	MetaName: Name("<anon>"),
 }
 
 // Function is a Value that can be invoked
@@ -56,6 +55,10 @@ func (f *function) Name() Name {
 
 func (f *function) Documentation() string {
 	return f.Metadata()[MetaDoc].(string)
+}
+
+func (f *function) Type() Name {
+	return "function"
 }
 
 // Apply makes Function Applicable

@@ -13,10 +13,9 @@ var (
 
 	// Nil is a value that represents the absence of a Value
 	Nil Value
-
-	// EmptyString represents the zero value of a string
-	EmptyString string
 )
+
+var Native = Name("<native>")
 
 // Truthy evaluates whether or not a Value is Truthy
 func Truthy(v Value) bool {
@@ -42,16 +41,31 @@ func String(v Value) string {
 	if s, ok := v.(fmt.Stringer); ok {
 		return s.String()
 	}
-	if a, ok := v.(Annotated); ok {
-		return a.Metadata().String()
-	}
 	if n, ok := v.(Name); ok {
 		return string(n)
 	}
 	if s, ok := v.(string); ok {
 		return fmt.Sprintf("%q", s)
 	}
-	return fmt.Sprintf("(<anon> :instance %p)", &v)
+	return stringDump(v)
+}
+
+func stringDump(v Value) string {
+	md := Metadata{}
+	if n, ok := v.(Named); ok {
+		md = md.Merge(Metadata{MetaName: n.Name()})
+	}
+	if t, ok := v.(Typed); ok {
+		md = md.Merge(Metadata{MetaType: t.Type()})
+	} else {
+		md = md.Merge(Metadata{MetaType: Native})
+	}
+	ptr := fmt.Sprintf("%p", &v)
+	md = md.Merge(Metadata{MetaInstance: ptr})
+	if a, ok := v.(Annotated); ok {
+		md = md.Merge(Metadata{MetaMeta: a.Metadata()})
+	}
+	return md.String()
 }
 
 // Err generates a standard interpreter error

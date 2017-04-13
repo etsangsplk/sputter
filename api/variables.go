@@ -31,6 +31,11 @@ type Named interface {
 	Name() Name
 }
 
+// Typed is the generic interface for Values that are typed
+type Typed interface {
+	Type() Name
+}
+
 // Variables represents a mapping from Name to Value
 type Variables map[Name]Value
 

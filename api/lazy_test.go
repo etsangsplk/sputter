@@ -149,7 +149,7 @@ func TestLazyToString(t *testing.T) {
 	all := func(v a.Value) bool { return true }
 
 	v := a.Vector{}
-	as.True(strings.HasPrefix(a.String(a.NewConcat(v)), "(concat "))
-	as.True(strings.HasPrefix(a.String(a.NewFilter(v, all)), "(filter "))
-	as.True(strings.HasPrefix(a.String(a.NewMapper(v, id)), "(map "))
+	as.True(strings.Contains(a.String(a.NewConcat(v)), ":type concat"))
+	as.True(strings.Contains(a.String(a.NewFilter(v, all)), ":type filter"))
+	as.True(strings.Contains(a.String(a.NewMapper(v, id)), ":type map"))
 }

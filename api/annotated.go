@@ -9,14 +9,20 @@ var (
 	// MetaName is the Metadata key for a Value's Name
 	MetaName = NewKeyword("name")
 
-	// MetaArgs is the Metadata key for a Function's arguments
-	MetaArgs = NewKeyword("args")
-
 	// MetaType is the Metadata key for a Value's Type
 	MetaType = NewKeyword("type")
 
+	// MetaMeta is the Metadata key for a Value's Metadata	
+	MetaMeta = NewKeyword("meta")
+	
 	// MetaDoc is the Metadata key for Documentation Strings
 	MetaDoc = NewKeyword("doc")
+
+	// MetaArgs is the Metadata key for a Function's arguments
+	MetaArgs = NewKeyword("args")
+
+	// MetaInstance is the Metadata key for a Value's instance ID
+	MetaInstance = NewKeyword("instance")
 )
 
 // Metadata stores metadata about an Annotated Value

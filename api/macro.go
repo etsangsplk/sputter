@@ -31,6 +31,10 @@ func (m *macro) DataMode() bool {
 	return m.dataMode
 }
 
+func (m *macro) Type() Name {
+	return "macro"
+}
+
 // WithMetadata copies the Function with new Metadata
 func (m *macro) WithMetadata(md Metadata) Annotated {
 	return &macro{

@@ -31,5 +31,5 @@ func TestString(t *testing.T) {
 	as.Equal("false", a.String(a.False), "true stringifies correctly")
 	as.Equal("nil", a.String(a.Nil), "nil stringifies correctly")
 	as.Equal("nil", a.String(nil), "nil stringifies correctly")
-	as.True(strings.HasPrefix(a.String(&anon{}), "(<anon>"))
+	as.True(strings.Contains(a.String(&anon{}), ":type <native>"))
 }

@@ -86,6 +86,10 @@ func (e *emitter) Close() Emitter {
 	return e
 }
 
+func (e *emitter) Type() Name {
+	return "emitter"
+}
+
 // NewChannelSequence produces a new Sequence whose Values come from a Go chan
 func NewChannelSequence(ch chan Value) Sequence {
 	return &channelSequence{
@@ -148,6 +152,10 @@ func (c *channelSequence) Prepend(v Value) Sequence {
 		rest:  c,
 	}
 }
+ 
+func (c *channelSequence) Type() Name {
+	return "channel-sequence"
+}
 
 // NewPromise instantiates a new Promise
 func NewPromise() Promise {
@@ -198,4 +206,8 @@ func (p *promise) Deliver(v Value) Value {
 	cond.Broadcast()
 
 	return v
+}
+
+func (p *promise) Type() Name {
+	return "promise"
 }
