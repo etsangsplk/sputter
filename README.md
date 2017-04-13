@@ -52,6 +52,9 @@ that will change rapidly. The current built-in forms are:
   * Concurrency: `channel`, `async`, `promise`, `future`
   * I/O: `print`, `println`, `pr`, `prn`
  
+Documentation for most of these forms may be viewed in the 
+REPL using the `doc` function.
+ 
 ## License (MIT License)
 Copyright (c) 2017 Thomas S. Bradford
 
