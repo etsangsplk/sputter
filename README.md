@@ -30,7 +30,7 @@ cat somefile.lisp | sputter
 Sputter has a very crude Read-Eval-Print Loop that will be more than
 happy to start if you call it with no arguments from the terminal:
 
-<img src="doc/repl.jpeg" />
+<img src="docs/img/repl.jpeg" />
 
 ## Current Status
 I just started this thing and it's still pretty fragile, but
@@ -51,10 +51,10 @@ that will change rapidly. The current built-in forms are:
   * Comprehensions: `concat`, `map`, `filter`
   * Concurrency: `channel`, `async`, `promise`, `future`
   * I/O: `print`, `println`, `pr`, `prn`
- 
-Documentation for most of these forms may be viewed in the 
+
+Documentation for most of these forms may be viewed in the
 REPL using the `doc` function.
- 
+
 ## License (MIT License)
 Copyright (c) 2017 Thomas S. Bradford
 
