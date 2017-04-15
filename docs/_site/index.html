@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="/assets/css/style.css?v=3590c65d4d9dfa147c7178726dbcb2c6e08aa3a6">
+    <link rel="stylesheet" type="text/css" href="/assets/css/print.css" media="print">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <title>sputter by kode4food</title>
+  </head>
+
+  <body>
+    <div id="container">
+      <div class="inner">
+
+        <header>
+          <h1>sputter</h1>
+          <h2>A Lisp Interpreter Experiment</h2>
+        </header>
+        <section id="downloads" class="clearfix">
+          
+	  
+          <a href="http://github.com/kode4food/sputter" id="view-on-github" class="button"><span>View on GitHub</span></a>
+	    
+        </section> 
+        <hr>
+        <section id="main_content">
+          <p>Sputter is a simple Lisp Interpreter written in
+<a href="https://golang.org/">Go</a>. Basically, it’s just me having some fun
+and trying to improve my Go skills. That means you’re unlikely to
+find something you’d want to use in production here. On the other
+hand, if you want to join in on the fun, you’re more than welcome
+to.</p>
+
+<h2 id="how-to-install">How To Install</h2>
+<p>Make sure your <code class="highlighter-rouge">GOPATH</code> is set, then run <code class="highlighter-rouge">go get</code> to retrieve the
+package.</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code>go get github.com/kode4food/sputter
+</code></pre>
+</div>
+
+<h2 id="how-to-invoke-the-interpreter">How To Invoke The Interpreter</h2>
+<p>Once you’ve installed the package, you can run it from <code class="highlighter-rouge">GOPATH/bin</code>
+like so:</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code>sputter somefile.lisp
+
+<span class="c"># or</span>
+
+cat somefile.lisp | sputter
+</code></pre>
+</div>
+
+<h2 id="how-to-invoke-the-repl">How To Invoke The REPL</h2>
+<p>Sputter has a very crude Read-Eval-Print Loop that will be more than
+happy to start if you call it with no arguments from the terminal:</p>
+
+<p><img src="img/repl.jpeg" /></p>
+
+<h2 id="current-status">Current Status</h2>
+<p>I just started this thing and it’s still pretty fragile, but
+that will change rapidly. The current built-in forms are:</p>
+
+<ul>
+  <li>Control and Branching: <code class="highlighter-rouge">if</code>, <code class="highlighter-rouge">cond</code>, <code class="highlighter-rouge">quote</code>, <code class="highlighter-rouge">do</code></li>
+  <li>Numeric: <code class="highlighter-rouge">+</code>, <code class="highlighter-rouge">-</code>, <code class="highlighter-rouge">*</code>, <code class="highlighter-rouge">/</code>, <code class="highlighter-rouge">!=</code>, <code class="highlighter-rouge">=</code>, <code class="highlighter-rouge">&lt;</code>, <code class="highlighter-rouge">&lt;=</code>, <code class="highlighter-rouge">&gt;</code>, <code class="highlighter-rouge">&gt;=</code></li>
+  <li>Variables: <code class="highlighter-rouge">def</code>, <code class="highlighter-rouge">let</code>, <code class="highlighter-rouge">ns</code>, <code class="highlighter-rouge">with-ns</code></li>
+  <li>Functions: <code class="highlighter-rouge">defn</code>, <code class="highlighter-rouge">fn</code>, <code class="highlighter-rouge">apply</code></li>
+  <li>Predicates: <code class="highlighter-rouge">eq</code>, <code class="highlighter-rouge">!eq</code>, <code class="highlighter-rouge">nil?</code>, <code class="highlighter-rouge">!nil?</code></li>
+  <li>Sequences: <code class="highlighter-rouge">cons</code>, <code class="highlighter-rouge">conj</code>, <code class="highlighter-rouge">first</code>, <code class="highlighter-rouge">rest</code>, <code class="highlighter-rouge">seq?</code>, <code class="highlighter-rouge">!seq?</code></li>
+  <li>Lists: <code class="highlighter-rouge">list</code>, <code class="highlighter-rouge">list?</code>, <code class="highlighter-rouge">!list?</code>, <code class="highlighter-rouge">to-list</code></li>
+  <li>Vectors: <code class="highlighter-rouge">vector</code>, <code class="highlighter-rouge">vector?</code>, <code class="highlighter-rouge">!vector?</code>, <code class="highlighter-rouge">to-vector</code></li>
+  <li>Associative Arrays: <code class="highlighter-rouge">assoc</code>, <code class="highlighter-rouge">assoc?</code>, <code class="highlighter-rouge">!assoc?</code>, <code class="highlighter-rouge">to-assoc</code></li>
+  <li>Indexed Sequences: <code class="highlighter-rouge">nth</code>, <code class="highlighter-rouge">indexed?</code>, <code class="highlighter-rouge">!indexed?</code></li>
+  <li>Mapped Sequences: <code class="highlighter-rouge">mapped?</code>, <code class="highlighter-rouge">!mapped?</code></li>
+  <li>Metadata: <code class="highlighter-rouge">meta</code>, <code class="highlighter-rouge">with-meta</code></li>
+  <li>Comprehensions: <code class="highlighter-rouge">concat</code>, <code class="highlighter-rouge">map</code>, <code class="highlighter-rouge">filter</code></li>
+  <li>Concurrency: <code class="highlighter-rouge">channel</code>, <code class="highlighter-rouge">async</code>, <code class="highlighter-rouge">promise</code>, <code class="highlighter-rouge">future</code></li>
+  <li>I/O: <code class="highlighter-rouge">print</code>, <code class="highlighter-rouge">println</code>, <code class="highlighter-rouge">pr</code>, <code class="highlighter-rouge">prn</code></li>
+</ul>
+
+<p>Documentation for most of these forms may be viewed in the
+REPL using the <code class="highlighter-rouge">doc</code> function.</p>
+
+        </section>
+
+        <footer>
+        
+          sputter is maintained by <a href="http://github.com/kode4food">kode4food</a><br>
+        
+          This page was generated by <a href="https://pages.github.com">GitHub Pages</a>.
+        </footer>
+
+      </div>
+    </div>
+
+    
+  </body>
+</html>
