@@ -98,6 +98,17 @@ func IndexedApply(s Indexed, c Context, args Sequence) Value {
 	panic(Err(IndexNotFound, strconv.Itoa(idx)))
 }
 
+// Reduce performs a reduce operation over a Sequence, starting with the
+// first two elements of that sequence.
+func Reduce(c Context, s Sequence, f Function) Value {
+	AssertMinimumArity(s, 2)
+	l := s.First()
+	for r := s.Rest(); r.IsSequence(); r = r.Rest() {
+		l = f.Apply(c, Vector{l, r.First()})
+	}
+	return l
+}
+
 // AssertSequence will cast a Value into a Sequence or explode violently
 func AssertSequence(v Value) Sequence {
 	if r, ok := v.(Sequence); ok {
