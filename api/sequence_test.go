@@ -7,25 +7,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestReduce(t *testing.T) {
-	as := assert.New(t)
-
-	add := a.NewFunction(
-		func(_ a.Context, args a.Sequence) a.Value {
-			v := args.(a.Vector)
-			return v[0].(int) + v[1].(int)
-		},
-	)
-
-	as.Equal(30, a.Reduce(nil, a.Vector{10, 20}, add))
-	as.Equal(60, a.Reduce(nil, a.Vector{10, 20, 30}, add))
-	as.Equal(100, a.Reduce(nil, a.Vector{10, 20, 30, 40}, add))
-
-	err := a.Err(a.BadMinimumArity, 2, 1)
-	defer expectError(as, err)
-	a.Reduce(nil, a.Vector{10}, add)
-}
-
 type noCountSequence struct{}
 
 func (n *noCountSequence) First() a.Value               { return nil }

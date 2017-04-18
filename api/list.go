@@ -1,7 +1,5 @@
 package api
 
-import "bytes"
-
 // List contains a node to a singly-linked List
 type List struct {
 	first Value
@@ -82,23 +80,6 @@ func (l *List) Eval(ctx Context) Value {
 		return f.Apply(ctx, l.rest)
 	}
 	panic(Err(ExpectedApplicable, String(l.first)))
-}
-
-func (l *List) String() string {
-	if l == EmptyList {
-		return "()"
-	}
-
-	var b bytes.Buffer
-	b.WriteString("(")
-	for e := l; e != EmptyList; e = e.rest {
-		b.WriteString(String(e.first))
-		if e.rest != EmptyList {
-			b.WriteString(" ")
-		}
-	}
-	b.WriteString(")")
-	return b.String()
 }
 
 func init() {

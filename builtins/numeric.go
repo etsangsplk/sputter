@@ -10,7 +10,7 @@ var (
 	one  = a.NewFloat(1)
 )
 
-func reduce(c a.Context, s a.Sequence, v *a.Number, f reduceFunc) a.Value {
+func reduceNum(c a.Context, s a.Sequence, v *a.Number, f reduceFunc) a.Value {
 	r := v
 	for i := s; i.IsSequence(); i = i.Rest() {
 		fv := a.AssertNumber(a.Eval(c, i.First()))
@@ -42,14 +42,14 @@ func add(c a.Context, args a.Sequence) a.Value {
 		return zero
 	}
 	f, r := fetchFirstNumber(c, args)
-	return reduce(c, r, f, func(p *a.Number, n *a.Number) *a.Number {
+	return reduceNum(c, r, f, func(p *a.Number, n *a.Number) *a.Number {
 		return p.Add(n)
 	})
 }
 
 func sub(c a.Context, args a.Sequence) a.Value {
 	f, r := fetchFirstNumber(c, args)
-	return reduce(c, r, f, func(p *a.Number, n *a.Number) *a.Number {
+	return reduceNum(c, r, f, func(p *a.Number, n *a.Number) *a.Number {
 		return p.Sub(n)
 	})
 }
@@ -59,14 +59,14 @@ func mul(c a.Context, args a.Sequence) a.Value {
 		return one
 	}
 	f, r := fetchFirstNumber(c, args)
-	return reduce(c, r, f, func(p *a.Number, n *a.Number) *a.Number {
+	return reduceNum(c, r, f, func(p *a.Number, n *a.Number) *a.Number {
 		return p.Mul(n)
 	})
 }
 
 func div(c a.Context, args a.Sequence) a.Value {
 	f, r := fetchFirstNumber(c, args)
-	return reduce(c, r, f, func(p *a.Number, n *a.Number) *a.Number {
+	return reduceNum(c, r, f, func(p *a.Number, n *a.Number) *a.Number {
 		return p.Div(n)
 	})
 }

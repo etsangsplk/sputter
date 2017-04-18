@@ -59,18 +59,18 @@ func concat(c a.Context, args a.Sequence) a.Value {
 		return a.AssertSequence(a.Eval(c, args.First()))
 	}
 
-	es := a.NewMapper(args, func(v a.Value) a.Value {
+	es := a.Map(args, func(v a.Value) a.Value {
 		return a.AssertSequence(a.Eval(c, v))
 	})
 
-	return a.NewConcat(es)
+	return a.Concat(es)
 }
 
 func _map(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 	f := a.AssertApplicable(a.Eval(c, args.First()))
 	s := concat(c, args.Rest()).(a.Sequence)
-	return a.NewMapper(s, func(v a.Value) a.Value {
+	return a.Map(s, func(v a.Value) a.Value {
 		return f.Apply(c, a.NewList(v))
 	})
 }
@@ -79,9 +79,30 @@ func filter(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 	f := a.AssertApplicable(a.Eval(c, args.First()))
 	s := concat(c, args.Rest()).(a.Sequence)
-	return a.NewFilter(s, func(v a.Value) bool {
+	return a.Filter(s, func(v a.Value) bool {
 		return a.Truthy(f.Apply(c, a.NewList(v)))
 	})
+}
+
+func reduce(c a.Context, args a.Sequence) a.Value {
+	a.AssertMinimumArity(args, 2)
+	f := a.AssertApplicable(a.Eval(c, args.First()))
+	s := concat(c, args.Rest()).(a.Sequence)
+	return a.Reduce(c, s, f)
+}
+
+func take(c a.Context, args a.Sequence) a.Value {
+	a.AssertMinimumArity(args, 2)
+	n := a.AssertInteger(a.Eval(c, args.First()))
+	s := concat(c, args.Rest()).(a.Sequence)
+	return a.Take(s, n)
+}
+
+func drop(c a.Context, args a.Sequence) a.Value {
+	a.AssertMinimumArity(args, 2)
+	n := a.AssertInteger(a.Eval(c, args.First()))
+	s := concat(c, args.Rest()).(a.Sequence)
+	return a.Drop(s, n)
 }
 
 func init() {
@@ -150,6 +171,27 @@ func init() {
 		a.NewFunction(filter).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("filter"),
 			a.MetaDoc:  d.Get("filter"),
+		}),
+	)
+
+	registerAnnotated(
+		a.NewFunction(reduce).WithMetadata(a.Metadata{
+			a.MetaName: a.Name("reduce"),
+			a.MetaDoc:  d.Get("reduce"),
+		}),
+	)
+
+	registerAnnotated(
+		a.NewFunction(take).WithMetadata(a.Metadata{
+			a.MetaName: a.Name("take"),
+			a.MetaDoc:  d.Get("take"),
+		}),
+	)
+
+	registerAnnotated(
+		a.NewFunction(drop).WithMetadata(a.Metadata{
+			a.MetaName: a.Name("drop"),
+			a.MetaDoc:  d.Get("drop"),
 		}),
 	)
 }

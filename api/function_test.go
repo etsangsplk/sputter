@@ -52,7 +52,7 @@ func TestGoodArity(t *testing.T) {
 	as.Equal(3, a.AssertMinimumArity(v1, 3))
 	as.Equal(3, a.AssertMinimumArity(v1, 2))
 
-	v2 := a.NewConcat(a.Vector{
+	v2 := a.Concat(a.Vector{
 		a.NewList(1),
 		a.Vector{2, 3},
 	})

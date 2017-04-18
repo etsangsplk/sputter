@@ -32,8 +32,8 @@ func TestList(t *testing.T) {
 	n2 := a.NewFloat(20.5)
 	l2 := l1.Prepend(n2).(*a.List)
 
-	as.Equal("()", a.EmptyList.String())
-	as.Equal("(20.5 12)", l2.String())
+	as.Equal("()", a.String(a.EmptyList))
+	as.Equal("(20.5 12)", a.String(l2))
 	as.Equal(n2, l2.First(), "2nd head is populated correctly")
 	as.Equal(l1, l2.Rest(), "2nd tail is populated correctly")
 	as.Equal(2, l2.Count(), "2nd list count is correct")
@@ -115,10 +115,10 @@ func TestListExplosion(t *testing.T) {
 	seq := a.NewList("foo")
 	idx := a.NewFloat(3)
 	err := a.Err(a.IndexNotFound, a.String(idx))
-	
+
 	v := seq.Apply(a.NewContext(), a.Vector{idx, "default"})
 	as.Equal("default", v, "defaults work")
-	
+
 	defer expectError(as, err)
 	seq.Apply(a.NewContext(), a.Vector{idx})
 }

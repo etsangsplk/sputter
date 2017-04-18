@@ -47,8 +47,8 @@ that will change rapidly. The current built-in forms are:
   * Associative Arrays: `assoc`, `assoc?`, `!assoc?`, `to-assoc`
   * Indexed Sequences: `nth`, `indexed?`, `!indexed?`
   * Mapped Sequences: `mapped?`, `!mapped?`
+  * Comprehensions: `concat`, `map`, `filter`, `reduce`, `take`, `drop`
   * Metadata: `meta`, `with-meta`
-  * Comprehensions: `concat`, `map`, `filter`
   * Concurrency: `channel`, `async`, `promise`, `future`
   * I/O: `print`, `println`, `pr`, `prn`
 

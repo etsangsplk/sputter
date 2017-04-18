@@ -3,7 +3,6 @@ Creates a lazy sequence whose content is the result of applying the provided fun
 
 ## An Example
 
-
   (filter (fn [x] (< x 3)) [1 2 3 4])
 
 This will return the lazy sequence _(1 2)_

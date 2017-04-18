@@ -1,6 +1,9 @@
 package api
 
-import "fmt"
+import (
+	"bytes"
+	"fmt"
+)
 
 var (
 	// True represents the boolean value of True
@@ -39,6 +42,9 @@ func String(v Value) string {
 	if s, ok := v.(fmt.Stringer); ok {
 		return s.String()
 	}
+	if s, ok := v.(Sequence); ok {
+		return stringSequence(s)
+	}
 	if n, ok := v.(Name); ok {
 		return string(n)
 	}
@@ -46,6 +52,22 @@ func String(v Value) string {
 		return fmt.Sprintf("%q", s)
 	}
 	return stringDump(v)
+}
+
+func stringSequence(s Sequence) string {
+	if !s.IsSequence() {
+		return "()"
+	}
+
+	var b bytes.Buffer
+	b.WriteString("(")
+	b.WriteString(String(s.First()))
+	for i := s.Rest(); i.IsSequence(); i = i.Rest() {
+		b.WriteString(" ")
+		b.WriteString(String(i.First()))
+	}
+	b.WriteString(")")
+	return b.String()
 }
 
 func stringDump(v Value) string {

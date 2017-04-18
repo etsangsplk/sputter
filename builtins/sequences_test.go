@@ -15,7 +15,7 @@ func TestSequence(t *testing.T) {
 	testCode(t, `(first (rest '(1 2 3 4)))`, a.NewFloat(2))
 	testCode(t, `(first (rest (cons 1 (list 2 3))))`, a.NewFloat(2))
 	testCode(t, `(first (rest (conj (list 2 3) 1)))`, a.NewFloat(2))
-	
+
 	testCode(t, `(nth '(1 2 3) 1)`, a.NewFloat(2))
 	testCode(t, `(nth '(1 2 3) 5 "nope")`, "nope")
 	testBadCode(t, `(nth '(1 2 3) 5)`, a.Err(a.IndexNotFound, "5"))
@@ -30,14 +30,46 @@ func TestMapFilter(t *testing.T) {
 	    ;; the conj below is invalid, but never evaluated
 		(def x (concat '(1 2) (conj 3 (list 4))))
 		(def y
-			(map 
+			(map
 				(fn [x] (* x 2))
-				(filter 
+				(filter
 					(fn [x] (= x 6))
 					[5 6])))
-		(apply + 
+		(apply +
 			(map
 				(fn [z] (first z))
 				[x y]))
 	`, a.NewFloat(13))
+}
+
+func TestReduce(t *testing.T) {
+	ns := a.GetNamespace(a.UserDomain)
+	ns.Delete("x")
+	ns.Delete("y")
+
+	testCode(t, `
+		(def x '(1 2 3 4))
+		(def y [5 6 7 8])
+		(reduce + x y)
+	`, a.NewFloat(36))
+}
+
+func TestTakeDrop(t *testing.T) {
+	ns := a.GetNamespace(a.UserDomain)
+
+	ns.Delete("x")
+	ns.Delete("y")
+	testCode(t, `
+		(def x '(1 2 3 4))
+		(def y [5 6 7 8])
+		(nth (to-vector (take 6 x y)) 5)
+	`, a.NewFloat(6))
+
+	ns.Delete("x")
+	ns.Delete("y")
+	testCode(t, `
+		(def x '(1 2 3 4))
+		(def y [5 6 7 8])
+		(nth (to-vector (drop 3 x y)) 0)
+	`, a.NewFloat(4))
 }
