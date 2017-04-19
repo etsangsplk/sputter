@@ -60,7 +60,7 @@ func TestStrings(t *testing.T) {
 	as := assert.New(t)
 	l := p.NewLexer(` "hello there" "how's \"life\"?"  `)
 	assertToken(as, makeToken(p.String, `hello there`), l.Next())
-	assertToken(as, makeToken(p.String, `how's \"life\"?`), l.Next())
+	assertToken(as, makeToken(p.String, `how's "life"?`), l.Next())
 	assertToken(as, p.EOFToken, l.Next())
 }
 

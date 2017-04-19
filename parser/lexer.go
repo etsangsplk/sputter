@@ -66,7 +66,14 @@ type stateMapEntry struct {
 
 type stateMap []stateMapEntry
 
-var states stateMap
+var (
+	escaped = regexp.MustCompile(`\\\\|\\"|\\[^\\"]`)
+	escapedMap = map[string]string{
+		`\\`: `\`,
+		`\"`:  `"`,
+	}
+	states stateMap
+)
 
 func init() {
 	re := regexp.MustCompile
@@ -82,7 +89,7 @@ func init() {
 		{re(`^}`), tokenState(MapEnd)},
 		{re(`^'`), tokenState(QuoteMarker)},
 
-		{re(`^"(\\.|[^"])*"`), stringState},
+		{re(`^"(\\\\|\\"|\\[^\\"]|[^"\\])*"`), stringState},
 
 		{re(`^[+-]?[1-9]\d*/[1-9]\d*`), ratioState},
 		{re(`^[+-]?((0|[1-9]\d*)(\.\d+)?([eE][+-]?\d+)?)`), numberState},
@@ -178,9 +185,19 @@ func endState(t TokenType) stateFunc {
 	}
 }
 
+func unescape(s string) string {
+	return escaped.ReplaceAllStringFunc(s, func (e string) string {
+		if r, ok := escapedMap[e]; ok {
+			return r
+		}
+		return e
+	})
+}
+
 func stringState(l *lispLexer) stateFunc {
 	v := l.currentToken()
-	l.emitValue(String, v[1:len(v)-1])
+	s := unescape(v[1:len(v)-1])
+	l.emitValue(String, s)
 	return initState
 }
 

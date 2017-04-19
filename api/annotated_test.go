@@ -23,7 +23,7 @@ func TestMetadata(t *testing.T) {
 	as.True(strings.Contains(s2, `"hello" "there"`))
 	as.True(strings.Contains(s2, `"foo" false`))
 	as.False(strings.Contains(s2, `"foo" true`))
-	
+
 	v1 = a.Metadata{}
 	v2 = a.Metadata{"test": true}
 	v3 := v1.Merge(v2)

@@ -6,7 +6,7 @@ import (
 )
 
 func vector(c a.Context, args a.Sequence) a.Value {
-	if cnt, ok := args.(a.Counter); ok {
+	if cnt, ok := args.(a.Counted); ok {
 		l := cnt.Count()
 		r := make(a.Vector, l)
 		idx := 0

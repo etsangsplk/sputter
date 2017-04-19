@@ -3,6 +3,7 @@ package api
 import (
 	"bytes"
 	"fmt"
+	"regexp"
 )
 
 var (
@@ -16,7 +17,17 @@ var (
 	Nil Value
 )
 
+// Native identifies a native type that is not normally surfaced
 var Native = Name("<native>")
+
+var (
+	escaped = regexp.MustCompile(`^|$|[\\"]`) 
+	escapedMap = map[string]string {
+		`\`: `\\`,
+		`"`: `\"`,
+		``:  `"`,
+	}
+)
 
 // Truthy evaluates whether or not a Value is Truthy
 func Truthy(v Value) bool {
@@ -43,18 +54,24 @@ func String(v Value) string {
 		return s.String()
 	}
 	if s, ok := v.(Sequence); ok {
-		return stringSequence(s)
+		return sequenceToString(s)
 	}
 	if n, ok := v.(Name); ok {
 		return string(n)
 	}
 	if s, ok := v.(string); ok {
-		return fmt.Sprintf("%q", s)
+		return stringEscape(s)
 	}
-	return stringDump(v)
+	return dumpToString(v)
 }
 
-func stringSequence(s Sequence) string {
+func stringEscape(s string) string {
+	return escaped.ReplaceAllStringFunc(s, func(e string) string {
+		return escapedMap[e]
+	})
+}
+
+func sequenceToString(s Sequence) string {
 	if !s.IsSequence() {
 		return "()"
 	}
@@ -70,7 +87,7 @@ func stringSequence(s Sequence) string {
 	return b.String()
 }
 
-func stringDump(v Value) string {
+func dumpToString(v Value) string {
 	m := Metadata{}
 	if n, ok := v.(Named); ok {
 		m = m.Merge(Metadata{MetaName: n.Name()})

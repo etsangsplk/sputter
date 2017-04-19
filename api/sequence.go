@@ -3,8 +3,8 @@ package api
 import "strconv"
 
 const (
-	// ExpectedCountable is thrown if taking count of a non-countable sequence
-	ExpectedCountable = "sequence is not countable"
+	// ExpectedCounted is thrown if taking count of a non-countable sequence
+	ExpectedCounted = "sequence can not be counted: %s"
 
 	// ExpectedSequence is thrown when a Value is not a Sequence
 	ExpectedSequence = "value is not a sequence: %s"
@@ -31,8 +31,8 @@ type Sequence interface {
 	IsSequence() bool
 }
 
-// Counter interfaces allow a Sequence to return a count of its items
-type Counter interface {
+// Counted interfaces allow a Sequence to return a count of its items
+type Counted interface {
 	Sequence
 	Count() int
 }
@@ -49,40 +49,12 @@ type Conjoiner interface {
 	Conjoin(Value) Sequence
 }
 
-// Iterator is a stateful iteration interface for Sequences. "Stateful"
-// is the key word here. This data structure should not be used in any
-// concurrent or immutable situation
-type Iterator struct {
-	sequence Sequence
-}
-
-// Next returns the next value from the Iterator
-func (i *Iterator) Next() (Value, bool) {
-	s := i.sequence
-	if !s.IsSequence() {
-		return Nil, false
+// Count will return the Count from a Counted Sequence or explode
+func Count(v Value) int {
+	if c, ok := v.(Counted); ok {
+		return c.Count()
 	}
-	r := s.First()
-	i.sequence = s.Rest()
-	return r, true
-}
-
-// Rest returns the rest of the Iteration as a Sequence
-func (i *Iterator) Rest() Sequence {
-	return i.sequence
-}
-
-// Iterate creates a stateful Iterator over a Sequence
-func Iterate(s Sequence) *Iterator {
-	return &Iterator{sequence: s}
-}
-
-// Count will return the Count from a Counter Sequence or explode
-func Count(s Sequence) int {
-	if f, ok := s.(Counter); ok {
-		return f.Count()
-	}
-	panic(ExpectedCountable)
+	panic(Err(ExpectedCounted, String(v)))
 }
 
 // IndexedApply provides 'nth' behavior for Indexed Sequences

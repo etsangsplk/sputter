@@ -65,7 +65,7 @@ func (f *function) Apply(c Context, args Sequence) Value {
 }
 
 func countUpTo(args Sequence, c int) int {
-	if cnt, ok := args.(Counter); ok {
+	if cnt, ok := args.(Counted); ok {
 		return cnt.Count()
 	}
 	r := 0

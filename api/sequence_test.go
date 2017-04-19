@@ -12,13 +12,13 @@ type noCountSequence struct{}
 func (n *noCountSequence) First() a.Value               { return nil }
 func (n *noCountSequence) Rest() a.Sequence             { return nil }
 func (n *noCountSequence) Prepend(v a.Value) a.Sequence { return nil }
-func (n *noCountSequence) IsSequence() bool             { return true }
+func (n *noCountSequence) IsSequence() bool             { return false }
 
 func TestNonCountableSequence(t *testing.T) {
 	as := assert.New(t)
 	nc := &noCountSequence{}
 
-	defer expectError(as, a.ExpectedCountable)
+	defer expectError(as, a.Err(a.ExpectedCounted, "()"))
 	a.Count(nc)
 }
 
