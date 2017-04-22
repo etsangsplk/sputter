@@ -3,23 +3,31 @@ package api
 import (
 	"fmt"
 	"regexp"
+	"unicode/utf8"
 )
 
 // Str is the Sequence-compatible representation of string values
 type Str string
 
-var escape = regexp.MustCompile(`\\|\"`)
+var (
+	escape   = regexp.MustCompile(`\\|\"`)
+	emptyStr Str
+)
 
 // First returns the first character of the Str
 func (s Str) First() Value {
-	c := []rune(string(s))
-	return Str(c[0])
+	if r, w := utf8.DecodeRuneInString(string(s)); w > 0 {
+		return Str(r)
+	}
+	return Nil
 }
 
 // Rest returns a Str of all characters after the first
 func (s Str) Rest() Sequence {
-	c := []rune(string(s))
-	return Str(c[1:])
+	if _, w := utf8.DecodeRuneInString(string(s)); w > 0 {
+		return Str(s[w:])
+	}
+	return emptyStr
 }
 
 // IsSequence returns true if the Str is not empty
@@ -67,15 +75,25 @@ func (s Str) vector() Vector {
 
 // Count returns the length of the Str
 func (s Str) Count() int {
-	c := []rune(string(s))
-	return len(c)
+	return utf8.RuneCountInString(string(s))
 }
 
 // Get returns the Character at the indexed position in the Str
 func (s Str) Get(index int) (Value, bool) {
-	if index >= 0 && index < s.Count() {
-		c := []rune(string(s))
-		return Str(c[index : index+1]), true
+	if index < 0 {
+		return Nil, false
+	}
+	ns := string(s)
+	p := 0
+	for i := 0; i < index; i++ {
+		if _, w := utf8.DecodeRuneInString(ns[p:]); w > 0 {
+			p += w
+		} else {
+			return Nil, false
+		}
+	}
+	if r, w := utf8.DecodeRuneInString(ns[p:]); w > 0 {
+		return Str(r), true
 	}
 	return Nil, false
 }

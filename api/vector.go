@@ -8,6 +8,8 @@ const ExpectedVector = "value is not a vector: %s"
 // Vector is a fixed-length Array of Values
 type Vector []Value
 
+var emptyVector = Vector{}
+
 // Count returns the length of the Vector
 func (v Vector) Count() int {
 	return len(v)
@@ -38,12 +40,18 @@ func (v Vector) Eval(c Context) Value {
 
 // First returns the first element of a Vector
 func (v Vector) First() Value {
-	return v[0]
+	if len(v) > 0 {
+		return v[0]
+	}
+	return Nil
 }
 
 // Rest returns the remaining elements of a Vector as a Sequence
 func (v Vector) Rest() Sequence {
-	return Sequence(v[1:])
+	if len(v) > 1 {
+		return Sequence(v[1:])
+	}
+	return emptyVector
 }
 
 // Prepend creates a new Sequence by prepending a Value
