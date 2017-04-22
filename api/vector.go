@@ -61,7 +61,8 @@ func (v Vector) IsSequence() bool {
 	return len(v) > 0
 }
 
-func (v Vector) String() string {
+// Str converts this Value into a Str
+func (v Vector) Str() Str {
 	var b bytes.Buffer
 	l := len(v)
 
@@ -70,10 +71,10 @@ func (v Vector) String() string {
 		if i > 0 {
 			b.WriteString(" ")
 		}
-		b.WriteString(String(v[i]))
+		b.WriteString(string(v[i].Str()))
 	}
 	b.WriteString("]")
-	return b.String()
+	return Str(b.String())
 }
 
 // AssertVector will cast the Value into a Vector or die trying
@@ -81,5 +82,5 @@ func AssertVector(v Value) Vector {
 	if r, ok := v.(Vector); ok {
 		return r
 	}
-	panic(Err(ExpectedVector, String(v)))
+	panic(Err(ExpectedVector, v))
 }

@@ -33,6 +33,11 @@ func (l *lazyElement) Prepend(v Value) Sequence {
 	}
 }
 
+// Str converts this Value into a Str
+func (l *lazyElement) Str() Str {
+	return MakeSequenceStr(l)
+}
+
 type lazyMap struct {
 	first    Value
 	rest     Sequence
@@ -90,6 +95,11 @@ func (l *lazyMap) Prepend(v Value) Sequence {
 		first: v,
 		rest:  l,
 	}
+}
+
+// Str converts this Value into a Str
+func (l *lazyMap) Str() Str {
+	return MakeSequenceStr(l)
 }
 
 type lazyFilter struct {
@@ -154,6 +164,11 @@ func (l *lazyFilter) Prepend(v Value) Sequence {
 	}
 }
 
+// Str converts this Value into a Str
+func (l *lazyFilter) Str() Str {
+	return MakeSequenceStr(l)
+}
+
 type lazyConcat struct {
 	first    Value
 	rest     Sequence
@@ -209,6 +224,11 @@ func (l *lazyConcat) Prepend(v Value) Sequence {
 		first: v,
 		rest:  l,
 	}
+}
+
+// Str converts this Value into a Str
+func (l *lazyConcat) Str() Str {
+	return MakeSequenceStr(l)
 }
 
 type lazyTake struct {
@@ -267,6 +287,11 @@ func (l *lazyTake) Prepend(v Value) Sequence {
 	}
 }
 
+// Str converts this Value into a Str
+func (l *lazyTake) Str() Str {
+	return MakeSequenceStr(l)
+}
+
 type lazyDrop struct {
 	first    Value
 	rest     Sequence
@@ -323,6 +348,11 @@ func (l *lazyDrop) Prepend(v Value) Sequence {
 		first: v,
 		rest:  l,
 	}
+}
+
+// Str converts this Value into a Str
+func (l *lazyDrop) Str() Str {
+	return MakeSequenceStr(l)
 }
 
 // Reduce performs a reduce operation over a Sequence, starting with the

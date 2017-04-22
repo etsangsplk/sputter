@@ -1,11 +1,10 @@
 package builtins_test
 
 import (
-	"fmt"
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
-	"github.com/stretchr/testify/assert"
+	"github.com/kode4food/sputter/assert"
 )
 
 func TestFunction(t *testing.T) {
@@ -31,7 +30,7 @@ func TestFunction(t *testing.T) {
 
 	v, _ := ns.Get("say-hello")
 	fv := v.(a.Function)
-	as.Equal("this is a doc string", fv.Documentation(), "documented")
+	as.String("this is a doc string", fv.Documentation())
 }
 
 func TestBadFunction(t *testing.T) {
@@ -45,12 +44,12 @@ func TestBadFunction(t *testing.T) {
 func TestBadFunctionArity(t *testing.T) {
 	a.GetNamespace(a.UserDomain).Delete("identity")
 
-	testBadCode(t, `(defn blah)`, fmt.Sprintf(a.BadMinimumArity, 3, 1))
+	testBadCode(t, `(defn blah)`, a.Err(a.BadMinimumArity, 3, 1))
 
 	testBadCode(t, `
 		(defn identity [value] value)
 		(identity)
-	`, fmt.Sprintf(a.BadArity, 1, 0))
+	`, a.Err(a.BadArity, 1, 0))
 }
 
 func TestLambda(t *testing.T) {
@@ -67,18 +66,18 @@ func TestLambda(t *testing.T) {
 func TestBadLambda(t *testing.T) {
 	err := a.Err(a.ExpectedVector, "99")
 	testBadCode(t, `(fn 99 "hello")`, err)
-	
+
 	err = a.Err(a.ExpectedUnqualified, "foo:bar")
 	testBadCode(t, `(fn foo:bar [] "hello")`, err)
 }
 
 func TestApply(t *testing.T) {
-	testCode(t, `(apply + [1 2 3])`, a.NewFloat(6))
+	testCode(t, `(apply + [1 2 3])`, f(6))
 	testCode(t, `
 		(apply
 			(fn add {:test true} [x y z] (+ x y z))
 			[1 2 3])
-	`, a.NewFloat(6))
+	`, f(6))
 
 	appErr := a.Err(a.ExpectedApplicable, "32")
 	testBadCode(t, `(apply 32 [1 2 3])`, appErr)

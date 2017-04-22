@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
-	"github.com/stretchr/testify/assert"
+	"github.com/kode4food/sputter/assert"
 )
 
 type noCountSequence struct{}
@@ -13,6 +13,7 @@ func (n *noCountSequence) First() a.Value               { return nil }
 func (n *noCountSequence) Rest() a.Sequence             { return nil }
 func (n *noCountSequence) Prepend(v a.Value) a.Sequence { return nil }
 func (n *noCountSequence) IsSequence() bool             { return false }
+func (n *noCountSequence) Str() a.Str                   { return s("()") }
 
 func TestNonCountableSequence(t *testing.T) {
 	as := assert.New(t)
@@ -24,24 +25,24 @@ func TestNonCountableSequence(t *testing.T) {
 
 func TestAssertSequence(t *testing.T) {
 	as := assert.New(t)
-	a.AssertSequence(a.NewList("hello"))
+	a.AssertSequence(a.NewList(s("hello")))
 
-	defer expectError(as, a.Err(a.ExpectedSequence, "99"))
-	a.AssertSequence(a.NewFloat(99))
+	defer expectError(as, a.Err(a.ExpectedSequence, f(99)))
+	a.AssertSequence(f(99))
 }
 
 func TestAssertIndexed(t *testing.T) {
 	as := assert.New(t)
-	a.AssertIndexed(a.NewList("hello"))
+	a.AssertIndexed(a.NewList(s("hello")))
 
-	defer expectError(as, a.Err(a.ExpectedIndexed, "99"))
-	a.AssertIndexed(a.NewFloat(99))
+	defer expectError(as, a.Err(a.ExpectedIndexed, f(99)))
+	a.AssertIndexed(f(99))
 }
 
 func TestAssertConjoiner(t *testing.T) {
 	as := assert.New(t)
-	a.AssertConjoiner(a.NewList("hello"))
+	a.AssertConjoiner(a.NewList(s("hello")))
 
-	defer expectError(as, a.Err(a.ExpectedConjoiner, "99"))
-	a.AssertConjoiner(a.NewFloat(99))
+	defer expectError(as, a.Err(a.ExpectedConjoiner, f(99)))
+	a.AssertConjoiner(f(99))
 }

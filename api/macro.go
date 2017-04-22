@@ -14,7 +14,7 @@ type macro struct {
 	dataMode bool
 }
 
-var macroMetadata = Metadata{MetaMacro: true}
+var macroMetadata = Metadata{MetaMacro: True}
 
 // NewMacro instantiates a new Macro
 func NewMacro(e SequenceProcessor) Macro {

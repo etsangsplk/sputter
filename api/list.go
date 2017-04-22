@@ -55,7 +55,7 @@ func (l *List) Count() int {
 
 // Get returns the Value at the indexed position in the List
 func (l *List) Get(index int) (Value, bool) {
-	if index > l.count-1 {
+	if index > l.count-1 || index < 0 {
 		return Nil, false
 	}
 
@@ -79,7 +79,12 @@ func (l *List) Eval(ctx Context) Value {
 	if f, ok := ResolveAsApplicable(ctx, l.first); ok {
 		return f.Apply(ctx, l.rest)
 	}
-	panic(Err(ExpectedApplicable, String(l.first)))
+	panic(Err(ExpectedApplicable, l.first))
+}
+
+// Str converts this Value into a Str
+func (l *List) Str() Str {
+	return MakeSequenceStr(l)
 }
 
 func init() {

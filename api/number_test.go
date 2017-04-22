@@ -4,35 +4,35 @@ import (
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
-	"github.com/stretchr/testify/assert"
+	"github.com/kode4food/sputter/assert"
 )
 
 func TestParseNumber(t *testing.T) {
 	as := assert.New(t)
 	n1 := a.ParseNumber("12.8")
-	n2 := a.NewFloat(12.8)
-	n3 := a.NewFloat(12.8)
+	n2 := f(12.8)
+	n3 := f(12.8)
 
-	as.Equal(a.EqualTo, n1.Cmp(n2))
-	as.Equal(a.EqualTo, n2.Cmp(n3))
+	as.Equal(n1, n2)
+	as.Equal(n2, n3)
 
-	defer expectError(as, a.Err(a.ExpectedNumber, `"'splosion!"`))
+	defer expectError(as, a.Err(a.ExpectedNumber, s(`'splosion!`)))
 	a.ParseNumber("'splosion!")
 }
 
-func testExact(as *assert.Assertions, n *a.Number, expect float64) {
+func testExact(as *assert.Wrapper, n *a.Number, expect float64) {
 	val, exact := n.Float64()
-	as.True(exact, "non-exact precision returned")
+	as.True(exact)
 	as.Equal(expect, val)
 }
 
 func TestConvertNumber(t *testing.T) {
 	as := assert.New(t)
 	n1 := a.ParseNumber("12.8")
-	n2 := a.NewFloat(12.9)
+	n2 := f(12.9)
 	n3 := a.ParseNumber("50/2")
 	n4 := a.NewRatio(40, 2)
-	n5 := a.NewFloat(20)
+	n5 := f(20)
 
 	testExact(as, n1, 12.8)
 	testExact(as, n2, 12.9)
@@ -44,49 +44,49 @@ func TestConvertNumber(t *testing.T) {
 func TestCompareNumbers(t *testing.T) {
 	as := assert.New(t)
 	n1 := a.ParseNumber("12.8")
-	n2 := a.NewFloat(12.9)
+	n2 := f(12.9)
 	n3 := a.ParseNumber("50/2")
 	n4 := a.NewRatio(40, 2)
-	n5 := a.NewFloat(20)
+	n5 := f(20)
 
 	as.Equal(a.LessThan, n1.Cmp(n2))
 	as.Equal(a.LessThan, n1.Cmp(n3))
 	as.Equal(a.LessThan, n1.Cmp(n4))
 	as.Equal(a.GreaterThan, n3.Cmp(n4))
 	as.Equal(a.LessThan, n1.Cmp(n5))
-	as.Equal(a.EqualTo, n4.Cmp(n5))
+	as.Equal(n4, n5)
 }
 
 func TestStringifyNumbers(t *testing.T) {
 	as := assert.New(t)
 	n1 := a.ParseNumber("12.8")
-	n2 := a.NewFloat(12.9)
+	n2 := f(12.9)
 	n3 := a.ParseNumber("50/2")
 	n4 := a.NewRatio(40, 2)
-	n5 := a.NewFloat(20)
+	n5 := f(20)
 
-	as.Equal("12.8", a.String(n1))
-	as.Equal("12.9", a.String(n2))
-	as.Equal("25/1", a.String(n3))
-	as.Equal("20/1", a.String(n4))
-	as.Equal("20", a.String(n5))
+	as.String("12.8", n1)
+	as.String("12.9", n2)
+	as.String("25/1", n3)
+	as.String("20/1", n4)
+	as.String("20", n5)
 }
 
-func testResult(as *assert.Assertions, n *a.Number, expect string) {
-	expectNum := a.ParseNumber(expect)
+func testResult(as *assert.Wrapper, n *a.Number, expect string) {
+	expectNum := a.ParseNumber(s(expect))
 
 	f, _ := expectNum.Float64()
 	testExact(as, n, f)
-	as.Equal(a.EqualTo, expectNum.Cmp(n))
+	as.Equal(expectNum, n)
 }
 
 func TestNumberMath(t *testing.T) {
 	as := assert.New(t)
 	n1 := a.ParseNumber("12.8")
-	n2 := a.NewFloat(13)
+	n2 := f(13)
 	n3 := a.ParseNumber("50/2")
 	n4 := a.NewRatio(40, 2)
-	n5 := a.NewFloat(20)
+	n5 := f(20)
 	n6 := a.ParseNumber("1/2")
 	n7 := a.ParseNumber("12.9")
 
@@ -110,16 +110,16 @@ func TestNumberMath(t *testing.T) {
 
 func TestAssertNumber(t *testing.T) {
 	as := assert.New(t)
-	a.AssertNumber(a.NewFloat(99))
+	a.AssertNumber(f(99))
 
-	defer expectError(as, a.Err(a.ExpectedNumber, `"not a number"`))
-	a.AssertNumber("not a number")
+	defer expectError(as, a.Err(a.ExpectedNumber, s("not a number")))
+	a.AssertNumber(s("not a number"))
 }
 
 func TestAssertInteger(t *testing.T) {
 	as := assert.New(t)
-	a.AssertInteger(a.NewFloat(99))
+	a.AssertInteger(f(99))
 
-	defer expectError(as, a.Err(a.ExpectedInteger, `99.5`))
-	a.AssertInteger(a.NewFloat(99.5))
+	defer expectError(as, a.Err(a.ExpectedInteger, f(99.5)))
+	a.AssertInteger(f(99.5))
 }

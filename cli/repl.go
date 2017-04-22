@@ -37,9 +37,11 @@ const (
 	restore  = esc + "u" + reset
 )
 
+type any interface{}
+
 type empty struct{}
 
-var nothing = &empty{}
+var nothing = a.Atom("nothing")
 
 var farewells = []string{
 	"Adiós!",
@@ -148,7 +150,7 @@ func (repl *REPL) nsSpace() string {
 func (repl *REPL) evalBuffer() (completed bool) {
 	defer func() {
 		if rec := recover(); rec != nil {
-			if isRecoverable(rec) {
+			if isRecoverable(rec.(string)) {
 				completed = false
 				return
 			}
@@ -164,15 +166,21 @@ func (repl *REPL) evalBuffer() (completed bool) {
 	return true
 }
 
-func (repl *REPL) outputResult(v a.Value) {
+func (repl *REPL) outputResult(v any) {
 	if v == nothing {
 		return
 	}
-	res := fmt.Sprintf(good, repl.nsSpace(), repl.idx, a.String(v))
+	var sv any
+	if s, ok := v.(a.Value); ok {
+		sv = string(s.Str())
+	} else {
+		sv = v
+	}
+	res := fmt.Sprintf(good, repl.nsSpace(), repl.idx, sv)
 	fmt.Println(res)
 }
 
-func (repl *REPL) outputError(err a.Value) {
+func (repl *REPL) outputError(err any) {
 	res := fmt.Sprintf(bad, repl.nsSpace(), repl.idx, err)
 	fmt.Println(res)
 }
@@ -233,7 +241,7 @@ func isEmptyString(s string) bool {
 	return len(strings.TrimSpace(s)) == 0
 }
 
-func isRecoverable(err a.Value) bool {
+func isRecoverable(err string) bool {
 	return err == p.ListNotClosed ||
 		err == p.VectorNotClosed ||
 		err == p.MapNotClosed ||
@@ -284,7 +292,7 @@ func formatForREPL(s string) string {
 
 func help(_ a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 0)
-	md := d.Get("repl-help")
+	md := string(d.Get("repl-help"))
 	fmt.Println(formatForREPL(md))
 	return nothing
 }
@@ -295,7 +303,8 @@ func doc(c a.Context, args a.Sequence) a.Value {
 	if v, ok := c.Get(sym.Name()); ok {
 		if an, ok := v.(a.Annotated); ok {
 			md := an.Metadata()
-			f := formatForREPL(md[a.MetaDoc].(string))
+			d := string(md[a.MetaDoc].(a.Str))
+			f := formatForREPL(d)
 			fmt.Println(f)
 			return nothing
 		}
@@ -314,12 +323,12 @@ func registerBuiltIn(v a.Annotated) {
 		ns.Put(replBuiltIns, a.Vector{})
 	}
 	vec, _ := ns.Get(replBuiltIns)
-	bi := append(vec.(a.Vector), v)
+	bi := append(vec.(a.Vector), v.(a.Value))
 	ns.Delete(replBuiltIns)
 	ns.Put(replBuiltIns, bi)
 
 	n := v.Metadata()[a.MetaName].(a.Name)
-	ns.Put(n, v)
+	ns.Put(n, v.(a.Value))
 }
 
 func registerREPLBuiltIns() {

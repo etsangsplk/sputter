@@ -4,53 +4,57 @@ import (
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
-	"github.com/stretchr/testify/assert"
+	"github.com/kode4food/sputter/assert"
 )
 
 func TestVector(t *testing.T) {
 	as := assert.New(t)
 
-	v1 := a.Vector{"hello", "how", "are", "you?"}
-	as.Equal(4, v1.Count(), "vector 1 count is correct")
-	as.Equal(4, a.Count(v1), "vector 1 general count is correct")
+	v1 := a.Vector{s("hello"), s("how"), s("are"), s("you?")}
+	as.Equal(4, v1.Count())
+	as.Equal(4, a.Count(v1))
 
 	r, ok := v1.Get(2)
-	as.True(ok, "get by index is correct")
-	as.Equal("are", r, "get by index is correct")
-	as.Equal(`["hello" "how" "are" "you?"]`, v1.String(), "string is good")
+	as.True(ok)
+	as.String("are", r)
+	as.Equal(`["hello" "how" "are" "you?"]`, v1)
 
-	v2 := v1.Prepend("oh").(a.Vector)
-	as.Equal(5, v2.Count(), "vector 2 count is correct")
-	as.Equal(4, v1.Count(), "vector 1 count is still correct")
+	v2 := v1.Prepend(s("oh")).(a.Vector)
+	as.Equal(5, v2.Count())
+	as.Equal(4, v1.Count())
 
-	v3 := v2.Conjoin("good?").(a.Vector)
+	v3 := v2.Conjoin(s("good?")).(a.Vector)
 	r, ok = v3.Get(5)
-	as.True(ok, "get by index is correct")
-	as.Equal("good?", r, "get by index is correct")
-	as.Equal(6, v3.Count(), "vector 3 count is correct")
-	
+	as.True(ok)
+	as.String("good?", r)
+	as.Equal(6, v3.Count())
+
 	r, ok = v3.Get(0)
-	as.True(ok, "get by index is correct")
-	as.Equal("oh", r, "get by index is correct")
+	as.True(ok)
+	as.String("oh", r)
 
 	r, ok = v3.Get(3)
-	as.True(ok, "get by index is correct")
-	as.Equal("are", r, "get by index is correct")
+	as.True(ok)
+	as.String("are", r)
 
 	c := a.NewContext()
-	as.Equal("are", v1.Apply(c, a.NewList(a.NewFloat(2))))
+	as.String("are", v1.Apply(c, a.NewList(f(2))))
 }
 
 type testEvaluable struct{}
 
 func (t *testEvaluable) Eval(c a.Context) a.Value {
-	return "are"
+	return s("are")
+}
+
+func (t *testEvaluable) Str() a.Str {
+	return s("")
 }
 
 func TestVectorEval(t *testing.T) {
 	as := assert.New(t)
 
-	v := a.Vector{"hello", "how", &testEvaluable{}, "you?"}
+	v := a.Vector{s("hello"), s("how"), &testEvaluable{}, s("you?")}
 	c := a.NewContext()
 	r := v.Eval(c)
 
@@ -59,15 +63,15 @@ func TestVectorEval(t *testing.T) {
 	}
 
 	i, ok := r.(a.Indexed).Get(2)
-	as.True(ok, "indexed get is working")
-	as.Equal("are", i, "get is working")
-	as.Equal(`["hello" "how" "are" "you?"]`, a.String(r), "string is good")
+	as.True(ok)
+	as.String("are", i)
+	as.Equal(`["hello" "how" "are" "you?"]`, r)
 }
 
 func TestIterate(t *testing.T) {
 	as := assert.New(t)
 
-	v := a.Vector{"hello", "how", "are", "you?"}
+	v := a.Vector{s("hello"), s("how"), s("are"), s("you?")}
 	i := a.Iterate(v)
 	e1, _ := i.Next()
 	s1 := i.Rest()
@@ -77,35 +81,35 @@ func TestIterate(t *testing.T) {
 	e4, _ := i.Next()
 	e5, ok := i.Next()
 
-	as.Equal("hello", e1, "first vector element")
-	as.Equal("how", e2, "second vector element")
-	as.Equal("are", e3, "third vector element")
-	as.Equal("you?", e4, "fourth vector element")
+	as.String("hello", e1)
+	as.String("how", e2)
+	as.String("are", e3)
+	as.String("you?", e4)
 
-	as.Equal(3, a.Count(s1), "s1 slice count")
-	as.Equal(2, a.Count(s2), "s2 slice count")
+	as.Equal(3, a.Count(s1))
+	as.Equal(2, a.Count(s2))
 
-	as.Equal(a.Nil, e5, "fifth element is nil")
-	as.False(ok, "fifth element was false")
+	as.Equal(a.Nil, e5)
+	as.False(ok)
 }
 
 func TestAssertVector(t *testing.T) {
 	as := assert.New(t)
 
-	v := a.Vector{"hello", "how", "are", "you?"}
+	v := a.Vector{s("hello"), s("how"), s("are"), s("you?")}
 	a.AssertVector(v)
 
-	defer expectError(as, a.Err(a.ExpectedVector, "99"))
-	a.AssertVector(a.NewFloat(99))
+	defer expectError(as, a.Err(a.ExpectedVector, f(99)))
+	a.AssertVector(f(99))
 }
 
 func TestVectorExplosion(t *testing.T) {
 	as := assert.New(t)
 
-	idx := a.NewFloat(3)
-	err := a.Err(a.IndexNotFound, a.String(idx))
+	idx := f(3)
+	err := a.Err(a.IndexNotFound, idx)
 	defer expectError(as, err)
 
-	v := a.Vector{"foo"}
+	v := a.Vector{s("foo")}
 	v.Apply(a.NewContext(), a.NewList(idx))
 }

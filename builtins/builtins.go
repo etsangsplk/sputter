@@ -10,7 +10,7 @@ var Namespace = a.GetNamespace(a.BuiltInDomain)
 
 func registerAnnotated(v a.Annotated) {
 	n := v.Metadata()[a.MetaName].(a.Name)
-	Namespace.Put(n, v)
+	Namespace.Put(n, v.(a.Value))
 }
 
 func do(c a.Context, args a.Sequence) a.Value {

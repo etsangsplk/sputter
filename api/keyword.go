@@ -41,11 +41,12 @@ func (k *keyword) Apply(c Context, args Sequence) Value {
 		if v, ok := m.Get(k); ok {
 			return v
 		}
-		panic(Err(KeyNotFound, String(k)))
+		panic(Err(KeyNotFound, k))
 	}
-	panic(Err(ExpectedMapped, String(v)))
+	panic(Err(ExpectedMapped, v))
 }
 
-func (k *keyword) String() string {
-	return ":" + string(k.name)
+// Str converts this Value into a Str
+func (k *keyword) Str() Str {
+	return ":" + Str(k.name)
 }

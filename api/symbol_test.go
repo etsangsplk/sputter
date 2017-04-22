@@ -1,31 +1,30 @@
 package api_test
 
 import (
-	"fmt"
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
-	"github.com/stretchr/testify/assert"
+	"github.com/kode4food/sputter/assert"
 )
 
 func TestSymbol(t *testing.T) {
 	as := assert.New(t)
 
 	c := a.NewContext()
-	c.Put("howdy", "ho")
+	c.Put("howdy", s("ho"))
 
 	sym := a.NewLocalSymbol("howdy")
-	as.Equal("ho", sym.Eval(c), "symbol value returned")
-	as.Equal("howdy", a.String(sym), "symbol name returned")
+	as.String("ho", sym.Eval(c))
+	as.String("howdy", sym)
 }
 
 func TestQualifiedSymbol(t *testing.T) {
 	as := assert.New(t)
 
 	ns1 := a.GetNamespace("ns1")
-	ns1.Put("foo", "foo-ns1")
+	ns1.Put("foo", s("foo-ns1"))
 	ns2 := a.GetNamespace("ns2")
-	ns2.Put("foo", "foo-ns2")
+	ns2.Put("foo", s("foo-ns2"))
 
 	empty := a.NewContext()
 
@@ -43,10 +42,10 @@ func TestQualifiedSymbol(t *testing.T) {
 	as.Equal(a.GetNamespace("ns2"), s2.Namespace(c1))
 	as.Equal(a.GetNamespace("ns1"), s3.Namespace(c1))
 
-	as.Equal("foo-ns1", s1.Eval(empty))
-	as.Equal("foo-ns2", s2.Eval(empty))
-	as.Equal("foo-ns1", s3.Eval(c1))
-	as.Equal("foo-ns2", s3.Eval(c2))
+	as.String("foo-ns1", s1.Eval(empty))
+	as.String("foo-ns2", s2.Eval(empty))
+	as.String("foo-ns1", s3.Eval(c1))
+	as.String("foo-ns2", s3.Eval(c2))
 }
 
 func TestSymbolInterning(t *testing.T) {
@@ -56,14 +55,14 @@ func TestSymbolInterning(t *testing.T) {
 	sym2 := a.NewLocalSymbol("there")
 	sym3 := a.NewLocalSymbol("hello")
 
-	as.Equal(sym1, sym3, "properly interned")
-	as.NotEqual(sym1, sym2, "properly isolated")
+	as.Identical(sym1, sym3)
+	as.NotIdentical(sym1, sym2)
 }
 
 func TestUnknownSymbol(t *testing.T) {
 	as := assert.New(t)
 
-	defer expectError(as, fmt.Sprintf(a.UnknownSymbol, "howdy"))
+	defer expectError(as, a.Err(a.UnknownSymbol, "howdy"))
 	c := a.NewContext()
 	sym := a.NewLocalSymbol("howdy")
 	a.Eval(c, sym)
@@ -73,27 +72,27 @@ func TestSymbolParsing(t *testing.T) {
 	as := assert.New(t)
 
 	s1 := a.ParseSymbol("domain:name1")
-	as.Equal("domain", string(s1.Domain()))
-	as.Equal("name1", string(s1.Name()))
+	as.String("domain", string(s1.Domain()))
+	as.String("name1", string(s1.Name()))
 
 	s2 := a.ParseSymbol(":name2")
 	as.Equal(a.LocalDomain, s2.Domain())
-	as.Equal("name2", string(s2.Name()))
+	as.String("name2", string(s2.Name()))
 
 	s3 := a.ParseSymbol("name3")
 	as.Equal(a.LocalDomain, s3.Domain())
-	as.Equal("name3", string(s3.Name()))
+	as.String("name3", string(s3.Name()))
 
 	s4 := a.ParseSymbol("one:too:")
-	as.Equal("one", string(s4.Domain()))
-	as.Equal("too:", string(s4.Name()))
+	as.String("one", string(s4.Domain()))
+	as.String("too:", string(s4.Name()))
 
 }
 
 func TestAssertSymbol(t *testing.T) {
 	as := assert.New(t)
 	defer expectError(as, a.Err(a.ExpectedSymbol, "37"))
-	a.AssertUnqualified(a.NewFloat(37))
+	a.AssertUnqualified(f(37))
 }
 
 func TestAssertUnqualified(t *testing.T) {

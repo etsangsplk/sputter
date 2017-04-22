@@ -6,38 +6,38 @@ import (
 	"time"
 
 	a "github.com/kode4food/sputter/api"
-	"github.com/stretchr/testify/assert"
+	"github.com/kode4food/sputter/assert"
 )
 
 func TestChannel(t *testing.T) {
 	as := assert.New(t)
 
-	e, s := a.NewChannel(1)
-	s = s.Prepend(1)
+	e, seq := a.NewChannel(1)
+	seq = seq.Prepend(f(1))
 
 	var wg sync.WaitGroup
 
 	gen := func() {
-		e.Emit(2)
+		e.Emit(f(2))
 		time.Sleep(time.Millisecond * 50)
-		e.Emit(3)
+		e.Emit(f(3))
 		time.Sleep(time.Millisecond * 30)
-		e.Emit("foo")
+		e.Emit(s("foo"))
 		time.Sleep(time.Millisecond * 10)
-		e.Emit("bar")
+		e.Emit(s("bar"))
 		e.Close()
 		wg.Done()
 	}
 
 	check := func() {
-		as.Equal(1, s.First(), "first is right")
-		as.Equal(2, s.Rest().First(), "second is right")
-		as.Equal(3, s.Rest().Rest().First(), "third is right")
-		as.True(s.Rest().Rest().Rest().IsSequence(), "more!")
-		as.Equal("foo", s.Rest().Rest().Rest().First(), "foo is right")
-		as.True(s.Rest().Rest().Rest().Rest().IsSequence(), "more!")
-		as.Equal("bar", s.Rest().Rest().Rest().Rest().First(), "bar is right")
-		as.False(s.Rest().Rest().Rest().Rest().Rest().IsSequence(), "eof")
+		as.Equal(1, seq.First())
+		as.Equal(2, seq.Rest().First())
+		as.Equal(3, seq.Rest().Rest().First())
+		as.True(seq.Rest().Rest().Rest().IsSequence())
+		as.String("foo", seq.Rest().Rest().Rest().First())
+		as.True(seq.Rest().Rest().Rest().Rest().IsSequence())
+		as.String("bar", seq.Rest().Rest().Rest().Rest().First())
+		as.False(seq.Rest().Rest().Rest().Rest().Rest().IsSequence())
 		wg.Done()
 	}
 
@@ -55,13 +55,13 @@ func TestPromise(t *testing.T) {
 
 	go func() {
 		time.Sleep(time.Millisecond * 50)
-		p1.Deliver("hello")
+		p1.Deliver(s("hello"))
 	}()
 
-	as.Equal("hello", p1.Value(), "returned correctly")
-	p1.Deliver("hello")
-	as.Equal("hello", p1.Value(), "still okay")
+	as.String("hello", p1.Value())
+	p1.Deliver(s("hello"))
+	as.String("hello", p1.Value())
 
 	defer expectError(as, a.ExpectedUndelivered)
-	p1.Deliver("goodbye")
+	p1.Deliver(s("goodbye"))
 }

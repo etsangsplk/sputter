@@ -4,67 +4,67 @@ import (
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
-	"github.com/stretchr/testify/assert"
+	"github.com/kode4food/sputter/assert"
 )
 
 var helloThere = a.NewFunction(func(_ a.Context, _ a.Sequence) a.Value {
-	return "there"
+	return s("there")
 }).WithMetadata(a.Metadata{
 	a.MetaName: a.Name("hello"),
 }).(a.Function)
 
 func TestSimpleList(t *testing.T) {
 	as := assert.New(t)
-	n := a.NewFloat(12)
+	n := f(12)
 	l := a.NewList(n)
-	as.Equal(n, l.First(), "head is populated correctly")
-	as.Equal(a.EmptyList, l.Rest(), "list terminated properly")
+	as.Equal(n, l.First())
+	as.Equal(a.EmptyList, l.Rest())
 }
 
 func TestList(t *testing.T) {
 	as := assert.New(t)
-	n1 := a.NewFloat(12)
+	n1 := f(12)
 	l1 := a.NewList(n1)
-	as.Equal(n1, l1.First(), "1st head is populated correctly")
-	as.Equal(a.EmptyList, l1.Rest(), "list terminated properly")
-	as.False(l1.Rest().IsSequence(), "list terminated properly")
+	as.Equal(n1, l1.First())
+	as.Equal(a.EmptyList, l1.Rest())
+	as.False(l1.Rest().IsSequence())
 
-	n2 := a.NewFloat(20.5)
+	n2 := f(20.5)
 	l2 := l1.Prepend(n2).(*a.List)
 
-	as.Equal("()", a.String(a.EmptyList))
-	as.Equal("(20.5 12)", a.String(l2))
-	as.Equal(n2, l2.First(), "2nd head is populated correctly")
-	as.Equal(l1, l2.Rest(), "2nd tail is populated correctly")
-	as.Equal(2, l2.Count(), "2nd list count is correct")
+	as.String("()", a.EmptyList)
+	as.String("(20.5 12)", l2)
+	as.Equal(n2, l2.First())
+	as.Identical(l1, l2.Rest())
+	as.Equal(2, l2.Count())
 
 	r, ok := l2.Get(1)
-	as.True(ok, "get(int) works")
-	as.Equal(a.NewFloat(12), r, "get(int) works")
-	as.Equal(2, a.Count(l2), "2nd list general count is correct")
+	as.True(ok)
+	as.Equal(f(12), r)
+	as.Equal(2, a.Count(l2))
 
 	r, ok = a.EmptyList.Get(1)
-	as.False(ok, "get from empty list")
-	as.Equal(a.Nil, r, "get from empty list")
+	as.False(ok)
+	as.Equal(a.Nil, r)
 
 	c := a.NewContext()
-	as.Equal(a.NewFloat(12), l2.Apply(c, a.NewList(a.NewFloat(1))))
+	as.Equal(f(12), l2.Apply(c, a.NewList(f(1))))
 }
 
 func TestIterator(t *testing.T) {
 	as := assert.New(t)
-	n1 := a.NewFloat(12)
+	n1 := f(12)
 	l1 := a.NewList(n1)
-	as.Equal(n1, l1.First(), "1st head is populated correctly")
-	as.Equal(a.EmptyList, l1.Rest(), "list terminated properly")
-	as.False(l1.Rest().IsSequence(), "list terminated properly")
+	as.Equal(n1, l1.First())
+	as.Identical(a.EmptyList, l1.Rest())
+	as.False(l1.Rest().IsSequence())
 
-	n2 := a.NewFloat(20.5)
+	n2 := f(20.5)
 	l2 := l1.Conjoin(n2)
-	as.Equal(n2, l2.First(), "2nd head is populated correctly")
-	as.Equal(l1, l2.Rest(), "2nd tail is populated correctly")
+	as.Equal(n2, l2.First())
+	as.Identical(l1, l2.Rest())
 
-	sum := a.NewFloat(0.0)
+	sum := f(0.0)
 	i := a.Iterate(l2)
 	for {
 		v, ok := i.Next()
@@ -76,8 +76,8 @@ func TestIterator(t *testing.T) {
 	}
 
 	val, exact := sum.Float64()
-	as.Equal(32.5, val, "values are summed correctly")
-	as.EqualValues(true, exact, "should be no loss of accuracy")
+	as.Float(32.5, val)
+	as.True(exact)
 }
 
 func TestListEval(t *testing.T) {
@@ -87,12 +87,12 @@ func TestListEval(t *testing.T) {
 	c.Put(helloThere.Name(), helloThere)
 
 	fl := a.NewList(helloThere)
-	as.Equal("there", a.Eval(c, fl), "function-based list eval")
+	as.String("there", a.Eval(c, fl))
 
 	sl := a.NewList(a.NewLocalSymbol("hello"))
-	as.Equal("there", a.Eval(c, sl), "symbol-based list eval")
+	as.String("there", a.Eval(c, sl))
 
-	as.Equal(a.EmptyList, a.Eval(c, a.EmptyList), "empty list eval")
+	as.Equal(a.EmptyList, a.Eval(c, a.EmptyList))
 }
 
 func testBrokenEval(t *testing.T, seq a.Sequence, err string) {
@@ -105,19 +105,19 @@ func testBrokenEval(t *testing.T, seq a.Sequence, err string) {
 
 func TestNonFunction(t *testing.T) {
 	err := a.Err(a.ExpectedApplicable, "unknown")
-	seq := a.NewList("foo").Prepend(a.NewLocalSymbol("unknown"))
+	seq := a.NewList(s("foo")).Prepend(a.NewLocalSymbol("unknown"))
 	testBrokenEval(t, seq, err)
 }
 
 func TestListExplosion(t *testing.T) {
 	as := assert.New(t)
 
-	seq := a.NewList("foo")
-	idx := a.NewFloat(3)
-	err := a.Err(a.IndexNotFound, a.String(idx))
+	seq := a.NewList(s("foo"))
+	idx := f(3)
+	err := a.Err(a.IndexNotFound, idx)
 
-	v := seq.Apply(a.NewContext(), a.Vector{idx, "default"})
-	as.Equal("default", v, "defaults work")
+	v := seq.Apply(a.NewContext(), a.Vector{idx, s("default")})
+	as.String("default", v)
 
 	defer expectError(as, err)
 	seq.Apply(a.NewContext(), a.Vector{idx})

@@ -1,43 +1,48 @@
 package api_test
 
 import (
-	"strings"
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
-	"github.com/stretchr/testify/assert"
+	"github.com/kode4food/sputter/assert"
 )
 
 func TestMetadata(t *testing.T) {
 	as := assert.New(t)
 
-	v1 := a.Metadata{"foo": true, "bar": false}
-	v2 := v1.Merge(a.Metadata{"foo": false, "hello": "there"})
+	v1 := a.Metadata{
+		s("foo"): a.True,
+		s("bar"): a.False,
+	}
+	v2 := v1.Merge(a.Metadata{
+		s("foo"):   a.False,
+		s("hello"): s("there"),
+	})
 
-	s1 := v1.String()
-	as.True(strings.Contains(s1, `"foo" true`))
-	as.True(strings.Contains(s1, `"bar" false`))
+	s1 := v1.Str()
+	as.Contains(`"foo" true`, s1)
+	as.Contains(`"bar" false`, s1)
 
-	s2 := v2.String()
-	as.True(strings.Contains(s2, `"bar" false`))
-	as.True(strings.Contains(s2, `"hello" "there"`))
-	as.True(strings.Contains(s2, `"foo" false`))
-	as.False(strings.Contains(s2, `"foo" true`))
+	s2 := v2.Str()
+	as.Contains(`"bar" false`, s2)
+	as.Contains(`"hello" "there"`, s2)
+	as.Contains(`"foo" false`, s2)
+	as.NotContains(`"foo" true`, s2)
 
 	v1 = a.Metadata{}
-	v2 = a.Metadata{"test": true}
+	v2 = a.Metadata{s("test"): a.True}
 	v3 := v1.Merge(v2)
-	s3 := v3.String()
-	as.True(strings.Contains(s3, `"test" true`))
-	as.EqualValues(v2, v3, "merge against empty is identical")
+	s3 := v3.Str()
+	as.Contains(`"test" true`, s3)
+	as.Equal(v2, v3)
 }
 
 func TestAnnotated(t *testing.T) {
 	as := assert.New(t)
 
-	f := a.NewFunction(nil)
-	as.Equal(f, a.AssertAnnotated(f), "function asserts as annotated")
+	fn := a.NewFunction(nil)
+	as.Identical(fn, a.AssertAnnotated(fn))
 
-	defer expectError(as, a.Err(a.ExpectedAnnotated, "99"))
-	a.AssertAnnotated(a.NewFloat(99))
+	defer expectError(as, a.Err(a.ExpectedAnnotated, f(99)))
+	a.AssertAnnotated(f(99))
 }

@@ -30,7 +30,7 @@ func TestLetBindings(t *testing.T) {
 		(def foo 99)
 		(let [foo 100]
 			(+ foo user:foo))
-	`, a.NewFloat(199))
+	`, f(199))
 
 	testBadCode(t, `
 		(let 99 "hello")

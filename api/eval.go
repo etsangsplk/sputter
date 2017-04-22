@@ -11,6 +11,7 @@ type Evaluable interface {
 // Applicable is the standard signature for any Value that can have
 // arguments applied to it
 type Applicable interface {
+	Value
 	Apply(Context, Sequence) Value
 }
 
@@ -54,5 +55,5 @@ func AssertApplicable(v Value) Applicable {
 	if r, ok := v.(Applicable); ok {
 		return r
 	}
-	panic(Err(ExpectedApplicable, String(v)))
+	panic(Err(ExpectedApplicable, v))
 }

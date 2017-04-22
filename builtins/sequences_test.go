@@ -7,16 +7,16 @@ import (
 )
 
 func TestSequence(t *testing.T) {
-	testCode(t, `(len '(1, 2, 3))`, a.NewFloat(3))
+	testCode(t, `(len '(1, 2, 3))`, f(3))
 	testCode(t, `(seq? (list 1 2 3))`, a.True)
 	testCode(t, `(seq? ())`, a.False)
 	testCode(t, `(seq? (list 1 2 3) 99)`, a.False)
-	testCode(t, `(first '(1 2 3 4))`, a.NewFloat(1))
-	testCode(t, `(first (rest '(1 2 3 4)))`, a.NewFloat(2))
-	testCode(t, `(first (rest (cons 1 (list 2 3))))`, a.NewFloat(2))
-	testCode(t, `(first (rest (conj (list 2 3) 1)))`, a.NewFloat(2))
+	testCode(t, `(first '(1 2 3 4))`, f(1))
+	testCode(t, `(first (rest '(1 2 3 4)))`, f(2))
+	testCode(t, `(first (rest (cons 1 (list 2 3))))`, f(2))
+	testCode(t, `(first (rest (conj (list 2 3) 1)))`, f(2))
 
-	testCode(t, `(nth '(1 2 3) 1)`, a.NewFloat(2))
+	testCode(t, `(nth '(1 2 3) 1)`, f(2))
 	testCode(t, `(nth '(1 2 3) 5 "nope")`, "nope")
 	testBadCode(t, `(nth '(1 2 3) 5)`, a.Err(a.IndexNotFound, "5"))
 }
@@ -39,7 +39,7 @@ func TestMapFilter(t *testing.T) {
 			(map
 				(fn [z] (first z))
 				[x y]))
-	`, a.NewFloat(13))
+	`, f(13))
 }
 
 func TestReduce(t *testing.T) {
@@ -51,7 +51,7 @@ func TestReduce(t *testing.T) {
 		(def x '(1 2 3 4))
 		(def y [5 6 7 8])
 		(reduce + x y)
-	`, a.NewFloat(36))
+	`, f(36))
 }
 
 func TestTakeDrop(t *testing.T) {
@@ -63,7 +63,7 @@ func TestTakeDrop(t *testing.T) {
 		(def x '(1 2 3 4))
 		(def y [5 6 7 8])
 		(nth (to-vector (take 6 x y)) 5)
-	`, a.NewFloat(6))
+	`, f(6))
 
 	ns.Delete("x")
 	ns.Delete("y")
@@ -71,5 +71,5 @@ func TestTakeDrop(t *testing.T) {
 		(def x '(1 2 3 4))
 		(def y [5 6 7 8])
 		(nth (to-vector (drop 3 x y)) 0)
-	`, a.NewFloat(4))
+	`, f(4))
 }

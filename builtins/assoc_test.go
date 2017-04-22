@@ -7,8 +7,8 @@ import (
 )
 
 func TestAssoc(t *testing.T) {
-	testCode(t, `(len {:name "Sputter", :age 45})`, a.NewFloat(2))
-	testCode(t, `(len (assoc :name "Sputter", :age 45))`, a.NewFloat(2))
+	testCode(t, `(len {:name "Sputter", :age 45})`, f(2))
+	testCode(t, `(len (assoc :name "Sputter", :age 45))`, f(2))
 	testCode(t, `(assoc? {:name "Sputter" :age 45})`, a.True)
 	testCode(t, `(assoc? (assoc :name "Sputter" :age 45))`, a.True)
 	testCode(t, `(assoc? '(:name "Sputter" :age 45))`, a.False)

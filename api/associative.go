@@ -46,7 +46,7 @@ func (a Associative) Apply(c Context, args Sequence) Value {
 	if r, ok := a.Get(k); ok {
 		return r
 	}
-	panic(Err(KeyNotFound, String(k)))
+	panic(Err(KeyNotFound, k))
 }
 
 // Eval makes an Associative Evaluable
@@ -92,7 +92,8 @@ func (a Associative) IsSequence() bool {
 	return len(a) > 0
 }
 
-func (a Associative) String() string {
+// Str converts this Value into a Str
+func (a Associative) Str() Str {
 	var b bytes.Buffer
 	l := len(a)
 
@@ -102,12 +103,12 @@ func (a Associative) String() string {
 			b.WriteString(", ")
 		}
 		mp := a[i]
-		b.WriteString(String(mp[0]))
+		b.WriteString(string(mp[0].Str()))
 		b.WriteString(" ")
-		b.WriteString(String(mp[1]))
+		b.WriteString(string(mp[1].Str()))
 	}
 	b.WriteString("}")
-	return b.String()
+	return Str(b.String())
 }
 
 // AssertMapped will cast Value to a Mapped or explode violently
@@ -115,5 +116,5 @@ func AssertMapped(v Value) Mapped {
 	if r, ok := v.(Mapped); ok {
 		return r
 	}
-	panic(Err(ExpectedMapped, String(v)))
+	panic(Err(ExpectedMapped, v))
 }

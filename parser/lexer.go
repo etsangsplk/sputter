@@ -36,13 +36,16 @@ const (
 	Comment
 )
 
-// EOFToken marks the end of a Lexer stream
-var EOFToken = &Token{EndOfFile, ""}
-
 // Token is a Lexer token
 type Token struct {
 	Type  TokenType
 	Value a.Value
+}
+
+// EOFToken marks the end of a Lexer stream
+var EOFToken = &Token{
+	Type:  EndOfFile,
+	Value: a.Nil,
 }
 
 // Lexer is the lexer interface
@@ -67,10 +70,10 @@ type stateMapEntry struct {
 type stateMap []stateMapEntry
 
 var (
-	escaped = regexp.MustCompile(`\\\\|\\"|\\[^\\"]`)
+	escaped    = regexp.MustCompile(`\\\\|\\"|\\[^\\"]`)
 	escapedMap = map[string]string{
 		`\\`: `\`,
-		`\"`:  `"`,
+		`\"`: `"`,
 	}
 	states stateMap
 )
@@ -144,8 +147,8 @@ func (l *lispLexer) emit(t TokenType) {
 	l.emitValue(t, l.currentToken())
 }
 
-func (l *lispLexer) currentToken() string {
-	return l.input[l.start:l.pos]
+func (l *lispLexer) currentToken() a.Str {
+	return a.Str(l.input[l.start:l.pos])
 }
 
 func (l *lispLexer) skip() {
@@ -185,19 +188,20 @@ func endState(t TokenType) stateFunc {
 	}
 }
 
-func unescape(s string) string {
-	return escaped.ReplaceAllStringFunc(s, func (e string) string {
+func unescape(s a.Str) a.Str {
+	r := escaped.ReplaceAllStringFunc(string(s), func(e string) string {
 		if r, ok := escapedMap[e]; ok {
 			return r
 		}
 		return e
 	})
+	return a.Str(r)
 }
 
 func stringState(l *lispLexer) stateFunc {
 	v := l.currentToken()
-	s := unescape(v[1:len(v)-1])
-	l.emitValue(String, s)
+	s := unescape(v[1 : len(v)-1])
+	l.emitValue(String, a.Str(s))
 	return initState
 }
 

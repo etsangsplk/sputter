@@ -19,7 +19,7 @@ func TestNamespaces(t *testing.T) {
 		(with-ns bar
 			(def v1 100)
 			(+ v1 foo:v1))
-	`, a.NewFloat(199))
+	`, f(199))
 
 	testCode(t, `(ns foo)`, ns1)
 

@@ -3,8 +3,8 @@ package util_test
 import (
 	"testing"
 
+	"github.com/kode4food/sputter/assert"
 	u "github.com/kode4food/sputter/util"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestStack(t *testing.T) {
@@ -13,38 +13,38 @@ func TestStack(t *testing.T) {
 	st := u.NewStack()
 
 	v, ok := st.Peek()
-	as.Equal(nil, v, "1st peek is nil")
-	as.False(ok, "1st peek is false")
+	as.Equal(nil, v)
+	as.False(ok)
 
 	st.Push("you")
 	v, ok = st.Peek()
-	as.Equal("you", v, "2nd peek is correct")
-	as.True(ok, "2nd peek is true")
+	as.String("you", v)
+	as.True(ok)
 
 	st.Push("are")
 	st.Push("how")
 
 	v, ok = st.Peek()
-	as.Equal("how", v, "3rd peek is correct")
-	as.True(ok, "3rd peek is true")
+	as.String("how", v)
+	as.True(ok)
 
 	v, ok = st.Pop()
-	as.Equal("how", v, "1st pop is correct")
-	as.True(ok, "1st pop is true")
+	as.String("how", v)
+	as.True(ok)
 
 	v, ok = st.Pop()
-	as.Equal("are", v, "2nd pop is correct")
-	as.True(ok, "2nd pop is true")
+	as.String("are", v)
+	as.True(ok)
 
 	v, ok = st.Pop()
-	as.Equal("you", v, "3rd pop is correct")
-	as.True(ok, "3rd pop is true")
+	as.String("you", v)
+	as.True(ok)
 
 	v, ok = st.Pop()
-	as.Equal(nil, v, "4th pop is nil")
-	as.False(ok, "4th pop is false")
+	as.Equal(nil, v)
+	as.False(ok)
 
 	v, ok = st.Peek()
-	as.Equal(nil, v, "last peek is nil")
-	as.False(ok, "last peek is false")
+	as.Equal(nil, v)
+	as.False(ok)
 }

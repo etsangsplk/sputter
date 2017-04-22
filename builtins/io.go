@@ -9,11 +9,15 @@ import (
 type outputFunc func(a.Value)
 
 func raw(v a.Value) {
-	fmt.Print(a.String(v))
+	fmt.Print(v.Str())
 }
 
 func pretty(v a.Value) {
-	fmt.Print(v)
+	if s, ok := v.(a.Str); ok {
+		fmt.Print(s)
+		return
+	}
+	fmt.Print(v.Str())
 }
 
 func out(c a.Context, args a.Sequence, o outputFunc) a.Value {

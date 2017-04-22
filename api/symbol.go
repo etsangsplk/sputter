@@ -15,6 +15,7 @@ const (
 
 // Symbol is a qualified identifier that can be resolved
 type Symbol interface {
+	Value
 	Evaluable
 	Named
 	Domain() Name
@@ -99,8 +100,9 @@ func (s symbol) Eval(c Context) Value {
 	panic(Err(UnknownSymbol, s.name))
 }
 
-func (s symbol) String() string {
-	return string(s.Qualified())
+// Str converts this Value into a Str
+func (s symbol) Str() Str {
+	return Str(s.Qualified())
 }
 
 // AssertUnqualified will cast a Value into a Symbol and explode
@@ -112,5 +114,5 @@ func AssertUnqualified(v Value) Symbol {
 		}
 		panic(Err(ExpectedUnqualified, r.Qualified()))
 	}
-	panic(Err(ExpectedSymbol, String(v)))
+	panic(Err(ExpectedSymbol, v))
 }

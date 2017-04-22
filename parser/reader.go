@@ -44,8 +44,15 @@ var specialNames = a.Variables{
 	"nil":   a.Nil,
 }
 
+type endOfReader struct {
+}
+
+func (e endOfReader) Str() a.Str {
+	return a.Str("")
+}
+
 // EndOfReader represents the end of a Reader stream
-var EndOfReader = struct{}{}
+var EndOfReader = endOfReader{}
 
 // Reader is responsible for returning the next Value from a Reader source
 type Reader interface {
@@ -195,7 +202,7 @@ func (r *tokenReader) readMap(m mode) a.Associative {
 }
 
 func readIdentifier(t *Token) a.Value {
-	n := a.Name(t.Value.(string))
+	n := a.Name(t.Value.(a.Str))
 	if v, ok := specialNames[n]; ok {
 		return v
 	}

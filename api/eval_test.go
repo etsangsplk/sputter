@@ -4,44 +4,44 @@ import (
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
-	"github.com/stretchr/testify/assert"
+	"github.com/kode4food/sputter/assert"
 )
 
 var helloName = a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
 	i := a.Iterate(args)
 	n, _ := i.Next()
 	v := a.Eval(c, n)
-	return "Hello, " + v.(string) + "!"
+	return s("Hello, " + string(v.(a.Str)) + "!")
 }).WithMetadata(a.Metadata{
 	a.MetaName: a.Name("hello"),
-})
+}).(a.Function)
 
 func TestEvaluate(t *testing.T) {
 	as := assert.New(t)
 
-	l := a.NewList("World").Prepend(helloName)
+	l := a.NewList(s("World")).Prepend(helloName)
 	c := a.NewContext()
 	r := a.Eval(c, l)
 
-	as.Equal("Hello, World!", r.(string), "good hello")
+	as.String("Hello, World!", r)
 }
 
 func TestEvaluateSequence(t *testing.T) {
 	as := assert.New(t)
 
-	s1 := a.NewList("World").Prepend(helloName)
-	s2 := a.NewList("Foo").Prepend(helloName)
+	s1 := a.NewList(s("World")).Prepend(helloName)
+	s2 := a.NewList(s("Foo")).Prepend(helloName)
 	l := a.NewList(s2).Prepend(s1)
 
 	c := a.NewContext()
 	r := a.EvalSequence(c, l)
-	as.Equal("Hello, Foo!", r.(string), "last result")
+	as.String("Hello, Foo!", r)
 }
 
 func TestAssertApplicable(t *testing.T) {
 	as := assert.New(t)
 	a.AssertApplicable(a.NewFunction(nil))
 
-	defer expectError(as, a.Err(a.ExpectedApplicable, "99"))
-	a.AssertApplicable(a.NewFloat(99))
+	defer expectError(as, a.Err(a.ExpectedApplicable, f(99)))
+	a.AssertApplicable(f(99))
 }

@@ -27,7 +27,7 @@ func TestAsync(t *testing.T) {
 			(emit 99)
 			(emit 100 1000)))
 		(apply + g)
-	`, a.NewFloat(1199))
+	`, f(1199))
 }
 
 func TestPromise(t *testing.T) {

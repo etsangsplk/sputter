@@ -1,7 +1,6 @@
 package builtins_test
 
 import (
-	"fmt"
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
@@ -28,5 +27,5 @@ func TestPredicates(t *testing.T) {
 	testCode(t, `(nil? '(1 2 3))`, a.False)
 	testCode(t, `(nil? () nil "hello")`, a.False)
 
-	testBadCode(t, `(nil?)`, fmt.Sprintf(a.BadMinimumArity, 1, 0))
+	testBadCode(t, `(nil?)`, a.Err(a.BadMinimumArity, 1, 0))
 }

@@ -46,14 +46,15 @@ func nativeRatio() *big.Rat {
 }
 
 // ParseNumber attempts to parse a string into a Number Value
-func ParseNumber(s string) *Number {
-	if f, _, err := ctx.SetString(nativeDecimal(), s); err == nil {
+func ParseNumber(s Str) *Number {
+	ns := string(s)
+	if f, _, err := ctx.SetString(nativeDecimal(), ns); err == nil {
 		return &Number{decimal: f}
 	}
-	if r, ok := nativeRatio().SetString(s); ok {
+	if r, ok := nativeRatio().SetString(ns); ok {
 		return &Number{ratio: r}
 	}
-	panic(Err(ExpectedNumber, String(s)))
+	panic(Err(ExpectedNumber, s))
 }
 
 func (l *Number) toDecimal() *apd.Decimal {
@@ -125,11 +126,12 @@ func (l *Number) Float64() (float64, bool) {
 	return l.ratio.Float64()
 }
 
-func (l *Number) String() string {
+// Str converts this Value into a Str
+func (l *Number) Str() Str {
 	if nf := l.decimal; nf != nil {
-		return nf.ToStandard()
+		return Str(nf.ToStandard())
 	}
-	return l.ratio.String()
+	return Str(l.ratio.String())
 }
 
 // AssertNumber will cast a Value into a Number or explode violently
@@ -137,7 +139,7 @@ func AssertNumber(v Value) *Number {
 	if r, ok := v.(*Number); ok {
 		return r
 	}
-	panic(Err(ExpectedNumber, String(v)))
+	panic(Err(ExpectedNumber, v))
 }
 
 // AssertInteger will cast a Value into an Integer or explode violently
@@ -148,5 +150,5 @@ func AssertInteger(v Value) int {
 	if f-float64(i) == 0 {
 		return i
 	}
-	panic(Err(ExpectedInteger, n.String()))
+	panic(Err(ExpectedInteger, n))
 }

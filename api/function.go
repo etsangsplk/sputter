@@ -15,10 +15,10 @@ var functionMetadata = Metadata{MetaName: Name("<anon>")}
 
 // Function is a Value that can be invoked
 type Function interface {
-	Annotated
 	Applicable
+	Annotated
 	Named
-	Documentation() string
+	Documentation() Str
 }
 
 type function struct {
@@ -51,8 +51,8 @@ func (f *function) Name() Name {
 	return f.Metadata()[MetaName].(Name)
 }
 
-func (f *function) Documentation() string {
-	return f.Metadata()[MetaDoc].(string)
+func (f *function) Documentation() Str {
+	return f.Metadata()[MetaDoc].(Str)
 }
 
 func (f *function) Type() Name {
@@ -62,6 +62,11 @@ func (f *function) Type() Name {
 // Apply makes Function Applicable
 func (f *function) Apply(c Context, args Sequence) Value {
 	return f.exec(c, args)
+}
+
+// Str converts this Value into a Str
+func (f *function) Str() Str {
+	return MakeDumpStr(f)
 }
 
 func countUpTo(args Sequence, c int) int {

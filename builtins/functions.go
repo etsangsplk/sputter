@@ -28,7 +28,7 @@ func argNames(n a.Sequence) []a.Name {
 func optionalMetadata(c a.Context, args a.Sequence) (a.Metadata, a.Sequence) {
 	r := args
 	var md a.Metadata
-	if s, ok := r.First().(string); ok {
+	if s, ok := r.First().(a.Str); ok {
 		md = a.Metadata{a.MetaDoc: s}
 		r = r.Rest()
 	} else {

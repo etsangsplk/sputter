@@ -29,6 +29,7 @@ var namespaces = make(namespaceMap, defaultNamespaceEntries)
 
 // Namespace is a container where Qualified Symbols are mapped to Values
 type Namespace interface {
+	Value
 	Context
 	Domain() Name
 	Intern(n Name) Symbol
@@ -64,8 +65,9 @@ func (ns *namespace) Intern(n Name) Symbol {
 	return s
 }
 
-func (ns *namespace) String() string {
-	return "(ns " + string(ns.domain) + ")"
+// Str converts this Value into a Str
+func (ns *namespace) Str() Str {
+	return "(ns " + Str(ns.domain) + ")"
 }
 
 // GetNamespace returns the Namespace for the specified domain.
@@ -112,7 +114,7 @@ func AssertNamespace(v Value) Namespace {
 	if r, ok := v.(Namespace); ok {
 		return r
 	}
-	panic(Err(ExpectedNamespace, String(v)))
+	panic(Err(ExpectedNamespace, v))
 }
 
 func init() {

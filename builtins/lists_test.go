@@ -19,5 +19,5 @@ func TestList(t *testing.T) {
 	testCode(t, `
 		(def x '(1 2 3 4))
 		(x 2)
-	`, a.NewFloat(3))
+	`, f(3))
 }

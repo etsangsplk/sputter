@@ -7,8 +7,12 @@ import (
 	_ "github.com/kode4food/sputter/builtins"
 	p "github.com/kode4food/sputter/parser"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/kode4food/sputter/assert"
 )
+
+func f(f float64) *a.Number {
+	return a.NewFloat(f)
+}
 
 func runCode(src string) a.Value {
 	l := p.NewLexer(src)
@@ -17,13 +21,9 @@ func runCode(src string) a.Value {
 	return p.EvalReader(c, tr)
 }
 
-func testCode(t *testing.T, src string, expect a.Value) {
+func testCode(t *testing.T, src string, expect assert.Any) {
 	as := assert.New(t)
-	if expectNum, ok := expect.(*a.Number); ok {
-		as.Equal(a.EqualTo, expectNum.Cmp(runCode(src).(*a.Number)))
-		return
-	}
-	as.Equal(expect, runCode(src), src)
+	as.Equal(expect, runCode(src))
 }
 
 func testBadCode(t *testing.T, src string, err string) {
@@ -31,7 +31,7 @@ func testBadCode(t *testing.T, src string, err string) {
 
 	defer func() {
 		if rec := recover(); rec != nil {
-			as.Equal(err, rec, "bad code panics properly")
+			as.Equal(err, rec)
 			return
 		}
 		as.Fail("bad code should panic")
@@ -62,30 +62,30 @@ func TestQuote(t *testing.T) {
 
 	v1, ok := r1.Get(0)
 	v2, _ := r2.Get(0)
-	as.True(ok, "first element retrieved")
-	as.Equal(v1, v2, "first element same")
+	as.True(ok)
+	as.Equal(v1, v2)
 
 	v1, ok = r1.Get(0)
-	as.True(ok, "first element retrieved")
+	as.True(ok)
 	if _, ok := v1.(a.Symbol); !ok {
 		as.Fail("first element is not a symbol")
 	}
 
 	v1, ok = r1.Get(1)
 	v2, _ = r2.Get(1)
-	as.True(ok, "first element retrieved")
-	as.Equal(v1, v2, "second element same")
+	as.True(ok)
+	as.Identical(v1, v2)
 
 	v1, ok = r1.Get(1)
-	as.Equal(a.EqualTo, a.NewFloat(2.0).Cmp(v1.(*a.Number)), "second")
+	as.Float(2, v1)
 
 	v1, ok = r1.Get(2)
 	v2, _ = r2.Get(2)
-	as.Equal(v1, v2, "third element same")
+	as.Identical(v1, v2)
 
 	v1, ok = r1.Get(2)
-	as.True(ok, "third element retrieved")
-	as.Equal(a.EqualTo, a.NewFloat(3.0).Cmp(v1.(*a.Number)), "third")
+	as.True(ok)
+	as.Float(3, v1)
 }
 
 func TestDo(t *testing.T) {
@@ -97,7 +97,7 @@ func TestDo(t *testing.T) {
 			(print "how ")
 			(println "are" 66)
 			(if true 99 33))
-	`, a.NewFloat(99))
+	`, f(99))
 }
 
 func TestTrueFalse(t *testing.T) {

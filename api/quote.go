@@ -2,6 +2,7 @@ package api
 
 // Quoted identifies a Value as being in data mode (quoted)
 type Quoted interface {
+	Value
 	Evaluable
 }
 
@@ -27,6 +28,7 @@ func (q quoted) Eval(_ Context) Value {
 	return q.value
 }
 
-func (q quoted) String() string {
-	return String(q.value)
+// Str converts this Value into a Str
+func (q quoted) Str() Str {
+	return q.value.Str()
 }

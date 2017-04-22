@@ -12,9 +12,9 @@ var (
 	// MetaType is the Metadata key for a Value's Type
 	MetaType = NewKeyword("type")
 
-	// MetaMeta is the Metadata key for a Value's Metadata	
+	// MetaMeta is the Metadata key for a Value's Metadata
 	MetaMeta = NewKeyword("meta")
-	
+
 	// MetaDoc is the Metadata key for Documentation Strings
 	MetaDoc = NewKeyword("doc")
 
@@ -49,7 +49,8 @@ func (v Metadata) Merge(nv Metadata) Metadata {
 	return r
 }
 
-func (v Metadata) String() string {
+// Str converts this Value into a Str
+func (v Metadata) Str() Str {
 	var b bytes.Buffer
 	c := false
 	b.WriteString("{")
@@ -59,12 +60,12 @@ func (v Metadata) String() string {
 		} else {
 			c = true
 		}
-		b.WriteString(String(k))
+		b.WriteString(string(k.Str()))
 		b.WriteString(" ")
-		b.WriteString(String(v))
+		b.WriteString(string(v.Str()))
 	}
 	b.WriteString("}")
-	return b.String()
+	return Str(b.String())
 }
 
 // AssertAnnotated will cast a Value to Annotated or die trying
@@ -72,5 +73,5 @@ func AssertAnnotated(v Value) Annotated {
 	if a, ok := v.(Annotated); ok {
 		return a
 	}
-	panic(Err(ExpectedAnnotated, String(v)))
+	panic(Err(ExpectedAnnotated, v))
 }

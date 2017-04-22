@@ -4,9 +4,17 @@ import (
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
+	"github.com/kode4food/sputter/assert"
 	p "github.com/kode4food/sputter/parser"
-	"github.com/stretchr/testify/assert"
 )
+
+func s(s string) a.Str {
+	return a.Str(s)
+}
+
+func f(f float64) *a.Number {
+	return a.NewFloat(f)
+}
 
 func TestCreateReader(t *testing.T) {
 	as := assert.New(t)
@@ -22,9 +30,9 @@ func TestReadInteger(t *testing.T) {
 	c := a.NewContext()
 	tr := p.NewReader(c, l)
 	v := tr.Next()
-	f, ok := v.(*a.Number)
+	n, ok := v.(*a.Number)
 	as.True(ok)
-	as.Equal(a.EqualTo, f.Cmp(a.NewFloat(99)))
+	as.Equal(f(99), n)
 }
 
 func TestReadList(t *testing.T) {
@@ -39,15 +47,15 @@ func TestReadList(t *testing.T) {
 	i := a.Iterate(list)
 	val, ok := i.Next()
 	as.True(ok)
-	as.Equal(a.EqualTo, a.NewFloat(99).Cmp(val.(*a.Number)))
+	as.Float(99, val)
 
 	val, ok = i.Next()
 	as.True(ok)
-	as.Equal("hello", val)
+	as.String("hello", val)
 
 	val, ok = i.Next()
 	as.True(ok)
-	as.Equal(a.EqualTo, a.NewFloat(55.12).Cmp(val.(*a.Number)))
+	as.Float(55.12, val)
 
 	val, ok = i.Next()
 	as.False(ok)
@@ -63,16 +71,16 @@ func TestReadVector(t *testing.T) {
 	as.True(ok)
 
 	res, ok := vector.Get(0)
-	as.True(ok, "get by index")
-	as.Equal(a.EqualTo, a.NewFloat(99.0).Cmp(res.(*a.Number)))
+	as.True(ok)
+	as.Float(99, res)
 
 	res, ok = vector.Get(1)
-	as.True(ok, "get by index")
-	as.Equal("hello", res)
+	as.True(ok)
+	as.String("hello", res)
 
 	res, ok = vector.Get(2)
-	as.True(ok, "get by index")
-	as.Equal(a.EqualTo, a.NewFloat(55.120).Cmp(res.(*a.Number)))
+	as.True(ok)
+	as.Float(55.120, res)
 }
 
 func TestReadMap(t *testing.T) {
@@ -83,7 +91,7 @@ func TestReadMap(t *testing.T) {
 	v := tr.Next()
 	m, ok := v.(a.Associative)
 	as.True(ok)
-	as.Equal(2, m.Count(), "map count is correct")
+	as.Equal(2, m.Count())
 }
 
 func TestReadNestedList(t *testing.T) {
@@ -98,7 +106,7 @@ func TestReadNestedList(t *testing.T) {
 	i1 := a.Iterate(list)
 	val, ok := i1.Next()
 	as.True(ok)
-	as.Equal(a.EqualTo, a.NewFloat(99).Cmp(val.(*a.Number)))
+	as.Float(99, val)
 
 	// get nested list
 	val, ok = i1.Next()
@@ -109,7 +117,7 @@ func TestReadNestedList(t *testing.T) {
 	// iterate over the rest of top-level list
 	val, ok = i1.Next()
 	as.True(ok)
-	as.Equal(a.EqualTo, a.NewFloat(55.12).Cmp(val.(*a.Number)))
+	as.Float(55.12, val)
 
 	val, ok = i1.Next()
 	as.False(ok)
@@ -118,11 +126,11 @@ func TestReadNestedList(t *testing.T) {
 	i2 := a.Iterate(list2)
 	val, ok = i2.Next()
 	as.True(ok)
-	as.Equal("hello", val)
+	as.String("hello", val)
 
 	val, ok = i2.Next()
 	as.True(ok)
-	as.Equal("there", val)
+	as.String("there", val)
 
 	val, ok = i2.Next()
 	as.False(ok)
@@ -141,7 +149,7 @@ func TestSimpleData(t *testing.T) {
 
 	value, ok := a.Eval(c, d).(*a.Number)
 	as.True(ok)
-	as.Equal(a.EqualTo, a.NewFloat(99).Cmp(value))
+	as.Float(99, value)
 }
 
 func TestListData(t *testing.T) {
@@ -159,7 +167,7 @@ func TestListData(t *testing.T) {
 	as.True(ok)
 
 	if sym, ok := value.First().(a.Symbol); ok {
-		as.Equal("symbol", string(sym.Name()), "symbol was literal")
+		as.String("symbol", sym.Name())
 	} else {
 		as.Fail("first element should be symbol")
 	}
@@ -171,18 +179,18 @@ func TestListData(t *testing.T) {
 
 		nl, ok := n.Rest().(*a.List)
 		as.True(ok)
-		as.Equal(a.EmptyList, nl, "list properly terminated")
-		as.False(nl.IsSequence(), "list properly terminated")
+		as.Equal(a.EmptyList, nl)
+		as.False(nl.IsSequence())
 	} else {
 		as.Fail("rest() elements not a list")
 	}
 }
 
 func testCodeWithContext(
-	as *assert.Assertions, code string, expect a.Value, c a.Context) {
+	as *assert.Wrapper, code string, expect assert.Any, c a.Context) {
 	l := p.NewLexer(code)
 	tr := p.NewReader(a.NewContext(), l)
-	as.Equal(expect, p.EvalReader(c, tr), code)
+	as.Equal(expect, p.EvalReader(c, tr))
 }
 
 func TestEvaluable(t *testing.T) {
@@ -193,13 +201,13 @@ func TestEvaluable(t *testing.T) {
 		i := a.Iterate(args)
 		arg, _ := i.Next()
 		v := a.Eval(c, arg)
-		return "Hello, " + v.(string) + "!"
+		return s("Hello, " + string(v.(a.Str)) + "!")
 	}).WithMetadata(a.Metadata{
 		a.MetaName: a.Name("hello"),
-	})
+	}).(a.Function)
 
 	c.Put("hello", hello)
-	c.Put("name", "Bob")
+	c.Put("name", s("Bob"))
 
 	testCodeWithContext(as, `(hello "World")`, "Hello, World!", c)
 	testCodeWithContext(as, `(hello name)`, "Hello, Bob!", c)
@@ -211,15 +219,15 @@ func TestBuiltIns(t *testing.T) {
 	b := a.NewEvalContext()
 	ns := a.GetContextNamespace(b)
 	ns.Put("hello", a.NewFunction(func(_ a.Context, _ a.Sequence) a.Value {
-		return "there"
+		return s("there")
 	}).WithMetadata(a.Metadata{
 		a.MetaName: a.Name("hello"),
-	}))
+	}).(a.Function))
 
 	l := p.NewLexer(`(hello)`)
 	tr := p.NewReader(b, l)
 	c := a.ChildContext(b)
-	as.Equal("there", p.EvalReader(c, tr), "builtin called")
+	as.String("there", p.EvalReader(c, tr))
 }
 
 func TestReaderPrepare(t *testing.T) {
@@ -232,10 +240,10 @@ func TestReaderPrepare(t *testing.T) {
 		if _, ok := l.(*a.List); !ok {
 			as.Fail("provided list is not a cons")
 		}
-		return a.Vector{"you"}
+		return a.Vector{s("you")}
 	}).WithMetadata(a.Metadata{
 		a.MetaName: a.Name("hello"),
-	}))
+	}).(a.Macro))
 
 	l := p.NewLexer(`(hello)`)
 	tr := p.NewReader(b, l)
@@ -243,8 +251,8 @@ func TestReaderPrepare(t *testing.T) {
 
 	if rv, ok := v.(a.Vector); ok {
 		v1, ok := rv.Get(0)
-		as.True(ok, "prepared transformed into vector")
-		as.Equal("you", v1, "prepared transformed into vector")
+		as.True(ok)
+		as.String("you", v1)
 	} else {
 		as.Fail("prepare did not transform")
 	}
@@ -255,7 +263,7 @@ func testReaderError(t *testing.T, src string, err string) {
 
 	defer func() {
 		if rec := recover(); rec != nil {
-			as.Equal(err, rec, "coder errors out")
+			as.Equal(err, rec)
 			return
 		}
 		as.Fail("coder doesn't error out like it should")

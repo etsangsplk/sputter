@@ -152,9 +152,14 @@ func (c *channelSequence) Prepend(v Value) Sequence {
 		rest:  c,
 	}
 }
- 
+
 func (c *channelSequence) Type() Name {
 	return "channel-sequence"
+}
+
+// Str converts this Value into a Str
+func (c *channelSequence) Str() Str {
+	return MakeDumpStr(c)
 }
 
 // NewPromise instantiates a new Promise
@@ -210,4 +215,9 @@ func (p *promise) Deliver(v Value) Value {
 
 func (p *promise) Type() Name {
 	return "promise"
+}
+
+// Str converts this Value into a Str
+func (p *promise) Str() Str {
+	return MakeDumpStr(p)
 }
