@@ -32,10 +32,8 @@ const (
 	bad    = domain + red + "[%d]! " + output
 
 	pair     = esc + "7m" + esc + "1m"
-	save     = esc + "s"
 	forward  = esc + "%dC"
 	backward = esc + "%dD"
-	restore  = esc + "u" + reset
 )
 
 type any interface{}
@@ -214,6 +212,7 @@ func highlightOpener(line []rune, pos int, key rune) {
 				fmt.Print(fmt.Sprintf(backward, tl))
 				fmt.Print(pair + string(o))
 				fmt.Print(fmt.Sprintf(forward, tl-1))
+				fmt.Print(reset)
 				return
 			}
 		case key:
@@ -234,6 +233,7 @@ func highlightCloser(line []rune, pos int, key rune) {
 				fmt.Print(fmt.Sprintf(forward, tl))
 				fmt.Print(pair + string(c))
 				fmt.Print(fmt.Sprintf(backward, tl+1))
+				fmt.Print(reset)
 				return
 			}
 		case key:
