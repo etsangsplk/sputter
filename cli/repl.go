@@ -10,6 +10,7 @@ import (
 	"regexp"
 	"strings"
 	"time"
+	"unicode/utf8"
 
 	"github.com/chzyer/readline"
 	a "github.com/kode4food/sputter/api"
@@ -209,8 +210,10 @@ func highlightOpener(line []rune, pos int, key rune) {
 		case o:
 			d--
 			if d == 0 {
-				fmt.Print(save + fmt.Sprintf(backward, pos-i))
-				fmt.Print(pair + string(o) + restore)
+				tl := termLen(line[i:pos])
+				fmt.Print(fmt.Sprintf(backward, tl))
+				fmt.Print(pair + string(o))
+				fmt.Print(fmt.Sprintf(forward, tl-1))
 				return
 			}
 		case key:
@@ -227,14 +230,29 @@ func highlightCloser(line []rune, pos int, key rune) {
 		case c:
 			d--
 			if d == 0 {
-				fmt.Print(save + fmt.Sprintf(forward, i-pos))
-				fmt.Print(pair + string(c) + restore)
+				tl := termLen(line[pos:i])
+				fmt.Print(fmt.Sprintf(forward, tl))
+				fmt.Print(pair + string(c))
+				fmt.Print(fmt.Sprintf(backward, tl+1))
 				return
 			}
 		case key:
 			d++
 		}
 	}
+}
+
+func termLen(r []rune) int {
+	l := 0
+	for i := 0; i < len(r); i++ {
+		rl := utf8.RuneLen(r[i])
+		if rl > 1 {
+			l += rl - 1
+		} else {
+			l++
+		}
+	}
+	return l
 }
 
 func isEmptyString(s string) bool {
