@@ -247,7 +247,7 @@ func termLen(r []rune) int {
 	for i := 0; i < len(r); i++ {
 		rl := utf8.RuneLen(r[i])
 		if rl > 1 {
-			l += rl - 1
+			l += 2
 		} else {
 			l++
 		}
