@@ -14,6 +14,8 @@ func TestChannel(t *testing.T) {
 
 	e, seq := a.NewChannel(1)
 	seq = seq.Prepend(f(1))
+	as.Contains(":type channel-emitter", e)
+	as.Contains(":type channel-sequence", seq)
 
 	var wg sync.WaitGroup
 
@@ -52,12 +54,13 @@ func TestChannel(t *testing.T) {
 func TestPromise(t *testing.T) {
 	as := assert.New(t)
 	p1 := a.NewPromise()
-
+	
 	go func() {
 		time.Sleep(time.Millisecond * 50)
 		p1.Deliver(s("hello"))
 	}()
 
+	as.Contains(":type promise", p1)
 	as.String("hello", p1.Value())
 	p1.Deliver(s("hello"))
 	as.String("hello", p1.Value())

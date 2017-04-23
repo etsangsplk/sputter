@@ -18,17 +18,19 @@ const (
 
 // Emitter is an interface that is used to emit Values to a Channel
 type Emitter interface {
+	Value
 	Emit(Value) Emitter
 	Close() Emitter
 }
 
 // Promise represents a Value that will eventually be resolved
 type Promise interface {
+	Value
 	Deliver(Value) Value
 	Value() Value
 }
 
-type emitter struct {
+type channelEmitter struct {
 	ch chan Value
 }
 
@@ -56,10 +58,10 @@ func NewChannel(buf int) (Emitter, Sequence) {
 
 // NewChannelEmitter produces an Emitter for sending Values to a Go chan
 func NewChannelEmitter(ch chan Value) Emitter {
-	r := &emitter{
+	r := &channelEmitter{
 		ch: ch,
 	}
-	runtime.SetFinalizer(r, func(e *emitter) {
+	runtime.SetFinalizer(r, func(e *channelEmitter) {
 		if e.ch != nil {
 			close(e.ch)
 			e.ch = nil
@@ -69,7 +71,7 @@ func NewChannelEmitter(ch chan Value) Emitter {
 }
 
 // Emit will send a Value to the Go chan
-func (e *emitter) Emit(v Value) Emitter {
+func (e *channelEmitter) Emit(v Value) Emitter {
 	if e.ch != nil {
 		e.ch <- v
 	}
@@ -77,7 +79,7 @@ func (e *emitter) Emit(v Value) Emitter {
 }
 
 // Close will close the Go chan
-func (e *emitter) Close() Emitter {
+func (e *channelEmitter) Close() Emitter {
 	if e.ch != nil {
 		close(e.ch)
 		e.ch = nil
@@ -86,8 +88,13 @@ func (e *emitter) Close() Emitter {
 	return e
 }
 
-func (e *emitter) Type() Name {
-	return "emitter"
+func (e *channelEmitter) Type() Name {
+	return "channel-emitter"
+}
+
+// Str converts this Value into a Str
+func (e *channelEmitter) Str() Str {
+	return MakeDumpStr(e)
 }
 
 // NewChannelSequence produces a new Sequence whose Values come from a Go chan
@@ -101,13 +108,17 @@ func NewChannelSequence(ch chan Value) Sequence {
 }
 
 func (c *channelSequence) resolve() *channelSequence {
+	cond := c.cond
 	if c.state == deliveredState {
 		return c
 	}
 
-	cond := c.cond
 	cond.L.Lock()
-
+	if c.state == deliveredState {
+		cond.L.Unlock()
+		return c
+	}
+	
 	if c.state == deliveringState {
 		cond.Wait()
 		cond.L.Unlock()
@@ -190,12 +201,17 @@ func (p *promise) checkNewValue(v Value) Value {
 }
 
 func (p *promise) Deliver(v Value) Value {
+	cond := p.cond
 	if p.state == deliveredState {
 		return p.checkNewValue(v)
 	}
 
-	cond := p.cond
 	cond.L.Lock()
+	if p.state == deliveredState {
+		cond.L.Unlock()
+		return p.checkNewValue(v)
+	}
+	
 	if p.state == deliveringState {
 		cond.Wait()
 		cond.L.Unlock()
@@ -209,7 +225,6 @@ func (p *promise) Deliver(v Value) Value {
 	p.state = deliveredState
 	p.cond = nil
 	cond.Broadcast()
-
 	return v
 }
 
