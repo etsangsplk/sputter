@@ -214,11 +214,11 @@ func readIdentifier(t *Token) a.Value {
 	return a.ParseSymbol(n)
 }
 
-// EvalReader evaluates each element of the provided Reader
+// EvalReader consumes a Reader and evaluates the resulting Sequence
 func EvalReader(c a.Context, reader Reader) a.Value {
-	r := a.Nil
+	s := a.Vector{}
 	for v := reader.Next(); v != EndOfReader; v = reader.Next() {
-		r = a.Eval(c, v)
+		s = s.Conjoin(v).(a.Vector)
 	}
-	return r
+	return a.EvalSequence(c, s)
 }
