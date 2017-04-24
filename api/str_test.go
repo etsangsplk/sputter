@@ -58,10 +58,25 @@ func TestStr(t *testing.T) {
 	as.False(ok)
 	as.Nil(c)
 
+	c, ok = s1.Get(6)
+	as.False(ok)
+	as.Nil(c)
+
 	as.String("e", s1.Apply(a.NewContext(), a.Vector{f(1)}))
 
 	s6 := s("再见!")
 	as.Equal(3, a.Count(s6))
 	as.String("再", s6.First())
 	as.String("见!", s6.Rest())
+}
+
+func TestEmptyStr(t *testing.T) {
+	as := assert.New(t)
+
+	as.Nil(s("").First())
+	as.Equal("", s("").Rest())
+
+	c, ok := s("").Get(-1)
+	as.False(ok)
+	as.Nil(c)
 }

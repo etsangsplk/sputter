@@ -41,6 +41,15 @@ func TestVector(t *testing.T) {
 	as.String("are", v1.Apply(c, a.NewList(f(2))))
 }
 
+func TestEmptyVector(t *testing.T) {
+	as := assert.New(t)
+	
+	v := &a.Vector{}
+	as.Nil(v.First())
+	as.String("[]", v.Str())
+	as.String("[]", v.Rest())
+}
+
 type testEvaluable struct{}
 
 func (t *testEvaluable) Eval(c a.Context) a.Value {
