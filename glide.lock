@@ -1,17 +1,16 @@
-hash: b090e28d43141e4c4469b04c8b63d61826688f5b28ca25a42c879b1389c71e07
-updated: 2017-04-05T09:42:33.830774391+02:00
+hash: 67325696628da67177476b0b3923293c047112cbaea986f4334dc61be66525bf
+updated: 2017-04-24T18:30:32.663061383+02:00
 imports:
 - name: github.com/chzyer/readline
   version: 62c6fe6193755f722b8b8788aa7357be55a50ff1
 - name: github.com/cockroachdb/apd
   version: 9d633bb047cfb1e374ce070ac2fcc5593de144a8
-- name: github.com/pkg/errors
-  version: ff09b135c25aae272398c51a07235b90a75aa4f0
-testImports:
 - name: github.com/davecgh/go-spew
   version: 6d212800a42e8ab5c146b8ace3490ee17e5225f9
   subpackages:
   - spew
+- name: github.com/pkg/errors
+  version: ff09b135c25aae272398c51a07235b90a75aa4f0
 - name: github.com/pmezard/go-difflib
   version: d8ed2627bdf02c080bf22230dbb337003b7aba2d
   subpackages:
@@ -20,3 +19,4 @@ testImports:
   version: 69483b4bd14f5845b5a1e55bca19e954e827f1d0
   subpackages:
   - assert
+testImports: []
