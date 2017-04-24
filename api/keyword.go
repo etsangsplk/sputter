@@ -38,8 +38,8 @@ func (k *keyword) Apply(c Context, args Sequence) Value {
 	AssertArity(args, 1)
 	v := Eval(c, args.First())
 	if m, ok := v.(Mapped); ok {
-		if v, ok := m.Get(k); ok {
-			return v
+		if r, ok := m.Get(k); ok {
+			return r
 		}
 		panic(Err(KeyNotFound, k))
 	}

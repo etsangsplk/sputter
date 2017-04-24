@@ -57,7 +57,7 @@ func TestReadList(t *testing.T) {
 	as.True(ok)
 	as.Float(55.12, val)
 
-	val, ok = i.Next()
+	_, ok = i.Next()
 	as.False(ok)
 }
 
@@ -119,7 +119,7 @@ func TestReadNestedList(t *testing.T) {
 	as.True(ok)
 	as.Float(55.12, val)
 
-	val, ok = i1.Next()
+	_, ok = i1.Next()
 	as.False(ok)
 
 	// iterate over the nested list
@@ -132,7 +132,7 @@ func TestReadNestedList(t *testing.T) {
 	as.True(ok)
 	as.String("there", val)
 
-	val, ok = i2.Next()
+	_, ok = i2.Next()
 	as.False(ok)
 }
 

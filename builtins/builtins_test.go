@@ -77,10 +77,12 @@ func TestQuote(t *testing.T) {
 	as.Identical(v1, v2)
 
 	v1, ok = r1.Get(1)
+	as.True(ok)
 	as.Float(2, v1)
 
 	v1, ok = r1.Get(2)
 	v2, _ = r2.Get(2)
+	as.True(ok)
 	as.Identical(v1, v2)
 
 	v1, ok = r1.Get(2)
