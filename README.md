@@ -1,4 +1,6 @@
 # Sputter (a Lisp Interpreter)
+[![Go Report Card](https://goreportcard.com/badge/github.com/kode4food/sputter)](https://goreportcard.com/report/github.com/kode4food/sputter) [![Build Status](https://travis-ci.org/kode4food/sputter.svg?branch=master)](https://travis-ci.org/kode4food/sputter)
+
 Sputter is a simple Lisp Interpreter written in
 [Go](https://golang.org/). Basically, it's just me having some fun
 and trying to improve my Go skills. That means you're unlikely to

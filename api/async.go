@@ -118,7 +118,7 @@ func (c *channelSequence) resolve() *channelSequence {
 		cond.L.Unlock()
 		return c
 	}
-	
+
 	if c.state == deliveringState {
 		cond.Wait()
 		cond.L.Unlock()
@@ -211,7 +211,7 @@ func (p *promise) Deliver(v Value) Value {
 		cond.L.Unlock()
 		return p.checkNewValue(v)
 	}
-	
+
 	if p.state == deliveringState {
 		cond.Wait()
 		cond.L.Unlock()

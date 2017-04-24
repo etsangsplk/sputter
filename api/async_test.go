@@ -54,7 +54,7 @@ func TestChannel(t *testing.T) {
 func TestPromise(t *testing.T) {
 	as := assert.New(t)
 	p1 := a.NewPromise()
-	
+
 	go func() {
 		time.Sleep(time.Millisecond * 50)
 		p1.Deliver(s("hello"))

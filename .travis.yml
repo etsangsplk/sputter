@@ -1,0 +1,17 @@
+language: go
+sudo: false
+
+go:
+  - 1.6.x
+  - 1.7.x
+  - 1.8.x
+  - master
+
+install:
+  - go get github.com/Masterminds/glide
+  - go get github.com/jteeuwen/go-bindata/...
+
+script:
+  - $GOPATH/bin/glide install
+  - $GOPATH/bin/go-bindata -o docstring/assets.go -pkg="docstring" -prefix="docstring/" docstring/*.md
+  - go test $($GOPATH/bin/glide novendor)

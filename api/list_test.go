@@ -104,7 +104,7 @@ func testBrokenEval(t *testing.T, seq a.Sequence, err string) {
 }
 
 func TestNonFunction(t *testing.T) {
-	err := a.Err(a.ExpectedApplicable, "unknown")
+	err := a.Err(a.UnknownSymbol, "unknown")
 	seq := a.NewList(s("foo")).Prepend(a.NewLocalSymbol("unknown"))
 	testBrokenEval(t, seq, err)
 }

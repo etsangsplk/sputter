@@ -153,8 +153,15 @@ func (r *tokenReader) function(t *Token) (a.Applicable, bool) {
 	if t.Type != Identifier {
 		return nil, false
 	}
-	v := readIdentifier(t)
-	return a.ResolveAsApplicable(r.context, v)
+
+	if s, ok := readIdentifier(t).(a.Symbol); ok {
+		if v, ok := s.Resolve(r.context); ok {
+			if f, ok := v.(a.Applicable); ok {
+				return f, true
+			}
+		}
+	}
+	return nil, false
 }
 
 func (r *tokenReader) readVector(m mode) a.Vector {

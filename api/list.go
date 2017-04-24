@@ -72,14 +72,15 @@ func (l *List) Apply(c Context, args Sequence) Value {
 }
 
 // Eval makes a List Evaluable
-func (l *List) Eval(ctx Context) Value {
+func (l *List) Eval(c Context) Value {
 	if l == EmptyList {
 		return EmptyList
 	}
-	if f, ok := ResolveAsApplicable(ctx, l.first); ok {
-		return f.Apply(ctx, l.rest)
+	f := l.first
+	if a, ok := Eval(c, f).(Applicable); ok {
+		return a.Apply(c, l.rest)
 	}
-	panic(Err(ExpectedApplicable, l.first))
+	panic(Err(ExpectedApplicable, f))
 }
 
 // Str converts this Value into a Str

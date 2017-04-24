@@ -43,7 +43,7 @@ func TestVector(t *testing.T) {
 
 func TestEmptyVector(t *testing.T) {
 	as := assert.New(t)
-	
+
 	v := &a.Vector{}
 	as.Nil(v.First())
 	as.String("[]", v.Str())
