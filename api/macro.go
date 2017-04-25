@@ -33,6 +33,11 @@ func (m *macro) Type() Name {
 	return "macro"
 }
 
+// Str converts this Value into a Str
+func (m *macro) Str() Str {
+	return MakeDumpStr(m)
+}
+
 // WithMetadata copies the Function with new Metadata
 func (m *macro) WithMetadata(md Metadata) Annotated {
 	return &macro{
