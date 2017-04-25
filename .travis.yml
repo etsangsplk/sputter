@@ -17,4 +17,4 @@ script:
   - $GOPATH/bin/glide install
   - $GOPATH/bin/go-bindata -o docstring/assets.go -pkg="docstring" -prefix="docstring/" docstring/*.md
   - go test $($GOPATH/bin/glide novendor)
-  - $GOPATH/bin/goveralls -service=travis-ci
+  - $GOPATH/bin/goveralls -service=travis-ci -ignore=assets.go
