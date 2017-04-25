@@ -10,7 +10,6 @@ import (
 	"regexp"
 	"strings"
 	"time"
-	"unicode/utf8"
 
 	"github.com/chzyer/readline"
 	a "github.com/kode4food/sputter/api"
@@ -30,10 +29,6 @@ const (
 	output = bold + "%s" + reset
 	good   = domain + result + "[%d]= " + output
 	bad    = domain + red + "[%d]! " + output
-
-	pair     = esc + "7m" + esc + "1m"
-	forward  = esc + "%dC"
-	backward = esc + "%dD"
 )
 
 type any interface{}
@@ -70,7 +65,6 @@ func NewREPL() *REPL {
 
 	rl, err := readline.NewEx(&readline.Config{
 		HistoryFile: getHistoryFile(),
-		Listener:    repl,
 	})
 
 	if err != nil {
@@ -134,11 +128,15 @@ func (repl *REPL) setInitialPrompt() {
 	}
 
 	ns := repl.ns.Domain()
-	repl.rl.SetPrompt(fmt.Sprintf(prompt, ns, repl.idx))
+	repl.setPrompt(fmt.Sprintf(prompt, ns, repl.idx))
 }
 
 func (repl *REPL) setContinuePrompt() {
-	repl.rl.SetPrompt(fmt.Sprintf(cont, repl.nsSpace(), repl.idx))
+	repl.setPrompt(fmt.Sprintf(cont, repl.nsSpace(), repl.idx))
+}
+
+func (repl *REPL) setPrompt(s string) {
+	repl.rl.SetPrompt(s)	
 }
 
 func (repl *REPL) nsSpace() string {
@@ -182,77 +180,6 @@ func (repl *REPL) outputResult(v any) {
 func (repl *REPL) outputError(err any) {
 	res := fmt.Sprintf(bad, repl.nsSpace(), repl.idx, err)
 	fmt.Println(res)
-}
-
-var (
-	openers = map[rune]rune{')': '(', ']': '[', '}': '{'}
-	closers = map[rune]rune{'(': ')', '[': ']', '{': '}'}
-)
-
-// OnChange implements the readline Listener interface
-func (repl *REPL) OnChange(
-	line []rune, pos int, key rune) (newLine []rune, newPos int, ok bool) {
-	if _, ok := openers[key]; ok {
-		highlightOpener(line, pos, key)
-	} else if _, ok := closers[key]; ok {
-		highlightCloser(line, pos, key)
-	}
-	return line, pos, false
-}
-
-func highlightOpener(line []rune, pos int, key rune) {
-	o := openers[key]
-	d := 0
-	for i := pos - 1; i >= 0; i-- {
-		switch line[i] {
-		case o:
-			d--
-			if d == 0 {
-				tl := termLen(line[i:pos])
-				fmt.Print(fmt.Sprintf(backward, tl))
-				fmt.Print(pair + string(o))
-				fmt.Print(fmt.Sprintf(forward, tl-1))
-				fmt.Print(reset)
-				return
-			}
-		case key:
-			d++
-		}
-	}
-}
-
-func highlightCloser(line []rune, pos int, key rune) {
-	c := closers[key]
-	d := 0
-	for i := pos - 1; i < len(line); i++ {
-		switch line[i] {
-		case c:
-			d--
-			if d == 0 {
-				tl := termLen(line[pos:i])
-				fmt.Print(fmt.Sprintf(forward, tl))
-				fmt.Print(pair + string(c))
-				fmt.Print(fmt.Sprintf(backward, tl+1))
-				fmt.Print(reset)
-				return
-			}
-		case key:
-			d++
-		}
-	}
-}
-
-func termLen(r []rune) int {
-	l := 0
-	for i := 0; i < len(r); i++ {
-		rl := utf8.RuneLen(r[i])
-		if rl > 1 {
-			l += 2
-		} else {
-			l++
-		}
-	}
-	return l
 }
 
 func isEmptyString(s string) bool {
@@ -321,8 +248,8 @@ func doc(c a.Context, args a.Sequence) a.Value {
 	if v, ok := c.Get(sym.Name()); ok {
 		if an, ok := v.(a.Annotated); ok {
 			md := an.Metadata()
-			d := string(md[a.MetaDoc].(a.Str))
-			f := formatForREPL(d)
+			doc := string(md[a.MetaDoc].(a.Str))
+			f := formatForREPL(doc)
 			fmt.Println(f)
 			return nothing
 		}
