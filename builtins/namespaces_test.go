@@ -30,7 +30,7 @@ func TestNamespaces(t *testing.T) {
 		(with-ns my-namespace
 			(def x "x in the namespace")
 			x)
-	`, "x in the namespace")
+	`, s("x in the namespace"))
 
 	testBadCode(t, `
 		(ns foo:bar)

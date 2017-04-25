@@ -13,7 +13,7 @@ func makeToken(t p.TokenType, v a.Value) *p.Token {
 }
 
 func assertToken(as *assert.Wrapper, like *p.Token, value *p.Token) {
-	as.Equal(like.Type, value.Type)
+	as.Number(float64(like.Type), float64(value.Type))
 	if like.Type != p.EndOfFile {
 		as.Equal(like.Value, value.Value)
 	}

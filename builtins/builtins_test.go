@@ -10,6 +10,10 @@ import (
 	"github.com/kode4food/sputter/assert"
 )
 
+func s(s string) a.Str {
+	return a.Str(s)
+}
+
 func f(f float64) *a.Number {
 	return a.NewFloat(f)
 }
@@ -21,7 +25,7 @@ func runCode(src string) a.Value {
 	return p.EvalReader(c, tr)
 }
 
-func testCode(t *testing.T, src string, expect assert.Any) {
+func testCode(t *testing.T, src string, expect a.Value) {
 	as := assert.New(t)
 	as.Equal(expect, runCode(src))
 }
@@ -31,7 +35,7 @@ func testBadCode(t *testing.T, src string, err string) {
 
 	defer func() {
 		if rec := recover(); rec != nil {
-			as.Equal(err, rec)
+			as.String(err, rec)
 			return
 		}
 		as.Fail("bad code should panic")
@@ -78,7 +82,7 @@ func TestQuote(t *testing.T) {
 
 	v1, ok = r1.Get(1)
 	as.True(ok)
-	as.Float(2, v1)
+	as.Number(2, v1)
 
 	v1, ok = r1.Get(2)
 	v2, _ = r2.Get(2)
@@ -87,7 +91,7 @@ func TestQuote(t *testing.T) {
 
 	v1, ok = r1.Get(2)
 	as.True(ok)
-	as.Float(3, v1)
+	as.Number(3, v1)
 }
 
 func TestDo(t *testing.T) {

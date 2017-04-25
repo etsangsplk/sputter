@@ -15,7 +15,7 @@ func TestChannel(t *testing.T) {
 		(apply (:emit c) '("hello")) ; buffer of 1
 		(apply (:close c) ())
 		(first (:seq c))
-	`, "hello")
+	`, s("hello"))
 }
 
 func TestAsync(t *testing.T) {
@@ -37,7 +37,7 @@ func TestPromise(t *testing.T) {
 		(def p (promise))
 		(async (p "hello"))
 		(p)
-	`, "hello")
+	`, s("hello"))
 }
 
 func TestFuture(t *testing.T) {
@@ -46,5 +46,5 @@ func TestFuture(t *testing.T) {
 	testCode(t, `
 		(def p (future "hello"))
 		(p)
-	`, "hello")
+	`, s("hello"))
 }

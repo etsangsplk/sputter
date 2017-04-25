@@ -8,6 +8,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// InvalidTestExpression is thrown if an unsupported expression type is used
+const InvalidTestExpression = "invalid test expression: %s"
+
 // Any is the friendly name for a generic interface
 type Any interface{}
 
@@ -26,6 +29,10 @@ func New(t *testing.T) *Wrapper {
 
 // String tests a Value for string equality
 func (w *Wrapper) String(expect string, expr Any) {
+	if s, ok := expr.(string); ok {
+		w.as.Equal(expect, s)
+		return
+	}
 	if s, ok := expr.(a.Str); ok {
 		w.as.Equal(expect, string(s))
 		return
@@ -34,11 +41,11 @@ func (w *Wrapper) String(expect string, expr Any) {
 		w.as.Equal(expect, string(s.Str()))
 		return
 	}
-	w.as.Equal(expect, expr)
+	panic(a.Err(InvalidTestExpression, expr))
 }
 
-// Float tests a Value for floating point equality
-func (w *Wrapper) Float(expect float64, expr Any) {
+// Number tests a Value for numeric equality
+func (w *Wrapper) Number(expect float64, expr Any) {
 	if f, ok := expr.(float64); ok {
 		w.as.Equal(expect, f)
 		return
@@ -51,36 +58,22 @@ func (w *Wrapper) Float(expect float64, expr Any) {
 		w.as.Equal(a.EqualTo, a.NewFloat(expect).Cmp(n))
 		return
 	}
-	w.as.Equal(expect, expr)
+	panic(a.Err(InvalidTestExpression, expr))
 }
 
 // Equal tests a Value for some kind of equality. Performs checks to do so
-func (w *Wrapper) Equal(expect Any, expr Any) {
-	if s, ok := expect.(string); ok {
-		w.String(s, expr)
-		return
-	}
-	if f, ok := expect.(float64); ok {
-		w.Float(f, expr)
-		return
-	}
-	if i, ok := expect.(int); ok {
-		w.Float(float64(i), expr)
-		return
-	}
-	if n, ok := expect.(*a.Number); ok {
-		w.as.Equal(a.EqualTo, n.Cmp(expr.(*a.Number)))
-		return
-	}
+func (w *Wrapper) Equal(expect a.Value, expr Any) {
 	if s, ok := expect.(a.Str); ok {
 		w.String(string(s), expr)
 		return
 	}
-	if v, ok := expect.(a.Value); ok {
-		w.String(string(v.Str()), expr)
+	if n, ok := expect.(*a.Number); ok {
+		f, _ := n.Float64()
+		w.Number(f, expr)
+		//w.as.Equal(a.EqualTo, n.Cmp(expr.(*a.Number)))
 		return
 	}
-	w.as.Equal(expect, expr)
+	w.String(string(expect.Str()), expr)
 }
 
 // True tests a Value for boolean true
@@ -150,14 +143,23 @@ func (w *Wrapper) NotIdentical(expect Any, expr Any) {
 
 // Nil tests if a Value is nil
 func (w *Wrapper) Nil(expr Any) {
-	if expr != nil && expr != a.Nil {
-		w.Fail("value should be nil")
+	if expr == a.Nil {
+		w.as.Nil(nil)
+		return
 	}
+	w.as.Nil(expr)
 }
 
 // NotNil tests if a Value is not nil
 func (w *Wrapper) NotNil(expr Any) {
-	if expr == nil || expr == a.Nil {
-		w.Fail("value should not be nil")
+	if expr == a.Nil {
+		w.as.NotNil(nil)
+		return
 	}
+	w.as.NotNil(expr)
+}
+
+// Compare tests if the Comparison of two Numbers is correct
+func (w *Wrapper) Compare(c a.Comparison, l *a.Number, r *a.Number) {
+	w.as.Equal(c, l.Cmp(r))
 }

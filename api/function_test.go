@@ -45,17 +45,17 @@ func TestGoodArity(t *testing.T) {
 	}()
 
 	v1 := a.Vector{f(1), f(2), f(3)}
-	as.Equal(3, a.AssertArity(v1, 3))
-	as.Equal(3, a.AssertArityRange(v1, 2, 4))
-	as.Equal(3, a.AssertArityRange(v1, 3, 3))
-	as.Equal(3, a.AssertMinimumArity(v1, 3))
-	as.Equal(3, a.AssertMinimumArity(v1, 2))
+	as.Number(3, a.AssertArity(v1, 3))
+	as.Number(3, a.AssertArityRange(v1, 2, 4))
+	as.Number(3, a.AssertArityRange(v1, 3, 3))
+	as.Number(3, a.AssertMinimumArity(v1, 3))
+	as.Number(3, a.AssertMinimumArity(v1, 2))
 
 	v2 := a.Concat(a.Vector{
 		a.NewList(f(1)),
 		a.Vector{f(2), f(3)},
 	})
-	as.Equal(3, a.AssertArity(v2, 3))
+	as.Number(3, a.AssertArity(v2, 3))
 }
 
 func TestBadArity(t *testing.T) {

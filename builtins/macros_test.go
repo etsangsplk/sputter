@@ -18,5 +18,5 @@ func TestMacroReplace(t *testing.T) {
 			(+ x y)
 			'hello)
 		(foo 1 2)
-	`, "you")
+	`, s("you"))
 }

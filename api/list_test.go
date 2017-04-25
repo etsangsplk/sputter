@@ -36,12 +36,12 @@ func TestList(t *testing.T) {
 	as.String("(20.5 12)", l2)
 	as.Equal(n2, l2.First())
 	as.Identical(l1, l2.Rest())
-	as.Equal(2, l2.Count())
+	as.Number(2, l2.Count())
 
 	r, ok := l2.Get(1)
 	as.True(ok)
 	as.Equal(f(12), r)
-	as.Equal(2, a.Count(l2))
+	as.Number(2, a.Count(l2))
 
 	r, ok = a.EmptyList.Get(1)
 	as.False(ok)
@@ -76,7 +76,7 @@ func TestIterator(t *testing.T) {
 	}
 
 	val, exact := sum.Float64()
-	as.Float(32.5, val)
+	as.Number(32.5, val)
 	as.True(exact)
 }
 

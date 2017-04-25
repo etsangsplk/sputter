@@ -7,7 +7,7 @@ import (
 	"github.com/kode4food/sputter/assert"
 )
 
-func assertGet(as *assert.Wrapper, c a.Context, n a.Name, cv assert.Any) {
+func assertGet(as *assert.Wrapper, c a.Context, n a.Name, cv a.Value) {
 	v, ok := c.Get(n)
 	as.True(ok)
 	as.Equal(cv, v)
@@ -29,7 +29,7 @@ func TestPopulateContext(t *testing.T) {
 	as := assert.New(t)
 	c := a.NewContext()
 	c.Put("hello", s("there"))
-	assertGet(as, c, "hello", "there")
+	assertGet(as, c, "hello", s("there"))
 }
 
 func TestNestedContext(t *testing.T) {
@@ -43,13 +43,13 @@ func TestNestedContext(t *testing.T) {
 	c2.Put("hello", s("you"))
 	c2.Put("foo", s("bar"))
 
-	assertGet(as, c1, "hello", "there")
-	assertGet(as, c1, "howdy", "ho")
+	assertGet(as, c1, "hello", s("there"))
+	assertGet(as, c1, "howdy", s("ho"))
 	assertMissing(as, c1, "foo")
 
-	assertGet(as, c2, "hello", "you")
-	assertGet(as, c2, "howdy", "ho")
-	assertGet(as, c2, "foo", "bar")
+	assertGet(as, c2, "hello", s("you"))
+	assertGet(as, c2, "howdy", s("ho"))
+	assertGet(as, c2, "foo", s("bar"))
 }
 
 func TestEvalContext(t *testing.T) {
@@ -61,7 +61,7 @@ func TestEvalContext(t *testing.T) {
 
 	ec := a.NewEvalContext()
 	v, _ := ec.Get("foo")
-	as.Float(99, v)
+	as.Number(99, v)
 }
 
 func TestRebind(t *testing.T) {

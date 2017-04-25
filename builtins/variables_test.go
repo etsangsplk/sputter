@@ -15,13 +15,13 @@ func TestDefinitions(t *testing.T) {
 	testCode(t, `
 		(def foo "bar")
 		foo
-	`, "bar")
+	`, s("bar"))
 
 	testCode(t, `
 		(defn return-local []
 			(let [foo "local"] foo))
 		(return-local)
-	`, "local")
+	`, s("local"))
 }
 
 func TestLetBindings(t *testing.T) {

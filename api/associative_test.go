@@ -19,7 +19,7 @@ func TestAssociative(t *testing.T) {
 	as := assert.New(t)
 	m1 := getTestMap()
 
-	as.Equal(3, a.Count(m1))
+	as.Number(3, a.Count(m1))
 
 	nameKey := a.NewKeyword("name")
 	as.Equal(a.Name("name"), nameKey.Name())
@@ -31,7 +31,7 @@ func TestAssociative(t *testing.T) {
 	ageKey := a.NewKeyword("age")
 	ageValue, ok := m1.Get(ageKey)
 	as.True(ok)
-	as.Float(99, ageValue)
+	as.Number(99, ageValue)
 
 	strValue, ok := m1.Get(s("string"))
 	as.True(ok)
@@ -99,7 +99,7 @@ func TestAssociativeIterate(t *testing.T) {
 	if v, ok := i.Next(); ok {
 		vec := v.(a.Vector)
 		as.Equal(a.NewKeyword("age"), vec[0])
-		as.Float(99, vec[1])
+		as.Number(99, vec[1])
 	} else {
 		as.Fail("couldn't get second element")
 	}

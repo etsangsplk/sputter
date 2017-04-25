@@ -21,12 +21,12 @@ func TestFunction(t *testing.T) {
 		  []
 		  "Hello, World!")
 		(say-hello)
-	`, "Hello, World!")
+	`, s("Hello, World!"))
 
 	testCode(t, `
 		(defn identity [value] value)
 		(identity "foo")
-	`, "foo")
+	`, s("foo"))
 
 	v, _ := ns.Get("say-hello")
 	fv := v.(a.Function)
@@ -60,7 +60,7 @@ func TestLambda(t *testing.T) {
 		(let [greeting "hello"]
 			(let [foo (fn [] greeting)]
 				(call foo)))
-	`, "hello")
+	`, s("hello"))
 }
 
 func TestBadLambda(t *testing.T) {

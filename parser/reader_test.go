@@ -47,7 +47,7 @@ func TestReadList(t *testing.T) {
 	i := a.Iterate(list)
 	val, ok := i.Next()
 	as.True(ok)
-	as.Float(99, val)
+	as.Number(99, val)
 
 	val, ok = i.Next()
 	as.True(ok)
@@ -55,7 +55,7 @@ func TestReadList(t *testing.T) {
 
 	val, ok = i.Next()
 	as.True(ok)
-	as.Float(55.12, val)
+	as.Number(55.12, val)
 
 	_, ok = i.Next()
 	as.False(ok)
@@ -72,7 +72,7 @@ func TestReadVector(t *testing.T) {
 
 	res, ok := vector.Get(0)
 	as.True(ok)
-	as.Float(99, res)
+	as.Number(99, res)
 
 	res, ok = vector.Get(1)
 	as.True(ok)
@@ -80,7 +80,7 @@ func TestReadVector(t *testing.T) {
 
 	res, ok = vector.Get(2)
 	as.True(ok)
-	as.Float(55.120, res)
+	as.Number(55.120, res)
 }
 
 func TestReadMap(t *testing.T) {
@@ -91,7 +91,7 @@ func TestReadMap(t *testing.T) {
 	v := tr.Next()
 	m, ok := v.(a.Associative)
 	as.True(ok)
-	as.Equal(2, m.Count())
+	as.Number(2, m.Count())
 }
 
 func TestReadNestedList(t *testing.T) {
@@ -106,7 +106,7 @@ func TestReadNestedList(t *testing.T) {
 	i1 := a.Iterate(list)
 	val, ok := i1.Next()
 	as.True(ok)
-	as.Float(99, val)
+	as.Number(99, val)
 
 	// get nested list
 	val, ok = i1.Next()
@@ -117,7 +117,7 @@ func TestReadNestedList(t *testing.T) {
 	// iterate over the rest of top-level list
 	val, ok = i1.Next()
 	as.True(ok)
-	as.Float(55.12, val)
+	as.Number(55.12, val)
 
 	_, ok = i1.Next()
 	as.False(ok)
@@ -149,7 +149,7 @@ func TestSimpleData(t *testing.T) {
 
 	value, ok := a.Eval(c, d).(*a.Number)
 	as.True(ok)
-	as.Float(99, value)
+	as.Number(99, value)
 }
 
 func TestListData(t *testing.T) {
@@ -187,7 +187,7 @@ func TestListData(t *testing.T) {
 }
 
 func testCodeWithContext(
-	as *assert.Wrapper, code string, expect assert.Any, c a.Context) {
+	as *assert.Wrapper, code string, expect a.Value, c a.Context) {
 	l := p.NewLexer(code)
 	tr := p.NewReader(a.NewContext(), l)
 	as.Equal(expect, p.EvalReader(c, tr))
@@ -209,8 +209,8 @@ func TestEvaluable(t *testing.T) {
 	c.Put("hello", hello)
 	c.Put("name", s("Bob"))
 
-	testCodeWithContext(as, `(hello "World")`, "Hello, World!", c)
-	testCodeWithContext(as, `(hello name)`, "Hello, Bob!", c)
+	testCodeWithContext(as, `(hello "World")`, s("Hello, World!"), c)
+	testCodeWithContext(as, `(hello name)`, s("Hello, Bob!"), c)
 }
 
 func TestBuiltIns(t *testing.T) {
@@ -263,7 +263,7 @@ func testReaderError(t *testing.T, src string, err string) {
 
 	defer func() {
 		if rec := recover(); rec != nil {
-			as.Equal(err, rec)
+			as.String(err, rec)
 			return
 		}
 		as.Fail("coder doesn't error out like it should")

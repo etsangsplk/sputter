@@ -32,9 +32,9 @@ func TestChannel(t *testing.T) {
 	}
 
 	check := func() {
-		as.Equal(1, seq.First())
-		as.Equal(2, seq.Rest().First())
-		as.Equal(3, seq.Rest().Rest().First())
+		as.Number(1, seq.First())
+		as.Number(2, seq.Rest().First())
+		as.Number(3, seq.Rest().Rest().First())
 		as.True(seq.Rest().Rest().Rest().IsSequence())
 		as.String("foo", seq.Rest().Rest().Rest().First())
 		as.True(seq.Rest().Rest().Rest().Rest().IsSequence())

@@ -11,23 +11,23 @@ func TestVector(t *testing.T) {
 	as := assert.New(t)
 
 	v1 := a.Vector{s("hello"), s("how"), s("are"), s("you?")}
-	as.Equal(4, v1.Count())
-	as.Equal(4, a.Count(v1))
+	as.Number(4, v1.Count())
+	as.Number(4, a.Count(v1))
 
 	r, ok := v1.Get(2)
 	as.True(ok)
 	as.String("are", r)
-	as.Equal(`["hello" "how" "are" "you?"]`, v1)
+	as.String(`["hello" "how" "are" "you?"]`, v1)
 
 	v2 := v1.Prepend(s("oh")).(a.Vector)
-	as.Equal(5, v2.Count())
-	as.Equal(4, v1.Count())
+	as.Number(5, v2.Count())
+	as.Number(4, v1.Count())
 
 	v3 := v2.Conjoin(s("good?")).(a.Vector)
 	r, ok = v3.Get(5)
 	as.True(ok)
 	as.String("good?", r)
-	as.Equal(6, v3.Count())
+	as.Number(6, v3.Count())
 
 	r, ok = v3.Get(0)
 	as.True(ok)
@@ -74,7 +74,7 @@ func TestVectorEval(t *testing.T) {
 	i, ok := r.(a.Indexed).Get(2)
 	as.True(ok)
 	as.String("are", i)
-	as.Equal(`["hello" "how" "are" "you?"]`, r)
+	as.String(`["hello" "how" "are" "you?"]`, r)
 }
 
 func TestIterate(t *testing.T) {
@@ -95,8 +95,8 @@ func TestIterate(t *testing.T) {
 	as.String("are", e3)
 	as.String("you?", e4)
 
-	as.Equal(3, a.Count(s1))
-	as.Equal(2, a.Count(s2))
+	as.Number(3, a.Count(s1))
+	as.Number(2, a.Count(s2))
 
 	as.Equal(a.Nil, e5)
 	as.False(ok)

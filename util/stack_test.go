@@ -13,7 +13,7 @@ func TestStack(t *testing.T) {
 	st := u.NewStack()
 
 	v, ok := st.Peek()
-	as.Equal(nil, v)
+	as.Nil(v)
 	as.False(ok)
 
 	st.Push("you")
@@ -41,10 +41,10 @@ func TestStack(t *testing.T) {
 	as.True(ok)
 
 	v, ok = st.Pop()
-	as.Equal(nil, v)
+	as.Nil(v)
 	as.False(ok)
 
 	v, ok = st.Peek()
-	as.Equal(nil, v)
+	as.Nil(v)
 	as.False(ok)
 }

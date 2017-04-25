@@ -12,7 +12,7 @@ func TestMeta(t *testing.T) {
 		(def x (with-meta (fn [] "hello") {
 			:foo "bar"}))
 		(:foo (meta x))
-	`, "bar")
+	`, s("bar"))
 
 	testCode(t, `(meta? (fn [x] 1))`, a.True)
 	testCode(t, `(meta? if)`, a.True)

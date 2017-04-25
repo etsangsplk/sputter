@@ -17,7 +17,7 @@ func TestSequence(t *testing.T) {
 	testCode(t, `(first (rest (conj (list 2 3) 1)))`, f(2))
 
 	testCode(t, `(nth '(1 2 3) 1)`, f(2))
-	testCode(t, `(nth '(1 2 3) 5 "nope")`, "nope")
+	testCode(t, `(nth '(1 2 3) 5 "nope")`, s("nope"))
 	testBadCode(t, `(nth '(1 2 3) 5)`, a.Err(a.IndexNotFound, "5"))
 }
 

@@ -23,7 +23,7 @@ func TestParseNumber(t *testing.T) {
 func testExact(as *assert.Wrapper, n *a.Number, expect float64) {
 	val, exact := n.Float64()
 	as.True(exact)
-	as.Equal(expect, val)
+	as.Number(expect, val)
 }
 
 func TestConvertNumber(t *testing.T) {
@@ -49,12 +49,12 @@ func TestCompareNumbers(t *testing.T) {
 	n4 := a.NewRatio(40, 2)
 	n5 := f(20)
 
-	as.Equal(a.LessThan, n1.Cmp(n2))
-	as.Equal(a.LessThan, n1.Cmp(n3))
-	as.Equal(a.LessThan, n1.Cmp(n4))
-	as.Equal(a.GreaterThan, n3.Cmp(n4))
-	as.Equal(a.LessThan, n1.Cmp(n5))
-	as.Equal(n4, n5)
+	as.Compare(a.LessThan, n1, n2)
+	as.Compare(a.LessThan, n1, n3)
+	as.Compare(a.LessThan, n1, n4)
+	as.Compare(a.GreaterThan, n3, n4)
+	as.Compare(a.LessThan, n1, n5)
+	as.Compare(a.EqualTo, n4, n5)
 }
 
 func TestStringifyNumbers(t *testing.T) {

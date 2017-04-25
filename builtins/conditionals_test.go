@@ -15,7 +15,7 @@ func TestCond(t *testing.T) {
 			nil   "nope"
 			true  "hello"
 			"hi"  "ignored")
-	`, "hello")
+	`, s("hello"))
 
 	testCode(t, `
 		(cond
@@ -23,7 +23,7 @@ func TestCond(t *testing.T) {
 			nil   "nope"
 			:else "hello"
 			"hi"  "ignored")
-	`, "hello")
+	`, s("hello"))
 
 	testCode(t, `
 		(cond
@@ -35,7 +35,7 @@ func TestCond(t *testing.T) {
 		(cond
 			true "hello"
 			99)
-	`, "hello")
+	`, s("hello"))
 
 	testCode(t, `(cond 99)`, f(99))
 

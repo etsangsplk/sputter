@@ -25,5 +25,5 @@ func TestQuoteApply(t *testing.T) {
 	v := a.Vector{f(1), f(2), f(3)}
 	q := a.Quote(v).(a.Applicable)
 	r := q.Apply(c, a.NewList(f(1)))
-	as.Float(2, r)
+	as.Number(2, r)
 }

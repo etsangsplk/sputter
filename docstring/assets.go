@@ -1091,7 +1091,7 @@ func withNsMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "with-ns.md", size: 425, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "with-ns.md", size: 425, mode: os.FileMode(420), modTime: time.Unix(1493125032, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
