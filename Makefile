@@ -3,7 +3,7 @@ all: main
 main: assets
 	go build
 
-test: main glide goveralls
+test: main glide
 	go test `glide novendor`
 
 assets: bindata

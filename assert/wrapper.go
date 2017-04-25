@@ -151,13 +151,13 @@ func (w *Wrapper) NotIdentical(expect Any, expr Any) {
 // Nil tests if a Value is nil
 func (w *Wrapper) Nil(expr Any) {
 	if expr != nil && expr != a.Nil {
-		w.as.Fail("value should be nil")
+		w.Fail("value should be nil")
 	}
 }
 
 // NotNil tests if a Value is not nil
 func (w *Wrapper) NotNil(expr Any) {
 	if expr == nil || expr == a.Nil {
-		w.as.Fail("value should not be nil")
+		w.Fail("value should not be nil")
 	}
 }
