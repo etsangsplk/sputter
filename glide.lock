@@ -1,5 +1,5 @@
-hash: 96f6888450cff9b5abe267a3aefa29a4acec38f83c4746a75502f4b0a6ba853a
-updated: 2017-04-26T22:15:55.331592908+02:00
+hash: 122dc9bcc0b9c4b46ea359f0b0ba6b2f4e4fe7d2f4c51ee251537e26bd900ede
+updated: 2017-04-26T22:29:03.889300091+02:00
 imports:
 - name: github.com/cockroachdb/apd
   version: 9d633bb047cfb1e374ce070ac2fcc5593de144a8
@@ -8,7 +8,7 @@ imports:
   subpackages:
   - spew
 - name: github.com/kode4food/readline
-  version: 62c6fe6193755f722b8b8788aa7357be55a50ff1
+  version: 9f0af7bcfc299acb83cd26aedda464e22b06d835
 - name: github.com/pkg/errors
   version: ff09b135c25aae272398c51a07235b90a75aa4f0
 - name: github.com/pmezard/go-difflib
@@ -19,4 +19,8 @@ imports:
   version: 69483b4bd14f5845b5a1e55bca19e954e827f1d0
   subpackages:
   - assert
+- name: golang.org/x/sys
+  version: 9f30dcbe5be197894515a338a9bda9253567ea8f
+  subpackages:
+  - unix
 testImports: []
