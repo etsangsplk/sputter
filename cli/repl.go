@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/chzyer/readline"
+	"github.com/kode4food/readline"
 	a "github.com/kode4food/sputter/api"
 	d "github.com/kode4food/sputter/docstring"
 	p "github.com/kode4food/sputter/parser"
@@ -29,6 +29,7 @@ const (
 	output = bold + "%s" + reset
 	good   = domain + result + "[%d]= " + output
 	bad    = domain + red + "[%d]! " + output
+	paired = esc + "7m"
 )
 
 type any interface{}
@@ -65,6 +66,7 @@ func NewREPL() *REPL {
 
 	rl, err := readline.NewEx(&readline.Config{
 		HistoryFile: getHistoryFile(),
+		Painter:     repl,
 	})
 
 	if err != nil {
@@ -80,22 +82,22 @@ func NewREPL() *REPL {
 }
 
 // Run will perform the Eval-Print-Loop
-func (repl *REPL) Run() {
-	defer repl.rl.Close()
+func (r *REPL) Run() {
+	defer r.rl.Close()
 
 	fmt.Println(a.Language, a.Version)
 	help(nil, a.EmptyList)
-	repl.setInitialPrompt()
+	r.setInitialPrompt()
 
 	for {
-		line, err := repl.rl.Readline()
-		repl.buf.WriteString(line + "\n")
+		line, err := r.rl.Readline()
+		r.buf.WriteString(line + "\n")
 		fmt.Print(reset)
 
 		if err != nil {
-			emptyBuffer := isEmptyString(repl.buf.String())
+			emptyBuffer := isEmptyString(r.buf.String())
 			if err == readline.ErrInterrupt && !emptyBuffer {
-				repl.reset()
+				r.reset()
 				continue
 			}
 			break
@@ -105,65 +107,65 @@ func (repl *REPL) Run() {
 			continue
 		}
 
-		if !repl.evalBuffer() {
-			repl.setContinuePrompt()
+		if !r.evalBuffer() {
+			r.setContinuePrompt()
 			continue
 		}
 
-		repl.reset()
+		r.reset()
 	}
 	shutdown(nil, a.EmptyList)
 }
 
-func (repl *REPL) reset() {
-	repl.buf.Reset()
-	repl.idx++
-	repl.setInitialPrompt()
+func (r *REPL) reset() {
+	r.buf.Reset()
+	r.idx++
+	r.setInitialPrompt()
 }
 
-func (repl *REPL) setInitialPrompt() {
-	if a.GetContextNamespace(repl.ctx) != repl.ns {
+func (r *REPL) setInitialPrompt() {
+	if a.GetContextNamespace(r.ctx) != r.ns {
 		fmt.Println()
-		repl.ns = a.GetContextNamespace(repl.ctx)
+		r.ns = a.GetContextNamespace(r.ctx)
 	}
 
-	ns := repl.ns.Domain()
-	repl.setPrompt(fmt.Sprintf(prompt, ns, repl.idx))
+	ns := r.ns.Domain()
+	r.setPrompt(fmt.Sprintf(prompt, ns, r.idx))
 }
 
-func (repl *REPL) setContinuePrompt() {
-	repl.setPrompt(fmt.Sprintf(cont, repl.nsSpace(), repl.idx))
+func (r *REPL) setContinuePrompt() {
+	r.setPrompt(fmt.Sprintf(cont, r.nsSpace(), r.idx))
 }
 
-func (repl *REPL) setPrompt(s string) {
-	repl.rl.SetPrompt(s)	
+func (r *REPL) setPrompt(s string) {
+	r.rl.SetPrompt(s)
 }
 
-func (repl *REPL) nsSpace() string {
-	ns := string(repl.ns.Domain())
+func (r *REPL) nsSpace() string {
+	ns := string(r.ns.Domain())
 	return anyChar.ReplaceAllString(ns, " ")
 }
 
-func (repl *REPL) evalBuffer() (completed bool) {
+func (r *REPL) evalBuffer() (completed bool) {
 	defer func() {
 		if rec := recover(); rec != nil {
 			if isRecoverable(rec.(string)) {
 				completed = false
 				return
 			}
-			repl.outputError(rec)
+			r.outputError(rec)
 			completed = true
 		}
 	}()
 
-	l := p.NewLexer(repl.buf.String())
-	tr := p.NewReader(repl.ctx, l)
-	res := p.EvalReader(repl.ctx, tr)
-	repl.outputResult(res)
+	l := p.NewLexer(r.buf.String())
+	tr := p.NewReader(r.ctx, l)
+	res := p.EvalReader(r.ctx, tr)
+	r.outputResult(res)
 	return true
 }
 
-func (repl *REPL) outputResult(v any) {
+func (r *REPL) outputResult(v any) {
 	if v == nothing {
 		return
 	}
@@ -173,13 +175,87 @@ func (repl *REPL) outputResult(v any) {
 	} else {
 		sv = v
 	}
-	res := fmt.Sprintf(good, repl.nsSpace(), repl.idx, sv)
+	res := fmt.Sprintf(good, r.nsSpace(), r.idx, sv)
 	fmt.Println(res)
 }
 
-func (repl *REPL) outputError(err any) {
-	res := fmt.Sprintf(bad, repl.nsSpace(), repl.idx, err)
+func (r *REPL) outputError(err any) {
+	res := fmt.Sprintf(bad, r.nsSpace(), r.idx, err)
 	fmt.Println(res)
+}
+
+var (
+	openers = map[rune]rune{')': '(', ']': '[', '}': '{'}
+	closers = map[rune]rune{'(': ')', '[': ']', '{': '}'}
+)
+
+// Paint implements the Painter interface
+func (r *REPL) Paint(line []rune, pos int) []rune {
+	if line == nil || len(line) == 0 {
+		return line
+	}
+
+	l := len(line)
+	npos := pos
+	if npos < 0 {
+		npos = 0
+	}
+	if npos >= l {
+		npos = l - 1
+	}
+	k := line[npos]
+	if _, ok := openers[k]; ok {
+		return markOpener(line, npos, k)
+	} else if _, ok := closers[k]; ok {
+		return markCloser(line, npos, k)
+	}
+	return line
+}
+
+func markOpener(line []rune, pos int, c rune) []rune {
+	o := openers[c]
+	depth := 0
+	for i := pos; i >= 0; i-- {
+		if line[i] == o {
+			depth--
+			if depth == 0 {
+				return markMatch(line, i)
+			}
+		} else if line[i] == c {
+			depth++
+		}
+	}
+	return line
+}
+
+func markCloser(line []rune, pos int, o rune) []rune {
+	c := closers[o]
+	depth := 0
+	for i := pos; i < len(line); i++ {
+		if line[i] == c {
+			depth--
+			if depth == 0 {
+				return markMatch(line, i)
+			}
+		} else if line[i] == o {
+			depth++
+		}
+	}
+	return line
+}
+
+func markMatch(line []rune, pos int) []rune {
+	m := []rune{}
+	if pos > 0 {
+		m = append(m, line[:pos]...)
+	}
+	m = append(m, []rune(paired)...)
+	m = append(m, line[pos])
+	m = append(m, []rune(reset+code)...)
+	if pos < len(line)-1 {
+		m = append(m, line[pos+1:]...)
+	}
+	return m
 }
 
 func isEmptyString(s string) bool {
