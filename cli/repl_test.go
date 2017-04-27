@@ -3,6 +3,7 @@ package cli_test
 import (
 	"testing"
 
+	a "github.com/kode4food/sputter/api"
 	"github.com/kode4food/sputter/assert"
 	_ "github.com/kode4food/sputter/builtins"
 	c "github.com/kode4food/sputter/cli"
@@ -51,4 +52,31 @@ func TestREPLNonPaint(t *testing.T) {
 	as.String(src2, string(s2))
 	s3 := r.Paint([]rune{}, 0)
 	as.String("", string(s3))
+}
+
+func asApplicable(as *assert.Wrapper, v a.Value) a.Applicable {
+	if r, ok := v.(a.Applicable); ok {
+		return r
+	}
+	as.Fail("value is not Applicable")
+	return nil
+}
+
+func TestBuiltInUse(t *testing.T) {
+	as := assert.New(t)
+
+	c := a.NewEvalContext()
+	v, ok := c.Get("use")
+	as.True(ok)
+	as.NotNil(v)
+	ap := asApplicable(as, v)
+	nsName := a.NewLocalSymbol(a.Name("test-ns"))
+	ns, ok := ap.Apply(c, &a.Vector{nsName}).(a.Namespace)
+	as.True(ok)
+	as.String("test-ns", ns.Domain())
+
+	ns = a.GetContextNamespace(c)
+	as.String("test-ns", ns.Domain())
+
+	c.Delete(a.ContextDomain)
 }

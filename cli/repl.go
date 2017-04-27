@@ -352,7 +352,7 @@ func registerBuiltIn(v a.Annotated) {
 	ns.Put(n, v.(a.Value))
 }
 
-func registerREPLBuiltIns() {
+func registerBuiltIns() {
 	registerBuiltIn(
 		a.NewFunction(use).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("use"),
@@ -402,5 +402,5 @@ func getHistoryFile() string {
 }
 
 func init() {
-	registerREPLBuiltIns()
+	registerBuiltIns()
 }
