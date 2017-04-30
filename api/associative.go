@@ -27,7 +27,7 @@ func (a Associative) Count() int {
 	return len(a)
 }
 
-// ElementAt returns the Value corresponding to the key in the Associative
+// Get returns the Value corresponding to the key in the Associative
 func (a Associative) Get(key Value) (Value, bool) {
 	l := len(a)
 	for i := 0; i < l; i++ {

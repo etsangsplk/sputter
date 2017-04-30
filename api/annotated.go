@@ -49,7 +49,7 @@ func (v Metadata) Merge(nv Metadata) Metadata {
 	return r
 }
 
-// ElementAt returns the Value corresponding to the key in the Metadata
+// Get returns the Value corresponding to the key in the Metadata
 func (v Metadata) Get(key Value) (Value, bool) {
 	if r, ok := v[key]; ok {
 		return r, true
