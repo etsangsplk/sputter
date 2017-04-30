@@ -35,6 +35,14 @@ func TestMetadata(t *testing.T) {
 	s3 := v3.Str()
 	as.Contains(`"test" true`, s3)
 	as.Equal(v2, v3)
+
+	r1, ok := v2.Get(s("test"))
+	as.True(ok)
+	as.True(r1)
+
+	r2, ok := v2.Get(s("missing"))
+	as.False(ok)
+	as.Nil(r2)
 }
 
 func TestAnnotated(t *testing.T) {
