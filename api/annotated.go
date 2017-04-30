@@ -49,6 +49,14 @@ func (v Metadata) Merge(nv Metadata) Metadata {
 	return r
 }
 
+// ElementAt returns the Value corresponding to the key in the Metadata
+func (v Metadata) Get(key Value) (Value, bool) {
+	if r, ok := v[key]; ok {
+		return r, true
+	}
+	return Nil, false
+}
+
 // Str converts this Value into a Str
 func (v Metadata) Str() Str {
 	var b bytes.Buffer

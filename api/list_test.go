@@ -38,12 +38,12 @@ func TestList(t *testing.T) {
 	as.Identical(l1, l2.Rest())
 	as.Number(2, l2.Count())
 
-	r, ok := l2.Get(1)
+	r, ok := l2.ElementAt(1)
 	as.True(ok)
 	as.Equal(f(12), r)
 	as.Number(2, a.Count(l2))
 
-	r, ok = a.EmptyList.Get(1)
+	r, ok = a.EmptyList.ElementAt(1)
 	as.False(ok)
 	as.Equal(a.Nil, r)
 

@@ -50,15 +50,15 @@ func TestStr(t *testing.T) {
 	as.Number(10, len(r1))
 	as.String(`"`, string(r1[0]))
 
-	c, ok := s1.Get(1)
+	c, ok := s1.ElementAt(1)
 	as.True(ok)
 	as.String("e", c)
 
-	c, ok = s1.Get(5)
+	c, ok = s1.ElementAt(5)
 	as.False(ok)
 	as.Nil(c)
 
-	c, ok = s1.Get(6)
+	c, ok = s1.ElementAt(6)
 	as.False(ok)
 	as.Nil(c)
 
@@ -76,7 +76,7 @@ func TestEmptyStr(t *testing.T) {
 	as.Nil(s("").First())
 	as.String("", s("").Rest())
 
-	c, ok := s("").Get(-1)
+	c, ok := s("").ElementAt(-1)
 	as.False(ok)
 	as.Nil(c)
 }

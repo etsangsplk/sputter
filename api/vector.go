@@ -15,8 +15,8 @@ func (v Vector) Count() int {
 	return len(v)
 }
 
-// Get returns the Value at the indexed position in the Vector
-func (v Vector) Get(index int) (Value, bool) {
+// ElementAt returns the Value at the indexed position in the Vector
+func (v Vector) ElementAt(index int) (Value, bool) {
 	if index >= 0 && index < len(v) {
 		return v[index], true
 	}

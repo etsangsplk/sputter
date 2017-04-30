@@ -149,7 +149,7 @@ func (r *tokenReader) readList(m mode) a.Value {
 	return first()
 }
 
-func (r *tokenReader) function(t *Token) (a.Applicable, bool) {
+func (r *tokenReader) function(t *Token) (a.Value, bool) {
 	if t.Type != Identifier {
 		return nil, false
 	}
@@ -157,7 +157,7 @@ func (r *tokenReader) function(t *Token) (a.Applicable, bool) {
 	if s, ok := readIdentifier(t).(a.Symbol); ok {
 		if v, ok := s.Resolve(r.context); ok {
 			if f, ok := v.(a.Applicable); ok {
-				return f, true
+				return f.(a.Value), true
 			}
 		}
 	}

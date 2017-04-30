@@ -15,6 +15,7 @@ var functionMetadata = Metadata{MetaName: Name("<anon>")}
 
 // Function is a Value that can be invoked
 type Function interface {
+	Value
 	Applicable
 	Annotated
 	Named

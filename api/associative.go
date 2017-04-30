@@ -16,7 +16,7 @@ const (
 // Mapped interfaces allow a Sequence item to be retrieved by Name
 type Mapped interface {
 	Sequence
-	Get(key Value) (Value, bool)
+	Getter
 }
 
 // Associative is a Mappable that is implemented atop an array
@@ -27,7 +27,7 @@ func (a Associative) Count() int {
 	return len(a)
 }
 
-// Get returns the Value corresponding to the key in the Associative
+// ElementAt returns the Value corresponding to the key in the Associative
 func (a Associative) Get(key Value) (Value, bool) {
 	l := len(a)
 	for i := 0; i < l; i++ {

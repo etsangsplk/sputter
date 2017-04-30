@@ -14,7 +14,7 @@ func TestVector(t *testing.T) {
 	as.Number(4, v1.Count())
 	as.Number(4, a.Count(v1))
 
-	r, ok := v1.Get(2)
+	r, ok := v1.ElementAt(2)
 	as.True(ok)
 	as.String("are", r)
 	as.String(`["hello" "how" "are" "you?"]`, v1)
@@ -24,16 +24,16 @@ func TestVector(t *testing.T) {
 	as.Number(4, v1.Count())
 
 	v3 := v2.Conjoin(s("good?")).(a.Vector)
-	r, ok = v3.Get(5)
+	r, ok = v3.ElementAt(5)
 	as.True(ok)
 	as.String("good?", r)
 	as.Number(6, v3.Count())
 
-	r, ok = v3.Get(0)
+	r, ok = v3.ElementAt(0)
 	as.True(ok)
 	as.String("oh", r)
 
-	r, ok = v3.Get(3)
+	r, ok = v3.ElementAt(3)
 	as.True(ok)
 	as.String("are", r)
 
@@ -71,7 +71,7 @@ func TestVectorEval(t *testing.T) {
 		as.Fail("result is not a finite sequence")
 	}
 
-	i, ok := r.(a.Indexed).Get(2)
+	i, ok := r.(a.Indexed).ElementAt(2)
 	as.True(ok)
 	as.String("are", i)
 	as.String(`["hello" "how" "are" "you?"]`, r)

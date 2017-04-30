@@ -70,15 +70,15 @@ func TestReadVector(t *testing.T) {
 	vector, ok := v.(a.Vector)
 	as.True(ok)
 
-	res, ok := vector.Get(0)
+	res, ok := vector.ElementAt(0)
 	as.True(ok)
 	as.Number(99, res)
 
-	res, ok = vector.Get(1)
+	res, ok = vector.ElementAt(1)
 	as.True(ok)
 	as.String("hello", res)
 
-	res, ok = vector.Get(2)
+	res, ok = vector.ElementAt(2)
 	as.True(ok)
 	as.Number(55.120, res)
 }
@@ -250,7 +250,7 @@ func TestReaderPrepare(t *testing.T) {
 	v := tr.Next()
 
 	if rv, ok := v.(a.Vector); ok {
-		v1, ok := rv.Get(0)
+		v1, ok := rv.ElementAt(0)
 		as.True(ok)
 		as.String("you", v1)
 	} else {

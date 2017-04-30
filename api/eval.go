@@ -11,7 +11,6 @@ type Evaluable interface {
 // Applicable is the standard signature for any Value that can have
 // arguments applied to it
 type Applicable interface {
-	Value
 	Apply(Context, Sequence) Value
 }
 

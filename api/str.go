@@ -78,8 +78,8 @@ func (s Str) Count() int {
 	return utf8.RuneCountInString(string(s))
 }
 
-// Get returns the Character at the indexed position in the Str
-func (s Str) Get(index int) (Value, bool) {
+// ElementAt returns the Character at the indexed position in the Str
+func (s Str) ElementAt(index int) (Value, bool) {
 	if index < 0 {
 		return Nil, false
 	}

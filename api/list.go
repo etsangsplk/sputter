@@ -53,8 +53,8 @@ func (l *List) Count() int {
 	return l.count
 }
 
-// Get returns the Value at the indexed position in the List
-func (l *List) Get(index int) (Value, bool) {
+// ElementAt returns the Value at the indexed position in the List
+func (l *List) ElementAt(index int) (Value, bool) {
 	if index > l.count-1 || index < 0 {
 		return Nil, false
 	}

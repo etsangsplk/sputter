@@ -2,38 +2,56 @@ package builtins
 
 import (
 	"fmt"
+	"io"
+	"os"
 
 	a "github.com/kode4food/sputter/api"
 )
 
-type outputFunc func(a.Value)
+type outputFunc func(io.Writer, a.Value)
 
-func raw(v a.Value) {
-	fmt.Print(v.Str())
+const stdinReader = a.Name("*stdin*")
+const stdoutWriter = a.Name("*stdout*")
+
+func getStdOut(c a.Context) io.Writer {
+	if v, ok := c.Get(stdoutWriter); ok {
+		if n, ok := v.(a.Native); ok {
+			if w, ok := n.WrappedValue().(io.Writer); ok {
+				return w
+			}
+		}
+	}
+	return os.Stdout
 }
 
-func pretty(v a.Value) {
+func raw(w io.Writer, v a.Value) {
+	fmt.Fprint(w, v.Str())
+}
+
+func pretty(w io.Writer, v a.Value) {
 	if s, ok := v.(a.Str); ok {
-		fmt.Print(s)
+		fmt.Fprint(w, s)
 		return
 	}
-	fmt.Print(v.Str())
+	fmt.Fprint(w, v.Str())
 }
 
 func out(c a.Context, args a.Sequence, o outputFunc) a.Value {
+	w := getStdOut(c)
 	if args.IsSequence() {
-		o(a.Eval(c, args.First()))
+		o(w, a.Eval(c, args.First()))
 	}
 	for i := args.Rest(); i.IsSequence(); i = i.Rest() {
-		fmt.Print(" ")
-		o(a.Eval(c, i.First()))
+		fmt.Fprint(w, " ")
+		o(w, a.Eval(c, i.First()))
 	}
 	return a.Nil
 }
 
 func outn(c a.Context, args a.Sequence, o outputFunc) a.Value {
 	r := out(c, args, o)
-	fmt.Println("")
+	w := getStdOut(c)
+	fmt.Fprintln(w, "")
 	return r
 }
 

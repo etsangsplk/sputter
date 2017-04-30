@@ -44,7 +44,7 @@ type Counted interface {
 // Indexed interfaces allow a Sequence item to be retrieved by index
 type Indexed interface {
 	Sequence
-	Get(index int) (Value, bool)
+	Elementer
 }
 
 // Conjoiner interfaces allow a Sequence to be added to
@@ -65,7 +65,7 @@ func Count(v Value) int {
 func IndexedApply(s Indexed, c Context, args Sequence) Value {
 	i := AssertArityRange(args, 1, 2)
 	idx := AssertInteger(Eval(c, args.First()))
-	if r, ok := s.Get(idx); ok {
+	if r, ok := s.ElementAt(idx); ok {
 		return r
 	}
 	if i == 2 {

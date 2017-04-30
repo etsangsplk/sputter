@@ -114,7 +114,7 @@ func TestAssociativeLookup(t *testing.T) {
 	args := a.NewList(m1)
 	as.String("Sputter", nameKey.Apply(c, args))
 
-	defer expectError(as, a.Err(a.ExpectedMapped, f(99)))
+	defer expectError(as, a.Err(a.ExpectedGetter, f(99)))
 	nameKey.Apply(c, a.NewList(f(99)))
 }
 

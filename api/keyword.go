@@ -1,9 +1,13 @@
 package api
 
+// ExpectedGetter is thrown if the Value is not a Getter
+const ExpectedGetter = "expected a propertied value: %s"
+
 var keywords = make(Variables, 4096)
 
 // Keyword is an Atom-like Value that represents a Name for mapping purposes
 type Keyword interface {
+	Value
 	Applicable
 	Evaluable
 	Named
@@ -37,13 +41,13 @@ func (k *keyword) Eval(_ Context) Value {
 func (k *keyword) Apply(c Context, args Sequence) Value {
 	AssertArity(args, 1)
 	v := Eval(c, args.First())
-	if m, ok := v.(Mapped); ok {
-		if r, ok := m.Get(k); ok {
+	if g, ok := v.(Getter); ok {
+		if r, ok := g.Get(k); ok {
 			return r
 		}
 		panic(Err(KeyNotFound, k))
 	}
-	panic(Err(ExpectedMapped, v))
+	panic(Err(ExpectedGetter, v))
 }
 
 // Str converts this Value into a Str
