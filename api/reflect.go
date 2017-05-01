@@ -7,7 +7,7 @@ import (
 )
 
 // BadConversionType is raised if a native type can't be converted
-const BadConversionType = "Can not convert native type: %s"
+const BadConversionType = "can't convert native type: %s"
 
 // Native is the interface for wrapped Go values
 type Native interface {

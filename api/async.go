@@ -7,7 +7,7 @@ import (
 )
 
 // ExpectedUndelivered is thrown on an attempt to deliver a Promise twice
-const ExpectedUndelivered = "Can't deliver a promise twice"
+const ExpectedUndelivered = "can't deliver a promise twice"
 
 const (
 	undeliveredState uint32 = iota
