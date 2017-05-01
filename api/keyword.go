@@ -1,9 +1,11 @@
 package api
 
+import u "github.com/kode4food/sputter/util"
+
 // ExpectedGetter is thrown if the Value is not a Getter
 const ExpectedGetter = "expected a propertied value: %s"
 
-var keywords = make(Variables, 4096)
+var keywords = u.NewCache()
 
 // Keyword is an Atom-like Value that represents a Name for mapping purposes
 type Keyword interface {
@@ -19,12 +21,9 @@ type keyword struct {
 
 // NewKeyword returns an interned instance of a Keyword
 func NewKeyword(n Name) Keyword {
-	if r, ok := keywords[n]; ok {
-		return r.(Keyword)
-	}
-	r := &keyword{name: n}
-	keywords[n] = r
-	return r
+	return keywords.Get(n, func() u.Any {
+		return &keyword{name: n}
+	}).(Keyword)
 }
 
 // Name returns the Name component of the Keyword

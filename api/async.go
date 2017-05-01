@@ -3,16 +3,14 @@ package api
 import (
 	"runtime"
 	"sync"
+	"sync/atomic"
 )
 
 // ExpectedUndelivered is thrown on an attempt to deliver a Promise twice
 const ExpectedUndelivered = "Can't deliver a promise twice"
 
-type asyncState int
-
 const (
-	undeliveredState asyncState = iota
-	deliveringState
+	undeliveredState uint32 = iota
 	deliveredState
 )
 
@@ -35,8 +33,8 @@ type channelEmitter struct {
 }
 
 type channelSequence struct {
-	cond  *sync.Cond
-	state asyncState
+	mutex *sync.Mutex
+	state uint32
 	ch    chan Value
 
 	isSeq bool
@@ -46,7 +44,7 @@ type channelSequence struct {
 
 type promise struct {
 	cond  *sync.Cond
-	state asyncState
+	state uint32
 	val   Value
 }
 
@@ -100,7 +98,7 @@ func (e *channelEmitter) Str() Str {
 // NewChannelSequence produces a new Sequence whose Values come from a Go chan
 func NewChannelSequence(ch chan Value) Sequence {
 	return &channelSequence{
-		cond:  &sync.Cond{L: &sync.Mutex{}},
+		mutex: new(sync.Mutex),
 		state: undeliveredState,
 		ch:    ch,
 		rest:  EmptyList,
@@ -108,38 +106,23 @@ func NewChannelSequence(ch chan Value) Sequence {
 }
 
 func (c *channelSequence) resolve() *channelSequence {
-	cond := c.cond
-	if c.state == deliveredState {
+	if atomic.LoadUint32(&c.state) == deliveredState {
 		return c
 	}
 
-	cond.L.Lock()
-	if c.state == deliveredState {
-		cond.L.Unlock()
-		return c
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+
+	if c.state == undeliveredState {
+		ch := c.ch
+		if first, isSeq := <-ch; isSeq {
+			c.isSeq = isSeq
+			c.first = first
+			c.rest = NewChannelSequence(ch)
+		}
+		c.ch = nil
+		atomic.StoreUint32(&c.state, deliveredState)
 	}
-
-	if c.state == deliveringState {
-		cond.Wait()
-		cond.L.Unlock()
-		return c
-	}
-
-	c.state = deliveringState
-	ch := c.ch
-	c.ch = nil
-	cond.L.Unlock()
-
-	if first, isSeq := <-ch; isSeq {
-		c.isSeq = isSeq
-		c.first = first
-		c.rest = NewChannelSequence(ch)
-	}
-
-	c.state = deliveredState
-	c.cond = nil
-	cond.Broadcast()
-
 	return c
 }
 
@@ -176,13 +159,13 @@ func (c *channelSequence) Str() Str {
 // NewPromise instantiates a new Promise
 func NewPromise() Promise {
 	return &promise{
-		cond:  &sync.Cond{L: &sync.Mutex{}},
+		cond:  sync.NewCond(new(sync.Mutex)),
 		state: undeliveredState,
 	}
 }
 
 func (p *promise) Value() Value {
-	if p.state == deliveredState {
+	if atomic.LoadUint32(&p.state) == deliveredState {
 		return p.val
 	}
 
@@ -201,31 +184,23 @@ func (p *promise) checkNewValue(v Value) Value {
 }
 
 func (p *promise) Deliver(v Value) Value {
+	if atomic.LoadUint32(&p.state) == deliveredState {
+		return p.checkNewValue(v)
+	}
+
 	cond := p.cond
-	if p.state == deliveredState {
-		return p.checkNewValue(v)
-	}
-
 	cond.L.Lock()
-	if p.state == deliveredState {
-		cond.L.Unlock()
-		return p.checkNewValue(v)
+	defer cond.L.Unlock()
+
+	if p.state == undeliveredState {
+		p.val = v
+		atomic.StoreUint32(&p.state, deliveredState)
+		cond.Broadcast()
+		return v
 	}
 
-	if p.state == deliveringState {
-		cond.Wait()
-		cond.L.Unlock()
-		return p.checkNewValue(v)
-	}
-
-	p.state = deliveringState
-	cond.L.Unlock()
-
-	p.val = v
-	p.state = deliveredState
-	p.cond = nil
-	cond.Broadcast()
-	return v
+	cond.Wait()
+	return p.checkNewValue(v)
 }
 
 func (p *promise) Type() Name {

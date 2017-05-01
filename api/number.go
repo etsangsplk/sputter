@@ -38,7 +38,7 @@ func NewRatio(n int64, d int64) *Number {
 }
 
 func nativeDecimal() *apd.Decimal {
-	return &apd.Decimal{}
+	return new(apd.Decimal)
 }
 
 func nativeRatio() *big.Rat {

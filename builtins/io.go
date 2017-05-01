@@ -16,7 +16,7 @@ const stdoutWriter = a.Name("*stdout*")
 func getStdOut(c a.Context) io.Writer {
 	if v, ok := c.Get(stdoutWriter); ok {
 		if n, ok := v.(a.Native); ok {
-			if w, ok := n.WrappedValue().(io.Writer); ok {
+			if w, ok := n.NativeValue().(io.Writer); ok {
 				return w
 			}
 		}

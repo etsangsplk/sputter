@@ -1,9 +1,6 @@
 package api
 
-const (
-	defaultNamespaceEntries = 128
-	defaultSymbolEntries    = 4096
-)
+import u "github.com/kode4food/sputter/util"
 
 const (
 	// BuiltInDomain stores built-ins
@@ -22,10 +19,7 @@ const (
 	ExpectedNamespace = "value is not a namespace: %s"
 )
 
-type symbolMap map[Name](Symbol)
-type namespaceMap map[Name](Namespace)
-
-var namespaces = make(namespaceMap, defaultNamespaceEntries)
+var namespaces = u.NewCache()
 
 // Namespace is a container where Qualified Symbols are mapped to Values
 type Namespace interface {
@@ -38,7 +32,7 @@ type Namespace interface {
 type namespace struct {
 	Context
 	domain  Name
-	symbols symbolMap
+	symbols u.Cache
 }
 
 type withNamespace struct {
@@ -57,12 +51,9 @@ func (ns *namespace) Domain() Name {
 func (ns *namespace) Intern(n Name) Symbol {
 	d := ns.domain
 	k := qualifiedName(n, d)
-	if s, ok := ns.symbols[k]; ok {
-		return s
-	}
-	s := &symbol{name: n, domain: d}
-	ns.symbols[k] = s
-	return s
+	return ns.symbols.Get(k, func() u.Any {
+		return &symbol{name: n, domain: d}
+	}).(Symbol)
 }
 
 // Str converts this Value into a Str
@@ -72,16 +63,13 @@ func (ns *namespace) Str() Str {
 
 // GetNamespace returns the Namespace for the specified domain.
 func GetNamespace(n Name) Namespace {
-	if ns, ok := namespaces[n]; ok {
-		return ns
-	}
-	ns := &namespace{
-		Context: NewContext(),
-		domain:  n,
-		symbols: make(symbolMap, defaultSymbolEntries),
-	}
-	namespaces[n] = ns
-	return ns
+	return namespaces.Get(n, func() u.Any {
+		return &namespace{
+			Context: NewContext(),
+			domain:  n,
+			symbols: u.NewCache(),
+		}
+	}).(Namespace)
 }
 
 // GetContextNamespace resolves the Namespace based on its Context
@@ -121,15 +109,19 @@ func init() {
 	builtInContext := NewContext()
 	userContext := ChildContext(builtInContext)
 
-	namespaces[BuiltInDomain] = &namespace{
-		Context: builtInContext,
-		domain:  BuiltInDomain,
-		symbols: make(symbolMap, defaultSymbolEntries),
-	}
+	namespaces.Get(BuiltInDomain, func() u.Any {
+		return &namespace{
+			Context: builtInContext,
+			domain:  BuiltInDomain,
+			symbols: u.NewCache(),
+		}
+	})
 
-	namespaces[UserDomain] = &namespace{
-		Context: userContext,
-		domain:  UserDomain,
-		symbols: make(symbolMap, defaultSymbolEntries),
-	}
+	namespaces.Get(UserDomain, func() u.Any {
+		return &namespace{
+			Context: userContext,
+			domain:  UserDomain,
+			symbols: u.NewCache(),
+		}
+	})
 }
