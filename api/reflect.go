@@ -31,23 +31,15 @@ type typeInfo struct {
 }
 
 type (
-	propertyGetter  func(v reflect.Value) Value
-	propertyGetters map[string]propertyGetter
+	nativeMapper    func(v reflect.Value) Value
+	propertyGetters map[string]nativeMapper
 )
 
 var types = u.NewCache()
 
 // NewNative wraps a native value using Go's reflection API
 func NewNative(a interface{}) Native {
-	v := reflect.ValueOf(a)
-	t := v.Type()
-	ti := getTypeInfo(t)
-
-	return &native{
-		value:    v,
-		typeInfo: ti,
-		meta:     ti.meta,
-	}
+	return toNative(reflect.ValueOf(a)).(Native)
 }
 
 func getTypeInfo(t reflect.Type) *typeInfo {
@@ -128,32 +120,15 @@ func makePropertyGetters(t reflect.Type) propertyGetters {
 	return g
 }
 
-type converter func(v reflect.Value) Value
+var converters map[reflect.Kind]nativeMapper
 
-var converters = map[reflect.Kind]converter{
-	reflect.Bool:    toBool,
-	reflect.Int:     intToNumber,
-	reflect.Int8:    intToNumber,
-	reflect.Int16:   intToNumber,
-	reflect.Int32:   intToNumber,
-	reflect.Int64:   intToNumber,
-	reflect.Uint:    intToNumber,
-	reflect.Uint8:   intToNumber,
-	reflect.Uint16:  intToNumber,
-	reflect.Uint32:  intToNumber,
-	reflect.Uint64:  intToNumber,
-	reflect.Float32: floatToNumber,
-	reflect.Float64: floatToNumber,
-	reflect.String:  toStr,
-}
-
-func makeIndirectGetter(g propertyGetter) propertyGetter {
+func makeIndirectGetter(g nativeMapper) nativeMapper {
 	return func(v reflect.Value) Value {
 		return g(v.Elem())
 	}
 }
 
-func makeFieldGetter(idx int, fi reflect.StructField) propertyGetter {
+func makeFieldGetter(idx int, fi reflect.StructField) nativeMapper {
 	if c, ok := converters[fi.Type.Kind()]; ok {
 		return func(v reflect.Value) Value {
 			return c(v.Field(idx))
@@ -173,6 +148,17 @@ func toStr(v reflect.Value) Value {
 	return Str(v.String())
 }
 
+func toNative(v reflect.Value) Value {
+	t := v.Type()
+	ti := getTypeInfo(t)
+
+	return &native{
+		value:    v,
+		typeInfo: ti,
+		meta:     ti.meta,
+	}
+}
+
 func floatToNumber(v reflect.Value) Value {
 	return NewFloat(v.Float())
 }
@@ -185,8 +171,29 @@ func noConvert(v reflect.Value) Value {
 	panic(Err(BadConversionType, v.Type().String()))
 }
 
-func makeMethodGetter(mi reflect.Method) propertyGetter {
+func makeMethodGetter(mi reflect.Method) nativeMapper {
 	return func(v reflect.Value) Value {
 		return Nil
+	}
+}
+
+func init() {
+	converters = map[reflect.Kind]nativeMapper{
+		reflect.Bool:    toBool,
+		reflect.Int:     intToNumber,
+		reflect.Int8:    intToNumber,
+		reflect.Int16:   intToNumber,
+		reflect.Int32:   intToNumber,
+		reflect.Int64:   intToNumber,
+		reflect.Uint:    intToNumber,
+		reflect.Uint8:   intToNumber,
+		reflect.Uint16:  intToNumber,
+		reflect.Uint32:  intToNumber,
+		reflect.Uint64:  intToNumber,
+		reflect.Float32: floatToNumber,
+		reflect.Float64: floatToNumber,
+		reflect.String:  toStr,
+		reflect.Struct:  toNative,
+		reflect.Ptr:     toNative,
 	}
 }
