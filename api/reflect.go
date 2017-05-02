@@ -2,6 +2,8 @@ package api
 
 import (
 	"reflect"
+	"regexp"
+	"strings"
 
 	u "github.com/kode4food/sputter/util"
 )
@@ -35,7 +37,11 @@ type (
 	propertyGetters map[string]nativeMapper
 )
 
-var types = u.NewCache()
+var (
+	types      = u.NewCache()
+	camelCase  = regexp.MustCompile("[a-z][A-Z]")
+	converters map[reflect.Kind]nativeMapper
+)
 
 // NewNative wraps a native value using Go's reflection API
 func NewNative(a interface{}) Native {
@@ -55,8 +61,15 @@ func getTypeInfo(t reflect.Type) *typeInfo {
 	}).(*typeInfo)
 }
 
+func kebabCase(n string) string {
+	r := camelCase.ReplaceAllStringFunc(n, func(s string) string {
+		return s[:1] + "-" + s[1:]
+	})
+	return strings.ToLower(r)
+}
+
 func typeName(t reflect.Type) Name {
-	return Name(t.String())
+	return Name(kebabCase(t.String()))
 }
 
 // NativeValue returns the wrapped Go value
@@ -110,17 +123,17 @@ func makePropertyGetters(t reflect.Type) propertyGetters {
 				// we only surface exported fields
 				continue
 			}
-			g[fi.Name] = makeFieldGetter(i, fi)
+			n := kebabCase(fi.Name)
+			g[n] = makeFieldGetter(i, fi)
 		}
 	}
 	for i := 0; i < t.NumMethod(); i++ {
 		mi := t.Method(i)
-		g[mi.Name] = makeMethodGetter(mi)
+		n := kebabCase(mi.Name)
+		g[n] = makeMethodGetter(mi)
 	}
 	return g
 }
-
-var converters map[reflect.Kind]nativeMapper
 
 func makeIndirectGetter(g nativeMapper) nativeMapper {
 	return func(v reflect.Value) Value {
@@ -136,15 +149,15 @@ func makeFieldGetter(idx int, fi reflect.StructField) nativeMapper {
 	}
 
 	return func(v reflect.Value) Value {
-		return noConvert(v.Field(idx))
+		return badConvert(v.Field(idx))
 	}
 }
 
-func toBool(v reflect.Value) Value {
+func nativeToBool(v reflect.Value) Value {
 	return Bool(v.Bool())
 }
 
-func toStr(v reflect.Value) Value {
+func nativeToStr(v reflect.Value) Value {
 	return Str(v.String())
 }
 
@@ -167,7 +180,7 @@ func intToNumber(v reflect.Value) Value {
 	return NewFloat(float64(v.Int()))
 }
 
-func noConvert(v reflect.Value) Value {
+func badConvert(v reflect.Value) Value {
 	panic(Err(BadConversionType, v.Type().String()))
 }
 
@@ -179,7 +192,7 @@ func makeMethodGetter(mi reflect.Method) nativeMapper {
 
 func init() {
 	converters = map[reflect.Kind]nativeMapper{
-		reflect.Bool:    toBool,
+		reflect.Bool:    nativeToBool,
 		reflect.Int:     intToNumber,
 		reflect.Int8:    intToNumber,
 		reflect.Int16:   intToNumber,
@@ -192,7 +205,7 @@ func init() {
 		reflect.Uint64:  intToNumber,
 		reflect.Float32: floatToNumber,
 		reflect.Float64: floatToNumber,
-		reflect.String:  toStr,
+		reflect.String:  nativeToStr,
 		reflect.Struct:  toNative,
 		reflect.Ptr:     toNative,
 	}

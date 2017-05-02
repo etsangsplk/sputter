@@ -79,11 +79,15 @@ func (s symbol) Namespace(c Context) Namespace {
 	return GetContextNamespace(c)
 }
 
+func resolveNamespace(c Context, domain Name) Namespace {
+	return GetNamespace(domain)
+}
+
 // Resolve a Symbol against a Context
 func (s symbol) Resolve(c Context) (Value, bool) {
 	d := s.domain
 	if d != LocalDomain {
-		return GetNamespace(d).Get(s.name)
+		return resolveNamespace(c, d).Get(s.name)
 	}
 	n := s.name
 	if r, ok := c.Get(n); ok {
