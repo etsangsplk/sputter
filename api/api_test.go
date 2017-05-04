@@ -1,8 +1,6 @@
 package api_test
 
 import (
-	"testing"
-
 	a "github.com/kode4food/sputter/api"
 	"github.com/kode4food/sputter/assert"
 )
@@ -15,13 +13,10 @@ func f(f float64) *a.Number {
 	return a.NewFloat(f)
 }
 
-func TestTruthy(t *testing.T) {
-	as := assert.New(t)
-
-	as.Truthy(a.True)
-	as.Truthy(a.NewList(a.Str("Hello")))
-	as.Truthy(a.Str("hello"))
-
-	as.Falsey(a.Nil)
-	as.Falsey(a.False)
+func expectError(as *assert.Wrapper, err string) {
+	if rec := recover(); rec != nil {
+		as.String(err, rec)
+		return
+	}
+	as.Fail("error not raised")
 }

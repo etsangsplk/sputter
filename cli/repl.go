@@ -17,6 +17,10 @@ import (
 	p "github.com/kode4food/sputter/parser"
 )
 
+type any interface{}
+
+type sentinel struct{}
+
 var anyChar = regexp.MustCompile(".")
 
 const replBuiltIns = "*repl-builtins*"
@@ -32,11 +36,7 @@ const (
 	paired = esc + "7m"
 )
 
-type any interface{}
-
-type empty struct{}
-
-var nothing = a.Atom("nothing")
+var nothing = &sentinel{}
 
 var farewells = []string{
 	"Adiós!",
@@ -50,6 +50,11 @@ var farewells = []string{
 	"再见!",
 	"じゃあね",
 }
+
+var (
+	openers = map[rune]rune{')': '(', ']': '[', '}': '{'}
+	closers = map[rune]rune{'(': ')', '[': ']', '{': '}'}
+)
 
 // REPL manages a Read-Eval-Print Loop
 type REPL struct {
@@ -184,11 +189,6 @@ func (r *REPL) outputError(err any) {
 	fmt.Println(res)
 }
 
-var (
-	openers = map[rune]rune{')': '(', ']': '[', '}': '{'}
-	closers = map[rune]rune{'(': ')', '[': ']', '{': '}'}
-)
-
 // Paint implements the Painter interface
 func (r *REPL) Paint(line []rune, pos int) []rune {
 	if line == nil || len(line) == 0 {
@@ -210,6 +210,10 @@ func (r *REPL) Paint(line []rune, pos int) []rune {
 		return markCloser(line, npos, k)
 	}
 	return line
+}
+
+func (s *sentinel) Str() a.Str {
+	return ""
 }
 
 func markOpener(line []rune, pos int, c rune) []rune {

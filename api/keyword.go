@@ -7,7 +7,7 @@ const ExpectedGetter = "expected a propertied value: %s"
 
 var keywords = u.NewCache()
 
-// Keyword is an Atom-like Value that represents a Name for mapping purposes
+// Keyword is a Value that represents a Name that resolves to itself
 type Keyword interface {
 	Value
 	Applicable

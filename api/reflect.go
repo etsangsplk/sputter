@@ -40,7 +40,7 @@ type (
 var (
 	types      = u.NewCache()
 	camelCase  = regexp.MustCompile("[a-z][A-Z]")
-	converters map[reflect.Kind]nativeMapper
+	convertOut map[reflect.Kind]nativeMapper
 )
 
 // NewNative wraps a native value using Go's reflection API
@@ -120,8 +120,7 @@ func makePropertyGetters(t reflect.Type) propertyGetters {
 		for i := 0; i < t.NumField(); i++ {
 			fi := t.Field(i)
 			if fi.PkgPath != "" {
-				// we only surface exported fields
-				continue
+				continue // only surface exported fields
 			}
 			n := kebabCase(fi.Name)
 			g[n] = makeFieldGetter(i, fi)
@@ -129,6 +128,9 @@ func makePropertyGetters(t reflect.Type) propertyGetters {
 	}
 	for i := 0; i < t.NumMethod(); i++ {
 		mi := t.Method(i)
+		if mi.PkgPath != "" {
+			continue // only surface exported methods
+		}
 		n := kebabCase(mi.Name)
 		g[n] = makeMethodGetter(mi)
 	}
@@ -142,7 +144,7 @@ func makeIndirectGetter(g nativeMapper) nativeMapper {
 }
 
 func makeFieldGetter(idx int, fi reflect.StructField) nativeMapper {
-	if c, ok := converters[fi.Type.Kind()]; ok {
+	if c, ok := convertOut[fi.Type.Kind()]; ok {
 		return func(v reflect.Value) Value {
 			return c(v.Field(idx))
 		}
@@ -191,7 +193,7 @@ func makeMethodGetter(mi reflect.Method) nativeMapper {
 }
 
 func init() {
-	converters = map[reflect.Kind]nativeMapper{
+	convertOut = map[reflect.Kind]nativeMapper{
 		reflect.Bool:    nativeToBool,
 		reflect.Int:     intToNumber,
 		reflect.Int8:    intToNumber,

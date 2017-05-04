@@ -3,39 +3,24 @@ package api
 // Comparison represents the result of a equality comparison
 type Comparison int
 
-const (
-	// LessThan means left Value is less than right Value
-	LessThan Comparison = -1
-
-	// EqualTo means left Value is equal to right Value
-	EqualTo Comparison = 0
-
-	// GreaterThan means left Value is greater than right Value
-	GreaterThan Comparison = 1
-)
-
-// Value is the generic interface for all 'Values'
-type Value interface {
-	Str() Str
-}
-
 // Name is a Variable name
 type Name string
 
 // Bool represents the values True or False
 type Bool bool
 
-type atom struct {
-	str Str
+// Variables represents a mapping from Name to Value
+type Variables map[Name]Value
+
+// Value is the generic interface for all 'Values'
+type Value interface {
+	Str() Str
 }
 
 // Comparer is an interface for a Value capable of comparing.
 type Comparer interface {
 	Compare(Comparer) Comparison
 }
-
-// Variables represents a mapping from Name to Value
-type Variables map[Name]Value
 
 // Typed is the generic interface for Values that are typed
 type Typed interface {
@@ -57,6 +42,30 @@ type Named interface {
 	Name() Name
 }
 
+type nilValue struct{}
+
+const (
+	// LessThan means left Value is less than right Value
+	LessThan Comparison = -1
+
+	// EqualTo means left Value is equal to right Value
+	EqualTo Comparison = 0
+
+	// GreaterThan means left Value is greater than right Value
+	GreaterThan Comparison = 1
+)
+
+var (
+	// True represents the boolean value of True
+	True = Bool(true)
+
+	// False represents the boolean value of false
+	False = Bool(false)
+
+	// Nil is a value that represents the absence of a Value
+	Nil = &nilValue{}
+)
+
 // Name makes Name Named
 func (n Name) Name() Name {
 	return n
@@ -67,6 +76,16 @@ func (n Name) Str() Str {
 	return Str(n)
 }
 
+// Apply makes Bool Applicable
+func (b Bool) Apply(c Context, args Sequence) Value {
+	for i := args; i.IsSequence(); i = i.Rest() {
+		if Eval(c, i.First()) != b {
+			return False
+		}
+	}
+	return True
+}
+
 // Str converts this Value into a Str
 func (b Bool) Str() Str {
 	if bool(b) {
@@ -75,12 +94,27 @@ func (b Bool) Str() Str {
 	return "false"
 }
 
-// Atom instantiates a new Atom
-func Atom(str Str) Value {
-	return &atom{str: str}
+// Apply makes nilValue Applicable
+func (n *nilValue) Apply(c Context, args Sequence) Value {
+	for i := args; i.IsSequence(); i = i.Rest() {
+		if Eval(c, i.First()) != Nil {
+			return False
+		}
+	}
+	return True
 }
 
 // Str converts this Value into a Str
-func (a *atom) Str() Str {
-	return a.str
+func (n *nilValue) Str() Str {
+	return "nil"
+}
+
+// Truthy evaluates whether or not a Value is Truthy
+func Truthy(v Value) bool {
+	switch {
+	case v == False || v == Nil:
+		return false
+	default:
+		return true
+	}
 }

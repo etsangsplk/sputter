@@ -24,7 +24,7 @@ func Eval(c Context, v Value) Value {
 
 // EvalSequence evaluates each element of the provided Sequence
 func EvalSequence(c Context, s Sequence) Value {
-	r := Nil
+	var r Value = Nil
 	for i := s; i.IsSequence(); i = i.Rest() {
 		r = Eval(c, i.First())
 	}

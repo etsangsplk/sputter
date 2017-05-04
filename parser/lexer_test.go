@@ -34,8 +34,8 @@ func TestWhitespace(t *testing.T) {
 func TestEmptyList(t *testing.T) {
 	as := assert.New(t)
 	l := p.NewLexer(" ( \t ) ")
-	assertToken(as, makeToken(p.ListStart, a.Atom("(")), l.Next())
-	assertToken(as, makeToken(p.ListEnd, a.Atom(")")), l.Next())
+	assertToken(as, makeToken(p.ListStart, s("(")), l.Next())
+	assertToken(as, makeToken(p.ListEnd, s(")")), l.Next())
 	assertToken(as, p.EOFToken, l.Next())
 }
 
@@ -54,8 +54,8 @@ func TestNumbers(t *testing.T) {
 func TestStrings(t *testing.T) {
 	as := assert.New(t)
 	l := p.NewLexer(` "hello there" "how's \"life\"?"  `)
-	assertToken(as, makeToken(p.String, a.Atom(`hello there`)), l.Next())
-	assertToken(as, makeToken(p.String, a.Atom(`how's "life"?`)), l.Next())
+	assertToken(as, makeToken(p.String, s(`hello there`)), l.Next())
+	assertToken(as, makeToken(p.String, s(`how's "life"?`)), l.Next())
 	assertToken(as, p.EOFToken, l.Next())
 }
 
@@ -65,8 +65,8 @@ func TestMultiLine(t *testing.T) {
   "how's life?"
 99`)
 
-	assertToken(as, makeToken(p.String, a.Atom(`hello there`)), l.Next())
-	assertToken(as, makeToken(p.String, a.Atom(`how's life?`)), l.Next())
+	assertToken(as, makeToken(p.String, s(`hello there`)), l.Next())
+	assertToken(as, makeToken(p.String, s(`how's life?`)), l.Next())
 	assertToken(as, makeToken(p.Number, f(99)), l.Next())
 	assertToken(as, p.EOFToken, l.Next())
 }
