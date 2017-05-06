@@ -11,7 +11,9 @@ func str(c a.Context, args a.Sequence) a.Value {
 	var b bytes.Buffer
 	for i := args; i.IsSequence(); i = i.Rest() {
 		v := a.Eval(c, i.First())
-		if s, ok := v.(a.Str); ok {
+		if v == a.Nil {
+			continue
+		} else if s, ok := v.(a.Str); ok {
 			b.WriteString(string(s))
 		} else {
 			b.WriteString(string(v.Str()))
