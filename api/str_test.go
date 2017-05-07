@@ -68,6 +68,9 @@ func TestStr(t *testing.T) {
 	as.Number(3, a.Count(s6))
 	as.String("再", s6.First())
 	as.String("见!", s6.Rest())
+
+	defer as.ExpectError(a.Err(a.ExpectedStr, f(99)))
+	a.AssertStr(f(99))
 }
 
 func TestEmptyStr(t *testing.T) {

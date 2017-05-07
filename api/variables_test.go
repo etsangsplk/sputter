@@ -22,6 +22,10 @@ func TestBool(t *testing.T) {
 	as.False(a.True.Apply(c, a.Vector{a.True, a.False, a.True}))
 	as.True(a.False.Apply(c, a.Vector{a.False, a.False, a.False}))
 	as.False(a.False.Apply(c, a.Vector{a.True, a.False, a.True}))
+	as.True(a.AssertBool(a.True))
+
+	defer as.ExpectError(a.Err(a.ExpectedBool, s("not bool")))
+	a.AssertBool(s("not bool"))
 }
 
 func TestTruthy(t *testing.T) {
