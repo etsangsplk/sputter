@@ -6,132 +6,26 @@ import (
 	"strings"
 
 	a "github.com/kode4food/sputter/api"
-	u "github.com/kode4food/sputter/util"
 )
 
-// BadConversionType is raised if a value type can't be converted
+// BadConversionType is raised if a type can't be converted
 const BadConversionType = "can't convert between type: %s"
 
-// Value is the interface for wrapped Go values
-type Value interface {
-	a.Value
-	a.Annotated
-	a.Getter
-	Wrapped() interface{}
-}
-
-type value struct {
-	value    reflect.Value
-	typeInfo *typeInfo
-	meta     a.Metadata
-}
-
-type typeInfo struct {
-	name    a.Name
-	typ     reflect.Type
-	getters propertyGetters
-	meta    a.Metadata
-}
-
-type (
-	outMapper       func(reflect.Value) a.Value
-	propertyGetters map[string]outMapper
-)
+type outMapper func(reflect.Value) a.Value
 
 var (
-	types     = u.NewCache()
-	camelCase = regexp.MustCompile("[a-z][A-Z]")
+	camelCase  = regexp.MustCompile("[a-z][A-Z]")
+	convertOut map[reflect.Kind]outMapper
 )
 
-// NewValue wraps a value value using Go's reflection API
-func NewValue(a interface{}) Value {
-	return wrapValue(reflect.ValueOf(a)).(Value)
-}
-
-func wrapValue(v reflect.Value) a.Value {
+// New wraps a native wrapped using Go's reflection API
+func New(i interface{}) a.Value {
+	v := reflect.ValueOf(i)
 	t := v.Type()
-	ti := getTypeInfo(t)
-
-	return &value{
-		value:    v,
-		typeInfo: ti,
-		meta:     ti.meta,
+	if c, ok := convertOut[t.Kind()]; ok {
+		return c(v)
 	}
-}
-
-// Wrapped returns the wrapped Go value
-func (n *value) Wrapped() interface{} {
-	return n.value.Interface()
-}
-
-// Metadata makes Value Annotated
-func (n *value) Metadata() a.Metadata {
-	return n.meta
-}
-
-// WithMetadata copies the Value with new Metadata
-func (n *value) WithMetadata(md a.Metadata) a.Annotated {
-	return &value{
-		value:    n.value,
-		typeInfo: n.typeInfo,
-		meta:     n.meta.Merge(md),
-	}
-}
-
-func (n *value) Get(key a.Value) (a.Value, bool) {
-	name := string(key.Str())
-	if g, ok := n.typeInfo.getters[name]; ok {
-		return g(n.value), true
-	}
-	return a.Nil, false
-}
-
-// Type returns the type name of the wrapped value
-func (n *value) Type() a.Name {
-	return n.meta[a.MetaType].(a.Name)
-}
-
-// Str converts this Value into a Str
-func (n *value) Str() a.Str {
-	return a.MakeDumpStr(n)
-}
-
-func getTypeInfo(t reflect.Type) *typeInfo {
-	tn := typeName(t)
-	return types.Get(tn, func() u.Any {
-		return &typeInfo{
-			name: tn,
-			meta: a.Metadata{
-				a.MetaType: tn,
-			},
-			getters: makePropertyGetters(t),
-		}
-	}).(*typeInfo)
-}
-
-func makePropertyGetters(t reflect.Type) propertyGetters {
-	g := propertyGetters{}
-	switch t.Kind() {
-	case reflect.Ptr:
-		for k, v := range makePropertyGetters(t.Elem()) {
-			g[k] = makeIndirectGetter(v)
-		}
-	case reflect.Struct:
-		for k, v := range makeStructGetters(t) {
-			g[k] = v
-		}
-	}
-	for k, v := range makeMethodGetters(t) {
-		g[k] = v
-	}
-
-	return g
-}
-
-func makeIndirectGetter(g outMapper) outMapper {
-	return func(v reflect.Value) a.Value {
-		return g(v.Elem())
-	}
+	panic(a.Err(BadConversionType, t))
 }
 
 func typeName(t reflect.Type) a.Name {
@@ -143,4 +37,41 @@ func kebabCase(n string) string {
 		return s[:1] + "-" + s[1:]
 	})
 	return strings.ToLower(r)
+}
+
+func valueToBool(v reflect.Value) a.Value {
+	return a.Bool(v.Bool())
+}
+
+func valueToStr(v reflect.Value) a.Value {
+	return a.Str(v.String())
+}
+
+func floatValueToNumber(v reflect.Value) a.Value {
+	return a.NewFloat(v.Float())
+}
+
+func intValueToNumber(v reflect.Value) a.Value {
+	return a.NewFloat(float64(v.Int()))
+}
+
+func init() {
+	convertOut = map[reflect.Kind]outMapper{
+		reflect.Bool:    valueToBool,
+		reflect.Int:     intValueToNumber,
+		reflect.Int8:    intValueToNumber,
+		reflect.Int16:   intValueToNumber,
+		reflect.Int32:   intValueToNumber,
+		reflect.Int64:   intValueToNumber,
+		reflect.Uint:    intValueToNumber,
+		reflect.Uint8:   intValueToNumber,
+		reflect.Uint16:  intValueToNumber,
+		reflect.Uint32:  intValueToNumber,
+		reflect.Uint64:  intValueToNumber,
+		reflect.Float32: floatValueToNumber,
+		reflect.Float64: floatValueToNumber,
+		reflect.String:  valueToStr,
+		reflect.Struct:  Wrap,
+		reflect.Ptr:     Wrap,
+	}
 }

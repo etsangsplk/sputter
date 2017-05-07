@@ -22,8 +22,9 @@ type (
 var convertIn map[reflect.Kind]inMapper
 
 func makeMethodGetters(t reflect.Type) propertyGetters {
-	r := propertyGetters{}
-	for i := 0; i < t.NumMethod(); i++ {
+	l := t.NumMethod()
+	r := make(propertyGetters, l)
+	for i := 0; i < l; i++ {
 		mi := t.Method(i)
 		if mi.PkgPath != "" {
 			continue // only surface exported methods

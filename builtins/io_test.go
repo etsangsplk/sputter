@@ -16,7 +16,7 @@ func testOutput(t *testing.T, src string, expected string) {
 	o, _ := ns.Get("*stdout*")
 	ns.Delete("*stdout*")
 	w := bytes.NewBufferString("")
-	ns.Put("*stdout*", n.NewValue(w))
+	ns.Put("*stdout*", n.New(w))
 
 	runCode(src)
 

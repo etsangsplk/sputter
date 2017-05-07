@@ -45,7 +45,7 @@ func TestNestedStructReflect(t *testing.T) {
 
 	r6, ok := n1.Get(a.Name("n"))
 	as.True(ok)
-	n2, ok := r6.(r.Value)
+	n2, ok := r6.(r.Wrapped)
 	as.True(ok)
 	as.NotNil(n2)
 	r7, ok := n2.Get(a.Name("nested"))
@@ -54,7 +54,7 @@ func TestNestedStructReflect(t *testing.T) {
 
 	r8, ok := n1.Get(a.Name("r"))
 	as.True(ok)
-	n3, ok := r8.(r.Value)
+	n3, ok := r8.(r.Wrapped)
 	as.True(ok)
 	as.NotNil(n3)
 	r9, ok := n3.Get(a.Name("s"))
