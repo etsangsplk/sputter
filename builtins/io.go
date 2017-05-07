@@ -6,6 +6,7 @@ import (
 	"os"
 
 	a "github.com/kode4food/sputter/api"
+	n "github.com/kode4food/sputter/native"
 )
 
 type outputFunc func(io.Writer, a.Value)
@@ -15,8 +16,8 @@ const stdoutWriter = a.Name("*stdout*")
 
 func getStdOut(c a.Context) io.Writer {
 	if v, ok := c.Get(stdoutWriter); ok {
-		if n, ok := v.(a.Native); ok {
-			if w, ok := n.NativeValue().(io.Writer); ok {
+		if n, ok := v.(n.Value); ok {
+			if w, ok := n.Wrapped().(io.Writer); ok {
 				return w
 			}
 		}

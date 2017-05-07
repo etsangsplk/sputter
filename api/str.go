@@ -6,6 +6,9 @@ import (
 	"unicode/utf8"
 )
 
+// ExpectedStr is thrown when a Value is not a Str
+const ExpectedStr = "value is not a string: %s"
+
 // Str is the Sequence-compatible representation of string values
 type Str string
 
@@ -126,4 +129,12 @@ func MakeDumpStr(v Value) Str {
 		m = m.Merge(Metadata{MetaMeta: a.Metadata()})
 	}
 	return m.Str()
+}
+
+// AssertStr will cast a Value into a Str or explode violently
+func AssertStr(v Value) Str {
+	if s, ok := v.(Str); ok {
+		return s
+	}
+	panic(Err(ExpectedStr, v))
 }

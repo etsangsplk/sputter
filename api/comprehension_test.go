@@ -160,7 +160,7 @@ func TestReduce(t *testing.T) {
 	as.Number(100, a.Reduce(nil, a.Vector{f(10), f(20), f(30), f(40)}, add))
 
 	err := a.Err(a.BadMinimumArity, 2, 1)
-	defer expectError(as, err)
+	defer as.ExpectError(err)
 	a.Reduce(nil, a.Vector{f(10)}, add)
 }
 

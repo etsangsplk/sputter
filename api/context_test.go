@@ -70,6 +70,6 @@ func TestRebind(t *testing.T) {
 	c := a.NewContext()
 	c.Put("hello", s("there"))
 
-	defer expectError(as, a.Err(a.AlreadyBound, a.Name("hello")))
+	defer as.ExpectError(a.Err(a.AlreadyBound, a.Name("hello")))
 	c.Put("hello", s("twice"))
 }

@@ -79,7 +79,7 @@ func TestAssociativePrepend(t *testing.T) {
 		as.Fail("map.Eval() didn't return an Associative")
 	}
 
-	defer expectError(as, a.ExpectedPair)
+	defer as.ExpectError(a.ExpectedPair)
 	m2.Conjoin(f(99))
 }
 
@@ -114,7 +114,7 @@ func TestAssociativeLookup(t *testing.T) {
 	args := a.NewList(m1)
 	as.String("Sputter", nameKey.Apply(c, args))
 
-	defer expectError(as, a.Err(a.ExpectedGetter, f(99)))
+	defer as.ExpectError(a.Err(a.ExpectedGetter, f(99)))
 	nameKey.Apply(c, a.NewList(f(99)))
 }
 
@@ -125,7 +125,7 @@ func TestAssociativeMiss(t *testing.T) {
 	nameKey := a.NewKeyword("miss")
 	c := a.NewContext()
 
-	defer expectError(as, a.Err(a.KeyNotFound, nameKey))
+	defer as.ExpectError(a.Err(a.KeyNotFound, nameKey))
 	m1.Apply(c, a.NewList(nameKey))
 }
 
@@ -136,7 +136,7 @@ func TestKeywordMiss(t *testing.T) {
 	nameKey := a.NewKeyword("miss")
 	c := a.NewContext()
 
-	defer expectError(as, a.Err(a.KeyNotFound, nameKey))
+	defer as.ExpectError(a.Err(a.KeyNotFound, nameKey))
 	nameKey.Apply(c, a.NewList(m1))
 }
 
@@ -145,6 +145,6 @@ func TestAssertMapped(t *testing.T) {
 	m1 := getTestMap()
 	a.AssertMapped(m1)
 
-	defer expectError(as, a.Err(a.ExpectedMapped, f(99)))
+	defer as.ExpectError(a.Err(a.ExpectedMapped, f(99)))
 	a.AssertMapped(f(99))
 }

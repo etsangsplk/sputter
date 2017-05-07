@@ -1,5 +1,8 @@
 package api
 
+// ExpectedBool is thrown when a Value is not a Bool
+const ExpectedBool = "value is not a bool: %s"
+
 // Comparison represents the result of a equality comparison
 type Comparison int
 
@@ -117,4 +120,12 @@ func Truthy(v Value) bool {
 	default:
 		return true
 	}
+}
+
+// AssertBool will cast a Value into a Bool or explode violently
+func AssertBool(v Value) Bool {
+	if b, ok := v.(Bool); ok {
+		return b
+	}
+	panic(Err(ExpectedBool, v))
 }

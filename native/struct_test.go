@@ -1,64 +1,12 @@
-package api_test
+package native_test
 
 import (
-	"bytes"
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
 	"github.com/kode4food/sputter/assert"
+	r "github.com/kode4food/sputter/native"
 )
-
-type reflectNestedStruct struct {
-	Nested bool
-}
-
-type reflectStruct struct {
-	S           string
-	B           bool
-	I           int32
-	F           float32
-	A           []int
-	N           reflectNestedStruct
-	R           *reflectStruct
-	notExported bool
-	IsCamelCase string
-}
-
-func getTestReflectStruct() a.Native {
-	return a.NewNative(&reflectStruct{
-		S: "hello",
-		B: true,
-		I: 42,
-		F: 99.5,
-		A: []int{1, 2, 3},
-		N: reflectNestedStruct{
-			Nested: true,
-		},
-		R: &reflectStruct{
-			S: "nested",
-		},
-		notExported: true,
-		IsCamelCase: "I was camelCase",
-	})
-}
-
-func TestReflect(t *testing.T) {
-	as := assert.New(t)
-
-	w := bytes.NewBufferString("")
-	tk := a.NewKeyword("test")
-	n := a.NewNative(w).WithMetadata(a.Metadata{
-		tk: a.True,
-	}).(a.Native)
-
-	as.String("*bytes.buffer", n.(a.Typed).Type())
-	as.Contains(":type *bytes.buffer", n)
-	as.Identical(w, n.NativeValue())
-
-	v, ok := n.Metadata().Get(tk)
-	as.True(ok)
-	as.True(v)
-}
 
 func TestStructReflect(t *testing.T) {
 	as := assert.New(t)
@@ -97,7 +45,7 @@ func TestNestedStructReflect(t *testing.T) {
 
 	r6, ok := n1.Get(a.Name("n"))
 	as.True(ok)
-	n2, ok := r6.(a.Native)
+	n2, ok := r6.(r.Value)
 	as.True(ok)
 	as.NotNil(n2)
 	r7, ok := n2.Get(a.Name("nested"))
@@ -106,7 +54,7 @@ func TestNestedStructReflect(t *testing.T) {
 
 	r8, ok := n1.Get(a.Name("r"))
 	as.True(ok)
-	n3, ok := r8.(a.Native)
+	n3, ok := r8.(r.Value)
 	as.True(ok)
 	as.NotNil(n3)
 	r9, ok := n3.Get(a.Name("s"))
@@ -123,6 +71,6 @@ func TestBadStructReflect(t *testing.T) {
 	as.True(ok)
 	as.String("hello", r1)
 
-	defer expectError(as, a.Err(a.BadConversionType, "[]int"))
+	defer as.ExpectError(a.Err(r.BadConversionType, "[]int"))
 	n1.Get(a.Name("a"))
 }

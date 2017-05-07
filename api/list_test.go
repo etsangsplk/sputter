@@ -98,7 +98,7 @@ func TestListEval(t *testing.T) {
 func testBrokenEval(t *testing.T, seq a.Sequence, err string) {
 	as := assert.New(t)
 
-	defer expectError(as, err)
+	defer as.ExpectError(err)
 	c := a.NewContext()
 	a.Eval(c, seq)
 }
@@ -119,6 +119,6 @@ func TestListExplosion(t *testing.T) {
 	v := seq.Apply(a.NewContext(), a.Vector{idx, s("default")})
 	as.String("default", v)
 
-	defer expectError(as, err)
+	defer as.ExpectError(err)
 	seq.Apply(a.NewContext(), a.Vector{idx})
 }

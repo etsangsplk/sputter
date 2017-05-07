@@ -65,6 +65,6 @@ func TestPromise(t *testing.T) {
 	p1.Deliver(s("hello"))
 	as.String("hello", p1.Value())
 
-	defer expectError(as, a.ExpectedUndelivered)
+	defer as.ExpectError(a.ExpectedUndelivered)
 	p1.Deliver(s("goodbye"))
 }

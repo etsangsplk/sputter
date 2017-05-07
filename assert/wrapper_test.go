@@ -7,13 +7,6 @@ import (
 	"github.com/kode4food/sputter/assert"
 )
 
-func expectError(as *assert.Wrapper, err string) {
-	if r := recover(); r == err {
-		return
-	}
-	as.Fail("should have failed with: " + err)
-}
-
 func TestTheStringTests(t *testing.T) {
 	as := assert.New(t)
 
@@ -21,7 +14,7 @@ func TestTheStringTests(t *testing.T) {
 	as.String("hello", a.Str("hello"))
 	as.String(":hello", a.NewKeyword("hello"))
 
-	defer expectError(as, a.Err(assert.InvalidTestExpression, 10))
+	defer as.ExpectError(a.Err(assert.InvalidTestExpression, 10))
 	as.String("10", 10)
 }
 
@@ -33,7 +26,7 @@ func TestTheFloatTests(t *testing.T) {
 	as.Number(10.5, 10.5)
 	as.Number(10, 10)
 
-	defer expectError(as, a.Err(assert.InvalidTestExpression, "10"))
+	defer as.ExpectError(a.Err(assert.InvalidTestExpression, "10"))
 	as.Number(10, "10")
 }
 

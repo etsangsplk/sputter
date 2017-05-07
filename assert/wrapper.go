@@ -163,3 +163,12 @@ func (w *Wrapper) NotNil(expr Any) {
 func (w *Wrapper) Compare(c a.Comparison, l *a.Number, r *a.Number) {
 	w.as.Equal(c, l.Cmp(r))
 }
+
+// ExpectError is used with a defer to make sure an error was triggered
+func (w *Wrapper) ExpectError(err string) {
+	if rec := recover(); rec != nil {
+		w.String(err, rec)
+		return
+	}
+	w.Fail("error not raised")
+}

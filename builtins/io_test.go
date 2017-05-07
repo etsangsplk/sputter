@@ -6,6 +6,7 @@ import (
 
 	a "github.com/kode4food/sputter/api"
 	"github.com/kode4food/sputter/assert"
+	n "github.com/kode4food/sputter/native"
 )
 
 func testOutput(t *testing.T, src string, expected string) {
@@ -15,7 +16,7 @@ func testOutput(t *testing.T, src string, expected string) {
 	o, _ := ns.Get("*stdout*")
 	ns.Delete("*stdout*")
 	w := bytes.NewBufferString("")
-	ns.Put("*stdout*", a.NewNative(w))
+	ns.Put("*stdout*", n.NewValue(w))
 
 	runCode(src)
 

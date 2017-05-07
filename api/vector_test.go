@@ -108,7 +108,7 @@ func TestAssertVector(t *testing.T) {
 	v := a.Vector{s("hello"), s("how"), s("are"), s("you?")}
 	a.AssertVector(v)
 
-	defer expectError(as, a.Err(a.ExpectedVector, f(99)))
+	defer as.ExpectError(a.Err(a.ExpectedVector, f(99)))
 	a.AssertVector(f(99))
 }
 
@@ -117,7 +117,7 @@ func TestVectorExplosion(t *testing.T) {
 
 	idx := f(3)
 	err := a.Err(a.IndexNotFound, idx)
-	defer expectError(as, err)
+	defer as.ExpectError(err)
 
 	v := a.Vector{s("foo")}
 	v.Apply(a.NewContext(), a.NewList(idx))

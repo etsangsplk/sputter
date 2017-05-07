@@ -42,6 +42,6 @@ func TestAssertApplicable(t *testing.T) {
 	as := assert.New(t)
 	a.AssertApplicable(a.NewFunction(nil))
 
-	defer expectError(as, a.Err(a.ExpectedApplicable, f(99)))
+	defer as.ExpectError(a.Err(a.ExpectedApplicable, f(99)))
 	a.AssertApplicable(f(99))
 }
