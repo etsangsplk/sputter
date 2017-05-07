@@ -14,12 +14,9 @@ type methodInfo struct {
 
 type (
 	argumentReader func(c a.Context, args a.Sequence) []reflect.Value
-	inMapper       func(a.Value) reflect.Value
 	resultGetters  []outMapper
 	argSetters     []inMapper
 )
-
-var convertIn map[reflect.Kind]inMapper
 
 func makeMethodGetters(t reflect.Type) propertyGetters {
 	l := t.NumMethod()
@@ -144,46 +141,4 @@ func makeArgSetter(t reflect.Type) inMapper {
 	return func(_ a.Value) reflect.Value {
 		panic(a.Err(BadConversionType, t))
 	}
-}
-
-func init() {
-	convertIn = map[reflect.Kind]inMapper{
-		reflect.Bool:    boolToNative,
-		reflect.Int:     numberToInt,
-		reflect.Int8:    numberToInt,
-		reflect.Int16:   numberToInt,
-		reflect.Int32:   numberToInt,
-		reflect.Int64:   numberToInt,
-		reflect.Uint:    numberToInt,
-		reflect.Uint8:   numberToInt,
-		reflect.Uint16:  numberToInt,
-		reflect.Uint32:  numberToInt,
-		reflect.Uint64:  numberToInt,
-		reflect.Float32: numberToFloat32,
-		reflect.Float64: numberToFloat64,
-		reflect.String:  strToNative,
-	}
-}
-
-func boolToNative(v a.Value) reflect.Value {
-	return reflect.ValueOf(bool(a.AssertBool(v)))
-}
-
-func strToNative(v a.Value) reflect.Value {
-	return reflect.ValueOf(string(a.AssertStr(v)))
-}
-
-func numberToFloat32(v a.Value) reflect.Value {
-	f, _ := a.AssertNumber(v).Float64()
-	return reflect.ValueOf(float32(f))
-}
-
-func numberToFloat64(v a.Value) reflect.Value {
-	f, _ := a.AssertNumber(v).Float64()
-	return reflect.ValueOf(f)
-}
-
-func numberToInt(v a.Value) reflect.Value {
-	i := a.AssertInteger(v)
-	return reflect.ValueOf(i)
 }
