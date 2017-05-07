@@ -14,7 +14,7 @@ type methodInfo struct {
 
 type (
 	argumentReader func(c a.Context, args a.Sequence) []reflect.Value
-	outMapper      func(reflect.Value) a.Value
+	inMapper       func(a.Value) reflect.Value
 	resultGetters  []outMapper
 	argSetters     []inMapper
 )

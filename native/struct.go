@@ -6,6 +6,8 @@ import (
 	a "github.com/kode4food/sputter/api"
 )
 
+var convertOut map[reflect.Kind]outMapper
+
 func makeStructGetters(t reflect.Type) propertyGetters {
 	r := propertyGetters{}
 	for i := 0; i < t.NumField(); i++ {
@@ -35,6 +37,22 @@ func badConvert(v reflect.Value) a.Value {
 	panic(a.Err(BadConversionType, v.Type().String()))
 }
 
+func valueToBool(v reflect.Value) a.Value {
+	return a.Bool(v.Bool())
+}
+
+func valueToStr(v reflect.Value) a.Value {
+	return a.Str(v.String())
+}
+
+func floatValueToNumber(v reflect.Value) a.Value {
+	return a.NewFloat(v.Float())
+}
+
+func intValueToNumber(v reflect.Value) a.Value {
+	return a.NewFloat(float64(v.Int()))
+}
+
 func init() {
 	convertOut = map[reflect.Kind]outMapper{
 		reflect.Bool:    valueToBool,
@@ -54,20 +72,4 @@ func init() {
 		reflect.Struct:  wrapValue,
 		reflect.Ptr:     wrapValue,
 	}
-}
-
-func valueToBool(v reflect.Value) a.Value {
-	return a.Bool(v.Bool())
-}
-
-func valueToStr(v reflect.Value) a.Value {
-	return a.Str(v.String())
-}
-
-func floatValueToNumber(v reflect.Value) a.Value {
-	return a.NewFloat(v.Float())
-}
-
-func intValueToNumber(v reflect.Value) a.Value {
-	return a.NewFloat(float64(v.Int()))
 }

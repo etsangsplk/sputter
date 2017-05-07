@@ -34,14 +34,13 @@ type typeInfo struct {
 }
 
 type (
-	inMapper        func(a.Value) reflect.Value
+	outMapper       func(reflect.Value) a.Value
 	propertyGetters map[string]outMapper
 )
 
 var (
-	types      = u.NewCache()
-	camelCase  = regexp.MustCompile("[a-z][A-Z]")
-	convertOut map[reflect.Kind]outMapper
+	types     = u.NewCache()
+	camelCase = regexp.MustCompile("[a-z][A-Z]")
 )
 
 // NewValue wraps a value value using Go's reflection API
