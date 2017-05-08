@@ -44,6 +44,11 @@ var specialNames = a.Variables{
 	"nil":   a.Nil,
 }
 
+var eofToken = Token{
+	Type:  EndOfFile,
+	Value: a.Nil,
+}
+
 type endOfReader struct {
 }
 
@@ -63,24 +68,34 @@ type Reader interface {
 // converting them into Lists for evaluation
 type tokenReader struct {
 	context a.Context
-	lexer   Lexer
+	iter    *a.Iterator
 }
 
 // NewReader instantiates a new TokenReader using the provided Lexer
-func NewReader(context a.Context, l Lexer) Reader {
-	return &tokenReader{context, l}
+func NewReader(context a.Context, lexer a.Sequence) Reader {
+	return &tokenReader{
+		context: context,
+		iter:    a.Iterate(lexer),
+	}
+}
+
+func (r *tokenReader) nextToken() Token {
+	if t, ok := r.iter.Next(); ok {
+		return t.(Token)
+	}
+	return eofToken
 }
 
 // Next returns the next value from the Reader
 func (r *tokenReader) Next() a.Value {
-	return r.token(r.lexer.Next(), readCode)
+	return r.token(r.nextToken(), readCode)
 }
 
 func (r *tokenReader) nextData() a.Value {
-	return r.token(r.lexer.Next(), readData)
+	return r.token(r.nextToken(), readData)
 }
 
-func (r *tokenReader) token(t *Token, m mode) a.Value {
+func (r *tokenReader) token(t Token, m mode) a.Value {
 	switch t.Type {
 	case QuoteMarker:
 		return r.readQuoted()
@@ -110,11 +125,11 @@ func (r *tokenReader) readQuoted() a.Quoted {
 }
 
 func (r *tokenReader) readList(m mode) a.Value {
-	var handle func(t *Token, m mode) a.Sequence
+	var handle func(t Token, m mode) a.Sequence
 	var rest func(m mode) a.Sequence
 	var first func() a.Value
 
-	handle = func(t *Token, m mode) a.Sequence {
+	handle = func(t Token, m mode) a.Sequence {
 		switch t.Type {
 		case ListEnd:
 			return a.EmptyList
@@ -128,11 +143,11 @@ func (r *tokenReader) readList(m mode) a.Value {
 	}
 
 	rest = func(m mode) a.Sequence {
-		return handle(r.lexer.Next(), m)
+		return handle(r.nextToken(), m)
 	}
 
 	first = func() a.Value {
-		t := r.lexer.Next()
+		t := r.nextToken()
 		if f, ok := r.function(t); ok {
 			if mac, ok := f.(a.Macro); ok {
 				dm := mode(mac.DataMode())
@@ -149,7 +164,7 @@ func (r *tokenReader) readList(m mode) a.Value {
 	return first()
 }
 
-func (r *tokenReader) function(t *Token) (a.Value, bool) {
+func (r *tokenReader) function(t Token) (a.Value, bool) {
 	if t.Type != Identifier {
 		return nil, false
 	}
@@ -168,7 +183,7 @@ func (r *tokenReader) readVector(m mode) a.Vector {
 	res := make(a.Vector, 0)
 
 	for {
-		t := r.lexer.Next()
+		t := r.nextToken()
 		switch t.Type {
 		case VectorEnd:
 			return res
@@ -186,7 +201,7 @@ func (r *tokenReader) readMap(m mode) a.Associative {
 	mp := make(a.Vector, 2)
 
 	for idx := 0; ; idx++ {
-		t := r.lexer.Next()
+		t := r.nextToken()
 		switch t.Type {
 		case MapEnd:
 			if idx%2 == 0 {
@@ -208,7 +223,7 @@ func (r *tokenReader) readMap(m mode) a.Associative {
 	}
 }
 
-func readIdentifier(t *Token) a.Value {
+func readIdentifier(t Token) a.Value {
 	n := a.Name(t.Value.(a.Str))
 	if v, ok := specialNames[n]; ok {
 		return v

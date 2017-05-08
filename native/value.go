@@ -17,10 +17,8 @@ var camelCase = regexp.MustCompile("[a-z][A-Z]")
 func New(i interface{}) a.Value {
 	v := reflect.ValueOf(i)
 	t := v.Type()
-	if c, ok := convertOut[t.Kind()]; ok {
-		return c(v)
-	}
-	panic(a.Err(BadConversionType, t))
+	c := getConvertOut(t)
+	return c(v)
 }
 
 func typeName(t reflect.Type) a.Name {

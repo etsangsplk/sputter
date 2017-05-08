@@ -21,17 +21,8 @@ func makeStructGetters(t reflect.Type) propertyGetters {
 }
 
 func makeFieldGetter(idx int, fi reflect.StructField) outMapper {
-	if c, ok := convertOut[fi.Type.Kind()]; ok {
-		return func(v reflect.Value) a.Value {
-			return c(v.Field(idx))
-		}
-	}
-
+	c := getConvertOut(fi.Type)
 	return func(v reflect.Value) a.Value {
-		return badConvert(v.Field(idx))
+		return c(v.Field(idx))
 	}
-}
-
-func badConvert(v reflect.Value) a.Value {
-	panic(a.Err(BadConversionType, v.Type().String()))
 }

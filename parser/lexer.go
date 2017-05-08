@@ -42,25 +42,18 @@ type Token struct {
 	Value a.Value
 }
 
-// EOFToken marks the end of a Lexer stream
-var EOFToken = &Token{
-	Type:  EndOfFile,
-	Value: a.Nil,
+func (t Token) Str() a.Str {
+	return a.Str("")
 }
 
-// Lexer is the lexer interface
-type Lexer interface {
-	Next() *Token
-}
-
-type lispLexer struct {
+type lexer struct {
 	input  string
 	start  int
 	pos    int
-	tokens chan *Token
+	tokens chan a.Value
 }
 
-type stateFunc func(*lispLexer) stateFunc
+type stateFunc func(*lexer) stateFunc
 
 type stateMapEntry struct {
 	pattern  *regexp.Regexp
@@ -78,84 +71,51 @@ var (
 	states stateMap
 )
 
-func init() {
-	re := regexp.MustCompile
-	states = stateMap{
-		{re(`^$`), endState(EndOfFile)},
-		{re(`^;[^\n]*[\n]`), tokenState(Comment)},
-		{re(`^[\s,]+`), tokenState(Whitespace)},
-		{re(`^\(`), tokenState(ListStart)},
-		{re(`^\[`), tokenState(VectorStart)},
-		{re(`^{`), tokenState(MapStart)},
-		{re(`^\)`), tokenState(ListEnd)},
-		{re(`^]`), tokenState(VectorEnd)},
-		{re(`^}`), tokenState(MapEnd)},
-		{re(`^'`), tokenState(QuoteMarker)},
-
-		{re(`^"(\\\\|\\"|\\[^\\"]|[^"\\])*"`), stringState},
-
-		{re(`^[+-]?[1-9]\d*/[1-9]\d*`), ratioState},
-		{re(`^[+-]?((0|[1-9]\d*)(\.\d+)?([eE][+-]?\d+)?)`), numberState},
-
-		{re(`^[^(){}\[\]\s,'";]+`), tokenState(Identifier)},
-
-		{re(`^.`), endState(Error)},
-	}
-}
-
-// NewLexer instantiates a new Lisp Lexer instance
-func NewLexer(src string) Lexer {
-	l := &lispLexer{
+// NewLexer instantiates a new Lisp Lexer Sequence
+func NewLexer(src string) a.Sequence {
+	l := &lexer{
 		input:  src,
-		tokens: make(chan *Token),
+		tokens: make(chan a.Value),
 	}
-
 	go l.run()
-	return l
+
+	return a.Filter(a.NewChannelSequence(l.tokens), func(v a.Value) bool {
+		return isNotWhitespace(v.(Token))
+	})
 }
 
-func isNotWhitespace(t *Token) bool {
+func isNotWhitespace(t Token) bool {
 	return t.Type != Whitespace && t.Type != Comment
 }
 
-// Next returns the next Token from the lexer's Token channel
-func (l *lispLexer) Next() *Token {
-	for {
-		t, ok := <-l.tokens
-		if !ok {
-			panic(UnexpectedEndOfFile)
-		}
-		if isNotWhitespace(t) {
-			return t
-		}
-	}
-}
-
-func (l *lispLexer) run() {
+func (l *lexer) run() {
 	for s := initState; s != nil; {
 		s = s(l)
 	}
 	close(l.tokens)
 }
 
-func (l *lispLexer) emitValue(t TokenType, v a.Value) {
-	l.tokens <- &Token{t, v}
+func (l *lexer) emitValue(t TokenType, v a.Value) {
+	l.tokens <- Token{
+		Type:  t,
+		Value: v,
+	}
 	l.skip()
 }
 
-func (l *lispLexer) emit(t TokenType) {
+func (l *lexer) emit(t TokenType) {
 	l.emitValue(t, l.currentToken())
 }
 
-func (l *lispLexer) currentToken() a.Str {
+func (l *lexer) currentToken() a.Str {
 	return a.Str(l.input[l.start:l.pos])
 }
 
-func (l *lispLexer) skip() {
+func (l *lexer) skip() {
 	l.start = l.pos
 }
 
-func (l *lispLexer) matchState() stateFunc {
+func (l *lexer) matchState() stateFunc {
 	src := l.input[l.pos:]
 	for _, s := range states {
 		if i := s.pattern.FindStringIndex(src); i != nil {
@@ -170,19 +130,19 @@ func (l *lispLexer) matchState() stateFunc {
 }
 
 func tokenState(t TokenType) stateFunc {
-	return func(l *lispLexer) stateFunc {
+	return func(l *lexer) stateFunc {
 		l.emit(t)
 		return initState
 	}
 }
 
-func initState(l *lispLexer) stateFunc {
+func initState(l *lexer) stateFunc {
 	state := l.matchState()
 	return state(l)
 }
 
 func endState(t TokenType) stateFunc {
-	return func(l *lispLexer) stateFunc {
+	return func(l *lexer) stateFunc {
 		l.emit(t)
 		return nil
 	}
@@ -198,21 +158,52 @@ func unescape(s a.Str) a.Str {
 	return a.Str(r)
 }
 
-func stringState(l *lispLexer) stateFunc {
+func stringState(l *lexer) stateFunc {
 	v := l.currentToken()
 	s := unescape(v[1 : len(v)-1])
 	l.emitValue(String, a.Str(s))
 	return initState
 }
 
-func ratioState(l *lispLexer) stateFunc {
+func ratioState(l *lexer) stateFunc {
 	v := a.ParseNumber(l.currentToken())
 	l.emitValue(Ratio, v)
 	return initState
 }
 
-func numberState(l *lispLexer) stateFunc {
+func numberState(l *lexer) stateFunc {
 	v := a.ParseNumber(l.currentToken())
 	l.emitValue(Number, v)
 	return initState
+}
+
+func init() {
+	pattern := func(p string, s stateFunc) stateMapEntry {
+		return stateMapEntry{
+			pattern:  regexp.MustCompile(p),
+			function: s,
+		}
+	}
+
+	states = stateMap{
+		pattern(`^$`, endState(EndOfFile)),
+		pattern(`^;[^\n]*[\n]`, tokenState(Comment)),
+		pattern(`^[\s,]+`, tokenState(Whitespace)),
+		pattern(`^\(`, tokenState(ListStart)),
+		pattern(`^\[`, tokenState(VectorStart)),
+		pattern(`^{`, tokenState(MapStart)),
+		pattern(`^\)`, tokenState(ListEnd)),
+		pattern(`^]`, tokenState(VectorEnd)),
+		pattern(`^}`, tokenState(MapEnd)),
+		pattern(`^'`, tokenState(QuoteMarker)),
+
+		pattern(`^"(\\\\|\\"|\\[^\\"]|[^"\\])*"`, stringState),
+
+		pattern(`^[+-]?[1-9]\d*/[1-9]\d*`, ratioState),
+		pattern(`^[+-]?((0|[1-9]\d*)(\.\d+)?([eE][+-]?\d+)?)`, numberState),
+
+		pattern(`^[^(){}\[\]\s,'";]+`, tokenState(Identifier)),
+
+		pattern(`^.`, endState(Error)),
+	}
 }

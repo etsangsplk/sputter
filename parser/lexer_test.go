@@ -8,15 +8,30 @@ import (
 	p "github.com/kode4food/sputter/parser"
 )
 
-func makeToken(t p.TokenType, v a.Value) *p.Token {
-	return &p.Token{Type: t, Value: v}
+func makeToken(t p.TokenType, v a.Value) p.Token {
+	return p.Token{Type: t, Value: v}
 }
 
-func assertToken(as *assert.Wrapper, like *p.Token, value *p.Token) {
+func assertToken(as *assert.Wrapper, like p.Token, value p.Token) {
 	as.Number(float64(like.Type), float64(value.Type))
 	if like.Type != p.EndOfFile {
 		as.Equal(like.Value, value.Value)
 	}
+}
+
+func assertTokenSequence(as *assert.Wrapper, s a.Sequence, tokens []p.Token) {
+	iter := a.Iterate(s)
+	for _, l := range tokens {
+		v, ok := iter.Next()
+		as.True(ok)
+		assertToken(as, l, v.(p.Token))
+	}
+	v, ok := iter.Next()
+	as.True(ok)
+	as.NotNil(v)
+	t, ok := v.(p.Token)
+	as.True(ok)
+	assertToken(as, makeToken(p.EndOfFile, nil), t)
 }
 
 func TestCreateLexer(t *testing.T) {
@@ -28,35 +43,38 @@ func TestCreateLexer(t *testing.T) {
 func TestWhitespace(t *testing.T) {
 	as := assert.New(t)
 	l := p.NewLexer("   \t ")
-	assertToken(as, p.EOFToken, l.Next())
+	assertTokenSequence(as, l, []p.Token{})
 }
 
 func TestEmptyList(t *testing.T) {
 	as := assert.New(t)
 	l := p.NewLexer(" ( \t ) ")
-	assertToken(as, makeToken(p.ListStart, s("(")), l.Next())
-	assertToken(as, makeToken(p.ListEnd, s(")")), l.Next())
-	assertToken(as, p.EOFToken, l.Next())
+	assertTokenSequence(as, l, []p.Token{
+		makeToken(p.ListStart, s("(")),
+		makeToken(p.ListEnd, s(")")),
+	})
 }
 
 func TestNumbers(t *testing.T) {
 	as := assert.New(t)
 	l := p.NewLexer(" 10 12.8 8E+10 99.598e+10 54e+12 1/2")
-	assertToken(as, makeToken(p.Number, f(10)), l.Next())
-	assertToken(as, makeToken(p.Number, f(12.8)), l.Next())
-	assertToken(as, makeToken(p.Number, f(8E+10)), l.Next())
-	assertToken(as, makeToken(p.Number, f(99.598e+10)), l.Next())
-	assertToken(as, makeToken(p.Number, f(54e+12)), l.Next())
-	assertToken(as, makeToken(p.Ratio, a.NewRatio(1, 2)), l.Next())
-	assertToken(as, p.EOFToken, l.Next())
+	assertTokenSequence(as, l, []p.Token{
+		makeToken(p.Number, f(10)),
+		makeToken(p.Number, f(12.8)),
+		makeToken(p.Number, f(8E+10)),
+		makeToken(p.Number, f(99.598e+10)),
+		makeToken(p.Number, f(54e+12)),
+		makeToken(p.Ratio, a.NewRatio(1, 2)),
+	})
 }
 
 func TestStrings(t *testing.T) {
 	as := assert.New(t)
 	l := p.NewLexer(` "hello there" "how's \"life\"?"  `)
-	assertToken(as, makeToken(p.String, s(`hello there`)), l.Next())
-	assertToken(as, makeToken(p.String, s(`how's "life"?`)), l.Next())
-	assertToken(as, p.EOFToken, l.Next())
+	assertTokenSequence(as, l, []p.Token{
+		makeToken(p.String, s(`hello there`)),
+		makeToken(p.String, s(`how's "life"?`)),
+	})
 }
 
 func TestMultiLine(t *testing.T) {
@@ -65,8 +83,9 @@ func TestMultiLine(t *testing.T) {
   "how's life?"
 99`)
 
-	assertToken(as, makeToken(p.String, s(`hello there`)), l.Next())
-	assertToken(as, makeToken(p.String, s(`how's life?`)), l.Next())
-	assertToken(as, makeToken(p.Number, f(99)), l.Next())
-	assertToken(as, p.EOFToken, l.Next())
+	assertTokenSequence(as, l, []p.Token{
+		makeToken(p.String, s(`hello there`)),
+		makeToken(p.String, s(`how's life?`)),
+		makeToken(p.Number, f(99)),
+	})
 }
