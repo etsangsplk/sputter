@@ -7,9 +7,6 @@ import (
 )
 
 const (
-	// UnexpectedEndOfFile is the error returned when EOF is unexpectedly reached
-	UnexpectedEndOfFile = "end of file reached unexpectedly"
-
 	// UnmatchedState is the error returned when the lexer state is invalid
 	UnmatchedState = "unmatched lexing state"
 )
@@ -36,31 +33,33 @@ const (
 	Comment
 )
 
-// Token is a Lexer token
+// Lexer breaks Lisp expressions into Tokens
+type Lexer interface {
+	a.Sequence
+}
+
+type lexer struct {
+	resolved bool
+	src      string
+	isSeq    bool
+	first    a.Value
+	rest     *lexer
+}
+
+// Token is a lexer token
 type Token struct {
 	Type  TokenType
 	Value a.Value
 }
 
-func (t Token) Str() a.Str {
-	return a.Str("")
-}
+type tokenizer func(s a.Str) Token
 
-type lexer struct {
-	input  string
-	start  int
-	pos    int
-	tokens chan a.Value
-}
-
-type stateFunc func(*lexer) stateFunc
-
-type stateMapEntry struct {
+type matchEntry struct {
 	pattern  *regexp.Regexp
-	function stateFunc
+	function tokenizer
 }
 
-type stateMap []stateMapEntry
+type mactchEntries []matchEntry
 
 var (
 	escaped    = regexp.MustCompile(`\\\\|\\"|\\[^\\"]`)
@@ -68,60 +67,43 @@ var (
 		`\\`: `\`,
 		`\"`: `"`,
 	}
-	states stateMap
+	matchers mactchEntries
 )
 
-// NewLexer instantiates a new Lisp Lexer Sequence
+// NewLexer creates a new lexer instance
 func NewLexer(src string) a.Sequence {
 	l := &lexer{
-		input:  src,
-		tokens: make(chan a.Value),
+		src: src,
 	}
-	go l.run()
 
-	return a.Filter(a.NewChannelSequence(l.tokens), func(v a.Value) bool {
+	return a.Filter(l, func(v a.Value) bool {
 		return isNotWhitespace(v.(Token))
 	})
 }
 
-func isNotWhitespace(t Token) bool {
-	return t.Type != Whitespace && t.Type != Comment
-}
-
-func (l *lexer) run() {
-	for s := initState; s != nil; {
-		s = s(l)
+func (l *lexer) resolve() *lexer {
+	if l.resolved {
+		return l
 	}
-	close(l.tokens)
-}
 
-func (l *lexer) emitValue(t TokenType, v a.Value) {
-	l.tokens <- Token{
-		Type:  t,
-		Value: v,
+	t, src := l.matchToken()
+
+	l.resolved = true
+	l.isSeq = true
+	l.first = t
+	l.rest = &lexer{
+		src: src,
 	}
-	l.skip()
+	return l
 }
 
-func (l *lexer) emit(t TokenType) {
-	l.emitValue(t, l.currentToken())
-}
-
-func (l *lexer) currentToken() a.Str {
-	return a.Str(l.input[l.start:l.pos])
-}
-
-func (l *lexer) skip() {
-	l.start = l.pos
-}
-
-func (l *lexer) matchState() stateFunc {
-	src := l.input[l.pos:]
-	for _, s := range states {
+func (l *lexer) matchToken() (Token, string) {
+	src := l.src
+	for _, s := range matchers {
 		if i := s.pattern.FindStringIndex(src); i != nil {
-			r := src[:i[1]]
-			l.pos += len(r)
-			return s.function
+			f := src[:i[1]]
+			r := src[len(f):]
+			return s.function(a.Str(f)), r
 		}
 	}
 	// Shouldn't happen because of the patterns that are defined,
@@ -129,22 +111,54 @@ func (l *lexer) matchState() stateFunc {
 	panic(UnmatchedState)
 }
 
-func tokenState(t TokenType) stateFunc {
-	return func(l *lexer) stateFunc {
-		l.emit(t)
-		return initState
+func (l *lexer) IsSequence() bool {
+	return l.resolve().isSeq
+}
+
+func (l *lexer) First() a.Value {
+	return l.resolve().first
+}
+
+func (l *lexer) Rest() a.Sequence {
+	return l.resolve().rest
+}
+
+func (l *lexer) Prepend(v a.Value) a.Sequence {
+	return &lexer{
+		isSeq: true,
+		first: v,
+		rest:  l,
 	}
 }
 
-func initState(l *lexer) stateFunc {
-	state := l.matchState()
-	return state(l)
+func (l *lexer) Str() a.Str {
+	return a.MakeSequenceStr(l)
 }
 
-func endState(t TokenType) stateFunc {
-	return func(l *lexer) stateFunc {
-		l.emit(t)
-		return nil
+func (t Token) Str() a.Str {
+	return a.Str("")
+}
+
+func isNotWhitespace(t Token) bool {
+	return t.Type != Whitespace && t.Type != Comment
+}
+
+func makeToken(t TokenType, v a.Value) Token {
+	return Token{
+		Type:  t,
+		Value: v,
+	}
+}
+
+func tokenState(t TokenType) tokenizer {
+	return func(s a.Str) Token {
+		return makeToken(t, a.Str(s))
+	}
+}
+
+func endState(t TokenType) tokenizer {
+	return func(_ a.Str) Token {
+		return makeToken(t, a.Nil)
 	}
 }
 
@@ -158,34 +172,30 @@ func unescape(s a.Str) a.Str {
 	return a.Str(r)
 }
 
-func stringState(l *lexer) stateFunc {
-	v := l.currentToken()
-	s := unescape(v[1 : len(v)-1])
-	l.emitValue(String, a.Str(s))
-	return initState
+func stringState(r a.Str) Token {
+	s := unescape(r[1 : len(r)-1])
+	return makeToken(String, a.Str(s))
 }
 
-func ratioState(l *lexer) stateFunc {
-	v := a.ParseNumber(l.currentToken())
-	l.emitValue(Ratio, v)
-	return initState
+func ratioState(s a.Str) Token {
+	v := a.ParseNumber(s)
+	return makeToken(Ratio, v)
 }
 
-func numberState(l *lexer) stateFunc {
-	v := a.ParseNumber(l.currentToken())
-	l.emitValue(Number, v)
-	return initState
+func numberState(s a.Str) Token {
+	v := a.ParseNumber(s)
+	return makeToken(Number, v)
 }
 
 func init() {
-	pattern := func(p string, s stateFunc) stateMapEntry {
-		return stateMapEntry{
+	pattern := func(p string, s tokenizer) matchEntry {
+		return matchEntry{
 			pattern:  regexp.MustCompile(p),
 			function: s,
 		}
 	}
 
-	states = stateMap{
+	matchers = mactchEntries{
 		pattern(`^$`, endState(EndOfFile)),
 		pattern(`^;[^\n]*[\n]`, tokenState(Comment)),
 		pattern(`^[\s,]+`, tokenState(Whitespace)),

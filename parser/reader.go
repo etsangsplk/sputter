@@ -64,14 +64,14 @@ type Reader interface {
 	Next() a.Value
 }
 
-// tokenReader is responsible for taking a stream of Lexer Tokens and
+// tokenReader is responsible for taking a stream of lexer Tokens and
 // converting them into Lists for evaluation
 type tokenReader struct {
 	context a.Context
 	iter    *a.Iterator
 }
 
-// NewReader instantiates a new TokenReader using the provided Lexer
+// NewReader instantiates a new TokenReader using the provided lexer
 func NewReader(context a.Context, lexer a.Sequence) Reader {
 	return &tokenReader{
 		context: context,

@@ -269,8 +269,7 @@ func isEmptyString(s string) bool {
 func isRecoverable(err string) bool {
 	return err == p.ListNotClosed ||
 		err == p.VectorNotClosed ||
-		err == p.MapNotClosed ||
-		err == p.UnexpectedEndOfFile
+		err == p.MapNotClosed
 }
 
 func use(c a.Context, args a.Sequence) a.Value {
