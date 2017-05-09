@@ -135,6 +135,7 @@ func (l *lexer) Str() a.Str {
 	return a.MakeSequenceStr(l)
 }
 
+// Str converts this Value into a Str
 func (t Token) Str() a.Str {
 	return a.Str("")
 }

@@ -25,7 +25,7 @@ func TestMacro(t *testing.T) {
 	as.True(m2.Metadata()[a.MetaMacro])
 	as.True(m1.DataMode())
 	as.True(m2.DataMode())
-	
+
 	as.Contains(":type macro", m1)
 	as.String("orig", m1.Metadata()[a.MetaName])
 	as.String("changed", m2.Metadata()[a.MetaName])
