@@ -52,7 +52,7 @@ type Token struct {
 	Value a.Value
 }
 
-type tokenizer func(s a.Str) Token
+type tokenizer func(s a.Str) *Token
 
 type matchEntry struct {
 	pattern  *regexp.Regexp
@@ -77,7 +77,7 @@ func NewLexer(src string) a.Sequence {
 	}
 
 	return a.Filter(l, func(v a.Value) bool {
-		return isNotWhitespace(v.(Token))
+		return isNotWhitespace(v.(*Token))
 	})
 }
 
@@ -97,7 +97,7 @@ func (l *lexer) resolve() *lexer {
 	return l
 }
 
-func (l *lexer) matchToken() (Token, string) {
+func (l *lexer) matchToken() (*Token, string) {
 	src := l.src
 	for _, s := range matchers {
 		if i := s.pattern.FindStringIndex(src); i != nil {
@@ -136,29 +136,29 @@ func (l *lexer) Str() a.Str {
 }
 
 // Str converts this Value into a Str
-func (t Token) Str() a.Str {
+func (t *Token) Str() a.Str {
 	return a.Str("")
 }
 
-func isNotWhitespace(t Token) bool {
+func isNotWhitespace(t *Token) bool {
 	return t.Type != Whitespace && t.Type != Comment
 }
 
-func makeToken(t TokenType, v a.Value) Token {
-	return Token{
+func makeToken(t TokenType, v a.Value) *Token {
+	return &Token{
 		Type:  t,
 		Value: v,
 	}
 }
 
 func tokenState(t TokenType) tokenizer {
-	return func(s a.Str) Token {
+	return func(s a.Str) *Token {
 		return makeToken(t, a.Str(s))
 	}
 }
 
 func endState(t TokenType) tokenizer {
-	return func(_ a.Str) Token {
+	return func(_ a.Str) *Token {
 		return makeToken(t, a.Nil)
 	}
 }
@@ -173,17 +173,17 @@ func unescape(s a.Str) a.Str {
 	return a.Str(r)
 }
 
-func stringState(r a.Str) Token {
+func stringState(r a.Str) *Token {
 	s := unescape(r[1 : len(r)-1])
 	return makeToken(String, a.Str(s))
 }
 
-func ratioState(s a.Str) Token {
+func ratioState(s a.Str) *Token {
 	v := a.ParseNumber(s)
 	return makeToken(Ratio, v)
 }
 
-func numberState(s a.Str) Token {
+func numberState(s a.Str) *Token {
 	v := a.ParseNumber(s)
 	return makeToken(Number, v)
 }
