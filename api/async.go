@@ -14,6 +14,9 @@ const (
 	deliveredState
 )
 
+// Do is a callback interface for performing some action
+type Do func(func())
+
 // Emitter is an interface that is used to emit Values to a Channel
 type Emitter interface {
 	Value
@@ -33,9 +36,8 @@ type channelEmitter struct {
 }
 
 type channelSequence struct {
-	mutex *sync.Mutex
-	state uint32
-	ch    chan Value
+	once Do
+	ch   chan Value
 
 	isSeq bool
 	first Value
@@ -46,6 +48,33 @@ type promise struct {
 	cond  *sync.Cond
 	state uint32
 	val   Value
+}
+
+// Once creates a Do instance for performing an action only once
+func Once() Do {
+	var state = undeliveredState
+	var mutex sync.Mutex
+
+	return func(f func()) {
+		if atomic.LoadUint32(&state) == deliveredState {
+			return
+		}
+
+		mutex.Lock()
+		defer mutex.Unlock()
+
+		if state == undeliveredState {
+			defer atomic.StoreUint32(&state, deliveredState)
+			f()
+		}
+	}
+}
+
+// Never returns a Do instance for performing never performing an action
+func Never() Do {
+	return func(_ func()) {
+		// no-op
+	}
 }
 
 // NewChannel produces a Emitter and Sequence pair
@@ -98,22 +127,14 @@ func (e *channelEmitter) Str() Str {
 // NewChannelSequence produces a new Sequence whose Values come from a Go chan
 func NewChannelSequence(ch chan Value) Sequence {
 	return &channelSequence{
-		mutex: new(sync.Mutex),
-		state: undeliveredState,
-		ch:    ch,
-		rest:  EmptyList,
+		once: Once(),
+		ch:   ch,
+		rest: EmptyList,
 	}
 }
 
 func (c *channelSequence) resolve() *channelSequence {
-	if atomic.LoadUint32(&c.state) == deliveredState {
-		return c
-	}
-
-	c.mutex.Lock()
-	defer c.mutex.Unlock()
-
-	if c.state == undeliveredState {
+	c.once(func() {
 		ch := c.ch
 		if first, isSeq := <-ch; isSeq {
 			c.isSeq = isSeq
@@ -121,8 +142,7 @@ func (c *channelSequence) resolve() *channelSequence {
 			c.rest = NewChannelSequence(ch)
 		}
 		c.ch = nil
-		atomic.StoreUint32(&c.state, deliveredState)
-	}
+	})
 	return c
 }
 
@@ -140,7 +160,7 @@ func (c *channelSequence) Rest() Sequence {
 
 func (c *channelSequence) Prepend(v Value) Sequence {
 	return &channelSequence{
-		state: deliveredState,
+		once:  Never(),
 		isSeq: true,
 		first: v,
 		rest:  c,

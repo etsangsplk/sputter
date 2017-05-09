@@ -19,7 +19,7 @@ func f(f float64) *a.Number {
 }
 
 func runCode(src string) a.Value {
-	l := p.NewLexer(src)
+	l := p.NewLexer(s(src))
 	c := a.NewEvalContext()
 	tr := p.NewReader(c, l)
 	return p.EvalReader(c, tr)

@@ -30,11 +30,8 @@ func assertTokenSequence(as *assert.Wrapper, s a.Sequence, tokens []*p.Token) {
 		assertToken(as, l, v.(*p.Token))
 	}
 	v, ok := iter.Next()
-	as.True(ok)
-	as.NotNil(v)
-	t, ok := v.(*p.Token)
-	as.True(ok)
-	assertToken(as, makeToken(p.EndOfFile, nil), t)
+	as.False(ok)
+	as.Nil(v)
 }
 
 func TestCreateLexer(t *testing.T) {

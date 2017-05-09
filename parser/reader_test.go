@@ -188,7 +188,7 @@ func TestListData(t *testing.T) {
 
 func testCodeWithContext(
 	as *assert.Wrapper, code string, expect a.Value, c a.Context) {
-	l := p.NewLexer(code)
+	l := p.NewLexer(s(code))
 	tr := p.NewReader(a.NewContext(), l)
 	as.Equal(expect, p.EvalReader(c, tr))
 }
@@ -270,7 +270,7 @@ func testReaderError(t *testing.T, src string, err string) {
 	}()
 
 	c := a.NewContext()
-	l := p.NewLexer(src)
+	l := p.NewLexer(s(src))
 	tr := p.NewReader(c, l)
 	p.EvalReader(c, tr)
 }

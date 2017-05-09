@@ -53,7 +53,7 @@ type endOfReader struct {
 }
 
 func (e endOfReader) Str() a.Str {
-	return a.Str("")
+	return a.MakeDumpStr(e)
 }
 
 // EndOfReader represents the end of a Reader stream
@@ -64,22 +64,22 @@ type Reader interface {
 	Next() a.Value
 }
 
-// tokenReader is responsible for taking a stream of lexer Tokens and
+// reader is responsible for taking a stream of lexer Tokens and
 // converting them into Lists for evaluation
-type tokenReader struct {
+type reader struct {
 	context a.Context
 	iter    *a.Iterator
 }
 
 // NewReader instantiates a new TokenReader using the provided lexer
 func NewReader(context a.Context, lexer a.Sequence) Reader {
-	return &tokenReader{
+	return &reader{
 		context: context,
 		iter:    a.Iterate(lexer),
 	}
 }
 
-func (r *tokenReader) nextToken() *Token {
+func (r *reader) nextToken() *Token {
 	if t, ok := r.iter.Next(); ok {
 		return t.(*Token)
 	}
@@ -87,15 +87,15 @@ func (r *tokenReader) nextToken() *Token {
 }
 
 // Next returns the next value from the Reader
-func (r *tokenReader) Next() a.Value {
+func (r *reader) Next() a.Value {
 	return r.token(r.nextToken(), readCode)
 }
 
-func (r *tokenReader) nextData() a.Value {
+func (r *reader) nextData() a.Value {
 	return r.token(r.nextToken(), readData)
 }
 
-func (r *tokenReader) token(t *Token, m mode) a.Value {
+func (r *reader) token(t *Token, m mode) a.Value {
 	switch t.Type {
 	case QuoteMarker:
 		return r.readQuoted()
@@ -120,11 +120,11 @@ func (r *tokenReader) token(t *Token, m mode) a.Value {
 	}
 }
 
-func (r *tokenReader) readQuoted() a.Quoted {
+func (r *reader) readQuoted() a.Quoted {
 	return a.Quote(r.nextData())
 }
 
-func (r *tokenReader) readList(m mode) a.Value {
+func (r *reader) readList(m mode) a.Value {
 	var handle func(t *Token, m mode) a.Sequence
 	var rest func(m mode) a.Sequence
 	var first func() a.Value
@@ -164,7 +164,7 @@ func (r *tokenReader) readList(m mode) a.Value {
 	return first()
 }
 
-func (r *tokenReader) function(t *Token) (a.Value, bool) {
+func (r *reader) function(t *Token) (a.Value, bool) {
 	if t.Type != Identifier {
 		return nil, false
 	}
@@ -179,7 +179,7 @@ func (r *tokenReader) function(t *Token) (a.Value, bool) {
 	return nil, false
 }
 
-func (r *tokenReader) readVector(m mode) a.Vector {
+func (r *reader) readVector(m mode) a.Vector {
 	res := make(a.Vector, 0)
 
 	for {
@@ -196,7 +196,7 @@ func (r *tokenReader) readVector(m mode) a.Vector {
 	}
 }
 
-func (r *tokenReader) readMap(m mode) a.Associative {
+func (r *reader) readMap(m mode) a.Associative {
 	res := make(a.Associative, 0)
 	mp := make(a.Vector, 2)
 

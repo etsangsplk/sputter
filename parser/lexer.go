@@ -6,10 +6,8 @@ import (
 	a "github.com/kode4food/sputter/api"
 )
 
-const (
-	// UnmatchedState is the error returned when the lexer state is invalid
-	UnmatchedState = "unmatched lexing state"
-)
+// UnmatchedState is the error returned when the lexer state is invalid
+const UnmatchedState = "unmatched lexing state"
 
 // TokenType is an opaque type for lexer tokens
 type TokenType int
@@ -40,7 +38,7 @@ type Lexer interface {
 
 type lexer struct {
 	resolved bool
-	src      string
+	src      a.Str
 	isSeq    bool
 	first    a.Value
 	rest     *lexer
@@ -71,7 +69,7 @@ var (
 )
 
 // NewLexer creates a new lexer instance
-func NewLexer(src string) a.Sequence {
+func NewLexer(src a.Str) Lexer {
 	l := &lexer{
 		src: src,
 	}
@@ -86,24 +84,26 @@ func (l *lexer) resolve() *lexer {
 		return l
 	}
 
-	t, src := l.matchToken()
+	t, rsrc := l.matchToken()
 
 	l.resolved = true
-	l.isSeq = true
-	l.first = t
+	if t.Type != EndOfFile {
+		l.isSeq = true
+		l.first = t
+	}
 	l.rest = &lexer{
-		src: src,
+		src: rsrc,
 	}
 	return l
 }
 
-func (l *lexer) matchToken() (*Token, string) {
-	src := l.src
+func (l *lexer) matchToken() (*Token, a.Str) {
+	src := string(l.src)
 	for _, s := range matchers {
 		if i := s.pattern.FindStringIndex(src); i != nil {
 			f := src[:i[1]]
 			r := src[len(f):]
-			return s.function(a.Str(f)), r
+			return s.function(a.Str(f)), a.Str(r)
 		}
 	}
 	// Shouldn't happen because of the patterns that are defined,
@@ -124,11 +124,8 @@ func (l *lexer) Rest() a.Sequence {
 }
 
 func (l *lexer) Prepend(v a.Value) a.Sequence {
-	return &lexer{
-		isSeq: true,
-		first: v,
-		rest:  l,
-	}
+	// insulated by a filter
+	panic("not implemented")
 }
 
 func (l *lexer) Str() a.Str {
@@ -137,7 +134,7 @@ func (l *lexer) Str() a.Str {
 
 // Str converts this Value into a Str
 func (t *Token) Str() a.Str {
-	return a.Str("")
+	return a.MakeDumpStr(t)
 }
 
 func isNotWhitespace(t *Token) bool {

@@ -34,7 +34,7 @@ func EvaluateFile() {
 
 func evalBuffer(src []byte) a.Value {
 	c := a.NewEvalContext()
-	l := p.NewLexer(string(src))
+	l := p.NewLexer(a.Str(src))
 	tr := p.NewReader(c, l)
 	return p.EvalReader(a.ChildContext(c), tr)
 }
