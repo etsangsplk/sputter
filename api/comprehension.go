@@ -39,6 +39,7 @@ func (l *lazyElement) Str() Str {
 }
 
 type lazyMap struct {
+	once     Do
 	first    Value
 	rest     Sequence
 	isSeq    bool
@@ -50,6 +51,7 @@ type lazyMap struct {
 // original and only maps its Values on demand
 func Map(s Sequence, m ValueMapper) Sequence {
 	return &lazyMap{
+		once:     Once(),
 		rest:     EmptyList,
 		sequence: s,
 		mapper:   m,
@@ -57,21 +59,20 @@ func Map(s Sequence, m ValueMapper) Sequence {
 }
 
 func (l *lazyMap) resolve() *lazyMap {
-	if l.sequence == nil {
-		return l
-	}
-
-	if l.sequence.IsSequence() {
-		l.isSeq = true
-		l.first = l.mapper(l.sequence.First())
-		l.rest = &lazyMap{
-			rest:     EmptyList,
-			sequence: l.sequence.Rest(),
-			mapper:   l.mapper,
+	l.once(func() {
+		if l.sequence.IsSequence() {
+			l.isSeq = true
+			l.first = l.mapper(l.sequence.First())
+			l.rest = &lazyMap{
+				once:     Once(),
+				rest:     EmptyList,
+				sequence: l.sequence.Rest(),
+				mapper:   l.mapper,
+			}
 		}
-	}
-	l.sequence = nil
-	l.mapper = nil
+		l.sequence = nil
+		l.mapper = nil
+	})
 	return l
 }
 
@@ -103,6 +104,7 @@ func (l *lazyMap) Str() Str {
 }
 
 type lazyFilter struct {
+	once     Do
 	first    Value
 	rest     Sequence
 	isSeq    bool
@@ -114,6 +116,7 @@ type lazyFilter struct {
 // original and only filters the next Value(s) on demand
 func Filter(s Sequence, f ValueFilter) Sequence {
 	return &lazyFilter{
+		once:     Once(),
 		rest:     EmptyList,
 		sequence: s,
 		filter:   f,
@@ -121,24 +124,23 @@ func Filter(s Sequence, f ValueFilter) Sequence {
 }
 
 func (l *lazyFilter) resolve() *lazyFilter {
-	if l.sequence == nil {
-		return l
-	}
-
-	for i := l.sequence; i.IsSequence(); i = i.Rest() {
-		if v := i.First(); l.filter(v) {
-			l.isSeq = true
-			l.first = v
-			l.rest = &lazyFilter{
-				rest:     EmptyList,
-				sequence: i.Rest(),
-				filter:   l.filter,
+	l.once(func() {
+		for i := l.sequence; i.IsSequence(); i = i.Rest() {
+			if v := i.First(); l.filter(v) {
+				l.isSeq = true
+				l.first = v
+				l.rest = &lazyFilter{
+					once:     Once(),
+					rest:     EmptyList,
+					sequence: i.Rest(),
+					filter:   l.filter,
+				}
+				break
 			}
-			break
 		}
-	}
-	l.sequence = nil
-	l.filter = nil
+		l.sequence = nil
+		l.filter = nil
+	})
 	return l
 }
 
@@ -170,6 +172,7 @@ func (l *lazyFilter) Str() Str {
 }
 
 type lazyConcat struct {
+	once     Do
 	first    Value
 	rest     Sequence
 	isSeq    bool
@@ -180,30 +183,28 @@ type lazyConcat struct {
 // several provided Sequences. The results are computed lazily
 func Concat(s Sequence) Sequence {
 	return &lazyConcat{
+		once:     Once(),
 		rest:     EmptyList,
 		sequence: s,
 	}
 }
 
 func (l *lazyConcat) resolve() *lazyConcat {
-	if l.sequence == nil {
-		return l
-	}
-
-	for i := l.sequence; i.IsSequence(); i = i.Rest() {
-		if f := AssertSequence(i.First()); f.IsSequence() {
-			l.first = f.First()
-			l.rest = &lazyConcat{
-				rest:     EmptyList,
-				sequence: i.Rest().Prepend(f.Rest()),
+	l.once(func() {
+		for i := l.sequence; i.IsSequence(); i = i.Rest() {
+			if f := AssertSequence(i.First()); f.IsSequence() {
+				l.first = f.First()
+				l.rest = &lazyConcat{
+					once:     Once(),
+					rest:     EmptyList,
+					sequence: i.Rest().Prepend(f.Rest()),
+				}
+				l.isSeq = true
+				break
 			}
-			l.isSeq = true
-			l.sequence = nil
-			return l
 		}
-	}
-
-	l.sequence = nil
+		l.sequence = nil
+	})
 	return l
 }
 
@@ -232,6 +233,7 @@ func (l *lazyConcat) Str() Str {
 }
 
 type lazyTake struct {
+	once     Do
 	first    Value
 	rest     Sequence
 	isSeq    bool
@@ -243,6 +245,7 @@ type lazyTake struct {
 // sequence. The result is computed lazily
 func Take(s Sequence, count int) Sequence {
 	return &lazyTake{
+		once:     Once(),
 		rest:     EmptyList,
 		sequence: s,
 		count:    count,
@@ -250,21 +253,20 @@ func Take(s Sequence, count int) Sequence {
 }
 
 func (l *lazyTake) resolve() *lazyTake {
-	if l.sequence == nil {
-		return l
-	}
-
-	s := l.sequence
-	if l.count > 0 && s.IsSequence() {
-		l.isSeq = true
-		l.first = s.First()
-		l.rest = &lazyTake{
-			rest:     EmptyList,
-			sequence: s.Rest(),
-			count:    l.count - 1,
+	l.once(func() {
+		s := l.sequence
+		if l.count > 0 && s.IsSequence() {
+			l.isSeq = true
+			l.first = s.First()
+			l.rest = &lazyTake{
+				once:     Once(),
+				rest:     EmptyList,
+				sequence: s.Rest(),
+				count:    l.count - 1,
+			}
 		}
-	}
-	l.sequence = nil
+		l.sequence = nil
+	})
 	return l
 }
 
@@ -293,6 +295,7 @@ func (l *lazyTake) Str() Str {
 }
 
 type lazyDrop struct {
+	once     Do
 	first    Value
 	rest     Sequence
 	isSeq    bool
@@ -304,6 +307,7 @@ type lazyDrop struct {
 // the source sequence. The result is computed lazily
 func Drop(s Sequence, count int) Sequence {
 	return &lazyDrop{
+		once:     Once(),
 		rest:     EmptyList,
 		sequence: s,
 		count:    count,
@@ -311,23 +315,21 @@ func Drop(s Sequence, count int) Sequence {
 }
 
 func (l *lazyDrop) resolve() *lazyDrop {
-	if l.sequence == nil {
-		return l
-	}
-
-	i := l.sequence
-	for c := l.count; c > 0; c-- {
-		if !i.IsSequence() {
-			l.sequence = nil
-			return l
+	l.once(func() {
+		i := l.sequence
+		for c := l.count; c > 0; c-- {
+			if !i.IsSequence() {
+				l.sequence = nil
+				return
+			}
+			i = i.Rest()
 		}
-		i = i.Rest()
-	}
 
-	l.isSeq = i.IsSequence()
-	l.first = i.First()
-	l.rest = i.Rest()
-	l.sequence = nil
+		l.isSeq = i.IsSequence()
+		l.first = i.First()
+		l.rest = i.Rest()
+		l.sequence = nil
+	})
 	return l
 }
 

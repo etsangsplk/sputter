@@ -37,11 +37,11 @@ type Lexer interface {
 }
 
 type lexer struct {
-	resolved bool
-	src      a.Str
-	isSeq    bool
-	first    a.Value
-	rest     *lexer
+	once  a.Do
+	src   a.Str
+	isSeq bool
+	first a.Value
+	rest  *lexer
 }
 
 // Token is a lexer token
@@ -71,7 +71,8 @@ var (
 // NewLexer creates a new lexer instance
 func NewLexer(src a.Str) Lexer {
 	l := &lexer{
-		src: src,
+		once: a.Once(),
+		src:  src,
 	}
 
 	return a.Filter(l, func(v a.Value) bool {
@@ -80,20 +81,18 @@ func NewLexer(src a.Str) Lexer {
 }
 
 func (l *lexer) resolve() *lexer {
-	if l.resolved {
-		return l
-	}
+	l.once(func() {
+		t, rsrc := l.matchToken()
 
-	t, rsrc := l.matchToken()
-
-	l.resolved = true
-	if t.Type != EndOfFile {
-		l.isSeq = true
-		l.first = t
-	}
-	l.rest = &lexer{
-		src: rsrc,
-	}
+		if t.Type != EndOfFile {
+			l.isSeq = true
+			l.first = t
+		}
+		l.rest = &lexer{
+			once: a.Once(),
+			src:  rsrc,
+		}
+	})
 	return l
 }
 
