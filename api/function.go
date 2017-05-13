@@ -43,14 +43,17 @@ func (f *Function) WithMetadata(md Metadata) Annotated {
 	}
 }
 
+// Name returns the name of this Function via its Metadata
 func (f *Function) Name() Name {
 	return f.Metadata()[MetaName].(Name)
 }
 
+// Documentation returns the docstring of this Function via its Metadata
 func (f *Function) Documentation() Str {
 	return f.Metadata()[MetaDoc].(Str)
 }
 
+// Type returns the Type of this Function via its Metadata
 func (f *Function) Type() Name {
 	if v, ok := f.meta.Get(MetaType); ok {
 		if n, ok := v.(Name); ok {
