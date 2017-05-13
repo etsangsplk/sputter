@@ -44,7 +44,7 @@ func optionalMetadata(c a.Context, args a.Sequence) (a.Metadata, a.Sequence) {
 }
 
 func optionalName(args a.Sequence) (a.Name, a.Sequence) {
-	if s, ok := args.First().(a.Symbol); ok {
+	if s, ok := args.First().(*a.Symbol); ok {
 		if s.Domain() == a.LocalDomain {
 			return s.Name(), args.Rest()
 		}
@@ -69,7 +69,7 @@ func getFunctionDefinition(c a.Context, args a.Sequence) *functionDefinition {
 	}
 }
 
-func defineFunction(closure a.Context, d *functionDefinition) a.Function {
+func defineFunction(closure a.Context, d *functionDefinition) *a.Function {
 	an := argNames(d.args)
 	ac := len(an)
 	db := d.body
@@ -83,7 +83,7 @@ func defineFunction(closure a.Context, d *functionDefinition) a.Function {
 			i = i.Rest()
 		}
 		return a.EvalSequence(l, db)
-	}).WithMetadata(d.meta).(a.Function)
+	}).WithMetadata(d.meta).(*a.Function)
 }
 
 func defn(c a.Context, args a.Sequence) a.Value {

@@ -14,7 +14,7 @@ func TestVector(t *testing.T) {
 	as.String("[1 2 3]", r1)
 
 	r2 := runCode(`(apply vector (concat '(1) '((- 5 3)) '((+ 1 2))))`)
-	as.String("[1 2 3]", r2)
+	as.String("[1 (- 5 3) (+ 1 2)]", r2)
 
 	testCode(t, `(vector? [1 2 3])`, a.True)
 	testCode(t, `(vector? (vector 1 2 3))`, a.True)

@@ -3,45 +3,22 @@ package api
 // MetaMacro is the Metadata key that identifies a Function as being a Macro
 var MetaMacro = NewKeyword("macro")
 
-// Macro is a Function that can be used for Reader transformation
-type Macro interface {
-	Function
-	DataMode() bool
+var macroMetadata = Metadata{
+	MetaMacro: True,
+	MetaType:  Name("macro"),
 }
-
-type macro struct {
-	Function
-	dataMode bool
-}
-
-var macroMetadata = Metadata{MetaMacro: True}
 
 // NewMacro instantiates a new Macro
-func NewMacro(e SequenceProcessor) Macro {
-	f := NewFunction(e).WithMetadata(macroMetadata).(Function)
-	return &macro{
-		Function: f,
-		dataMode: true,
+func NewMacro(e SequenceProcessor) *Function {
+	return NewFunction(e).WithMetadata(macroMetadata).(*Function)
+}
+
+// IsMacro tests an Applicable as being marked a Macro
+func IsMacro(a Applicable) bool {
+	if an, ok := a.(Annotated); ok {
+		if v, ok := an.Metadata().Get(MetaMacro); ok {
+			return v == True
+		}
 	}
-}
-
-func (m *macro) DataMode() bool {
-	return m.dataMode
-}
-
-func (m *macro) Type() Name {
-	return "macro"
-}
-
-// Str converts this Value into a Str
-func (m *macro) Str() Str {
-	return MakeDumpStr(m)
-}
-
-// WithMetadata copies the Function with new Metadata
-func (m *macro) WithMetadata(md Metadata) Annotated {
-	return &macro{
-		Function: m.Function.WithMetadata(md).(Function),
-		dataMode: m.dataMode,
-	}
+	return false
 }

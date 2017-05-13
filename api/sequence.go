@@ -35,22 +35,20 @@ type Sequence interface {
 	IsSequence() bool
 }
 
+// Conjoiner is a Sequence that can be Conjoined in some way
+type Conjoiner interface {
+	Sequence
+	Conjoin(Value) Sequence
+}
+
 // Counted interfaces allow a Sequence to return a count of its items
 type Counted interface {
-	Sequence
 	Count() int
 }
 
 // Indexed interfaces allow a Sequence item to be retrieved by index
 type Indexed interface {
-	Sequence
 	Elementer
-}
-
-// Conjoiner interfaces allow a Sequence to be added to
-type Conjoiner interface {
-	Sequence
-	Conjoin(Value) Sequence
 }
 
 // Count will return the Count from a Counted Sequence or explode

@@ -12,6 +12,7 @@ func TestAssoc(t *testing.T) {
 	testCode(t, `(assoc? {:name "Sputter" :age 45})`, a.True)
 	testCode(t, `(assoc? (assoc :name "Sputter" :age 45))`, a.True)
 	testCode(t, `(assoc? '(:name "Sputter" :age 45))`, a.False)
+	testCode(t, `(assoc? (to-assoc [:name "Sputter" :age 45]))`, a.True)
 	testCode(t, `(assoc? (to-assoc '(:name "Sputter" :age 45)))`, a.True)
 	testCode(t, `(assoc? [:name "Sputter" :age 45])`, a.False)
 	testCode(t, `(!assoc? '(:name "Sputter" :age 45))`, a.True)

@@ -5,6 +5,7 @@ import (
 
 	a "github.com/kode4food/sputter/api"
 	"github.com/kode4food/sputter/assert"
+	_ "github.com/kode4food/sputter/builtins"
 	p "github.com/kode4food/sputter/parser"
 )
 
@@ -29,7 +30,7 @@ func TestReadInteger(t *testing.T) {
 	l := p.NewLexer("99")
 	c := a.NewContext()
 	tr := p.NewReader(c, l)
-	v := tr.Next()
+	v := tr.First()
 	n, ok := v.(*a.Number)
 	as.True(ok)
 	as.Equal(f(99), n)
@@ -40,8 +41,8 @@ func TestReadList(t *testing.T) {
 	l := p.NewLexer(`(99 "hello" 55.12)`)
 	c := a.NewContext()
 	tr := p.NewReader(c, l)
-	v := tr.Next()
-	list, ok := v.(*a.List)
+	v := tr.First()
+	list, ok := v.(*a.Expression)
 	as.True(ok)
 
 	i := a.Iterate(list)
@@ -66,7 +67,7 @@ func TestReadVector(t *testing.T) {
 	l := p.NewLexer(`[99 "hello" 55.12]`)
 	c := a.NewContext()
 	tr := p.NewReader(c, l)
-	v := tr.Next()
+	v := tr.First()
 	vector, ok := v.(a.Vector)
 	as.True(ok)
 
@@ -88,7 +89,7 @@ func TestReadMap(t *testing.T) {
 	l := p.NewLexer(`{:name "blah" :age 99}`)
 	c := a.NewContext()
 	tr := p.NewReader(c, l)
-	v := tr.Next()
+	v := tr.First()
 	m, ok := v.(a.Associative)
 	as.True(ok)
 	as.Number(2, m.Count())
@@ -99,8 +100,8 @@ func TestReadNestedList(t *testing.T) {
 	l := p.NewLexer(`(99 ("hello" "there") 55.12)`)
 	c := a.NewContext()
 	tr := p.NewReader(c, l)
-	v := tr.Next()
-	list, ok := v.(*a.List)
+	v := tr.First()
+	list, ok := v.(*a.Expression)
 	as.True(ok)
 
 	i1 := a.Iterate(list)
@@ -111,7 +112,7 @@ func TestReadNestedList(t *testing.T) {
 	// get nested list
 	val, ok = i1.Next()
 	as.True(ok)
-	list2, ok := val.(*a.List)
+	list2, ok := val.(*a.Expression)
 	as.True(ok)
 
 	// iterate over the rest of top-level list
@@ -140,16 +141,11 @@ func TestSimpleData(t *testing.T) {
 	as := assert.New(t)
 
 	l := p.NewLexer(`'99`)
-	c := a.NewContext()
+	c := a.NewEvalContext()
 	tr := p.NewReader(c, l)
-	v := tr.Next()
-
-	d, ok := v.(a.Quoted)
+	v, ok := a.EvalSequence(c, tr).(*a.Number)
 	as.True(ok)
-
-	value, ok := a.Eval(c, d).(*a.Number)
-	as.True(ok)
-	as.Number(99, value)
+	as.Number(99, v)
 }
 
 func TestListData(t *testing.T) {
@@ -158,15 +154,11 @@ func TestListData(t *testing.T) {
 	l := p.NewLexer(`'(symbol true)`)
 	c := a.NewContext()
 	tr := p.NewReader(c, l)
-	v := tr.Next()
-
-	d, ok := v.(a.Quoted)
+	v := a.EvalSequence(c, tr)
+	value, ok := v.(*a.List)
 	as.True(ok)
 
-	value, ok := d.Eval(c).(*a.List)
-	as.True(ok)
-
-	if sym, ok := value.First().(a.Symbol); ok {
+	if sym, ok := value.First().(*a.Symbol); ok {
 		as.String("symbol", sym.Name())
 	} else {
 		as.Fail("first element should be symbol")
@@ -189,8 +181,8 @@ func TestListData(t *testing.T) {
 func testCodeWithContext(
 	as *assert.Wrapper, code string, expect a.Value, c a.Context) {
 	l := p.NewLexer(s(code))
-	tr := p.NewReader(a.NewContext(), l)
-	as.Equal(expect, p.EvalReader(c, tr))
+	tr := p.NewReader(a.NewEvalContext(), l)
+	as.Equal(expect, a.EvalSequence(c, tr))
 }
 
 func TestEvaluable(t *testing.T) {
@@ -204,7 +196,7 @@ func TestEvaluable(t *testing.T) {
 		return s("Hello, " + string(v.(a.Str)) + "!")
 	}).WithMetadata(a.Metadata{
 		a.MetaName: a.Name("hello"),
-	}).(a.Function)
+	}).(*a.Function)
 
 	c.Put("hello", hello)
 	c.Put("name", s("Bob"))
@@ -222,12 +214,12 @@ func TestBuiltIns(t *testing.T) {
 		return s("there")
 	}).WithMetadata(a.Metadata{
 		a.MetaName: a.Name("hello"),
-	}).(a.Function))
+	}).(*a.Function))
 
 	l := p.NewLexer(`(hello)`)
 	tr := p.NewReader(b, l)
 	c := a.ChildContext(b)
-	as.String("there", p.EvalReader(c, tr))
+	as.String("there", a.EvalSequence(c, tr))
 }
 
 func TestReaderPrepare(t *testing.T) {
@@ -238,16 +230,16 @@ func TestReaderPrepare(t *testing.T) {
 	ns.Delete("hello")
 	ns.Put("hello", a.NewMacro(func(_ a.Context, l a.Sequence) a.Value {
 		if _, ok := l.(*a.List); !ok {
-			as.Fail("provided list is not a cons")
+			as.Fail("provided sequence is not a list")
 		}
 		return a.Vector{s("you")}
 	}).WithMetadata(a.Metadata{
 		a.MetaName: a.Name("hello"),
-	}).(a.Macro))
+	}).(*a.Function))
 
 	l := p.NewLexer(`(hello)`)
 	tr := p.NewReader(b, l)
-	v := tr.Next()
+	v := tr.First()
 
 	if rv, ok := v.(a.Vector); ok {
 		v1, ok := rv.ElementAt(0)
@@ -272,7 +264,7 @@ func testReaderError(t *testing.T, src string, err string) {
 	c := a.NewContext()
 	l := p.NewLexer(s(src))
 	tr := p.NewReader(c, l)
-	p.EvalReader(c, tr)
+	a.EvalSequence(c, tr)
 }
 
 func TestReaderErrors(t *testing.T) {

@@ -36,7 +36,7 @@ func evalBuffer(src []byte) a.Value {
 	c := a.NewEvalContext()
 	l := p.NewLexer(a.Str(src))
 	tr := p.NewReader(c, l)
-	return p.EvalReader(a.ChildContext(c), tr)
+	return a.EvalSequence(a.ChildContext(c), tr)
 }
 
 func exitWithError() {

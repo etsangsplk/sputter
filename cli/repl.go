@@ -165,7 +165,7 @@ func (r *REPL) evalBuffer() (completed bool) {
 
 	l := p.NewLexer(a.Str(r.buf.String()))
 	tr := p.NewReader(r.ctx, l)
-	res := p.EvalReader(r.ctx, tr)
+	res := a.EvalSequence(r.ctx, tr)
 	r.outputResult(res)
 	return true
 }

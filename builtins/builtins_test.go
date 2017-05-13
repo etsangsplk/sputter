@@ -22,7 +22,7 @@ func runCode(src string) a.Value {
 	l := p.NewLexer(s(src))
 	c := a.NewEvalContext()
 	tr := p.NewReader(c, l)
-	return p.EvalReader(c, tr)
+	return a.EvalSequence(c, tr)
 }
 
 func testCode(t *testing.T, src string, expect a.Value) {
@@ -71,7 +71,7 @@ func TestQuote(t *testing.T) {
 
 	v1, ok = r1.ElementAt(0)
 	as.True(ok)
-	if _, ok := v1.(a.Symbol); !ok {
+	if _, ok := v1.(*a.Symbol); !ok {
 		as.Fail("first element is not a symbol")
 	}
 

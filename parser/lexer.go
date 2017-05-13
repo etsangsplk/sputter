@@ -26,25 +26,20 @@ const (
 	MapStart
 	MapEnd
 	QuoteMarker
-	EndOfFile
 	Whitespace
 	Comment
+	endOfFile
 )
-
-// Lexer breaks Lisp expressions into Tokens
-type Lexer interface {
-	a.Sequence
-}
 
 type lexer struct {
 	once  a.Do
 	src   a.Str
 	isSeq bool
 	first a.Value
-	rest  *lexer
+	rest  a.Sequence
 }
 
-// Token is a lexer token
+// Token is a lexer value
 type Token struct {
 	Type  TokenType
 	Value a.Value
@@ -68,8 +63,8 @@ var (
 	matchers mactchEntries
 )
 
-// NewLexer creates a new lexer instance
-func NewLexer(src a.Str) Lexer {
+// NewLexer creates a new lexer Sequence
+func NewLexer(src a.Str) a.Sequence {
 	l := &lexer{
 		once: a.Once(),
 		src:  src,
@@ -84,12 +79,13 @@ func (l *lexer) resolve() *lexer {
 	l.once(func() {
 		t, rsrc := l.matchToken()
 
-		if t.Type != EndOfFile {
+		if t.Type != endOfFile {
 			l.isSeq = true
 			l.first = t
 		}
 		l.rest = &lexer{
 			once: a.Once(),
+			rest: a.EmptyList,
 			src:  rsrc,
 		}
 	})
@@ -193,7 +189,7 @@ func init() {
 	}
 
 	matchers = mactchEntries{
-		pattern(`^$`, endState(EndOfFile)),
+		pattern(`^$`, endState(endOfFile)),
 		pattern(`^;[^\n]*[\n]`, tokenState(Comment)),
 		pattern(`^[\s,]+`, tokenState(Whitespace)),
 		pattern(`^\(`, tokenState(ListStart)),

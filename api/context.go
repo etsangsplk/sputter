@@ -42,7 +42,7 @@ func NewEvalContext() Context {
 	return c
 }
 
-// ElementAt retrieves a value from the Context chain
+// Get retrieves a value from the Context chain
 func (c *context) Get(n Name) (Value, bool) {
 	if v, ok := c.vars[n]; ok {
 		return v, true

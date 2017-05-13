@@ -11,62 +11,62 @@ const (
 	BadArityRange = "expected between %d and %d arguments, got %d"
 )
 
-var functionMetadata = Metadata{MetaName: Name("<anon>")}
-
-// Function is a Value that can be invoked
-type Function interface {
-	Value
-	Applicable
-	Annotated
-	Named
-	Documentation() Str
+var functionMetadata = Metadata{
+	MetaName: Name("<anon>"),
+	MetaType: Name("function"),
 }
 
-type function struct {
+// Function is a Value that can be invoked
+type Function struct {
 	exec SequenceProcessor
 	meta Metadata
 }
 
 // NewFunction instantiates a new Function
-func NewFunction(e SequenceProcessor) Function {
-	return &function{
+func NewFunction(e SequenceProcessor) *Function {
+	return &Function{
 		exec: e,
 		meta: functionMetadata,
 	}
 }
 
 // Metadata makes Function Annotated
-func (f *function) Metadata() Metadata {
+func (f *Function) Metadata() Metadata {
 	return f.meta
 }
 
 // WithMetadata copies the Function with new Metadata
-func (f *function) WithMetadata(md Metadata) Annotated {
-	return &function{
+func (f *Function) WithMetadata(md Metadata) Annotated {
+	return &Function{
 		exec: f.exec,
 		meta: f.meta.Merge(md),
 	}
 }
 
-func (f *function) Name() Name {
+func (f *Function) Name() Name {
 	return f.Metadata()[MetaName].(Name)
 }
 
-func (f *function) Documentation() Str {
+func (f *Function) Documentation() Str {
 	return f.Metadata()[MetaDoc].(Str)
 }
 
-func (f *function) Type() Name {
+func (f *Function) Type() Name {
+	if v, ok := f.meta.Get(MetaType); ok {
+		if n, ok := v.(Name); ok {
+			return n
+		}
+	}
 	return "function"
 }
 
 // Apply makes Function Applicable
-func (f *function) Apply(c Context, args Sequence) Value {
+func (f *Function) Apply(c Context, args Sequence) Value {
 	return f.exec(c, args)
 }
 
 // Str converts this Value into a Str
-func (f *function) Str() Str {
+func (f *Function) Str() Str {
 	return MakeDumpStr(f)
 }
 

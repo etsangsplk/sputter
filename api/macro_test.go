@@ -14,17 +14,15 @@ func TestMacro(t *testing.T) {
 
 	m1 := a.NewMacro(nil).WithMetadata(a.Metadata{
 		a.MetaName: a.Name("orig"),
-	}).(a.Macro)
+	}).(*a.Function)
 
 	m2 := m1.WithMetadata(a.Metadata{
 		foo:        s("bar"),
 		a.MetaName: a.Name("changed"),
-	}).(a.Macro)
+	}).(*a.Function)
 
 	as.True(m1.Metadata()[a.MetaMacro])
 	as.True(m2.Metadata()[a.MetaMacro])
-	as.True(m1.DataMode())
-	as.True(m2.DataMode())
 
 	as.Contains(":type macro", m1)
 	as.String("orig", m1.Metadata()[a.MetaName])

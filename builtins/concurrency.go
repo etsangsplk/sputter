@@ -28,22 +28,22 @@ var (
 	futureMetadata  = a.Metadata{MetaFuture: a.True}
 )
 
-func closeFunction(e a.Emitter) a.Function {
+func closeFunction(e a.Emitter) *a.Function {
 	return a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
 		a.AssertArity(args, 0)
 		e.Close()
 		return a.Nil
-	}).(a.Function)
+	})
 }
 
-func emitFunction(e a.Emitter) a.Function {
+func emitFunction(e a.Emitter) *a.Function {
 	return a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
 		a.AssertMinimumArity(args, 1)
 		for i := args; i.IsSequence(); i = i.Rest() {
 			e.Emit(a.Eval(c, i.First()))
 		}
 		return a.Nil
-	}).WithMetadata(emitterMetadata).(a.Function)
+	}).WithMetadata(emitterMetadata).(*a.Function)
 }
 
 func channel(_ a.Context, args a.Sequence) a.Value {
@@ -88,7 +88,7 @@ func promise(_ a.Context, args a.Sequence) a.Value {
 			}
 			return p.Value()
 		},
-	).WithMetadata(promiseMetadata).(a.Function)
+	).WithMetadata(promiseMetadata).(*a.Function)
 }
 
 func future(c a.Context, args a.Sequence) a.Value {
@@ -102,7 +102,7 @@ func future(c a.Context, args a.Sequence) a.Value {
 			a.AssertArity(args, 0)
 			return p.Value()
 		},
-	).WithMetadata(futureMetadata).(a.Function)
+	).WithMetadata(futureMetadata).(*a.Function)
 }
 
 func init() {

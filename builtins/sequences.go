@@ -56,7 +56,8 @@ func nth(c a.Context, args a.Sequence) a.Value {
 
 func concat(c a.Context, args a.Sequence) a.Value {
 	if a.AssertMinimumArity(args, 1) == 1 {
-		return a.AssertSequence(a.Eval(c, args.First()))
+		r := a.Eval(c, args.First())
+		return a.AssertSequence(r)
 	}
 
 	es := a.Map(args, func(v a.Value) a.Value {

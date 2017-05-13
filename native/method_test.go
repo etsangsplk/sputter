@@ -15,7 +15,7 @@ func TestSingularMethodInvoke(t *testing.T) {
 	as.True(ok)
 	as.NotNil(v1)
 
-	f1, ok := v1.(a.Function)
+	f1, ok := v1.(*a.Function)
 	as.True(ok)
 	as.NotNil(f1)
 
@@ -33,7 +33,7 @@ func TestVoidMethodInvoke(t *testing.T) {
 	as.True(ok)
 	as.NotNil(v1)
 
-	f1, ok := v1.(a.Function)
+	f1, ok := v1.(*a.Function)
 	as.True(ok)
 	as.NotNil(f1)
 
@@ -58,7 +58,7 @@ func TestPluralMethodInvoke(t *testing.T) {
 	as.True(ok)
 	as.NotNil(v1)
 
-	f1, ok := v1.(a.Function)
+	f1, ok := v1.(*a.Function)
 	as.True(ok)
 	as.NotNil(f1)
 

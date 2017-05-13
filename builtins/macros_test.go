@@ -7,16 +7,16 @@ import (
 )
 
 func TestMacroReplace(t *testing.T) {
-	a.GetNamespace(a.UserDomain).Delete("hello")
 	a.GetNamespace(a.UserDomain).Delete("foo")
 
-	testCode(t, `
-		(def hello "you")
+	runCode(`
 		(defmacro foo
 			{:doc "this is the macro foo"}
-			[x y]
-			(+ x y)
-			'hello)
-		(foo 1 2)
-	`, s("you"))
+			[aList]
+			aList)
+	`)
+
+	testCode(t, `
+		(foo (1 2 3))
+	`, s("(1 2 3)"))
 }

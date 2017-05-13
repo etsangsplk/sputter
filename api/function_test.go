@@ -16,7 +16,7 @@ func TestFunction(t *testing.T) {
 	}).WithMetadata(a.Metadata{
 		a.MetaName: a.Name("test-function"),
 		a.MetaDoc:  s("this is a test"),
-	}).(a.Function)
+	}).(*a.Function)
 
 	f2 := a.NewFunction(nil)
 	f3 := f1.WithMetadata(a.Metadata{a.MetaDoc: s("modified")})

@@ -17,9 +17,6 @@ func makeToken(t p.TokenType, v a.Value) *p.Token {
 
 func assertToken(as *assert.Wrapper, like *p.Token, value *p.Token) {
 	as.Number(float64(like.Type), float64(value.Type))
-	if like.Type != p.EndOfFile {
-		as.Equal(like.Value, value.Value)
-	}
 }
 
 func assertTokenSequence(as *assert.Wrapper, s a.Sequence, tokens []*p.Token) {
