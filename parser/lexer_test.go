@@ -35,6 +35,7 @@ func TestCreateLexer(t *testing.T) {
 	as := assert.New(t)
 	l := p.NewLexer("hello")
 	as.NotNil(l)
+	as.String(`([1 "hello"])`, l)
 }
 
 func TestWhitespace(t *testing.T) {

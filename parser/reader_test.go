@@ -148,6 +148,16 @@ func TestSimpleData(t *testing.T) {
 	as.Number(99, v)
 }
 
+func TestNestedData(t *testing.T) {
+	as := assert.New(t)
+
+	l := p.NewLexer(`''99`)
+	c := a.NewEvalContext()
+	tr := p.NewReader(c, l)
+	v := a.EvalSequence(c, tr)
+	as.String("(sputter:quote 99)", v)
+}
+
 func TestListData(t *testing.T) {
 	as := assert.New(t)
 
@@ -276,4 +286,7 @@ func TestReaderErrors(t *testing.T) {
 	testReaderError(t, "99 100]", p.UnmatchedVectorEnd)
 	testReaderError(t, "99}", p.UnmatchedMapEnd)
 	testReaderError(t, "{99}", p.MapNotPaired)
+
+	testReaderError(t, "(", p.ListNotClosed)
+	testReaderError(t, "'", p.QuoteNotPaired)
 }

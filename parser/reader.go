@@ -107,7 +107,7 @@ func (r *reader) value(t *Token, data bool) a.Value {
 }
 
 func (r *reader) quoted(data bool) a.Value {
-	if v, ok := r.nextValue(true); ok {
+	if v, ok := r.nextData(); ok {
 		q := a.NewQualifiedSymbol("quote", a.BuiltInDomain)
 		l := a.NewList(v).Prepend(q)
 		if data {
@@ -160,12 +160,9 @@ func (r *reader) list(data bool) a.Value {
 }
 
 func (r *reader) expand(v a.Value) a.Value {
-	if l, ok := v.(*a.Expression); ok {
-		if !l.IsSequence() {
-			return a.EmptyList
-		}
+	if l, ok := v.(*a.Expression); ok && l.IsSequence() {
 		if m, ok := r.macro(l.First()); ok {
-			return m.Apply(r.context, l.Rest())
+			return r.expand(m.Apply(r.context, l.Rest()))
 		}
 	}
 	return v

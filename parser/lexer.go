@@ -124,12 +124,13 @@ func (l *lexer) Prepend(v a.Value) a.Sequence {
 }
 
 func (l *lexer) Str() a.Str {
-	return a.MakeSequenceStr(l)
+	// insulated by a filter
+	panic("not implemented")
 }
 
 // Str converts this Value into a Str
 func (t *Token) Str() a.Str {
-	return a.MakeDumpStr(t)
+	return a.Vector{a.NewFloat(float64(t.Type)), t.Value}.Str()
 }
 
 func isNotWhitespace(t *Token) bool {
