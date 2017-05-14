@@ -42,7 +42,7 @@ func TestReadList(t *testing.T) {
 	c := a.NewContext()
 	tr := p.NewReader(c, l)
 	v := tr.First()
-	list, ok := v.(*a.Expression)
+	list, ok := v.(*a.EvaluableList)
 	as.True(ok)
 
 	i := a.Iterate(list)
@@ -68,7 +68,7 @@ func TestReadVector(t *testing.T) {
 	c := a.NewContext()
 	tr := p.NewReader(c, l)
 	v := tr.First()
-	vector, ok := v.(a.Vector)
+	vector, ok := v.(*a.EvaluableVector)
 	as.True(ok)
 
 	res, ok := vector.ElementAt(0)
@@ -90,7 +90,7 @@ func TestReadMap(t *testing.T) {
 	c := a.NewContext()
 	tr := p.NewReader(c, l)
 	v := tr.First()
-	m, ok := v.(a.Associative)
+	m, ok := v.(*a.EvaluableAssociative)
 	as.True(ok)
 	as.Number(2, m.Count())
 }
@@ -101,7 +101,7 @@ func TestReadNestedList(t *testing.T) {
 	c := a.NewContext()
 	tr := p.NewReader(c, l)
 	v := tr.First()
-	list, ok := v.(*a.Expression)
+	list, ok := v.(*a.EvaluableList)
 	as.True(ok)
 
 	i1 := a.Iterate(list)
@@ -112,7 +112,7 @@ func TestReadNestedList(t *testing.T) {
 	// get nested list
 	val, ok = i1.Next()
 	as.True(ok)
-	list2, ok := val.(*a.Expression)
+	list2, ok := val.(*a.EvaluableList)
 	as.True(ok)
 
 	// iterate over the rest of top-level list
@@ -168,7 +168,7 @@ func TestListData(t *testing.T) {
 	value, ok := v.(*a.List)
 	as.True(ok)
 
-	if sym, ok := value.First().(*a.Symbol); ok {
+	if sym, ok := value.First().(a.Symbol); ok {
 		as.String("symbol", sym.Name())
 	} else {
 		as.Fail("first element should be symbol")
@@ -249,7 +249,7 @@ func TestReaderPrepare(t *testing.T) {
 
 	l := p.NewLexer(`(hello)`)
 	tr := p.NewReader(b, l)
-	v := tr.First()
+	v := a.EvalSequence(b, tr)
 
 	if rv, ok := v.(a.Vector); ok {
 		v1, ok := rv.ElementAt(0)

@@ -44,7 +44,8 @@ func optionalMetadata(c a.Context, args a.Sequence) (a.Metadata, a.Sequence) {
 }
 
 func optionalName(args a.Sequence) (a.Name, a.Sequence) {
-	if s, ok := args.First().(*a.Symbol); ok {
+	f := args.First()
+	if s, ok := f.(a.Symbol); ok {
 		if s.Domain() == a.LocalDomain {
 			return s.Name(), args.Rest()
 		}

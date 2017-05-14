@@ -34,9 +34,9 @@ func TestQualifiedSymbol(t *testing.T) {
 	c2 := a.NewContext()
 	c2.Put(a.ContextDomain, a.GetNamespace("ns2"))
 
-	s1 := a.ParseSymbol("ns1:foo").Evaluable().(*a.EvaluableSymbol)
-	s2 := a.ParseSymbol("ns2:foo").Evaluable().(*a.EvaluableSymbol)
-	s3 := a.ParseSymbol("foo").Evaluable().(*a.EvaluableSymbol)
+	s1 := a.ParseSymbol("ns1:foo").Evaluable().(a.Symbol)
+	s2 := a.ParseSymbol("ns2:foo").Evaluable().(a.Symbol)
+	s3 := a.ParseSymbol("foo").Evaluable().(a.Symbol)
 
 	as.Equal(a.GetNamespace("ns1"), s1.Namespace(c2))
 	as.Equal(a.GetNamespace("ns2"), s2.Namespace(c1))

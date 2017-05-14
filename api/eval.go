@@ -8,6 +8,11 @@ type Evaluable interface {
 	Eval(Context) Value
 }
 
+// MakeEvaluable marks Types that can be converted to Evaluable
+type MakeEvaluable interface {
+	Evaluable() Value
+}
+
 // Applicable is the standard signature for any Value that can be applied
 // to a sequence of arguments
 type Applicable interface {
@@ -24,23 +29,7 @@ func Eval(c Context, v Value) Value {
 
 // Apply will apply an Applicable to the specified arguments
 func Apply(c Context, a Applicable, args Sequence) Value {
-	//if IsMacro(a) {
 	return a.Apply(c, args)
-	//}
-	//if cnt, ok := args.(Counted); ok {
-	//	l := cnt.Count()
-	//	v := make(Vector, l)
-	//	for i, e := 0, args; i < l; i++ {
-	//		v[i] = Eval(c, e.First())
-	//		e = e.Rest()
-	//	}
-	//	return a.Apply(c, v)
-	//}
-	//v := Vector{}
-	//for e := args; e.IsSequence(); e = e.Rest() {
-	//	v = append(v, Eval(c, e.First()))
-	//}
-	//return a.Apply(c, v)
 }
 
 // EvalSequence evaluates each element of the provided Sequence

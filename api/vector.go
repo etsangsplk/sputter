@@ -1,6 +1,9 @@
 package api
 
-import "bytes"
+import (
+	"bytes"
+	"fmt"
+)
 
 // ExpectedVector is raised if a value is not a Vector
 const ExpectedVector = "value is not a vector: %s"
@@ -100,6 +103,9 @@ func (e *EvaluableVector) Eval(c Context) Value {
 
 // AssertVector will cast the Value into a Vector or die trying
 func AssertVector(v Value) Vector {
+	if r, ok := v.(*EvaluableVector); ok {
+		return r.Vector
+	}
 	if r, ok := v.(Vector); ok {
 		return r
 	}

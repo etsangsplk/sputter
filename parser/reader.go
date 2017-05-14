@@ -169,7 +169,7 @@ func (r *reader) expand(v a.Value) a.Value {
 }
 
 func (r *reader) macro(v a.Value) (*a.Function, bool) {
-	if s, ok := v.(*a.Symbol); ok {
+	if s, ok := v.(a.Symbol); ok {
 		if r, ok := s.Resolve(r.context); ok {
 			if f, ok := r.(*a.Function); ok {
 				if a.IsMacro(f) {

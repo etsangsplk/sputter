@@ -14,14 +14,23 @@ const (
 )
 
 // Symbol is a qualified identifier that can be resolved
-type Symbol struct {
+type Symbol interface {
+	MakeEvaluable
+	Value
+	Name() Name
+	Domain() Name
+	Qualified() Name
+	Namespace(c Context) Namespace
+	Resolve(c Context) (Value, bool)
+}
+
+type symbol struct {
 	name   Name
 	domain Name
 }
 
-// EvaluableSymbol represents an Evaluable Symbol
-type EvaluableSymbol struct {
-	*Symbol
+type evaluableSymbol struct {
+	*symbol
 }
 
 func qualifiedName(name Name, domain Name) Name {
@@ -32,18 +41,18 @@ func qualifiedName(name Name, domain Name) Name {
 }
 
 // NewQualifiedSymbol returns a Qualified Symbol for a specific domain
-func NewQualifiedSymbol(name Name, domain Name) *Symbol {
+func NewQualifiedSymbol(name Name, domain Name) Symbol {
 	ns := GetNamespace(domain)
 	return ns.Intern(name)
 }
 
 // NewLocalSymbol returns a Symbol from the local domain
-func NewLocalSymbol(name Name) *Symbol {
+func NewLocalSymbol(name Name) Symbol {
 	return NewQualifiedSymbol(name, LocalDomain)
 }
 
 // ParseSymbol parses a qualified Name and produces a Symbol
-func ParseSymbol(n Name) *Symbol {
+func ParseSymbol(n Name) Symbol {
 	if i := strings.IndexRune(string(n), ':'); i != -1 {
 		return NewQualifiedSymbol(n[i+1:], n[:i])
 	}
@@ -51,22 +60,22 @@ func ParseSymbol(n Name) *Symbol {
 }
 
 // Name returns the Name portion of the Symbol
-func (s *Symbol) Name() Name {
+func (s *symbol) Name() Name {
 	return s.name
 }
 
 // Domain returns the domain portion of the Symbol
-func (s *Symbol) Domain() Name {
+func (s *symbol) Domain() Name {
 	return s.domain
 }
 
 // Qualified returns the fully-qualified Name of a Symbol
-func (s *Symbol) Qualified() Name {
+func (s *symbol) Qualified() Name {
 	return qualifiedName(s.name, s.domain)
 }
 
 // Namespace returns the Namespace for this Symbol
-func (s *Symbol) Namespace(c Context) Namespace {
+func (s *symbol) Namespace(c Context) Namespace {
 	d := s.domain
 	if d != LocalDomain {
 		return GetNamespace(d)
@@ -74,12 +83,12 @@ func (s *Symbol) Namespace(c Context) Namespace {
 	return GetContextNamespace(c)
 }
 
-func resolveNamespace(c Context, domain Name) Namespace {
+func resolveNamespace(_ Context, domain Name) Namespace {
 	return GetNamespace(domain)
 }
 
 // Resolve a Symbol against a Context
-func (s *Symbol) Resolve(c Context) (Value, bool) {
+func (s *symbol) Resolve(c Context) (Value, bool) {
 	d := s.domain
 	if d != LocalDomain {
 		return resolveNamespace(c, d).Get(s.name)
@@ -92,19 +101,19 @@ func (s *Symbol) Resolve(c Context) (Value, bool) {
 }
 
 // Evaluable turns Symbol into an Evaluable Expression
-func (s *Symbol) Evaluable() Value {
-	return &EvaluableSymbol{
-		Symbol: s,
+func (s *symbol) Evaluable() Value {
+	return &evaluableSymbol{
+		symbol: s,
 	}
 }
 
 // Str converts this Value into a Str
-func (s *Symbol) Str() Str {
+func (s *symbol) Str() Str {
 	return Str(s.Qualified())
 }
 
-// Eval makes a EvaluableSymbol Evaluable
-func (e *EvaluableSymbol) Eval(c Context) Value {
+// Eval makes a evaluableSymbol Evaluable
+func (e *evaluableSymbol) Eval(c Context) Value {
 	if r, ok := e.Resolve(c); ok {
 		return r
 	}
@@ -113,8 +122,8 @@ func (e *EvaluableSymbol) Eval(c Context) Value {
 
 // AssertUnqualified will cast a Value into a Symbol and explode
 // violently if it's qualified with a domain
-func AssertUnqualified(v Value) *Symbol {
-	if r, ok := v.(*Symbol); ok {
+func AssertUnqualified(v Value) Symbol {
+	if r, ok := v.(Symbol); ok {
 		if r.Domain() == LocalDomain {
 			return r
 		}

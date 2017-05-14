@@ -26,7 +26,7 @@ type Namespace interface {
 	Value
 	Context
 	Domain() Name
-	Intern(n Name) *Symbol
+	Intern(n Name) Symbol
 }
 
 type namespace struct {
@@ -48,12 +48,12 @@ func (ns *namespace) Domain() Name {
 // Intern returns a Symbol based on the Name and Namespace Domain.
 // This Symbol will be atomic, meaning that there will be only one
 // instance, allowing the Symbols to be compared by reference
-func (ns *namespace) Intern(n Name) *Symbol {
+func (ns *namespace) Intern(n Name) Symbol {
 	d := ns.domain
 	k := qualifiedName(n, d)
 	return ns.symbols.Get(k, func() u.Any {
-		return &Symbol{name: n, domain: d}
-	}).(*Symbol)
+		return &symbol{name: n, domain: d}
+	}).(Symbol)
 }
 
 // Str converts this Value into a Str

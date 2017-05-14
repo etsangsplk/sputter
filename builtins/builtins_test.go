@@ -71,7 +71,7 @@ func TestQuote(t *testing.T) {
 
 	v1, ok = r1.ElementAt(0)
 	as.True(ok)
-	if _, ok := v1.(*a.Symbol); !ok {
+	if _, ok := v1.(a.Symbol); !ok {
 		as.Fail("first element is not a symbol")
 	}
 
