@@ -1,9 +1,6 @@
 package api
 
-import (
-	"bytes"
-	"fmt"
-)
+import "bytes"
 
 // ExpectedVector is raised if a value is not a Vector
 const ExpectedVector = "value is not a vector: %s"
