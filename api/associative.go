@@ -22,6 +22,11 @@ type Mapped interface {
 // Associative is a Mappable that is implemented atop an array
 type Associative []Vector
 
+// EvaluableAssociative represents an Evaluable Associative
+type EvaluableAssociative struct {
+	Associative
+}
+
 // Count returns the number of key/value pairs in this Associative
 func (a Associative) Count() int {
 	return len(a)
@@ -47,20 +52,6 @@ func (a Associative) Apply(c Context, args Sequence) Value {
 		return r
 	}
 	panic(Err(KeyNotFound, k))
-}
-
-// Eval makes an Associative Evaluable
-func (a Associative) Eval(c Context) Value {
-	l := len(a)
-	r := make(Associative, l)
-	for i := 0; i < l; i++ {
-		mp := a[i]
-		r[i] = Vector{
-			Eval(c, mp[0]),
-			Eval(c, mp[1]),
-		}
-	}
-	return r
 }
 
 // First returns the first key/value pair of an Associative
@@ -92,6 +83,13 @@ func (a Associative) IsSequence() bool {
 	return len(a) > 0
 }
 
+// Evaluable turns Associative into an Evaluable Expression
+func (a Associative) Evaluable() Value {
+	return &EvaluableAssociative{
+		Associative: a,
+	}
+}
+
 // Str converts this Value into a Str
 func (a Associative) Str() Str {
 	var b bytes.Buffer
@@ -109,6 +107,21 @@ func (a Associative) Str() Str {
 	}
 	b.WriteString("}")
 	return Str(b.String())
+}
+
+// Eval makes an EvaluableAssociative Evaluable
+func (e *EvaluableAssociative) Eval(c Context) Value {
+	a := e.Associative
+	l := len(a)
+	r := make(Associative, l)
+	for i := 0; i < l; i++ {
+		mp := a[i]
+		r[i] = Vector{
+			Eval(c, mp[0]),
+			Eval(c, mp[1]),
+		}
+	}
+	return r
 }
 
 // AssertMapped will cast Value to a Mapped or explode violently

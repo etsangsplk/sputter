@@ -8,11 +8,13 @@ import (
 )
 
 func getTestMap() a.Associative {
-	return a.Associative{
+	r := a.Associative{
 		a.Vector{a.NewKeyword("name"), s("Sputter")},
 		a.Vector{a.NewKeyword("age"), f(99)},
 		a.Vector{s("string"), s("value")},
 	}
+	c := a.NewContext()
+	return a.Eval(c, r.Evaluable()).(a.Associative)
 }
 
 func TestAssociative(t *testing.T) {

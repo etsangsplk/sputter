@@ -8,6 +8,11 @@ const ExpectedVector = "value is not a vector: %s"
 // Vector is a fixed-length Array of Values
 type Vector []Value
 
+// EvaluableVector represents an Evaluable Vector
+type EvaluableVector struct {
+	Vector
+}
+
 var emptyVector = Vector{}
 
 // Count returns the length of the Vector
@@ -26,16 +31,6 @@ func (v Vector) ElementAt(index int) (Value, bool) {
 // Apply makes Vector applicable
 func (v Vector) Apply(c Context, args Sequence) Value {
 	return IndexedApply(v, c, args)
-}
-
-// Eval makes a Vector Evaluable
-func (v Vector) Eval(c Context) Value {
-	l := len(v)
-	r := make(Vector, l)
-	for i := 0; i < l; i++ {
-		r[i] = Eval(c, v[i])
-	}
-	return r
 }
 
 // First returns the first element of a Vector
@@ -69,6 +64,13 @@ func (v Vector) IsSequence() bool {
 	return len(v) > 0
 }
 
+// Evaluable turns Vector into an Evaluable Expression
+func (v Vector) Evaluable() Value {
+	return &EvaluableVector{
+		Vector: v,
+	}
+}
+
 // Str converts this Value into a Str
 func (v Vector) Str() Str {
 	var b bytes.Buffer
@@ -83,6 +85,17 @@ func (v Vector) Str() Str {
 	}
 	b.WriteString("]")
 	return Str(b.String())
+}
+
+// Eval makes an EvaluableVector Evaluable
+func (e *EvaluableVector) Eval(c Context) Value {
+	v := e.Vector
+	l := len(v)
+	r := make(Vector, l)
+	for i := 0; i < l; i++ {
+		r[i] = Eval(c, v[i])
+	}
+	return r
 }
 
 // AssertVector will cast the Value into a Vector or die trying

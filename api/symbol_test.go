@@ -13,8 +13,8 @@ func TestSymbol(t *testing.T) {
 	c := a.NewContext()
 	c.Put("howdy", s("ho"))
 
-	sym := a.NewLocalSymbol("howdy")
-	as.String("ho", sym.Eval(c))
+	sym := a.NewLocalSymbol("howdy").Evaluable()
+	as.String("ho", a.Eval(c, sym))
 	as.String("howdy", sym)
 }
 
@@ -34,18 +34,18 @@ func TestQualifiedSymbol(t *testing.T) {
 	c2 := a.NewContext()
 	c2.Put(a.ContextDomain, a.GetNamespace("ns2"))
 
-	s1 := a.ParseSymbol("ns1:foo")
-	s2 := a.ParseSymbol("ns2:foo")
-	s3 := a.ParseSymbol("foo")
+	s1 := a.ParseSymbol("ns1:foo").Evaluable().(*a.EvaluableSymbol)
+	s2 := a.ParseSymbol("ns2:foo").Evaluable().(*a.EvaluableSymbol)
+	s3 := a.ParseSymbol("foo").Evaluable().(*a.EvaluableSymbol)
 
 	as.Equal(a.GetNamespace("ns1"), s1.Namespace(c2))
 	as.Equal(a.GetNamespace("ns2"), s2.Namespace(c1))
 	as.Equal(a.GetNamespace("ns1"), s3.Namespace(c1))
 
-	as.String("foo-ns1", s1.Eval(empty))
-	as.String("foo-ns2", s2.Eval(empty))
-	as.String("foo-ns1", s3.Eval(c1))
-	as.String("foo-ns2", s3.Eval(c2))
+	as.String("foo-ns1", a.Eval(empty, s1))
+	as.String("foo-ns2", a.Eval(empty, s2))
+	as.String("foo-ns1", a.Eval(c1, s3))
+	as.String("foo-ns2", a.Eval(c2, s3))
 }
 
 func TestSymbolInterning(t *testing.T) {
@@ -64,7 +64,7 @@ func TestUnknownSymbol(t *testing.T) {
 
 	defer as.ExpectError(a.Err(a.UnknownSymbol, "howdy"))
 	c := a.NewContext()
-	sym := a.NewLocalSymbol("howdy")
+	sym := a.NewLocalSymbol("howdy").Evaluable()
 	a.Eval(c, sym)
 }
 

@@ -93,7 +93,7 @@ func (r *reader) value(t *Token, data bool) a.Value {
 	case MapStart:
 		v = r.associative(data)
 	case Identifier:
-		v = readIdentifier(t)
+		v = readIdentifier(t, data)
 	case ListEnd:
 		panic(UnmatchedListEnd)
 	case VectorEnd:
@@ -113,7 +113,7 @@ func (r *reader) quoted(data bool) a.Value {
 		if data {
 			return l
 		}
-		return a.NewExpression(l.(*a.List))
+		return l.(*a.List).Evaluable()
 	}
 	panic(QuoteNotPaired)
 }
@@ -156,11 +156,11 @@ func (r *reader) list(data bool) a.Value {
 	if data {
 		return rest()
 	}
-	return a.NewExpression(first())
+	return first().Evaluable()
 }
 
 func (r *reader) expand(v a.Value) a.Value {
-	if l, ok := v.(*a.Expression); ok && l.IsSequence() {
+	if l, ok := v.(*a.EvaluableList); ok {
 		if m, ok := r.macro(l.First()); ok {
 			return r.expand(m.Apply(r.context, l.Rest()))
 		}
@@ -181,14 +181,17 @@ func (r *reader) macro(v a.Value) (*a.Function, bool) {
 	return nil, false
 }
 
-func (r *reader) vector(data bool) a.Vector {
+func (r *reader) vector(data bool) a.Value {
 	res := make(a.Vector, 0)
 
 	for {
 		if t, ok := r.nextToken(); ok {
 			switch t.Type {
 			case VectorEnd:
-				return res
+				if data {
+					return res
+				}
+				return res.Evaluable()
 			default:
 				e := r.value(t, data)
 				res = append(res, e)
@@ -199,7 +202,7 @@ func (r *reader) vector(data bool) a.Vector {
 	}
 }
 
-func (r *reader) associative(data bool) a.Associative {
+func (r *reader) associative(data bool) a.Value {
 	res := make(a.Associative, 0)
 	mp := make(a.Vector, 2)
 
@@ -208,7 +211,10 @@ func (r *reader) associative(data bool) a.Associative {
 			switch t.Type {
 			case MapEnd:
 				if idx%2 == 0 {
-					return res
+					if data {
+						return res
+					}
+					return res.Evaluable()
 				}
 				panic(MapNotPaired)
 			default:
@@ -227,7 +233,7 @@ func (r *reader) associative(data bool) a.Associative {
 	}
 }
 
-func readIdentifier(t *Token) a.Value {
+func readIdentifier(t *Token, data bool) a.Value {
 	n := a.Name(t.Value.(a.Str))
 	if v, ok := specialNames[n]; ok {
 		return v
@@ -237,5 +243,9 @@ func readIdentifier(t *Token) a.Value {
 	if keywordIdentifier.MatchString(s) {
 		return a.NewKeyword(n[1:])
 	}
-	return a.ParseSymbol(n)
+	sym := a.ParseSymbol(n)
+	if data {
+		return sym
+	}
+	return sym.Evaluable()
 }

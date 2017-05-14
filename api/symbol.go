@@ -19,6 +19,11 @@ type Symbol struct {
 	domain Name
 }
 
+// EvaluableSymbol represents an Evaluable Symbol
+type EvaluableSymbol struct {
+	*Symbol
+}
+
 func qualifiedName(name Name, domain Name) Name {
 	if domain == LocalDomain {
 		return name
@@ -86,17 +91,24 @@ func (s *Symbol) Resolve(c Context) (Value, bool) {
 	return GetContextNamespace(c).Get(n)
 }
 
-// Eval makes a Symbol Evaluable
-func (s *Symbol) Eval(c Context) Value {
-	if r, ok := s.Resolve(c); ok {
-		return r
+// Evaluable turns Symbol into an Evaluable Expression
+func (s *Symbol) Evaluable() Value {
+	return &EvaluableSymbol{
+		Symbol: s,
 	}
-	panic(Err(UnknownSymbol, s.name))
 }
 
 // Str converts this Value into a Str
 func (s *Symbol) Str() Str {
 	return Str(s.Qualified())
+}
+
+// Eval makes a EvaluableSymbol Evaluable
+func (e *EvaluableSymbol) Eval(c Context) Value {
+	if r, ok := e.Resolve(c); ok {
+		return r
+	}
+	panic(Err(UnknownSymbol, e.name))
 }
 
 // AssertUnqualified will cast a Value into a Symbol and explode

@@ -7,8 +7,8 @@ type List struct {
 	count int
 }
 
-// Expression contains a evaluable Expression
-type Expression struct {
+// EvaluableList represents an Evaluable List
+type EvaluableList struct {
 	*List
 }
 
@@ -21,13 +21,6 @@ func NewList(v Value) *List {
 		first: v,
 		rest:  EmptyList,
 		count: 1,
-	}
-}
-
-// NewExpression creates a new Expression Invoker
-func NewExpression(l *List) *Expression {
-	return &Expression{
-		List: l,
 	}
 }
 
@@ -83,19 +76,27 @@ func (l *List) Apply(c Context, args Sequence) Value {
 	return IndexedApply(l, c, args)
 }
 
+// Evaluable turns List into an Evaluable Expression
+func (l *List) Evaluable() Value {
+	if l == EmptyList {
+		return l
+	}
+	return &EvaluableList{
+		List: l,
+	}
+}
+
 // Str converts this Value into a Str
 func (l *List) Str() Str {
 	return MakeSequenceStr(l)
 }
 
-// Eval makes Expression Evaluable
-func (e *Expression) Eval(c Context) Value {
-	if e.List == EmptyList {
-		return EmptyList
-	}
-	t := e.first
+// Eval makes EvaluableList Evaluable
+func (e *EvaluableList) Eval(c Context) Value {
+	l := e.List
+	t := l.first
 	if a, ok := Eval(c, t).(Applicable); ok {
-		return Apply(c, a, e.rest)
+		return Apply(c, a, l.rest)
 	}
 	panic(Err(ExpectedApplicable, t))
 }

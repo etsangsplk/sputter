@@ -86,14 +86,15 @@ func TestListEval(t *testing.T) {
 	c := a.NewContext()
 	c.Put(helloThere.Name(), helloThere)
 
-	fl := a.NewExpression(a.NewList(helloThere))
+	fl := a.NewList(helloThere).Evaluable()
 	as.String("there", a.Eval(c, fl))
 
-	sl := a.NewExpression(a.NewList(a.NewLocalSymbol("hello")))
+	sym := a.NewLocalSymbol("hello").Evaluable()
+	sl := a.NewList(sym).Evaluable()
 	as.String("there", a.Eval(c, sl))
 
 	as.Equal(a.EmptyList, a.Eval(c, a.EmptyList))
-	as.Equal(a.EmptyList, a.Eval(c, a.NewExpression(a.EmptyList)))
+	as.Equal(a.EmptyList, a.Eval(c, a.EmptyList.Evaluable()))
 }
 
 func testBrokenEval(t *testing.T, val a.Value, err string) {
@@ -106,11 +107,12 @@ func testBrokenEval(t *testing.T, val a.Value, err string) {
 
 func TestNonFunction(t *testing.T) {
 	err1 := a.Err(a.UnknownSymbol, "unknown")
-	seq := a.NewList(s("foo")).Prepend(a.NewLocalSymbol("unknown"))
-	testBrokenEval(t, a.NewExpression(seq.(*a.List)), err1)
+	sym := a.NewLocalSymbol("unknown").Evaluable()
+	seq := a.NewList(s("foo")).Prepend(sym)
+	testBrokenEval(t, seq.(*a.List).Evaluable(), err1)
 
 	err2 := a.Err(a.ExpectedApplicable, f(99))
-	testBrokenEval(t, a.NewExpression(a.NewList(f(99))), err2)
+	testBrokenEval(t, a.NewList(f(99)).Evaluable(), err2)
 }
 
 func TestListExplosion(t *testing.T) {
