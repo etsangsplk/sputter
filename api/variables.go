@@ -25,6 +25,11 @@ type Comparer interface {
 	Compare(Comparer) Comparison
 }
 
+// Named is the generic interface for Values that are named
+type Named interface {
+	Name() Name
+}
+
 // Typed is the generic interface for Values that are typed
 type Typed interface {
 	Type() Name
@@ -43,11 +48,6 @@ type Getter interface {
 // Elementer is the interface for Values that have indexed elements
 type Elementer interface {
 	ElementAt(int) (Value, bool)
-}
-
-// Named is the generic interface for Values that are named
-type Named interface {
-	Name() Name
 }
 
 type nilValue struct{}

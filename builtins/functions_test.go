@@ -5,6 +5,7 @@ import (
 
 	a "github.com/kode4food/sputter/api"
 	"github.com/kode4food/sputter/assert"
+	"github.com/kode4food/sputter/builtins"
 )
 
 func TestFunction(t *testing.T) {
@@ -81,4 +82,23 @@ func TestApply(t *testing.T) {
 
 	appErr := a.Err(a.ExpectedApplicable, "32")
 	testBadCode(t, `(apply 32 [1 2 3])`, appErr)
+}
+
+func TestRestFunctions(t *testing.T) {
+	testCode(t, `
+		(defn test [f & r] (to-vector (cons f r)))
+		(test 1 2 3 4 5 6 7)
+	`, a.Str("[1 2 3 4 5 6 7]"))
+
+	testBadCode(t, `
+		(fn [x y &] "explode")
+	`, a.Err(builtins.InvalidRestArgument, "[&]"))
+
+	testBadCode(t, `
+		(fn [x y & z g] "explode")
+	`, a.Err(builtins.InvalidRestArgument, "[& z g]"))
+
+	testBadCode(t, `
+		(fn [x y & & z] "explode")
+	`, a.Err(builtins.InvalidRestArgument, "[& & z]"))
 }

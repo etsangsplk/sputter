@@ -3,18 +3,11 @@ package builtins
 import a "github.com/kode4food/sputter/api"
 
 func defineMacro(closure a.Context, d *functionDefinition) a.Function {
-	an := argNames(d.args)
-	ac := len(an)
+	an := makeArgProcessor(closure, d.args)
 	db := d.body
 
 	return a.NewMacro(func(c a.Context, args a.Sequence) a.Value {
-		a.AssertArity(args, ac)
-		l := a.ChildContext(closure)
-		i := args
-		for _, n := range an {
-			l.Put(n, a.Eval(c, i.First()))
-			i = i.Rest()
-		}
+		l := an(c, args)
 		return a.EvalSequence(l, db)
 	}).WithMetadata(d.meta).(a.Function)
 }
