@@ -17,44 +17,59 @@ var functionMetadata = Metadata{
 }
 
 // Function is a Value that can be invoked
-type Function struct {
+type Function interface {
+	Value
+	Annotated
+	Named
+	Typed
+	Documented
+	Applicable
+	Function() bool
+}
+
+type function struct {
 	exec SequenceProcessor
 	meta Metadata
 }
 
 // NewFunction instantiates a new Function
-func NewFunction(e SequenceProcessor) *Function {
-	return &Function{
+func NewFunction(e SequenceProcessor) Function {
+	return &function{
 		exec: e,
 		meta: functionMetadata,
 	}
 }
 
+// Function is a disambiguating marker
+func (f *function) Function() bool {
+	return true
+}
+
 // Metadata makes Function Annotated
-func (f *Function) Metadata() Metadata {
+func (f *function) Metadata() Metadata {
 	return f.meta
 }
 
 // WithMetadata copies the Function with new Metadata
-func (f *Function) WithMetadata(md Metadata) Annotated {
-	return &Function{
+func (f *function) WithMetadata(md Metadata) Annotated {
+	return &function{
 		exec: f.exec,
 		meta: f.meta.Merge(md),
 	}
 }
 
 // Name returns the name of this Function via its Metadata
-func (f *Function) Name() Name {
+func (f *function) Name() Name {
 	return f.Metadata()[MetaName].(Name)
 }
 
 // Documentation returns the docstring of this Function via its Metadata
-func (f *Function) Documentation() Str {
+func (f *function) Documentation() Str {
 	return f.Metadata()[MetaDoc].(Str)
 }
 
 // Type returns the Type of this Function via its Metadata
-func (f *Function) Type() Name {
+func (f *function) Type() Name {
 	if v, ok := f.meta.Get(MetaType); ok {
 		if n, ok := v.(Name); ok {
 			return n
@@ -64,12 +79,12 @@ func (f *Function) Type() Name {
 }
 
 // Apply makes Function Applicable
-func (f *Function) Apply(c Context, args Sequence) Value {
+func (f *function) Apply(c Context, args Sequence) Value {
 	return f.exec(c, args)
 }
 
 // Str converts this Value into a Str
-func (f *Function) Str() Str {
+func (f *function) Str() Str {
 	return MakeDumpStr(f)
 }
 

@@ -70,7 +70,7 @@ func getFunctionDefinition(c a.Context, args a.Sequence) *functionDefinition {
 	}
 }
 
-func defineFunction(closure a.Context, d *functionDefinition) *a.Function {
+func defineFunction(closure a.Context, d *functionDefinition) a.Function {
 	an := argNames(d.args)
 	ac := len(an)
 	db := d.body
@@ -84,7 +84,7 @@ func defineFunction(closure a.Context, d *functionDefinition) *a.Function {
 			i = i.Rest()
 		}
 		return a.EvalSequence(l, db)
-	}).WithMetadata(d.meta).(*a.Function)
+	}).WithMetadata(d.meta).(a.Function)
 }
 
 func defn(c a.Context, args a.Sequence) a.Value {

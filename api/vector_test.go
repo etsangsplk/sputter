@@ -10,7 +10,7 @@ import (
 func TestVector(t *testing.T) {
 	as := assert.New(t)
 
-	v1 := a.Vector{s("hello"), s("how"), s("are"), s("you?")}
+	v1 := a.NewVector(s("hello"), s("how"), s("are"), s("you?"))
 	as.Number(4, v1.Count())
 	as.Number(4, a.Count(v1))
 
@@ -44,7 +44,7 @@ func TestVector(t *testing.T) {
 func TestEmptyVector(t *testing.T) {
 	as := assert.New(t)
 
-	v := &a.Vector{}
+	v := a.NewVector()
 	as.Nil(v.First())
 	as.String("[]", v.Str())
 	as.String("[]", v.Rest())
@@ -63,7 +63,9 @@ func (t *testEvaluable) Str() a.Str {
 func TestVectorEval(t *testing.T) {
 	as := assert.New(t)
 
-	v := a.Vector{s("hello"), s("how"), &testEvaluable{}, s("you?")}
+	v := a.NewVector(s("hello"), s("how"), &testEvaluable{}, s("you?"))
+	as.True(v.Vector())
+
 	c := a.NewContext()
 	r := a.Eval(c, v.Evaluable())
 
@@ -80,7 +82,7 @@ func TestVectorEval(t *testing.T) {
 func TestIterate(t *testing.T) {
 	as := assert.New(t)
 
-	v := a.Vector{s("hello"), s("how"), s("are"), s("you?")}
+	v := a.NewVector(s("hello"), s("how"), s("are"), s("you?"))
 	i := a.Iterate(v)
 	e1, _ := i.Next()
 	s1 := i.Rest()
@@ -105,7 +107,7 @@ func TestIterate(t *testing.T) {
 func TestAssertVector(t *testing.T) {
 	as := assert.New(t)
 
-	v := a.Vector{s("hello"), s("how"), s("are"), s("you?")}
+	v := a.NewVector(s("hello"), s("how"), s("are"), s("you?"))
 	a.AssertVector(v)
 
 	defer as.ExpectError(a.Err(a.ExpectedVector, f(99)))
@@ -119,6 +121,6 @@ func TestVectorExplosion(t *testing.T) {
 	err := a.Err(a.IndexNotFound, idx)
 	defer as.ExpectError(err)
 
-	v := a.Vector{s("foo")}
+	v := a.NewVector(s("foo"))
 	v.Apply(a.NewContext(), a.NewList(idx))
 }

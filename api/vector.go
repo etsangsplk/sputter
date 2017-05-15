@@ -6,22 +6,40 @@ import "bytes"
 const ExpectedVector = "value is not a vector: %s"
 
 // Vector is a fixed-length Array of Values
-type Vector []Value
-
-// EvaluableVector represents an Evaluable Vector
-type EvaluableVector struct {
-	Vector
+type Vector interface {
+	Conjoiner
+	MakeEvaluable
+	Elementer
+	Counted
+	Applicable
+	Vector() bool
 }
 
-var emptyVector = Vector{}
+type vector []Value
+
+type evaluableVector struct {
+	vector
+}
+
+var emptyVector = vector{}
+
+// NewVector instantiates a new Vector
+func NewVector(v ...Value) Vector {
+	return vector(v)
+}
+
+// Vector is a disambiguating marker
+func (v vector) Vector() bool {
+	return true
+}
 
 // Count returns the length of the Vector
-func (v Vector) Count() int {
+func (v vector) Count() int {
 	return len(v)
 }
 
 // ElementAt returns the Value at the indexed position in the Vector
-func (v Vector) ElementAt(index int) (Value, bool) {
+func (v vector) ElementAt(index int) (Value, bool) {
 	if index >= 0 && index < len(v) {
 		return v[index], true
 	}
@@ -29,12 +47,12 @@ func (v Vector) ElementAt(index int) (Value, bool) {
 }
 
 // Apply makes Vector applicable
-func (v Vector) Apply(c Context, args Sequence) Value {
+func (v vector) Apply(c Context, args Sequence) Value {
 	return IndexedApply(v, c, args)
 }
 
 // First returns the first element of a Vector
-func (v Vector) First() Value {
+func (v vector) First() Value {
 	if len(v) > 0 {
 		return v[0]
 	}
@@ -42,7 +60,7 @@ func (v Vector) First() Value {
 }
 
 // Rest returns the remaining elements of a Vector as a Sequence
-func (v Vector) Rest() Sequence {
+func (v vector) Rest() Sequence {
 	if len(v) > 1 {
 		return Sequence(v[1:])
 	}
@@ -50,29 +68,29 @@ func (v Vector) Rest() Sequence {
 }
 
 // Prepend creates a new Sequence by prepending a Value
-func (v Vector) Prepend(p Value) Sequence {
-	return append(Vector{p}, v...)
+func (v vector) Prepend(p Value) Sequence {
+	return append(vector{p}, v...)
 }
 
 // Conjoin implements the Conjoiner interface
-func (v Vector) Conjoin(a Value) Sequence {
+func (v vector) Conjoin(a Value) Sequence {
 	return append(v, a)
 }
 
 // IsSequence returns whether this instance is a consumable Sequence
-func (v Vector) IsSequence() bool {
+func (v vector) IsSequence() bool {
 	return len(v) > 0
 }
 
 // Evaluable turns Vector into an Evaluable Expression
-func (v Vector) Evaluable() Value {
-	return &EvaluableVector{
-		Vector: v,
+func (v vector) Evaluable() Value {
+	return &evaluableVector{
+		vector: v,
 	}
 }
 
 // Str converts this Value into a Str
-func (v Vector) Str() Str {
+func (v vector) Str() Str {
 	var b bytes.Buffer
 	l := len(v)
 
@@ -87,11 +105,11 @@ func (v Vector) Str() Str {
 	return Str(b.String())
 }
 
-// Eval makes an EvaluableVector Evaluable
-func (e *EvaluableVector) Eval(c Context) Value {
-	v := e.Vector
+// Eval makes an evaluableVector Evaluable
+func (e *evaluableVector) Eval(c Context) Value {
+	v := e.vector
 	l := len(v)
-	r := make(Vector, l)
+	r := make(vector, l)
 	for i := 0; i < l; i++ {
 		r[i] = Eval(c, v[i])
 	}
@@ -100,9 +118,6 @@ func (e *EvaluableVector) Eval(c Context) Value {
 
 // AssertVector will cast the Value into a Vector or die trying
 func AssertVector(v Value) Vector {
-	if r, ok := v.(*EvaluableVector); ok {
-		return r.Vector
-	}
 	if r, ok := v.(Vector); ok {
 		return r
 	}

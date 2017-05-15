@@ -18,10 +18,10 @@ func TestBool(t *testing.T) {
 	as := assert.New(t)
 
 	c := a.NewContext()
-	as.True(a.True.Apply(c, a.Vector{a.True, a.True, a.True}))
-	as.False(a.True.Apply(c, a.Vector{a.True, a.False, a.True}))
-	as.True(a.False.Apply(c, a.Vector{a.False, a.False, a.False}))
-	as.False(a.False.Apply(c, a.Vector{a.True, a.False, a.True}))
+	as.True(a.True.Apply(c, a.NewVector(a.True, a.True, a.True)))
+	as.False(a.True.Apply(c, a.NewVector(a.True, a.False, a.True)))
+	as.True(a.False.Apply(c, a.NewVector(a.False, a.False, a.False)))
+	as.False(a.False.Apply(c, a.NewVector(a.True, a.False, a.True)))
 	as.True(a.AssertBool(a.True))
 
 	defer as.ExpectError(a.Err(a.ExpectedBool, s("not bool")))
@@ -43,6 +43,6 @@ func TestNil(t *testing.T) {
 	as := assert.New(t)
 
 	c := a.NewContext()
-	as.True(a.Nil.Apply(c, a.Vector{a.Nil, a.Nil, a.Nil}))
-	as.False(a.Nil.Apply(c, a.Vector{a.Nil, a.False, a.Nil}))
+	as.True(a.Nil.Apply(c, a.NewVector(a.Nil, a.Nil, a.Nil)))
+	as.False(a.Nil.Apply(c, a.NewVector(a.Nil, a.False, a.Nil)))
 }

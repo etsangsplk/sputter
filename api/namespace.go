@@ -26,7 +26,7 @@ type Namespace interface {
 	Value
 	Context
 	Domain() Name
-	Intern(n Name) Symbol
+	Intern(Name) Symbol
 }
 
 type namespace struct {

@@ -8,11 +8,11 @@ import (
 )
 
 func getTestMap() a.Associative {
-	r := a.Associative{
-		a.Vector{a.NewKeyword("name"), s("Sputter")},
-		a.Vector{a.NewKeyword("age"), f(99)},
-		a.Vector{s("string"), s("value")},
-	}
+	r := a.NewAssociative(
+		a.NewVector(a.NewKeyword("name"), s("Sputter")),
+		a.NewVector(a.NewKeyword("age"), f(99)),
+		a.NewVector(s("string"), s("value")),
+	)
 	c := a.NewContext()
 	return a.Eval(c, r.Evaluable()).(a.Associative)
 }
@@ -21,9 +21,11 @@ func TestAssociative(t *testing.T) {
 	as := assert.New(t)
 	m1 := getTestMap()
 
+	as.True(m1.Associative())
 	as.Number(3, a.Count(m1))
 
 	nameKey := a.NewKeyword("name")
+	as.True(nameKey.Keyword())
 	as.Equal(a.Name("name"), nameKey.Name())
 
 	nameValue, ok := m1.Get(nameKey)
@@ -52,9 +54,11 @@ func TestAssociativeSequence(t *testing.T) {
 	m1 := getTestMap()
 
 	first := m1.First()
-	if v, ok := first.(a.Vector); ok {
-		as.Equal(a.NewKeyword("name"), v[0])
-		as.String("Sputter", v[1])
+	if e, ok := first.(a.Vector); ok {
+		k, _ := e.ElementAt(0)
+		v, _ := e.ElementAt(1)
+		as.Equal(a.NewKeyword("name"), k)
+		as.String("Sputter", v)
 	} else {
 		as.Fail("map.First() is not a vector")
 	}
@@ -68,7 +72,7 @@ func TestAssociativePrepend(t *testing.T) {
 	as := assert.New(t)
 	m1 := getTestMap()
 
-	m2 := m1.Prepend(a.Vector{a.NewKeyword("foo"), s("bar")}).(a.Associative)
+	m2 := m1.Prepend(a.NewVector(a.NewKeyword("foo"), s("bar"))).(a.Associative)
 	as.NotIdentical(m1, m2)
 
 	r, ok := m2.Get(a.NewKeyword("foo"))
@@ -92,16 +96,20 @@ func TestAssociativeIterate(t *testing.T) {
 	i := a.Iterate(m1)
 	if v, ok := i.Next(); ok {
 		vec := v.(a.Vector)
-		as.Equal(a.NewKeyword("name"), vec[0])
-		as.String("Sputter", vec[1])
+		k, _ := vec.ElementAt(0)
+		v, _ := vec.ElementAt(1)
+		as.Equal(a.NewKeyword("name"), k)
+		as.String("Sputter", v)
 	} else {
 		as.Fail("couldn't get first element")
 	}
 
 	if v, ok := i.Next(); ok {
 		vec := v.(a.Vector)
-		as.Equal(a.NewKeyword("age"), vec[0])
-		as.Number(99, vec[1])
+		k, _ := vec.ElementAt(0)
+		v, _ := vec.ElementAt(1)
+		as.Equal(a.NewKeyword("age"), k)
+		as.Number(99, v)
 	} else {
 		as.Fail("couldn't get second element")
 	}

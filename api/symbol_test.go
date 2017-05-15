@@ -13,8 +13,9 @@ func TestSymbol(t *testing.T) {
 	c := a.NewContext()
 	c.Put("howdy", s("ho"))
 
-	sym := a.NewLocalSymbol("howdy").Evaluable()
-	as.String("ho", a.Eval(c, sym))
+	sym := a.NewLocalSymbol("howdy")
+	as.True(sym.Symbol())
+	as.String("ho", a.Eval(c, sym.Evaluable()))
 	as.String("howdy", sym)
 }
 

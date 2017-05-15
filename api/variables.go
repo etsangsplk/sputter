@@ -30,14 +30,19 @@ type Typed interface {
 	Type() Name
 }
 
+// Documented is the generic interface for Values that are documented
+type Documented interface {
+	Documentation() Str
+}
+
 // Getter is the interface for Values that have retrievable Properties
 type Getter interface {
-	Get(key Value) (Value, bool)
+	Get(Value) (Value, bool)
 }
 
 // Elementer is the interface for Values that have indexed elements
 type Elementer interface {
-	ElementAt(index int) (Value, bool)
+	ElementAt(int) (Value, bool)
 }
 
 // Named is the generic interface for Values that are named

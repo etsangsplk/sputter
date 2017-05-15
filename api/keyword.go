@@ -13,6 +13,7 @@ type Keyword interface {
 	Applicable
 	Evaluable
 	Named
+	Keyword() bool
 }
 
 type keyword struct {
@@ -24,6 +25,11 @@ func NewKeyword(n Name) Keyword {
 	return keywords.Get(n, func() u.Any {
 		return &keyword{name: n}
 	}).(Keyword)
+}
+
+// Keyword is a disambiguating marker
+func (k *keyword) Keyword() bool {
+	return true
 }
 
 // Name returns the Name component of the Keyword

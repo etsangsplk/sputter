@@ -14,12 +14,12 @@ var helloName = a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
 	return s("Hello, " + string(v.(a.Str)) + "!")
 }).WithMetadata(a.Metadata{
 	a.MetaName: a.Name("hello"),
-}).(*a.Function)
+}).(a.Function)
 
 func TestEvaluate(t *testing.T) {
 	as := assert.New(t)
 
-	l := a.NewList(s("World")).Prepend(helloName).(*a.List).Evaluable()
+	l := a.NewList(helloName, s("World")).Evaluable()
 	c := a.NewContext()
 	r := a.Eval(c, l)
 
@@ -29,9 +29,9 @@ func TestEvaluate(t *testing.T) {
 func TestEvaluateSequence(t *testing.T) {
 	as := assert.New(t)
 
-	s1 := a.NewList(s("World")).Prepend(helloName).(*a.List).Evaluable()
-	s2 := a.NewList(s("Foo")).Prepend(helloName).(*a.List).Evaluable()
-	l := a.NewList(s2).Prepend(s1)
+	s1 := a.NewList(helloName, s("World")).Evaluable()
+	s2 := a.NewList(helloName, s("Foo")).Evaluable()
+	l := a.NewList(s1, s2)
 
 	c := a.NewContext()
 	r := a.EvalSequence(c, l)

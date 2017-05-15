@@ -2,7 +2,7 @@ package builtins
 
 import a "github.com/kode4food/sputter/api"
 
-func defineMacro(closure a.Context, d *functionDefinition) *a.Function {
+func defineMacro(closure a.Context, d *functionDefinition) a.Function {
 	an := argNames(d.args)
 	ac := len(an)
 	db := d.body
@@ -16,7 +16,7 @@ func defineMacro(closure a.Context, d *functionDefinition) *a.Function {
 			i = i.Rest()
 		}
 		return a.EvalSequence(l, db)
-	}).WithMetadata(d.meta).(*a.Function)
+	}).WithMetadata(d.meta).(a.Function)
 }
 
 func defmacro(c a.Context, args a.Sequence) a.Value {

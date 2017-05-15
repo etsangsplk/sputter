@@ -9,8 +9,8 @@ var macroMetadata = Metadata{
 }
 
 // NewMacro instantiates a new Macro
-func NewMacro(e SequenceProcessor) *Function {
-	return NewFunction(e).WithMetadata(macroMetadata).(*Function)
+func NewMacro(e SequenceProcessor) Function {
+	return NewFunction(e).WithMetadata(macroMetadata).(Function)
 }
 
 // IsMacro tests an Applicable as being marked a Macro

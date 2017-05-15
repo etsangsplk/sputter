@@ -7,9 +7,9 @@ const AlreadyBound = "symbol is already bound in this context: %s"
 
 // Context represents a variable scope
 type Context interface {
-	Get(n Name) (v Value, bound bool)
-	Put(n Name, v Value)
-	Delete(n Name)
+	Get(Name) (Value, bool)
+	Put(Name, Value)
+	Delete(Name)
 }
 
 type context struct {

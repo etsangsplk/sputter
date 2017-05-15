@@ -5,7 +5,7 @@ import (
 	d "github.com/kode4food/sputter/docstring"
 )
 
-func registerPredicate(f *a.Function) {
+func registerPredicate(f a.Function) {
 	registerAnnotated(f)
 
 	registerAnnotated(
@@ -66,7 +66,7 @@ func init() {
 		a.NewFunction(identical).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("eq"),
 			a.MetaDoc:  d.Get("eq"),
-		}).(*a.Function),
+		}).(a.Function),
 	)
 
 	registerSequencePredicate(func(v a.Value) bool {

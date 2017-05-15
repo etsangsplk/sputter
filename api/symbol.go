@@ -17,11 +17,12 @@ const (
 type Symbol interface {
 	MakeEvaluable
 	Value
+	Symbol() bool
 	Name() Name
 	Domain() Name
 	Qualified() Name
-	Namespace(c Context) Namespace
-	Resolve(c Context) (Value, bool)
+	Namespace(Context) Namespace
+	Resolve(Context) (Value, bool)
 }
 
 type symbol struct {
@@ -57,6 +58,11 @@ func ParseSymbol(n Name) Symbol {
 		return NewQualifiedSymbol(n[i+1:], n[:i])
 	}
 	return NewLocalSymbol(n)
+}
+
+// Symbol is a disambiguating marker
+func (s *symbol) Symbol() bool {
+	return true
 }
 
 // Name returns the Name portion of the Symbol

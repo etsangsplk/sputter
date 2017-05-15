@@ -3,20 +3,28 @@ package builtins
 import (
 	a "github.com/kode4food/sputter/api"
 	d "github.com/kode4food/sputter/docstring"
-	u "github.com/kode4food/sputter/util"
 )
 
 func list(c a.Context, args a.Sequence) a.Value {
-	s := u.NewStack()
-	for i := args; i.IsSequence(); i = i.Rest() {
-		s.Push(a.Eval(c, i.First()))
+	if cnt, ok := args.(a.Counted); ok {
+		l := cnt.Count()
+		r := make([]a.Value, l)
+		idx := 0
+		for i := args; i.IsSequence(); i = i.Rest() {
+			r[idx] = a.Eval(c, i.First())
+			idx++
+		}
+		return a.NewList(r...)
 	}
+	return listFromUncounted(c, args)
+}
 
-	l := a.Sequence(a.EmptyList)
-	for v, ok := s.Pop(); ok; v, ok = s.Pop() {
-		l = l.Prepend(v.(a.Value))
+func listFromUncounted(c a.Context, args a.Sequence) a.Value {
+	r := []a.Value{}
+	for i := args; i.IsSequence(); i = i.Rest() {
+		r = append(r, a.Eval(c, i.First()))
 	}
-	return l
+	return a.NewList(r...)
 }
 
 func toList(c a.Context, args a.Sequence) a.Value {
@@ -24,7 +32,7 @@ func toList(c a.Context, args a.Sequence) a.Value {
 }
 
 func isList(v a.Value) bool {
-	if _, ok := v.(*a.List); ok {
+	if _, ok := v.(a.List); ok {
 		return true
 	}
 	return false

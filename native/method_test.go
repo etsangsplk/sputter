@@ -15,12 +15,12 @@ func TestSingularMethodInvoke(t *testing.T) {
 	as.True(ok)
 	as.NotNil(v1)
 
-	f1, ok := v1.(*a.Function)
+	f1, ok := v1.(a.Function)
 	as.True(ok)
 	as.NotNil(f1)
 
 	c := a.NewContext()
-	r1 := f1.Apply(c, &a.Vector{a.Str("hello")})
+	r1 := f1.Apply(c, a.NewVector(a.Str("hello")))
 	as.NotNil(r1)
 	as.Number(5, r1)
 }
@@ -33,12 +33,12 @@ func TestVoidMethodInvoke(t *testing.T) {
 	as.True(ok)
 	as.NotNil(v1)
 
-	f1, ok := v1.(*a.Function)
+	f1, ok := v1.(a.Function)
 	as.True(ok)
 	as.NotNil(f1)
 
 	c := a.NewContext()
-	r1 := f1.Apply(c, &a.Vector{a.Str("clobbered"), a.NewFloat(-99)})
+	r1 := f1.Apply(c, a.NewVector(a.Str("clobbered"), a.NewFloat(-99)))
 	as.Nil(r1)
 
 	r2, ok := n1.Get(a.Name("s"))
@@ -58,16 +58,20 @@ func TestPluralMethodInvoke(t *testing.T) {
 	as.True(ok)
 	as.NotNil(v1)
 
-	f1, ok := v1.(*a.Function)
+	f1, ok := v1.(a.Function)
 	as.True(ok)
 	as.NotNil(f1)
 
 	c := a.NewContext()
-	r1 := f1.Apply(c, &a.Vector{a.Str("one"), a.NewFloat(4), a.Str("eight")})
+	r1 := f1.Apply(c, a.NewVector(a.Str("one"), a.NewFloat(4), a.Str("eight")))
 	as.NotNil(r1)
 
 	r2 := r1.(a.Vector)
-	as.Number(3, r2[0])
-	as.Number(4, r2[1])
-	as.Number(5, r2[2])
+	r3, _ := r2.ElementAt(0)
+	r4, _ := r2.ElementAt(1)
+	r5, _ := r2.ElementAt(2)
+
+	as.Number(3, r3)
+	as.Number(4, r4)
+	as.Number(5, r5)
 }

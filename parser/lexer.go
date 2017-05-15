@@ -130,7 +130,7 @@ func (l *lexer) Str() a.Str {
 
 // Str converts this Value into a Str
 func (t *Token) Str() a.Str {
-	return a.Vector{a.NewFloat(float64(t.Type)), t.Value}.Str()
+	return a.NewVector(a.NewFloat(float64(t.Type)), t.Value).Str()
 }
 
 func isNotWhitespace(t *Token) bool {

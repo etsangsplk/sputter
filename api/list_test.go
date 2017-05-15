@@ -11,7 +11,7 @@ var helloThere = a.NewFunction(func(_ a.Context, _ a.Sequence) a.Value {
 	return s("there")
 }).WithMetadata(a.Metadata{
 	a.MetaName: a.Name("hello"),
-}).(*a.Function)
+}).(a.Function)
 
 func TestSimpleList(t *testing.T) {
 	as := assert.New(t)
@@ -25,12 +25,14 @@ func TestList(t *testing.T) {
 	as := assert.New(t)
 	n1 := f(12)
 	l1 := a.NewList(n1)
+
+	as.True(l1.List())
 	as.Equal(n1, l1.First())
 	as.Equal(a.EmptyList, l1.Rest())
 	as.False(l1.Rest().IsSequence())
 
 	n2 := f(20.5)
-	l2 := l1.Prepend(n2).(*a.List)
+	l2 := l1.Prepend(n2).(a.List)
 
 	as.String("()", a.EmptyList)
 	as.String("(20.5 12)", l2)
@@ -108,8 +110,8 @@ func testBrokenEval(t *testing.T, val a.Value, err string) {
 func TestNonFunction(t *testing.T) {
 	err1 := a.Err(a.UnknownSymbol, "unknown")
 	sym := a.NewLocalSymbol("unknown").Evaluable()
-	seq := a.NewList(s("foo")).Prepend(sym)
-	testBrokenEval(t, seq.(*a.List).Evaluable(), err1)
+	seq := a.NewList(sym, s("foo"))
+	testBrokenEval(t, seq.(a.List).Evaluable(), err1)
 
 	err2 := a.Err(a.ExpectedApplicable, f(99))
 	testBrokenEval(t, a.NewList(f(99)).Evaluable(), err2)
@@ -122,9 +124,9 @@ func TestListExplosion(t *testing.T) {
 	idx := f(3)
 	err := a.Err(a.IndexNotFound, idx)
 
-	v := seq.Apply(a.NewContext(), a.Vector{idx, s("default")})
+	v := seq.Apply(a.NewContext(), a.NewVector(idx, s("default")))
 	as.String("default", v)
 
 	defer as.ExpectError(err)
-	seq.Apply(a.NewContext(), a.Vector{idx})
+	seq.Apply(a.NewContext(), a.NewVector(idx))
 }

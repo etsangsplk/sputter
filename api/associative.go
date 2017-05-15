@@ -20,32 +20,52 @@ type Mapped interface {
 }
 
 // Associative is a Mappable that is implemented atop an array
-type Associative []Vector
+type Associative interface {
+	Conjoiner
+	MakeEvaluable
+	Getter
+	Counted
+	Applicable
+	Associative() bool
+}
 
-// EvaluableAssociative represents an Evaluable Associative
-type EvaluableAssociative struct {
-	Associative
+type associative []Vector
+
+type evaluableAssociative struct {
+	associative
+}
+
+// NewAssociative instantiates a new Associative
+func NewAssociative(v ...Vector) Associative {
+	return associative(v)
+}
+
+// Associative is a disambiguating marker
+func (a associative) Associative() bool {
+	return true
 }
 
 // Count returns the number of key/value pairs in this Associative
-func (a Associative) Count() int {
+func (a associative) Count() int {
 	return len(a)
 }
 
 // Get returns the Value corresponding to the key in the Associative
-func (a Associative) Get(key Value) (Value, bool) {
+func (a associative) Get(key Value) (Value, bool) {
 	l := len(a)
 	for i := 0; i < l; i++ {
 		mp := a[i]
-		if mp[0] == key {
-			return mp[1], true
+		k, _ := mp.ElementAt(0)
+		if k == key {
+			v, _ := mp.ElementAt(1)
+			return v, true
 		}
 	}
 	return Nil, false
 }
 
 // Apply makes Associative applicable
-func (a Associative) Apply(c Context, args Sequence) Value {
+func (a associative) Apply(c Context, args Sequence) Value {
 	AssertArity(args, 1)
 	k := Eval(c, args.First())
 	if r, ok := a.Get(k); ok {
@@ -55,43 +75,43 @@ func (a Associative) Apply(c Context, args Sequence) Value {
 }
 
 // First returns the first key/value pair of an Associative
-func (a Associative) First() Value {
+func (a associative) First() Value {
 	return a[0]
 }
 
 // Rest returns the remaining elements of an Associative as a Sequence
-func (a Associative) Rest() Sequence {
+func (a associative) Rest() Sequence {
 	return Sequence(a[1:])
 }
 
 // Prepend creates a new Sequence by prepending a Value
-func (a Associative) Prepend(v Value) Sequence {
+func (a associative) Prepend(v Value) Sequence {
 	if mp, ok := v.(Vector); ok {
 		AssertArity(mp, 2)
-		return append(Associative{mp}, a...)
+		return append(associative{mp}, a...)
 	}
 	panic(ExpectedPair)
 }
 
 // Conjoin implements the Conjoiner interface
-func (a Associative) Conjoin(v Value) Sequence {
+func (a associative) Conjoin(v Value) Sequence {
 	return a.Prepend(v)
 }
 
 // IsSequence returns whether this instance is a consumable Sequence
-func (a Associative) IsSequence() bool {
+func (a associative) IsSequence() bool {
 	return len(a) > 0
 }
 
 // Evaluable turns Associative into an Evaluable Expression
-func (a Associative) Evaluable() Value {
-	return &EvaluableAssociative{
-		Associative: a,
+func (a associative) Evaluable() Value {
+	return &evaluableAssociative{
+		associative: a,
 	}
 }
 
 // Str converts this Value into a Str
-func (a Associative) Str() Str {
+func (a associative) Str() Str {
 	var b bytes.Buffer
 	l := len(a)
 
@@ -101,25 +121,26 @@ func (a Associative) Str() Str {
 			b.WriteString(", ")
 		}
 		mp := a[i]
-		b.WriteString(string(mp[0].Str()))
+		k, _ := mp.ElementAt(0)
+		v, _ := mp.ElementAt(1)
+		b.WriteString(string(k.Str()))
 		b.WriteString(" ")
-		b.WriteString(string(mp[1].Str()))
+		b.WriteString(string(v.Str()))
 	}
 	b.WriteString("}")
 	return Str(b.String())
 }
 
 // Eval makes an EvaluableAssociative Evaluable
-func (e *EvaluableAssociative) Eval(c Context) Value {
-	a := e.Associative
+func (e *evaluableAssociative) Eval(c Context) Value {
+	a := e.associative
 	l := len(a)
-	r := make(Associative, l)
+	r := make(associative, l)
 	for i := 0; i < l; i++ {
 		mp := a[i]
-		r[i] = Vector{
-			Eval(c, mp[0]),
-			Eval(c, mp[1]),
-		}
+		k, _ := mp.ElementAt(0)
+		v, _ := mp.ElementAt(1)
+		r[i] = NewVector(Eval(c, k), Eval(c, v))
 	}
 	return r
 }

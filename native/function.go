@@ -118,11 +118,11 @@ func (fi funcInfo) makePluralFuncMapper() outMapper {
 		return a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
 			fin := prepareArgs(c, args)
 			r := fn.Call(fin)
-			fout := make(a.Vector, olen)
+			fout := make([]a.Value, olen)
 			for i := 0; i < olen; i++ {
 				fout[i] = out[i](r[i])
 			}
-			return fout
+			return a.NewVector(fout...)
 		})
 	}
 }

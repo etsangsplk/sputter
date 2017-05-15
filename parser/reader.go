@@ -47,7 +47,7 @@ type reader struct {
 
 // NewReader completely consumes a Lexer before returning a Value Sequence
 func NewReader(context a.Context, lexer a.Sequence) a.Sequence {
-	r := a.Vector{}
+	r := a.NewVector()
 	iter := a.Iterate(lexer)
 	ri := &reader{
 		context: context,
@@ -113,42 +113,42 @@ func (r *reader) quoted(data bool) a.Value {
 		if data {
 			return l
 		}
-		return l.(*a.List).Evaluable()
+		return l.(a.List).Evaluable()
 	}
 	panic(QuoteNotPaired)
 }
 
 func (r *reader) list(data bool) a.Value {
-	var handle func(t *Token) *a.List
-	var rest func() *a.List
-	var first func() *a.List
+	var handle func(t *Token) a.List
+	var rest func() a.List
+	var first func() a.List
 
-	handle = func(t *Token) *a.List {
+	handle = func(t *Token) a.List {
 		switch t.Type {
 		case ListEnd:
 			return a.EmptyList
 		default:
 			v := r.value(t, data)
 			l := rest()
-			return l.Prepend(v).(*a.List)
+			return l.Prepend(v).(a.List)
 		}
 	}
 
-	rest = func() *a.List {
+	rest = func() a.List {
 		if t, ok := r.nextToken(); ok {
 			return handle(t)
 		}
 		panic(ListNotClosed)
 	}
 
-	first = func() *a.List {
+	first = func() a.List {
 		if t, ok := r.nextToken(); ok {
 			if t.Type != Identifier {
 				return handle(t)
 			}
 			v := r.value(t, false)
 			_, data = r.macro(v)
-			return rest().Prepend(v).(*a.List)
+			return rest().Prepend(v).(a.List)
 		}
 		panic(ListNotClosed)
 	}
@@ -160,18 +160,20 @@ func (r *reader) list(data bool) a.Value {
 }
 
 func (r *reader) expand(v a.Value) a.Value {
-	if l, ok := v.(*a.EvaluableList); ok {
-		if m, ok := r.macro(l.First()); ok {
-			return r.expand(m.Apply(r.context, l.Rest()))
+	if l, ok := v.(a.List); ok {
+		if _, ok := l.(a.Evaluable); ok {
+			if m, ok := r.macro(l.First()); ok {
+				return r.expand(m.Apply(r.context, l.Rest()))
+			}
 		}
 	}
 	return v
 }
 
-func (r *reader) macro(v a.Value) (*a.Function, bool) {
+func (r *reader) macro(v a.Value) (a.Function, bool) {
 	if s, ok := v.(a.Symbol); ok {
 		if r, ok := s.Resolve(r.context); ok {
-			if f, ok := r.(*a.Function); ok {
+			if f, ok := r.(a.Function); ok {
 				if a.IsMacro(f) {
 					return f, true
 				}
@@ -182,16 +184,17 @@ func (r *reader) macro(v a.Value) (*a.Function, bool) {
 }
 
 func (r *reader) vector(data bool) a.Value {
-	res := make(a.Vector, 0)
+	res := make([]a.Value, 0)
 
 	for {
 		if t, ok := r.nextToken(); ok {
 			switch t.Type {
 			case VectorEnd:
+				v := a.NewVector(res...)
 				if data {
-					return res
+					return v
 				}
-				return res.Evaluable()
+				return v.Evaluable()
 			default:
 				e := r.value(t, data)
 				res = append(res, e)
@@ -203,18 +206,19 @@ func (r *reader) vector(data bool) a.Value {
 }
 
 func (r *reader) associative(data bool) a.Value {
-	res := make(a.Associative, 0)
-	mp := make(a.Vector, 2)
+	res := make([]a.Vector, 0)
+	mp := make([]a.Value, 2)
 
 	for idx := 0; ; idx++ {
 		if t, ok := r.nextToken(); ok {
 			switch t.Type {
 			case MapEnd:
 				if idx%2 == 0 {
+					as := a.NewAssociative(res...)
 					if data {
-						return res
+						return as
 					}
-					return res.Evaluable()
+					return as.Evaluable()
 				}
 				panic(MapNotPaired)
 			default:
@@ -223,8 +227,8 @@ func (r *reader) associative(data bool) a.Value {
 					mp[0] = e
 				} else {
 					mp[1] = e
-					res = append(res, mp)
-					mp = make(a.Vector, 2)
+					res = append(res, a.NewVector(mp...))
+					mp = make([]a.Value, 2)
 				}
 			}
 		} else {

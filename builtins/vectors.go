@@ -8,23 +8,23 @@ import (
 func vector(c a.Context, args a.Sequence) a.Value {
 	if cnt, ok := args.(a.Counted); ok {
 		l := cnt.Count()
-		r := make(a.Vector, l)
+		r := make([]a.Value, l)
 		idx := 0
 		for i := args; i.IsSequence(); i = i.Rest() {
 			r[idx] = a.Eval(c, i.First())
 			idx++
 		}
-		return r
+		return a.NewVector(r...)
 	}
 	return vectorFromUncounted(c, args)
 }
 
 func vectorFromUncounted(c a.Context, args a.Sequence) a.Value {
-	r := a.Vector{}
+	r := []a.Value{}
 	for i := args; i.IsSequence(); i = i.Rest() {
 		r = append(r, a.Eval(c, i.First()))
 	}
-	return r
+	return a.NewVector(r...)
 }
 
 func toVector(c a.Context, args a.Sequence) a.Value {

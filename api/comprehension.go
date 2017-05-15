@@ -363,7 +363,7 @@ func Reduce(c Context, s Sequence, a Applicable) Value {
 	AssertMinimumArity(s, 2)
 	r := s.First()
 	for i := s.Rest(); i.IsSequence(); i = i.Rest() {
-		r = a.Apply(c, Vector{r, i.First()})
+		r = a.Apply(c, NewVector(r, i.First()))
 	}
 	return r
 }

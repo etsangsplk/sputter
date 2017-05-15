@@ -344,10 +344,10 @@ func getBuiltInsNamespace() a.Namespace {
 func registerBuiltIn(v a.Annotated) {
 	ns := getBuiltInsNamespace()
 	if _, ok := ns.Get(replBuiltIns); !ok {
-		ns.Put(replBuiltIns, a.Vector{})
+		ns.Put(replBuiltIns, a.NewVector())
 	}
 	vec, _ := ns.Get(replBuiltIns)
-	bi := append(vec.(a.Vector), v.(a.Value))
+	bi := vec.(a.Vector).Conjoin(v.(a.Value))
 	ns.Delete(replBuiltIns)
 	ns.Put(replBuiltIns, bi)
 

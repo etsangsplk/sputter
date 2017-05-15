@@ -42,7 +42,7 @@ func TestReadList(t *testing.T) {
 	c := a.NewContext()
 	tr := p.NewReader(c, l)
 	v := tr.First()
-	list, ok := v.(*a.EvaluableList)
+	list, ok := v.(a.List)
 	as.True(ok)
 
 	i := a.Iterate(list)
@@ -68,7 +68,7 @@ func TestReadVector(t *testing.T) {
 	c := a.NewContext()
 	tr := p.NewReader(c, l)
 	v := tr.First()
-	vector, ok := v.(*a.EvaluableVector)
+	vector, ok := v.(a.Vector)
 	as.True(ok)
 
 	res, ok := vector.ElementAt(0)
@@ -90,7 +90,7 @@ func TestReadMap(t *testing.T) {
 	c := a.NewContext()
 	tr := p.NewReader(c, l)
 	v := tr.First()
-	m, ok := v.(*a.EvaluableAssociative)
+	m, ok := v.(a.Associative)
 	as.True(ok)
 	as.Number(2, m.Count())
 }
@@ -101,7 +101,7 @@ func TestReadNestedList(t *testing.T) {
 	c := a.NewContext()
 	tr := p.NewReader(c, l)
 	v := tr.First()
-	list, ok := v.(*a.EvaluableList)
+	list, ok := v.(a.List)
 	as.True(ok)
 
 	i1 := a.Iterate(list)
@@ -112,7 +112,7 @@ func TestReadNestedList(t *testing.T) {
 	// get nested list
 	val, ok = i1.Next()
 	as.True(ok)
-	list2, ok := val.(*a.EvaluableList)
+	list2, ok := val.(a.List)
 	as.True(ok)
 
 	// iterate over the rest of top-level list
@@ -143,9 +143,27 @@ func TestSimpleData(t *testing.T) {
 	l := p.NewLexer(`'99`)
 	c := a.NewEvalContext()
 	tr := p.NewReader(c, l)
-	v, ok := a.EvalSequence(c, tr).(*a.Number)
+	v1, ok := a.EvalSequence(c, tr).(*a.Number)
 	as.True(ok)
-	as.Number(99, v)
+	as.Number(99, v1)
+
+	l = p.NewLexer(`'[1 2 3]`)
+	c = a.NewEvalContext()
+	tr = p.NewReader(c, l)
+	v2, ok := a.EvalSequence(c, tr).(a.Vector)
+	as.True(ok)
+	as.String("[1 2 3]", v2)
+	_, ok = v2.(a.Evaluable)
+	as.False(ok)
+
+	l = p.NewLexer(`'{:name "bob"}`)
+	c = a.NewEvalContext()
+	tr = p.NewReader(c, l)
+	v3, ok := a.EvalSequence(c, tr).(a.Associative)
+	as.True(ok)
+	as.String(`{:name "bob"}`, v3)
+	_, ok = v3.(a.Evaluable)
+	as.False(ok)
 }
 
 func TestNestedData(t *testing.T) {
@@ -165,7 +183,7 @@ func TestListData(t *testing.T) {
 	c := a.NewContext()
 	tr := p.NewReader(c, l)
 	v := a.EvalSequence(c, tr)
-	value, ok := v.(*a.List)
+	value, ok := v.(a.List)
 	as.True(ok)
 
 	if sym, ok := value.First().(a.Symbol); ok {
@@ -174,12 +192,12 @@ func TestListData(t *testing.T) {
 		as.Fail("first element should be symbol")
 	}
 
-	if n, ok := value.Rest().(*a.List); ok {
+	if n, ok := value.Rest().(a.List); ok {
 		b, ok := n.First().(a.Value)
 		as.True(ok)
 		as.Equal(a.True, b)
 
-		nl, ok := n.Rest().(*a.List)
+		nl, ok := n.Rest().(a.List)
 		as.True(ok)
 		as.Equal(a.EmptyList, nl)
 		as.False(nl.IsSequence())
@@ -206,7 +224,7 @@ func TestEvaluable(t *testing.T) {
 		return s("Hello, " + string(v.(a.Str)) + "!")
 	}).WithMetadata(a.Metadata{
 		a.MetaName: a.Name("hello"),
-	}).(*a.Function)
+	}).(a.Function)
 
 	c.Put("hello", hello)
 	c.Put("name", s("Bob"))
@@ -224,7 +242,7 @@ func TestBuiltIns(t *testing.T) {
 		return s("there")
 	}).WithMetadata(a.Metadata{
 		a.MetaName: a.Name("hello"),
-	}).(*a.Function))
+	}).(a.Function))
 
 	l := p.NewLexer(`(hello)`)
 	tr := p.NewReader(b, l)
@@ -239,13 +257,13 @@ func TestReaderPrepare(t *testing.T) {
 	ns := a.GetContextNamespace(b)
 	ns.Delete("hello")
 	ns.Put("hello", a.NewMacro(func(_ a.Context, l a.Sequence) a.Value {
-		if _, ok := l.(*a.List); !ok {
+		if _, ok := l.(a.List); !ok {
 			as.Fail("provided sequence is not a list")
 		}
-		return a.Vector{s("you")}
+		return a.NewVector(s("you"))
 	}).WithMetadata(a.Metadata{
 		a.MetaName: a.Name("hello"),
-	}).(*a.Function))
+	}).(a.Function))
 
 	l := p.NewLexer(`(hello)`)
 	tr := p.NewReader(b, l)

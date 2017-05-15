@@ -61,8 +61,8 @@ func TestBuiltInsContext(t *testing.T) {
 func TestQuote(t *testing.T) {
 	as := assert.New(t)
 
-	r1 := runCode("(quote (blah 2 3))").(*a.List)
-	r2 := runCode("'(blah 2 3)").(*a.List)
+	r1 := runCode("(quote (blah 2 3))").(a.List)
+	r2 := runCode("'(blah 2 3)").(a.List)
 
 	v1, ok := r1.ElementAt(0)
 	v2, _ := r2.ElementAt(0)

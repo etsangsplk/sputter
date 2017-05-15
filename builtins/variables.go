@@ -30,9 +30,11 @@ func let(c a.Context, args a.Sequence) a.Value {
 	}
 
 	for i := 0; i < bc; i++ {
-		n := a.AssertUnqualified(b[i]).Name()
+		s, _ := b.ElementAt(i)
+		n := a.AssertUnqualified(s).Name()
 		i++
-		l.Put(n, a.Eval(l, b[i]))
+		v, _ := b.ElementAt(i)
+		l.Put(n, a.Eval(l, v))
 	}
 
 	return a.EvalSequence(l, args.Rest())

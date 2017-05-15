@@ -17,11 +17,11 @@ func toMetadata(args a.Mapped) a.Metadata {
 }
 
 func fromMetadata(m a.Metadata) a.Value {
-	r := a.Associative{}
+	r := []a.Vector{}
 	for k, v := range m {
-		r = r.Prepend(a.Vector{k, v}).(a.Associative)
+		r = append(r, a.NewVector(k, v))
 	}
-	return r
+	return a.NewAssociative(r...)
 }
 
 func withMeta(c a.Context, args a.Sequence) a.Value {

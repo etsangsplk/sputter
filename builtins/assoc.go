@@ -12,7 +12,7 @@ func assoc(c a.Context, args a.Sequence) a.Value {
 			panic(a.ExpectedPair)
 		}
 		ml := l / 2
-		r := make(a.Associative, ml)
+		r := make([]a.Vector, ml)
 		i := args
 		for idx := 0; idx < ml; idx++ {
 			k := a.Eval(c, i.First())
@@ -21,29 +21,29 @@ func assoc(c a.Context, args a.Sequence) a.Value {
 			v := a.Eval(c, i.First())
 			i = i.Rest()
 
-			r[idx] = a.Vector{k, v}
+			r[idx] = a.NewVector(k, v)
 		}
-		return r
+		return a.NewAssociative(r...)
 	}
 	return assocFromUncounted(c, args)
 }
 
 func assocFromUncounted(c a.Context, args a.Sequence) a.Value {
-	r := a.Associative{}
+	r := []a.Vector{}
 	for i := args; i.IsSequence(); i = i.Rest() {
 		k := i.First()
 		i = i.Rest()
 		if i.IsSequence() {
 			v := i.First()
-			r = append(r, a.Vector{
+			r = append(r, a.NewVector(
 				a.Eval(c, k),
 				a.Eval(c, v),
-			})
+			))
 		} else {
 			panic(a.ExpectedPair)
 		}
 	}
-	return r
+	return a.NewAssociative(r...)
 }
 
 func toAssoc(c a.Context, args a.Sequence) a.Value {
