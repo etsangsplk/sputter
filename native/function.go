@@ -136,7 +136,7 @@ func (fi funcInfo) makeArgPreparer() argumentReader {
 		fin := make([]reflect.Value, ilen)
 		e := args
 		for i := 0; i < ilen; i++ {
-			fin[i] = in[i](a.Eval(c, e.First()))
+			fin[i] = in[i](e.First().Eval(c))
 			e = e.Rest()
 		}
 		return fin

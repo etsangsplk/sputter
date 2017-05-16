@@ -8,16 +8,16 @@ const ExpectedVector = "value is not a vector: %s"
 // Vector is a fixed-length Array of Values
 type Vector interface {
 	Conjoiner
-	MakeEvaluable
+	MakeExpression
 	Elementer
 	Counted
 	Applicable
-	Vector() bool
+	IsVector() bool
 }
 
 type vector []Value
 
-type evaluableVector struct {
+type vectorExpression struct {
 	vector
 }
 
@@ -28,17 +28,14 @@ func NewVector(v ...Value) Vector {
 	return vector(v)
 }
 
-// Vector is a disambiguating marker
-func (v vector) Vector() bool {
+func (v vector) IsVector() bool {
 	return true
 }
 
-// Count returns the length of the Vector
 func (v vector) Count() int {
 	return len(v)
 }
 
-// ElementAt returns the Value at the indexed position in the Vector
 func (v vector) ElementAt(index int) (Value, bool) {
 	if index >= 0 && index < len(v) {
 		return v[index], true
@@ -46,12 +43,14 @@ func (v vector) ElementAt(index int) (Value, bool) {
 	return Nil, false
 }
 
-// Apply makes Vector applicable
 func (v vector) Apply(c Context, args Sequence) Value {
 	return IndexedApply(v, c, args)
 }
 
-// First returns the first element of a Vector
+func (v vector) Eval(_ Context) Value {
+	return v
+}
+
 func (v vector) First() Value {
 	if len(v) > 0 {
 		return v[0]
@@ -59,7 +58,6 @@ func (v vector) First() Value {
 	return Nil
 }
 
-// Rest returns the remaining elements of a Vector as a Sequence
 func (v vector) Rest() Sequence {
 	if len(v) > 1 {
 		return Sequence(v[1:])
@@ -67,29 +65,24 @@ func (v vector) Rest() Sequence {
 	return emptyVector
 }
 
-// Prepend creates a new Sequence by prepending a Value
 func (v vector) Prepend(p Value) Sequence {
 	return append(vector{p}, v...)
 }
 
-// Conjoin implements the Conjoiner interface
 func (v vector) Conjoin(a Value) Sequence {
 	return append(v, a)
 }
 
-// IsSequence returns whether this instance is a consumable Sequence
 func (v vector) IsSequence() bool {
 	return len(v) > 0
 }
 
-// Evaluable turns Vector into an Evaluable Expression
-func (v vector) Evaluable() Value {
-	return &evaluableVector{
+func (v vector) Expression() Value {
+	return &vectorExpression{
 		vector: v,
 	}
 }
 
-// Str converts this Value into a Str
 func (v vector) Str() Str {
 	var b bytes.Buffer
 	l := len(v)
@@ -105,13 +98,16 @@ func (v vector) Str() Str {
 	return Str(b.String())
 }
 
-// Eval makes an evaluableVector Evaluable
-func (e *evaluableVector) Eval(c Context) Value {
-	v := e.vector
-	l := len(v)
+func (v *vectorExpression) IsExpression() bool {
+	return true
+}
+
+func (v *vectorExpression) Eval(c Context) Value {
+	t := v.vector
+	l := len(t)
 	r := make(vector, l)
 	for i := 0; i < l; i++ {
-		r[i] = Eval(c, v[i])
+		r[i] = t[i].Eval(c)
 	}
 	return r
 }

@@ -18,7 +18,7 @@ func TestFunction(t *testing.T) {
 		a.MetaDoc:  s("this is a test"),
 	}).(a.Function)
 
-	as.True(f1.Function())
+	as.True(f1.IsFunction())
 
 	f2 := a.NewFunction(nil)
 	f3 := f1.WithMetadata(a.Metadata{a.MetaDoc: s("modified")})

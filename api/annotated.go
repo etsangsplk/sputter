@@ -35,12 +35,12 @@ type Annotated interface {
 }
 
 // Merge merges two Metadata sets into a new one
-func (v Metadata) Merge(nv Metadata) Metadata {
-	if len(v) == 0 {
+func (m Metadata) Merge(nv Metadata) Metadata {
+	if len(m) == 0 {
 		return nv
 	}
 	r := make(Metadata)
-	for k, v := range v {
+	for k, v := range m {
 		r[k] = v
 	}
 	for k, v := range nv {
@@ -50,19 +50,24 @@ func (v Metadata) Merge(nv Metadata) Metadata {
 }
 
 // Get returns the Value corresponding to the key in the Metadata
-func (v Metadata) Get(key Value) (Value, bool) {
-	if r, ok := v[key]; ok {
+func (m Metadata) Get(key Value) (Value, bool) {
+	if r, ok := m[key]; ok {
 		return r, true
 	}
 	return Nil, false
 }
 
+// Eval is self-evaluating
+func (m Metadata) Eval(_ Context) Value {
+	return m
+}
+
 // Str converts this Value into a Str
-func (v Metadata) Str() Str {
+func (m Metadata) Str() Str {
 	var b bytes.Buffer
 	c := false
 	b.WriteString("{")
-	for k, v := range v {
+	for k, v := range m {
 		if c {
 			b.WriteString(", ")
 		} else {

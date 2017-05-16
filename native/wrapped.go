@@ -70,12 +70,14 @@ func (n *wrapped) Get(key a.Value) (a.Value, bool) {
 	return a.Nil, false
 }
 
-// Type returns the type name of the wrapped type
 func (n *wrapped) Type() a.Name {
 	return n.meta[a.MetaType].(a.Name)
 }
 
-// Str converts this wrapped into a Str
+func (n *wrapped) Eval(_ a.Context) a.Value {
+	return n
+}
+
 func (n *wrapped) Str() a.Str {
 	return a.MakeDumpStr(n)
 }

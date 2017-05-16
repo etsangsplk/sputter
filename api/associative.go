@@ -22,16 +22,16 @@ type Mapped interface {
 // Associative is a Mappable that is implemented atop an array
 type Associative interface {
 	Conjoiner
-	MakeEvaluable
+	MakeExpression
 	Getter
 	Counted
 	Applicable
-	Associative() bool
+	IsAssociative() bool
 }
 
 type associative []Vector
 
-type evaluableAssociative struct {
+type associativeExpression struct {
 	associative
 }
 
@@ -40,12 +40,10 @@ func NewAssociative(v ...Vector) Associative {
 	return associative(v)
 }
 
-// Associative is a disambiguating marker
-func (a associative) Associative() bool {
+func (a associative) IsAssociative() bool {
 	return true
 }
 
-// Count returns the number of key/value pairs in this Associative
 func (a associative) Count() int {
 	return len(a)
 }
@@ -64,27 +62,27 @@ func (a associative) Get(key Value) (Value, bool) {
 	return Nil, false
 }
 
-// Apply makes Associative applicable
 func (a associative) Apply(c Context, args Sequence) Value {
 	AssertArity(args, 1)
-	k := Eval(c, args.First())
+	k := args.First().Eval(c)
 	if r, ok := a.Get(k); ok {
 		return r
 	}
 	panic(Err(KeyNotFound, k))
 }
 
-// First returns the first key/value pair of an Associative
+func (a associative) Eval(_ Context) Value {
+	return a
+}
+
 func (a associative) First() Value {
 	return a[0]
 }
 
-// Rest returns the remaining elements of an Associative as a Sequence
 func (a associative) Rest() Sequence {
 	return Sequence(a[1:])
 }
 
-// Prepend creates a new Sequence by prepending a Value
 func (a associative) Prepend(v Value) Sequence {
 	if mp, ok := v.(Vector); ok {
 		AssertArity(mp, 2)
@@ -93,24 +91,20 @@ func (a associative) Prepend(v Value) Sequence {
 	panic(ExpectedPair)
 }
 
-// Conjoin implements the Conjoiner interface
 func (a associative) Conjoin(v Value) Sequence {
 	return a.Prepend(v)
 }
 
-// IsSequence returns whether this instance is a consumable Sequence
 func (a associative) IsSequence() bool {
 	return len(a) > 0
 }
 
-// Evaluable turns Associative into an Evaluable Expression
-func (a associative) Evaluable() Value {
-	return &evaluableAssociative{
+func (a associative) Expression() Value {
+	return &associativeExpression{
 		associative: a,
 	}
 }
 
-// Str converts this Value into a Str
 func (a associative) Str() Str {
 	var b bytes.Buffer
 	l := len(a)
@@ -131,16 +125,19 @@ func (a associative) Str() Str {
 	return Str(b.String())
 }
 
-// Eval makes an EvaluableAssociative Evaluable
-func (e *evaluableAssociative) Eval(c Context) Value {
-	a := e.associative
-	l := len(a)
+func (a *associativeExpression) IsExpression() bool {
+	return true
+}
+
+func (a *associativeExpression) Eval(c Context) Value {
+	t := a.associative
+	l := len(t)
 	r := make(associative, l)
 	for i := 0; i < l; i++ {
-		mp := a[i]
+		mp := t[i]
 		k, _ := mp.ElementAt(0)
 		v, _ := mp.ElementAt(1)
-		r[i] = NewVector(Eval(c, k), Eval(c, v))
+		r[i] = NewVector(k.Eval(c), v.Eval(c))
 	}
 	return r
 }

@@ -7,13 +7,13 @@ import (
 
 func cond(c a.Context, args a.Sequence) a.Value {
 	for i := args; i.IsSequence(); i = i.Rest() {
-		p := a.Eval(c, i.First())
+		p := i.First().Eval(c)
 		i = i.Rest()
 		if !i.IsSequence() {
 			return p
 		}
 		if a.Truthy(p) {
-			return a.Eval(c, i.First())
+			return i.First().Eval(c)
 		}
 	}
 	return a.Nil
@@ -21,13 +21,13 @@ func cond(c a.Context, args a.Sequence) a.Value {
 
 func _if(c a.Context, args a.Sequence) a.Value {
 	i := a.AssertArityRange(args, 2, 3)
-	cond := a.Eval(c, args.First())
+	cond := args.First().Eval(c)
 	rest := args.Rest()
 	if a.Truthy(cond) {
-		return a.Eval(c, rest.First())
+		return rest.First().Eval(c)
 	}
 	if i == 3 {
-		return a.Eval(c, rest.Rest().First())
+		return rest.Rest().First().Eval(c)
 	}
 	return a.Nil
 }

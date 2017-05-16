@@ -40,13 +40,12 @@ type withNamespace struct {
 	ns Namespace
 }
 
-// Domain returns the Domain of the Namespace
 func (ns *namespace) Domain() Name {
 	return ns.domain
 }
 
-// Intern returns a Symbol based on the Name and Namespace Domain.
-// This Symbol will be atomic, meaning that there will be only one
+// Intern returns a IsSymbol based on the Name and Namespace Domain.
+// This IsSymbol will be atomic, meaning that there will be only one
 // instance, allowing the Symbols to be compared by reference
 func (ns *namespace) Intern(n Name) Symbol {
 	d := ns.domain
@@ -56,7 +55,10 @@ func (ns *namespace) Intern(n Name) Symbol {
 	}).(Symbol)
 }
 
-// Str converts this Value into a Str
+func (ns *namespace) Eval(_ Context) Value {
+	return ns
+}
+
 func (ns *namespace) Str() Str {
 	return "(ns " + Str(ns.domain) + ")"
 }

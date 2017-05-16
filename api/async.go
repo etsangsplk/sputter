@@ -119,7 +119,10 @@ func (e *channelEmitter) Type() Name {
 	return "channel-emitter"
 }
 
-// Str converts this Value into a Str
+func (e *channelEmitter) Eval(_ Context) Value {
+	return e
+}
+
 func (e *channelEmitter) Str() Str {
 	return MakeDumpStr(e)
 }
@@ -171,7 +174,10 @@ func (c *channelSequence) Type() Name {
 	return "channel-sequence"
 }
 
-// Str converts this Value into a Str
+func (c *channelSequence) Eval(_ Context) Value {
+	return c
+}
+
 func (c *channelSequence) Str() Str {
 	return MakeDumpStr(c)
 }
@@ -227,7 +233,10 @@ func (p *promise) Type() Name {
 	return "promise"
 }
 
-// Str converts this Value into a Str
+func (p *promise) Eval(_ Context) Value {
+	return p
+}
+
 func (p *promise) Str() Str {
 	return MakeDumpStr(p)
 }

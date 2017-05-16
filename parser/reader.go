@@ -109,11 +109,11 @@ func (r *reader) value(t *Token, data bool) a.Value {
 func (r *reader) quoted(data bool) a.Value {
 	if v, ok := r.nextData(); ok {
 		q := a.NewQualifiedSymbol("quote", a.BuiltInDomain)
-		l := a.NewList(v).Prepend(q)
+		l := a.NewList(q, v)
 		if data {
 			return l
 		}
-		return l.(a.List).Evaluable()
+		return l.Expression()
 	}
 	panic(QuoteNotPaired)
 }
@@ -156,12 +156,12 @@ func (r *reader) list(data bool) a.Value {
 	if data {
 		return rest()
 	}
-	return first().Evaluable()
+	return first().Expression()
 }
 
 func (r *reader) expand(v a.Value) a.Value {
 	if l, ok := v.(a.List); ok {
-		if _, ok := l.(a.Evaluable); ok {
+		if _, ok := l.(a.Expression); ok {
 			if m, ok := r.macro(l.First()); ok {
 				return r.expand(m.Apply(r.context, l.Rest()))
 			}
@@ -194,7 +194,7 @@ func (r *reader) vector(data bool) a.Value {
 				if data {
 					return v
 				}
-				return v.Evaluable()
+				return v.Expression()
 			default:
 				e := r.value(t, data)
 				res = append(res, e)
@@ -218,7 +218,7 @@ func (r *reader) associative(data bool) a.Value {
 					if data {
 						return as
 					}
-					return as.Evaluable()
+					return as.Expression()
 				}
 				panic(MapNotPaired)
 			default:
@@ -251,5 +251,5 @@ func readIdentifier(t *Token, data bool) a.Value {
 	if data {
 		return sym
 	}
-	return sym.Evaluable()
+	return sym.Expression()
 }

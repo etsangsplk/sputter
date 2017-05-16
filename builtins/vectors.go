@@ -11,7 +11,7 @@ func vector(c a.Context, args a.Sequence) a.Value {
 		r := make([]a.Value, l)
 		idx := 0
 		for i := args; i.IsSequence(); i = i.Rest() {
-			r[idx] = a.Eval(c, i.First())
+			r[idx] = i.First().Eval(c)
 			idx++
 		}
 		return a.NewVector(r...)
@@ -22,7 +22,7 @@ func vector(c a.Context, args a.Sequence) a.Value {
 func vectorFromUncounted(c a.Context, args a.Sequence) a.Value {
 	r := []a.Value{}
 	for i := args; i.IsSequence(); i = i.Rest() {
-		r = append(r, a.Eval(c, i.First()))
+		r = append(r, i.First().Eval(c))
 	}
 	return a.NewVector(r...)
 }

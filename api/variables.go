@@ -17,6 +17,7 @@ type Variables map[Name]Value
 
 // Value is the generic interface for all 'Values'
 type Value interface {
+	Eval(c Context) Value
 	Str() Str
 }
 
@@ -79,6 +80,11 @@ func (n Name) Name() Name {
 	return n
 }
 
+// Eval is self-evaluating
+func (n Name) Eval(_ Context) Value {
+	return n
+}
+
 // Str converts this Value into a Str
 func (n Name) Str() Str {
 	return Str(n)
@@ -87,11 +93,16 @@ func (n Name) Str() Str {
 // Apply makes Bool Applicable
 func (b Bool) Apply(c Context, args Sequence) Value {
 	for i := args; i.IsSequence(); i = i.Rest() {
-		if Eval(c, i.First()) != b {
+		if i.First().Eval(c) != b {
 			return False
 		}
 	}
 	return True
+}
+
+// Eval is self-evaluating
+func (b Bool) Eval(_ Context) Value {
+	return b
 }
 
 // Str converts this Value into a Str
@@ -102,19 +113,21 @@ func (b Bool) Str() Str {
 	return "false"
 }
 
-// Apply makes nilValue Applicable
 func (n *nilValue) Apply(c Context, args Sequence) Value {
 	for i := args; i.IsSequence(); i = i.Rest() {
-		if Eval(c, i.First()) != Nil {
+		if i.First().Eval(c) != Nil {
 			return False
 		}
 	}
 	return True
 }
 
-// Str converts this Value into a Str
 func (n *nilValue) Str() Str {
 	return "nil"
+}
+
+func (n *nilValue) Eval(_ Context) Value {
+	return n
 }
 
 // Truthy evaluates whether or not a Value is Truthy

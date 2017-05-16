@@ -14,7 +14,7 @@ func isSequence(v a.Value) bool {
 
 func fetchSequence(c a.Context, args a.Sequence) a.Sequence {
 	a.AssertArity(args, 1)
-	return a.AssertSequence(a.Eval(c, args.First()))
+	return a.AssertSequence(args.First().Eval(c))
 }
 
 func first(c a.Context, args a.Sequence) a.Value {
@@ -27,16 +27,16 @@ func rest(c a.Context, args a.Sequence) a.Value {
 
 func cons(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 2)
-	f := a.Eval(c, args.First())
-	r := a.Eval(c, args.Rest().First())
+	f := args.First().Eval(c)
+	r := args.Rest().First().Eval(c)
 	return a.AssertSequence(r).Prepend(f)
 }
 
 func conj(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
-	s := a.AssertConjoiner(a.Eval(c, args.First()))
+	s := a.AssertConjoiner(args.First().Eval(c))
 	for i := args.Rest(); i.IsSequence(); i = i.Rest() {
-		v := a.Eval(c, i.First())
+		v := i.First().Eval(c)
 		s = s.Conjoin(v).(a.Conjoiner)
 	}
 	return s
@@ -50,18 +50,18 @@ func _len(c a.Context, args a.Sequence) a.Value {
 
 func nth(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
-	s := a.AssertIndexed(a.Eval(c, args.First()))
+	s := a.AssertIndexed(args.First().Eval(c))
 	return a.IndexedApply(s, c, args.Rest())
 }
 
 func concat(c a.Context, args a.Sequence) a.Value {
 	if a.AssertMinimumArity(args, 1) == 1 {
-		r := a.Eval(c, args.First())
+		r := args.First().Eval(c)
 		return a.AssertSequence(r)
 	}
 
 	es := a.Map(args, func(v a.Value) a.Value {
-		return a.AssertSequence(a.Eval(c, v))
+		return a.AssertSequence(v.Eval(c))
 	})
 
 	return a.Concat(es)
@@ -69,7 +69,7 @@ func concat(c a.Context, args a.Sequence) a.Value {
 
 func _map(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
-	f := a.AssertApplicable(a.Eval(c, args.First()))
+	f := a.AssertApplicable(args.First().Eval(c))
 	s := concat(c, args.Rest()).(a.Sequence)
 	return a.Map(s, func(v a.Value) a.Value {
 		return f.Apply(c, a.NewList(v))
@@ -78,7 +78,7 @@ func _map(c a.Context, args a.Sequence) a.Value {
 
 func filter(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
-	f := a.AssertApplicable(a.Eval(c, args.First()))
+	f := a.AssertApplicable(args.First().Eval(c))
 	s := concat(c, args.Rest()).(a.Sequence)
 	return a.Filter(s, func(v a.Value) bool {
 		return a.Truthy(f.Apply(c, a.NewList(v)))
@@ -87,21 +87,21 @@ func filter(c a.Context, args a.Sequence) a.Value {
 
 func reduce(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
-	f := a.AssertApplicable(a.Eval(c, args.First()))
+	f := a.AssertApplicable(args.First().Eval(c))
 	s := concat(c, args.Rest()).(a.Sequence)
 	return a.Reduce(c, s, f)
 }
 
 func take(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
-	n := a.AssertInteger(a.Eval(c, args.First()))
+	n := a.AssertInteger(args.First().Eval(c))
 	s := concat(c, args.Rest()).(a.Sequence)
 	return a.Take(s, n)
 }
 
 func drop(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
-	n := a.AssertInteger(a.Eval(c, args.First()))
+	n := a.AssertInteger(args.First().Eval(c))
 	s := concat(c, args.Rest()).(a.Sequence)
 	return a.Drop(s, n)
 }

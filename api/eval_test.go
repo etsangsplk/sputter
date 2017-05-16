@@ -10,7 +10,7 @@ import (
 var helloName = a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
 	i := a.Iterate(args)
 	n, _ := i.Next()
-	v := a.Eval(c, n)
+	v := n.Eval(c)
 	return s("Hello, " + string(v.(a.Str)) + "!")
 }).WithMetadata(a.Metadata{
 	a.MetaName: a.Name("hello"),
@@ -19,9 +19,9 @@ var helloName = a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
 func TestEvaluate(t *testing.T) {
 	as := assert.New(t)
 
-	l := a.NewList(helloName, s("World")).Evaluable()
+	l := a.NewList(helloName, s("World")).Expression()
 	c := a.NewContext()
-	r := a.Eval(c, l)
+	r := l.Eval(c)
 
 	as.String("Hello, World!", r)
 }
@@ -29,8 +29,8 @@ func TestEvaluate(t *testing.T) {
 func TestEvaluateSequence(t *testing.T) {
 	as := assert.New(t)
 
-	s1 := a.NewList(helloName, s("World")).Evaluable()
-	s2 := a.NewList(helloName, s("Foo")).Evaluable()
+	s1 := a.NewList(helloName, s("World")).Expression()
+	s2 := a.NewList(helloName, s("Foo")).Expression()
 	l := a.NewList(s1, s2)
 
 	c := a.NewContext()

@@ -26,14 +26,14 @@ func fromMetadata(m a.Metadata) a.Value {
 
 func withMeta(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 2)
-	o := a.AssertAnnotated(a.Eval(c, args.First()))
-	m := a.AssertMapped(a.Eval(c, args.Rest().First()))
+	o := a.AssertAnnotated(args.First().Eval(c))
+	m := a.AssertMapped(args.Rest().First().Eval(c))
 	return o.WithMetadata(toMetadata(m)).(a.Value)
 }
 
 func meta(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
-	o := a.AssertAnnotated(a.Eval(c, args.First()))
+	o := a.AssertAnnotated(args.First().Eval(c))
 	return fromMetadata(o.Metadata())
 }
 

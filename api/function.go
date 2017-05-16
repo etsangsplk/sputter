@@ -24,7 +24,7 @@ type Function interface {
 	Typed
 	Documented
 	Applicable
-	Function() bool
+	IsFunction() bool
 }
 
 type function struct {
@@ -40,17 +40,14 @@ func NewFunction(e SequenceProcessor) Function {
 	}
 }
 
-// Function is a disambiguating marker
-func (f *function) Function() bool {
+func (f *function) IsFunction() bool {
 	return true
 }
 
-// Metadata makes Function Annotated
 func (f *function) Metadata() Metadata {
 	return f.meta
 }
 
-// WithMetadata copies the Function with new Metadata
 func (f *function) WithMetadata(md Metadata) Annotated {
 	return &function{
 		exec: f.exec,
@@ -58,17 +55,14 @@ func (f *function) WithMetadata(md Metadata) Annotated {
 	}
 }
 
-// Name returns the name of this Function via its Metadata
 func (f *function) Name() Name {
 	return f.Metadata()[MetaName].(Name)
 }
 
-// Documentation returns the docstring of this Function via its Metadata
 func (f *function) Documentation() Str {
 	return f.Metadata()[MetaDoc].(Str)
 }
 
-// Type returns the Type of this Function via its Metadata
 func (f *function) Type() Name {
 	if v, ok := f.meta.Get(MetaType); ok {
 		if n, ok := v.(Name); ok {
@@ -78,12 +72,14 @@ func (f *function) Type() Name {
 	return "function"
 }
 
-// Apply makes Function Applicable
 func (f *function) Apply(c Context, args Sequence) Value {
 	return f.exec(c, args)
 }
 
-// Str converts this Value into a Str
+func (f *function) Eval(_ Context) Value {
+	return f
+}
+
 func (f *function) Str() Str {
 	return MakeDumpStr(f)
 }

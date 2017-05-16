@@ -55,13 +55,13 @@ func makeRestArgProcessor(cl a.Context, an []a.Name, rn a.Name) argProcessor {
 		l := a.ChildContext(cl)
 		i := args
 		for _, n := range an {
-			l.Put(n, a.Eval(c, i.First()))
+			l.Put(n, i.First().Eval(c))
 			i = i.Rest()
 		}
 
 		r := []a.Value{}
 		for ; i.IsSequence(); i = i.Rest() {
-			r = append(r, a.Eval(c, i.First()))
+			r = append(r, i.First().Eval(c))
 		}
 		l.Put(rn, a.NewList(r...))
 		return l
@@ -76,7 +76,7 @@ func makeFixedArgProcessor(cl a.Context, an []a.Name) argProcessor {
 		l := a.ChildContext(cl)
 		i := args
 		for _, n := range an {
-			l.Put(n, a.Eval(c, i.First()))
+			l.Put(n, i.First().Eval(c))
 			i = i.Rest()
 		}
 		return l
@@ -94,7 +94,7 @@ func optionalMetadata(c a.Context, args a.Sequence) (a.Metadata, a.Sequence) {
 	}
 
 	if m, ok := r.First().(a.Mapped); ok {
-		em := a.Eval(c, m).(a.Mapped)
+		em := m.Eval(c).(a.Mapped)
 		md = md.Merge(toMetadata(em))
 		r = r.Rest()
 	}
@@ -163,9 +163,20 @@ func fn(c a.Context, args a.Sequence) a.Value {
 
 func apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 2)
-	f := a.AssertApplicable(a.Eval(c, args.First()))
-	s := a.AssertSequence(a.Eval(c, args.Rest().First()))
+	f := a.AssertApplicable(args.First().Eval(c))
+	s := a.AssertSequence(args.Rest().First().Eval(c))
 	return f.Apply(c, s)
+}
+
+func eval(c a.Context, args a.Sequence) a.Value {
+	a.AssertArity(args, 1)
+	v := args.First().Eval(c)
+	if _, ok := v.(a.Expression); !ok {
+		if m, ok := v.(a.MakeExpression); ok {
+			v = m.Expression()
+		}
+	}
+	return v.Eval(c)
 }
 
 func init() {
@@ -187,6 +198,13 @@ func init() {
 		a.NewFunction(apply).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("apply"),
 			a.MetaDoc:  d.Get("apply"),
+		}),
+	)
+
+	registerAnnotated(
+		a.NewFunction(eval).WithMetadata(a.Metadata{
+			a.MetaName: a.Name("eval"),
+			//a.MetaDoc:  d.Get("eval"),
 		}),
 	)
 }

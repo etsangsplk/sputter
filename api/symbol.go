@@ -15,9 +15,9 @@ const (
 
 // Symbol is a qualified identifier that can be resolved
 type Symbol interface {
-	MakeEvaluable
+	MakeExpression
 	Value
-	Symbol() bool
+	IsSymbol() bool
 	Name() Name
 	Domain() Name
 	Qualified() Name
@@ -30,7 +30,7 @@ type symbol struct {
 	domain Name
 }
 
-type evaluableSymbol struct {
+type symbolExpression struct {
 	*symbol
 }
 
@@ -60,27 +60,22 @@ func ParseSymbol(n Name) Symbol {
 	return NewLocalSymbol(n)
 }
 
-// Symbol is a disambiguating marker
-func (s *symbol) Symbol() bool {
+func (s *symbol) IsSymbol() bool {
 	return true
 }
 
-// Name returns the Name portion of the Symbol
 func (s *symbol) Name() Name {
 	return s.name
 }
 
-// Domain returns the domain portion of the Symbol
 func (s *symbol) Domain() Name {
 	return s.domain
 }
 
-// Qualified returns the fully-qualified Name of a Symbol
 func (s *symbol) Qualified() Name {
 	return qualifiedName(s.name, s.domain)
 }
 
-// Namespace returns the Namespace for this Symbol
 func (s *symbol) Namespace(c Context) Namespace {
 	d := s.domain
 	if d != LocalDomain {
@@ -93,7 +88,6 @@ func resolveNamespace(_ Context, domain Name) Namespace {
 	return GetNamespace(domain)
 }
 
-// Resolve a Symbol against a Context
 func (s *symbol) Resolve(c Context) (Value, bool) {
 	d := s.domain
 	if d != LocalDomain {
@@ -106,24 +100,29 @@ func (s *symbol) Resolve(c Context) (Value, bool) {
 	return GetContextNamespace(c).Get(n)
 }
 
-// Evaluable turns Symbol into an Evaluable Expression
-func (s *symbol) Evaluable() Value {
-	return &evaluableSymbol{
+func (s *symbol) Expression() Value {
+	return &symbolExpression{
 		symbol: s,
 	}
 }
 
-// Str converts this Value into a Str
+func (s *symbol) Eval(_ Context) Value {
+	return s
+}
+
 func (s *symbol) Str() Str {
 	return Str(s.Qualified())
 }
 
-// Eval makes a evaluableSymbol Evaluable
-func (e *evaluableSymbol) Eval(c Context) Value {
-	if r, ok := e.Resolve(c); ok {
+func (s *symbolExpression) IsExpression() bool {
+	return true
+}
+
+func (s *symbolExpression) Eval(c Context) Value {
+	if r, ok := s.Resolve(c); ok {
 		return r
 	}
-	panic(Err(UnknownSymbol, e.name))
+	panic(Err(UnknownSymbol, s.name))
 }
 
 // AssertUnqualified will cast a Value into a Symbol and explode

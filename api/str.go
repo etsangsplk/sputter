@@ -106,6 +106,11 @@ func (s Str) Apply(c Context, args Sequence) Value {
 	return IndexedApply(s, c, args)
 }
 
+// Eval is self-evaluating
+func (s Str) Eval(_ Context) Value {
+	return s
+}
+
 // Str converts this Value into a Str
 func (s Str) Str() Str {
 	r := escape.ReplaceAllStringFunc(string(s), func(e string) string {

@@ -212,6 +212,10 @@ func (r *REPL) Paint(line []rune, pos int) []rune {
 	return line
 }
 
+func (s *sentinel) Eval(_ a.Context) a.Value {
+	return s
+}
+
 func (s *sentinel) Str() a.Str {
 	return ""
 }
@@ -332,7 +336,7 @@ func doc(c a.Context, args a.Sequence) a.Value {
 			fmt.Println(f)
 			return nothing
 		}
-		panic(a.Err("Symbol is not documented: %s", sym))
+		panic(a.Err("IsSymbol is not documented: %s", sym))
 	}
 	panic(a.Err("Could not resolve symbol: %s", sym))
 }

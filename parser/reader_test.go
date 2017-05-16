@@ -153,7 +153,7 @@ func TestSimpleData(t *testing.T) {
 	v2, ok := a.EvalSequence(c, tr).(a.Vector)
 	as.True(ok)
 	as.String("[1 2 3]", v2)
-	_, ok = v2.(a.Evaluable)
+	_, ok = v2.(a.Expression)
 	as.False(ok)
 
 	l = p.NewLexer(`'{:name "bob"}`)
@@ -162,7 +162,7 @@ func TestSimpleData(t *testing.T) {
 	v3, ok := a.EvalSequence(c, tr).(a.Associative)
 	as.True(ok)
 	as.String(`{:name "bob"}`, v3)
-	_, ok = v3.(a.Evaluable)
+	_, ok = v3.(a.Expression)
 	as.False(ok)
 }
 
@@ -220,7 +220,7 @@ func TestEvaluable(t *testing.T) {
 	hello := a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
 		i := a.Iterate(args)
 		arg, _ := i.Next()
-		v := a.Eval(c, arg)
+		v := arg.Eval(c)
 		return s("Hello, " + string(v.(a.Str)) + "!")
 	}).WithMetadata(a.Metadata{
 		a.MetaName: a.Name("hello"),

@@ -11,9 +11,8 @@ var keywords = u.NewCache()
 type Keyword interface {
 	Value
 	Applicable
-	Evaluable
 	Named
-	Keyword() bool
+	IsKeyword() bool
 }
 
 type keyword struct {
@@ -27,25 +26,21 @@ func NewKeyword(n Name) Keyword {
 	}).(Keyword)
 }
 
-// Keyword is a disambiguating marker
-func (k *keyword) Keyword() bool {
+func (k *keyword) IsKeyword() bool {
 	return true
 }
 
-// Name returns the Name component of the Keyword
 func (k *keyword) Name() Name {
 	return k.name
 }
 
-// Eval makes Keyword Evaluable
 func (k *keyword) Eval(_ Context) Value {
 	return k
 }
 
-// Apply makes Keyword Applicable
 func (k *keyword) Apply(c Context, args Sequence) Value {
 	AssertArity(args, 1)
-	v := Eval(c, args.First())
+	v := args.First().Eval(c)
 	if g, ok := v.(Getter); ok {
 		if r, ok := g.Get(k); ok {
 			return r
@@ -55,7 +50,6 @@ func (k *keyword) Apply(c Context, args Sequence) Value {
 	panic(Err(ExpectedGetter, v))
 }
 
-// Str converts this Value into a Str
 func (k *keyword) Str() Str {
 	return ":" + Str(k.name)
 }

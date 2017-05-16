@@ -123,9 +123,18 @@ func (l *lexer) Prepend(v a.Value) a.Sequence {
 	panic("not implemented")
 }
 
+func (l *lexer) Eval(_ a.Context) a.Value {
+	return l
+}
+
 func (l *lexer) Str() a.Str {
 	// insulated by a filter
 	panic("not implemented")
+}
+
+// Eval is self-evaluating
+func (t *Token) Eval(_ a.Context) a.Value {
+	return t
 }
 
 // Str converts this Value into a Str

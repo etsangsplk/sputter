@@ -40,7 +40,7 @@ func emitFunction(e a.Emitter) a.Function {
 	return a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
 		a.AssertMinimumArity(args, 1)
 		for i := args; i.IsSequence(); i = i.Rest() {
-			e.Emit(a.Eval(c, i.First()))
+			e.Emit(i.First().Eval(c))
 		}
 		return a.Nil
 	}).WithMetadata(emitterMetadata).(a.Function)
@@ -84,7 +84,7 @@ func promise(_ a.Context, args a.Sequence) a.Value {
 	return a.NewFunction(
 		func(c a.Context, args a.Sequence) a.Value {
 			if a.AssertArityRange(args, 0, 1) == 1 {
-				return p.Deliver(a.Eval(c, args.First()))
+				return p.Deliver(args.First().Eval(c))
 			}
 			return p.Value()
 		},

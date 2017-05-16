@@ -10,7 +10,7 @@ import (
 func str(c a.Context, args a.Sequence) a.Value {
 	var b bytes.Buffer
 	for i := args; i.IsSequence(); i = i.Rest() {
-		v := a.Eval(c, i.First())
+		v := i.First().Eval(c)
 		if v == a.Nil {
 			continue
 		} else if s, ok := v.(a.Str); ok {

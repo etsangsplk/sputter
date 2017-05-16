@@ -17,9 +17,19 @@ func do(c a.Context, args a.Sequence) a.Value {
 	return a.EvalSequence(c, args)
 }
 
-func quote(_ a.Context, args a.Sequence) a.Value {
+func quote(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
+	//c.Put("unquote", a.NewMacro(unquote))
 	return args.First()
+}
+
+func unquote(_ a.Context, args a.Sequence) a.Value {
+	a.AssertArity(args, 1)
+	v := args.First()
+	if m, ok := v.(a.MakeExpression); ok {
+		return m.Expression()
+	}
+	return v
 }
 
 func init() {

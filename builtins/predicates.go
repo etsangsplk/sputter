@@ -25,7 +25,7 @@ func registerSequencePredicate(f a.ValueFilter, md a.Metadata) {
 		a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
 			a.AssertMinimumArity(args, 1)
 			for i := args; i.IsSequence(); i = i.Rest() {
-				v := a.Eval(c, i.First())
+				v := i.First().Eval(c)
 				if !f(v) {
 					return a.False
 				}
@@ -38,7 +38,7 @@ func registerSequencePredicate(f a.ValueFilter, md a.Metadata) {
 		a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
 			a.AssertMinimumArity(args, 1)
 			for i := args; i.IsSequence(); i = i.Rest() {
-				v := a.Eval(c, i.First())
+				v := i.First().Eval(c)
 				if f(v) {
 					return a.False
 				}
@@ -52,9 +52,9 @@ func registerSequencePredicate(f a.ValueFilter, md a.Metadata) {
 
 func identical(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
-	l := a.Eval(c, args.First())
+	l := args.First().Eval(c)
 	for i := args.Rest(); i.IsSequence(); i = i.Rest() {
-		if l != a.Eval(c, i.First()) {
+		if l != i.First().Eval(c) {
 			return a.False
 		}
 	}

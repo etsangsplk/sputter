@@ -64,10 +64,10 @@ func TestVectorEval(t *testing.T) {
 	as := assert.New(t)
 
 	v := a.NewVector(s("hello"), s("how"), &testEvaluable{}, s("you?"))
-	as.True(v.Vector())
+	as.True(v.IsVector())
 
 	c := a.NewContext()
-	r := a.Eval(c, v.Evaluable())
+	r := v.Expression().Eval(c)
 
 	if _, ok := r.(a.Indexed); !ok {
 		as.Fail("result is not a finite sequence")

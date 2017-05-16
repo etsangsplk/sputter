@@ -3,14 +3,14 @@ package api
 // ExpectedApplicable is thrown when a Value is not Applicable
 const ExpectedApplicable = "value does not support application: %s"
 
-// Evaluable can be evaluated against a Context
-type Evaluable interface {
-	Eval(Context) Value
+// MakeExpression marks Types that can be converted to Expression
+type MakeExpression interface {
+	Expression() Value
 }
 
-// MakeEvaluable marks Types that can be converted to Evaluable
-type MakeEvaluable interface {
-	Evaluable() Value
+// Expression marks a Type as being a transformative Expression
+type Expression interface {
+	IsExpression() bool
 }
 
 // Applicable is the standard signature for any Value that can be applied
@@ -19,24 +19,11 @@ type Applicable interface {
 	Apply(Context, Sequence) Value
 }
 
-// Eval evaluates a Value against a Context
-func Eval(c Context, v Value) Value {
-	if e, ok := v.(Evaluable); ok {
-		return e.Eval(c)
-	}
-	return v
-}
-
-// Apply will apply an Applicable to the specified arguments
-func Apply(c Context, a Applicable, args Sequence) Value {
-	return a.Apply(c, args)
-}
-
 // EvalSequence evaluates each element of the provided Sequence
 func EvalSequence(c Context, s Sequence) Value {
 	var r Value = Nil
 	for i := s; i.IsSequence(); i = i.Rest() {
-		r = Eval(c, i.First())
+		r = i.First().Eval(c)
 	}
 	return r
 }

@@ -40,11 +40,11 @@ func pretty(w io.Writer, v a.Value) {
 func out(c a.Context, args a.Sequence, o outputFunc) a.Value {
 	w := getStdOut(c)
 	if args.IsSequence() {
-		o(w, a.Eval(c, args.First()))
+		o(w, args.First().Eval(c))
 	}
 	for i := args.Rest(); i.IsSequence(); i = i.Rest() {
 		fmt.Fprint(w, " ")
-		o(w, a.Eval(c, i.First()))
+		o(w, i.First().Eval(c))
 	}
 	return a.Nil
 }

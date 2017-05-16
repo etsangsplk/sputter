@@ -126,6 +126,11 @@ func (l *Number) Float64() (float64, bool) {
 	return l.ratio.Float64()
 }
 
+// Eval is self-evaluating
+func (l *Number) Eval(_ Context) Value {
+	return l
+}
+
 // Str converts this Value into a Str
 func (l *Number) Str() Str {
 	if nf := l.decimal; nf != nil {

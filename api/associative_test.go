@@ -14,18 +14,18 @@ func getTestMap() a.Associative {
 		a.NewVector(s("string"), s("value")),
 	)
 	c := a.NewContext()
-	return a.Eval(c, r.Evaluable()).(a.Associative)
+	return r.Expression().Eval(c).(a.Associative)
 }
 
 func TestAssociative(t *testing.T) {
 	as := assert.New(t)
 	m1 := getTestMap()
 
-	as.True(m1.Associative())
+	as.True(m1.IsAssociative())
 	as.Number(3, a.Count(m1))
 
 	nameKey := a.NewKeyword("name")
-	as.True(nameKey.Keyword())
+	as.True(nameKey.IsKeyword())
 	as.Equal(a.Name("name"), nameKey.Name())
 
 	nameValue, ok := m1.Get(nameKey)
@@ -79,7 +79,7 @@ func TestAssociativePrepend(t *testing.T) {
 	as.True(ok)
 	as.String("bar", r)
 
-	if e2, ok := a.Eval(a.NewContext(), m2).(a.Associative); ok {
+	if e2, ok := m2.Eval(a.NewContext()).(a.Associative); ok {
 		as.True(&e2 != &m2)
 	} else {
 		as.Fail("map.Eval() didn't return an Associative")

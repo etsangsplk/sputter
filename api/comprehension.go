@@ -11,17 +11,14 @@ type lazyElement struct {
 	rest  Sequence
 }
 
-// First returns the first mapped Value from the lazyElement
 func (l *lazyElement) First() Value {
 	return l.first
 }
 
-// Rest returns the rest of the lazyElement
 func (l *lazyElement) Rest() Sequence {
 	return l.rest
 }
 
-// IsSequence returns whether this instance is a consumable Sequence
 func (l *lazyElement) IsSequence() bool {
 	return true
 }
@@ -33,7 +30,10 @@ func (l *lazyElement) Prepend(v Value) Sequence {
 	}
 }
 
-// Str converts this Value into a Str
+func (l *lazyElement) Eval(_ Context) Value {
+	return l
+}
+
 func (l *lazyElement) Str() Str {
 	return MakeSequenceStr(l)
 }
@@ -76,17 +76,14 @@ func (l *lazyMap) resolve() *lazyMap {
 	return l
 }
 
-// First returns the first mapped Value from the lazyMap
 func (l *lazyMap) First() Value {
 	return l.resolve().first
 }
 
-// Rest returns the rest of the lazyMap
 func (l *lazyMap) Rest() Sequence {
 	return l.resolve().rest
 }
 
-// IsSequence returns whether this instance is a consumable Sequence
 func (l *lazyMap) IsSequence() bool {
 	return l.resolve().isSeq
 }
@@ -98,7 +95,10 @@ func (l *lazyMap) Prepend(v Value) Sequence {
 	}
 }
 
-// Str converts this Value into a Str
+func (l *lazyMap) Eval(_ Context) Value {
+	return l
+}
+
 func (l *lazyMap) Str() Str {
 	return MakeSequenceStr(l)
 }
@@ -144,17 +144,14 @@ func (l *lazyFilter) resolve() *lazyFilter {
 	return l
 }
 
-// First returns the first mapped Value from the lazyFilter
 func (l *lazyFilter) First() Value {
 	return l.resolve().first
 }
 
-// Rest returns the rest of the lazyFilter
 func (l *lazyFilter) Rest() Sequence {
 	return l.resolve().rest
 }
 
-// IsSequence returns whether this instance is a consumable Sequence
 func (l *lazyFilter) IsSequence() bool {
 	return l.resolve().isSeq
 }
@@ -166,7 +163,10 @@ func (l *lazyFilter) Prepend(v Value) Sequence {
 	}
 }
 
-// Str converts this Value into a Str
+func (l *lazyFilter) Eval(_ Context) Value {
+	return l
+}
+
 func (l *lazyFilter) Str() Str {
 	return MakeSequenceStr(l)
 }
@@ -227,7 +227,10 @@ func (l *lazyConcat) Prepend(v Value) Sequence {
 	}
 }
 
-// Str converts this Value into a Str
+func (l *lazyConcat) Eval(_ Context) Value {
+	return l
+}
+
 func (l *lazyConcat) Str() Str {
 	return MakeSequenceStr(l)
 }
@@ -289,7 +292,10 @@ func (l *lazyTake) Prepend(v Value) Sequence {
 	}
 }
 
-// Str converts this Value into a Str
+func (l *lazyTake) Eval(_ Context) Value {
+	return l
+}
+
 func (l *lazyTake) Str() Str {
 	return MakeSequenceStr(l)
 }
@@ -352,7 +358,10 @@ func (l *lazyDrop) Prepend(v Value) Sequence {
 	}
 }
 
-// Str converts this Value into a Str
+func (l *lazyDrop) Eval(_ Context) Value {
+	return l
+}
+
 func (l *lazyDrop) Str() Str {
 	return MakeSequenceStr(l)
 }
