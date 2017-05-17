@@ -16,132 +16,184 @@ const (
 )
 
 // Number can represent either floating point or rational numbers
-type Number struct {
-	decimal *apd.Decimal
-	ratio   *big.Rat
+type Number interface {
+	Value
+	Cmp(r Number) Comparison
+	Add(r Number) Number
+	Sub(r Number) Number
+	Mul(r Number) Number
+	Div(r Number) Number
+	Float64() (float64, bool)
 }
+
+type dec apd.Decimal
+type rat big.Rat
 
 var ctx = apd.BaseContext.WithPrecision(53)
 
 // NewFloat generates a new Number from a float64 value
-func NewFloat(f float64) *Number {
-	if res, err := nativeDecimal().SetFloat64(f); err == nil {
-		return &Number{decimal: res}
+func NewFloat(f float64) Number {
+	if res, err := new(apd.Decimal).SetFloat64(f); err == nil {
+		return (*dec)(res)
 	}
-	panic(Err(ExpectedNumber, fmt.Sprintf("%f", f)))
+	panic(Err(ExpectedNumber, fmt.Sprintf("%d", f)))
 }
 
 // NewRatio generates a new Number from a ratio
-func NewRatio(n int64, d int64) *Number {
-	res := new(big.Rat).SetFrac64(n, d)
-	return &Number{ratio: res}
-}
-
-func nativeDecimal() *apd.Decimal {
-	return new(apd.Decimal)
-}
-
-func nativeRatio() *big.Rat {
-	return big.NewRat(1, 1)
+func NewRatio(n int64, d int64) Number {
+	return (*rat)(new(big.Rat).SetFrac64(n, d))
 }
 
 // ParseNumber attempts to parse a string into a Number Value
-func ParseNumber(s Str) *Number {
+func ParseNumber(s Str) Number {
 	ns := string(s)
-	if f, _, err := ctx.SetString(nativeDecimal(), ns); err == nil {
-		return &Number{decimal: f}
+	if f, _, err := ctx.SetString(new(apd.Decimal), ns); err == nil {
+		return (*dec)(f)
 	}
-	if r, ok := nativeRatio().SetString(ns); ok {
-		return &Number{ratio: r}
+	if r, ok := new(big.Rat).SetString(ns); ok {
+		return (*rat)(r)
 	}
 	panic(Err(ExpectedNumber, s))
 }
 
-func (l *Number) toDecimal() *apd.Decimal {
-	if lf := l.decimal; lf != nil {
-		return lf
-	}
-
-	rf, _ := l.ratio.Float64()
-	if res, err := nativeDecimal().SetFloat64(rf); err == nil {
+func (r *rat) toDecimal() *apd.Decimal {
+	rr := (*big.Rat)(r)
+	rf, _ := rr.Float64()
+	if res, err := new(apd.Decimal).SetFloat64(rf); err == nil {
 		return res
 	}
-	panic(Err(ExpectedNumber, l.ratio.String()))
+	panic(Err(ExpectedNumber, rr.String()))
 }
 
-// Cmp compares this Number Value to another Value
-func (l *Number) Cmp(r *Number) Comparison {
-	if l.decimal != nil || r.decimal != nil {
-		return Comparison(l.toDecimal().Cmp(r.toDecimal()))
+func (d *dec) Cmp(n Number) Comparison {
+	if dn, ok := n.(*dec); ok {
+		return Comparison((*apd.Decimal)(d).Cmp((*apd.Decimal)(dn)))
 	}
-	return Comparison(l.ratio.Cmp(r.ratio))
+	rn, _ := n.(*rat)
+	return Comparison((*apd.Decimal)(d).Cmp(rn.toDecimal()))
 }
 
-// Add will add two Numbers
-func (l *Number) Add(r *Number) *Number {
-	if l.decimal != nil || r.decimal != nil {
-		res := nativeDecimal()
-		ctx.Add(res, l.toDecimal(), r.toDecimal())
-		return &Number{decimal: res}
+func (r *rat) Cmp(n Number) Comparison {
+	if rn, ok := n.(*rat); ok {
+		rr := (*big.Rat)(r)
+		br := (*big.Rat)(rn)
+		return Comparison(rr.Cmp(br))
 	}
-	return &Number{ratio: nativeRatio().Add(l.ratio, r.ratio)}
+	dn := (*apd.Decimal)(n.(*dec))
+	return Comparison(r.toDecimal().Cmp(dn))
+}
+
+func (d *dec) Add(n Number) Number {
+	res := new(apd.Decimal)
+	if dn, ok := n.(*dec); ok {
+		ctx.Add(res, (*apd.Decimal)(d), (*apd.Decimal)(dn))
+		return (*dec)(res)
+	}
+	rn, _ := n.(*rat)
+	ctx.Add(res, (*apd.Decimal)(d), rn.toDecimal())
+	return (*dec)(res)
+}
+
+func (r *rat) Add(n Number) Number {
+	if rn, ok := n.(*rat); ok {
+		return (*rat)(new(big.Rat).Add((*big.Rat)(r), (*big.Rat)(rn)))
+	}
+	res := new(apd.Decimal)
+	ctx.Add(res, r.toDecimal(), (*apd.Decimal)(n.(*dec)))
+	return (*dec)(res)
 }
 
 // Sub will subtract two Numbers
-func (l *Number) Sub(r *Number) *Number {
-	if l.decimal != nil || r.decimal != nil {
-		res := nativeDecimal()
-		ctx.Sub(res, l.toDecimal(), r.toDecimal())
-		return &Number{decimal: res}
+func (d *dec) Sub(n Number) Number {
+	res := new(apd.Decimal)
+	if dn, ok := n.(*dec); ok {
+		ctx.Sub(res, (*apd.Decimal)(d), (*apd.Decimal)(dn))
+		return (*dec)(res)
 	}
-	return &Number{ratio: nativeRatio().Sub(l.ratio, r.ratio)}
+	rn, _ := n.(*rat)
+	ctx.Sub(res, (*apd.Decimal)(d), rn.toDecimal())
+	return (*dec)(res)
 }
 
-// Mul will multiply two Numbers
-func (l *Number) Mul(r *Number) *Number {
-	if l.decimal != nil || r.decimal != nil {
-		res := nativeDecimal()
-		ctx.Mul(res, l.toDecimal(), r.toDecimal())
-		return &Number{decimal: res}
+func (r *rat) Sub(n Number) Number {
+	if rn, ok := n.(*rat); ok {
+		return (*rat)(new(big.Rat).Sub((*big.Rat)(r), (*big.Rat)(rn)))
 	}
-	return &Number{ratio: nativeRatio().Mul(l.ratio, r.ratio)}
+	res := new(apd.Decimal)
+	ctx.Sub(res, r.toDecimal(), (*apd.Decimal)(n.(*dec)))
+	return (*dec)(res)
 }
 
-// Div will divide two Numbers
-func (l *Number) Div(r *Number) *Number {
-	if l.decimal != nil || r.decimal != nil {
-		res := nativeDecimal()
-		ctx.Quo(res, l.toDecimal(), r.toDecimal())
-		return &Number{decimal: res}
+func (d *dec) Mul(n Number) Number {
+	res := new(apd.Decimal)
+	if dn, ok := n.(*dec); ok {
+		ctx.Mul(res, (*apd.Decimal)(d), (*apd.Decimal)(dn))
+		return (*dec)(res)
 	}
-	return &Number{ratio: nativeRatio().Quo(l.ratio, r.ratio)}
+	rn, _ := n.(*rat)
+	ctx.Mul(res, (*apd.Decimal)(d), rn.toDecimal())
+	return (*dec)(res)
+}
+
+func (r *rat) Mul(n Number) Number {
+	if rn, ok := n.(*rat); ok {
+		return (*rat)(new(big.Rat).Mul((*big.Rat)(r), (*big.Rat)(rn)))
+	}
+	res := new(apd.Decimal)
+	ctx.Mul(res, r.toDecimal(), (*apd.Decimal)(n.(*dec)))
+	return (*dec)(res)
+}
+
+func (d *dec) Div(n Number) Number {
+	res := new(apd.Decimal)
+	if dn, ok := n.(*dec); ok {
+		ctx.Quo(res, (*apd.Decimal)(d), (*apd.Decimal)(dn))
+		return (*dec)(res)
+	}
+	rn, _ := n.(*rat)
+	ctx.Quo(res, (*apd.Decimal)(d), rn.toDecimal())
+	return (*dec)(res)
+}
+
+func (r *rat) Div(n Number) Number {
+	if rn, ok := n.(*rat); ok {
+		return (*rat)(new(big.Rat).Quo((*big.Rat)(r), (*big.Rat)(rn)))
+	}
+	res := new(apd.Decimal)
+	ctx.Quo(res, r.toDecimal(), (*apd.Decimal)(n.(*dec)))
+	return (*dec)(res)
 }
 
 // Float64 converts the value to a native float64
-func (l *Number) Float64() (float64, bool) {
-	if nf := l.decimal; nf != nil {
-		v, err := nf.Float64()
-		return v, err == nil
-	}
-	return l.ratio.Float64()
+func (d *dec) Float64() (float64, bool) {
+	v, err := (*apd.Decimal)(d).Float64()
+	return v, err == nil
 }
 
-// Eval is self-evaluating
-func (l *Number) Eval(_ Context) Value {
-	return l
+func (r *rat) Float64() (float64, bool) {
+	return (*big.Rat)(r).Float64()
+}
+
+func (d *dec) Eval(_ Context) Value {
+	return d
+}
+
+func (r *rat) Eval(_ Context) Value {
+	return r
 }
 
 // Str converts this Value into a Str
-func (l *Number) Str() Str {
-	if nf := l.decimal; nf != nil {
-		return Str(nf.ToStandard())
-	}
-	return Str(l.ratio.String())
+func (d *dec) Str() Str {
+	return Str((*apd.Decimal)(d).ToStandard())
+}
+
+func (r *rat) Str() Str {
+	return Str((*big.Rat)(r).String())
 }
 
 // AssertNumber will cast a Value into a Number or explode violently
-func AssertNumber(v Value) *Number {
-	if r, ok := v.(*Number); ok {
+func AssertNumber(v Value) Number {
+	if r, ok := v.(Number); ok {
 		return r
 	}
 	panic(Err(ExpectedNumber, v))

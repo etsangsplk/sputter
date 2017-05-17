@@ -20,7 +20,7 @@ func TestParseNumber(t *testing.T) {
 	a.ParseNumber("'splosion!")
 }
 
-func testExact(as *assert.Wrapper, n *a.Number, expect float64) {
+func testExact(as *assert.Wrapper, n a.Number, expect float64) {
 	val, exact := n.Float64()
 	as.True(exact)
 	as.Number(expect, val)
@@ -72,7 +72,7 @@ func TestStringifyNumbers(t *testing.T) {
 	as.String("20", n5)
 }
 
-func testResult(as *assert.Wrapper, n *a.Number, expect string) {
+func testResult(as *assert.Wrapper, n a.Number, expect string) {
 	expectNum := a.ParseNumber(s(expect))
 
 	f, _ := expectNum.Float64()

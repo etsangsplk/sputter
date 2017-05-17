@@ -52,18 +52,6 @@ func TestNestedContext(t *testing.T) {
 	assertGet(as, c2, "foo", s("bar"))
 }
 
-func TestEvalContext(t *testing.T) {
-	as := assert.New(t)
-
-	uc := a.GetNamespace(a.UserDomain)
-	uc.Delete("foo")
-	uc.Put("foo", f(99))
-
-	ec := a.NewEvalContext()
-	v, _ := ec.Get("foo")
-	as.Number(99, v)
-}
-
 func TestRebind(t *testing.T) {
 	as := assert.New(t)
 

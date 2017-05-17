@@ -8,6 +8,6 @@ func s(s string) a.Str {
 	return a.Str(s)
 }
 
-func f(f float64) *a.Number {
+func f(f float64) a.Number {
 	return a.NewFloat(f)
 }

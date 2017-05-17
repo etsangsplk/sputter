@@ -14,7 +14,7 @@ import (
 	"github.com/kode4food/readline"
 	a "github.com/kode4food/sputter/api"
 	d "github.com/kode4food/sputter/docstring"
-	p "github.com/kode4food/sputter/parser"
+	e "github.com/kode4food/sputter/evaluator"
 )
 
 type any interface{}
@@ -79,7 +79,7 @@ func NewREPL() *REPL {
 	}
 
 	repl.rl = rl
-	repl.ctx = a.NewEvalContext()
+	repl.ctx = e.NewEvalContext()
 	repl.ns = a.GetContextNamespace(repl.ctx)
 	repl.idx = 1
 
@@ -163,9 +163,7 @@ func (r *REPL) evalBuffer() (completed bool) {
 		}
 	}()
 
-	l := p.NewLexer(a.Str(r.buf.String()))
-	tr := p.NewReader(r.ctx, l)
-	res := a.EvalSequence(r.ctx, tr)
+	res := e.EvalStr(r.ctx, a.Str(r.buf.String()))
 	r.outputResult(res)
 	return true
 }
@@ -271,9 +269,9 @@ func isEmptyString(s string) bool {
 }
 
 func isRecoverable(err string) bool {
-	return err == p.ListNotClosed ||
-		err == p.VectorNotClosed ||
-		err == p.MapNotClosed
+	return err == e.ListNotClosed ||
+		err == e.VectorNotClosed ||
+		err == e.MapNotClosed
 }
 
 func use(c a.Context, args a.Sequence) a.Value {

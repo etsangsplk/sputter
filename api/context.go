@@ -33,15 +33,6 @@ func ChildContext(parent Context) Context {
 	}
 }
 
-// NewEvalContext creates a new Context instance that
-// chains up to the UserDomain Context for special forms
-func NewEvalContext() Context {
-	ns := GetNamespace(UserDomain)
-	c := ChildContext(ns)
-	c.Put(ContextDomain, ns)
-	return c
-}
-
 // Get retrieves a value from the Context chain
 func (c *context) Get(n Name) (Value, bool) {
 	if v, ok := c.vars[n]; ok {

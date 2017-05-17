@@ -54,7 +54,7 @@ func (w *Wrapper) Number(expect float64, expr Any) {
 		w.as.Equal(expect, float64(i))
 		return
 	}
-	if n, ok := expr.(*a.Number); ok {
+	if n, ok := expr.(a.Number); ok {
 		w.as.Equal(a.EqualTo, a.NewFloat(expect).Cmp(n))
 		return
 	}
@@ -67,10 +67,10 @@ func (w *Wrapper) Equal(expect a.Value, expr Any) {
 		w.String(string(s), expr)
 		return
 	}
-	if n, ok := expect.(*a.Number); ok {
+	if n, ok := expect.(a.Number); ok {
 		f, _ := n.Float64()
 		w.Number(f, expr)
-		//w.as.Equal(a.EqualTo, n.Cmp(expr.(*a.Number)))
+		//w.as.Equal(a.EqualTo, n.Cmp(expr.(a.Number)))
 		return
 	}
 	w.String(string(expect.Str()), expr)
@@ -160,7 +160,7 @@ func (w *Wrapper) NotNil(expr Any) {
 }
 
 // Compare tests if the Comparison of two Numbers is correct
-func (w *Wrapper) Compare(c a.Comparison, l *a.Number, r *a.Number) {
+func (w *Wrapper) Compare(c a.Comparison, l a.Number, r a.Number) {
 	w.as.Equal(c, l.Cmp(r))
 }
 

@@ -4,25 +4,21 @@ import (
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
-	_ "github.com/kode4food/sputter/builtins"
-	p "github.com/kode4food/sputter/parser"
-
 	"github.com/kode4food/sputter/assert"
+	_ "github.com/kode4food/sputter/builtins"
+	e "github.com/kode4food/sputter/evaluator"
 )
 
 func s(s string) a.Str {
 	return a.Str(s)
 }
 
-func f(f float64) *a.Number {
+func f(f float64) a.Number {
 	return a.NewFloat(f)
 }
 
 func runCode(src string) a.Value {
-	l := p.NewLexer(s(src))
-	c := a.NewEvalContext()
-	tr := p.NewReader(c, l)
-	return a.EvalSequence(c, tr)
+	return e.EvalStr(e.NewEvalContext(), a.Str(src))
 }
 
 func testCode(t *testing.T, src string, expect a.Value) {
@@ -47,7 +43,7 @@ func testBadCode(t *testing.T, src string, err string) {
 func TestBuiltInsContext(t *testing.T) {
 	as := assert.New(t)
 
-	bg1 := a.NewEvalContext()
+	bg1 := e.NewEvalContext()
 	bg2 := a.ChildContext(bg1)
 	bg3 := a.ChildContext(bg2)
 

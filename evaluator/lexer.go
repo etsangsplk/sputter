@@ -1,4 +1,4 @@
-package parser
+package evaluator
 
 import (
 	"regexp"
@@ -26,6 +26,8 @@ const (
 	MapStart
 	MapEnd
 	QuoteMarker
+	UnquoteMarker
+	SpliceMarker
 	Whitespace
 	Comment
 	endOfFile
@@ -209,13 +211,15 @@ func init() {
 		pattern(`^]`, tokenState(VectorEnd)),
 		pattern(`^}`, tokenState(MapEnd)),
 		pattern(`^'`, tokenState(QuoteMarker)),
+		pattern(`^~`, tokenState(UnquoteMarker)),
+		pattern(`^@`, tokenState(SpliceMarker)),
 
 		pattern(`^"(\\\\|\\"|\\[^\\"]|[^"\\])*"`, stringState),
 
 		pattern(`^[+-]?[1-9]\d*/[1-9]\d*`, ratioState),
 		pattern(`^[+-]?((0|[1-9]\d*)(\.\d+)?([eE][+-]?\d+)?)`, numberState),
 
-		pattern(`^[^(){}\[\]\s,'";]+`, tokenState(Identifier)),
+		pattern(`^[^(){}\[\]\s,'~@";]+`, tokenState(Identifier)),
 
 		pattern(`^.`, endState(Error)),
 	}

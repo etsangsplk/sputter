@@ -153,7 +153,7 @@ func TestReduce(t *testing.T) {
 			v := args.(a.Vector)
 			n1, _ := v.ElementAt(0)
 			n2, _ := v.ElementAt(1)
-			return n1.(*a.Number).Add(n2.(*a.Number))
+			return n1.(a.Number).Add(n2.(a.Number))
 		},
 	)
 

@@ -73,7 +73,7 @@ func TestIterator(t *testing.T) {
 		if !ok {
 			break
 		}
-		fv := v.(*a.Number)
+		fv := v.(a.Number)
 		sum = sum.Add(fv)
 	}
 

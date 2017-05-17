@@ -7,6 +7,7 @@ import (
 	"github.com/kode4food/sputter/assert"
 	_ "github.com/kode4food/sputter/builtins"
 	c "github.com/kode4food/sputter/cli"
+	e "github.com/kode4food/sputter/evaluator"
 )
 
 func TestREPL(t *testing.T) {
@@ -65,18 +66,18 @@ func asApplicable(as *assert.Wrapper, v a.Value) a.Applicable {
 func TestBuiltInUse(t *testing.T) {
 	as := assert.New(t)
 
-	c := a.NewEvalContext()
-	v, ok := c.Get("use")
+	ec := e.NewEvalContext()
+	v, ok := ec.Get("use")
 	as.True(ok)
 	as.NotNil(v)
 	ap := asApplicable(as, v)
 	nsName := a.NewLocalSymbol(a.Name("test-ns"))
-	ns, ok := ap.Apply(c, a.NewVector(nsName)).(a.Namespace)
+	ns, ok := ap.Apply(ec, a.NewVector(nsName)).(a.Namespace)
 	as.True(ok)
 	as.String("test-ns", ns.Domain())
 
-	ns = a.GetContextNamespace(c)
+	ns = a.GetContextNamespace(ec)
 	as.String("test-ns", ns.Domain())
 
-	c.Delete(a.ContextDomain)
+	ec.Delete(a.ContextDomain)
 }
