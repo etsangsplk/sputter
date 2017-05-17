@@ -36,7 +36,7 @@ func NewFloat(f float64) Number {
 	if res, err := new(apd.Decimal).SetFloat64(f); err == nil {
 		return (*dec)(res)
 	}
-	panic(Err(ExpectedNumber, fmt.Sprintf("%d", f)))
+	panic(Err(ExpectedNumber, fmt.Sprintf("%f", f)))
 }
 
 // NewRatio generates a new Number from a ratio
