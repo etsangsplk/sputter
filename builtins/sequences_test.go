@@ -62,7 +62,7 @@ func TestTakeDrop(t *testing.T) {
 	testCode(t, `
 		(def x '(1 2 3 4))
 		(def y [5 6 7 8])
-		(nth (to-vector (take 6 x y)) 5)
+		(nth (apply vector (take 6 x y)) 5)
 	`, f(6))
 
 	ns.Delete("x")
@@ -70,6 +70,6 @@ func TestTakeDrop(t *testing.T) {
 	testCode(t, `
 		(def x '(1 2 3 4))
 		(def y [5 6 7 8])
-		(nth (to-vector (drop 3 x y)) 0)
+		(nth (apply vector (drop 3 x y)) 0)
 	`, f(4))
 }

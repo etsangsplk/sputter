@@ -27,10 +27,6 @@ func listFromUncounted(c a.Context, args a.Sequence) a.Value {
 	return a.NewList(r...)
 }
 
-func toList(c a.Context, args a.Sequence) a.Value {
-	return list(c, concat(c, args).(a.Sequence))
-}
-
 func isList(v a.Value) bool {
 	if _, ok := v.(a.List); ok {
 		return true
@@ -43,13 +39,6 @@ func init() {
 		a.NewFunction(list).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("list"),
 			a.MetaDoc:  d.Get("list"),
-		}),
-	)
-
-	registerAnnotated(
-		a.NewFunction(toList).WithMetadata(a.Metadata{
-			a.MetaName: a.Name("to-list"),
-			a.MetaDoc:  d.Get("to-list"),
 		}),
 	)
 

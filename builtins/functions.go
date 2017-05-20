@@ -161,13 +161,6 @@ func defineFunction(closure a.Context, d *functionDefinition) a.Function {
 	}).WithMetadata(d.meta).(a.Function)
 }
 
-func defn(c a.Context, args a.Sequence) a.Value {
-	fd := getFunctionDefinition(c, args)
-	f := defineFunction(c, fd)
-	a.GetContextNamespace(c).Put(f.Name(), f)
-	return f
-}
-
 func fn(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 	fn, r := optionalName(args)
@@ -193,13 +186,6 @@ func apply(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	registerAnnotated(
-		a.NewFunction(defn).WithMetadata(a.Metadata{
-			a.MetaName: a.Name("defn"),
-			a.MetaDoc:  d.Get("defn"),
-		}),
-	)
-
 	registerAnnotated(
 		a.NewFunction(fn).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("fn"),

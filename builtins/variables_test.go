@@ -18,8 +18,8 @@ func TestDefinitions(t *testing.T) {
 	`, s("bar"))
 
 	testCode(t, `
-		(defn return-local []
-			(let [foo "local"] foo))
+		(def return-local (fn []
+			(let [foo "local"] foo)))
 		(return-local)
 	`, s("local"))
 }

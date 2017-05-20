@@ -27,10 +27,6 @@ func vectorFromUncounted(c a.Context, args a.Sequence) a.Value {
 	return a.NewVector(r...)
 }
 
-func toVector(c a.Context, args a.Sequence) a.Value {
-	return vector(c, concat(c, args).(a.Sequence))
-}
-
 func isVector(v a.Value) bool {
 	if _, ok := v.(a.Vector); ok {
 		return true
@@ -43,13 +39,6 @@ func init() {
 		a.NewFunction(vector).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("vector"),
 			a.MetaDoc:  d.Get("vector"),
-		}),
-	)
-
-	registerAnnotated(
-		a.NewFunction(toVector).WithMetadata(a.Metadata{
-			a.MetaName: a.Name("to-vector"),
-			a.MetaDoc:  d.Get("to-vector"),
 		}),
 	)
 
