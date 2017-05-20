@@ -3,6 +3,7 @@ package builtins
 import (
 	a "github.com/kode4food/sputter/api"
 	d "github.com/kode4food/sputter/docstring"
+	e "github.com/kode4food/sputter/evaluator"
 )
 
 // Namespace is a special Namespace for built-in identifiers
@@ -14,22 +15,31 @@ func registerAnnotated(v a.Annotated) {
 }
 
 func do(c a.Context, args a.Sequence) a.Value {
-	return a.EvalSequence(c, args)
+	return a.EvalBlock(c, args)
 }
 
 func quote(_ a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
-	//c.Put("unquote", a.NewMacro(unquote))
 	return args.First()
 }
 
-func unquote(_ a.Context, args a.Sequence) a.Value {
+func unquote(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
-	v := args.First()
-	if m, ok := v.(a.MakeExpression); ok {
-		return m.Expression()
-	}
-	return v
+	return e.Eval(c, args)
+}
+
+func read(c a.Context, args a.Sequence) a.Value {
+	a.AssertArity(args, 1)
+	v := args.First().Eval(c)
+	s := a.AssertStr(v)
+	return e.Read(c, s)
+}
+
+func eval(c a.Context, args a.Sequence) a.Value {
+	a.AssertArity(args, 1)
+	v := args.First().Eval(c)
+	s := a.AssertSequence(v)
+	return e.Eval(c, s)
 }
 
 func init() {
@@ -44,6 +54,33 @@ func init() {
 		a.NewMacro(quote).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("quote"),
 			a.MetaDoc:  d.Get("quote"),
+		}),
+	)
+
+	registerAnnotated(
+		a.NewMacro(unquote).WithMetadata(a.Metadata{
+			a.MetaName: a.Name("unquote"),
+		}),
+	)
+
+	registerAnnotated(
+		a.NewMacro(unquote).WithMetadata(a.Metadata{
+			a.MetaName:     a.Name("unquote-splicing"),
+			a.MetaSplicing: a.True,
+		}),
+	)
+
+	registerAnnotated(
+		a.NewFunction(read).WithMetadata(a.Metadata{
+			a.MetaName: a.Name("read"),
+			a.MetaDoc:  d.Get("read"),
+		}),
+	)
+
+	registerAnnotated(
+		a.NewFunction(eval).WithMetadata(a.Metadata{
+			a.MetaName: a.Name("eval"),
+			a.MetaDoc:  d.Get("eval"),
 		}),
 	)
 }

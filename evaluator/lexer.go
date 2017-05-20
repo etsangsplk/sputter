@@ -35,7 +35,7 @@ const (
 
 type lexer struct {
 	once  a.Do
-	src   a.Str
+	src   string
 	isSeq bool
 	first a.Value
 	rest  a.Sequence
@@ -47,7 +47,7 @@ type Token struct {
 	Value a.Value
 }
 
-type tokenizer func(s a.Str) *Token
+type tokenizer func(s string) *Token
 
 type matchEntry struct {
 	pattern  *regexp.Regexp
@@ -69,7 +69,7 @@ var (
 func NewLexer(src a.Str) a.Sequence {
 	l := &lexer{
 		once: a.Once(),
-		src:  src,
+		src:  string(src),
 	}
 
 	return a.Filter(l, func(v a.Value) bool {
@@ -94,13 +94,13 @@ func (l *lexer) resolve() *lexer {
 	return l
 }
 
-func (l *lexer) matchToken() (*Token, a.Str) {
-	src := string(l.src)
+func (l *lexer) matchToken() (*Token, string) {
+	src := l.src
 	for _, s := range matchers {
 		if i := s.pattern.FindStringIndex(src); i != nil {
 			f := src[:i[1]]
 			r := src[len(f):]
-			return s.function(a.Str(f)), a.Str(r)
+			return s.function(f), r
 		}
 	}
 	// Shouldn't happen because of the patterns that are defined,
@@ -156,39 +156,39 @@ func makeToken(t TokenType, v a.Value) *Token {
 }
 
 func tokenState(t TokenType) tokenizer {
-	return func(s a.Str) *Token {
+	return func(s string) *Token {
 		return makeToken(t, a.Str(s))
 	}
 }
 
 func endState(t TokenType) tokenizer {
-	return func(_ a.Str) *Token {
+	return func(_ string) *Token {
 		return makeToken(t, a.Nil)
 	}
 }
 
-func unescape(s a.Str) a.Str {
-	r := escaped.ReplaceAllStringFunc(string(s), func(e string) string {
+func unescape(s string) string {
+	r := escaped.ReplaceAllStringFunc(s, func(e string) string {
 		if r, ok := escapedMap[e]; ok {
 			return r
 		}
 		return e
 	})
-	return a.Str(r)
+	return r
 }
 
-func stringState(r a.Str) *Token {
+func stringState(r string) *Token {
 	s := unescape(r[1 : len(r)-1])
 	return makeToken(String, a.Str(s))
 }
 
-func ratioState(s a.Str) *Token {
-	v := a.ParseNumber(s)
+func ratioState(s string) *Token {
+	v := a.ParseNumber(a.Str(s))
 	return makeToken(Ratio, v)
 }
 
-func numberState(s a.Str) *Token {
-	v := a.ParseNumber(s)
+func numberState(s string) *Token {
+	v := a.ParseNumber(a.Str(s))
 	return makeToken(Number, v)
 }
 

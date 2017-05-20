@@ -37,7 +37,7 @@ func let(c a.Context, args a.Sequence) a.Value {
 		l.Put(n, v.Eval(l))
 	}
 
-	return a.EvalSequence(l, args.Rest())
+	return a.EvalBlock(l, args.Rest())
 }
 
 func init() {

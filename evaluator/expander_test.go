@@ -14,7 +14,7 @@ func TestCreateExpander(t *testing.T) {
 	l := e.NewLexer("99")
 	c := a.NewContext()
 	tr := e.NewReader(c, l)
-	ex := e.NewExpander(c, tr)
+	ex := e.Expand(c, tr)
 	as.NotNil(ex)
 }
 
@@ -35,8 +35,8 @@ func TestExpander(t *testing.T) {
 
 	l := e.NewLexer(`(hello)`)
 	tr := e.NewReader(b, l)
-	ex := e.NewExpander(b, tr)
-	v := a.EvalSequence(b, ex)
+	ex := e.ExpandSequence(b, tr)
+	v := a.EvalBlock(b, ex)
 
 	if rv, ok := v.(a.Vector); ok {
 		v1, ok := rv.ElementAt(0)

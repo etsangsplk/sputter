@@ -1,11 +1,15 @@
 package api
 
 // MetaMacro is the Metadata key that identifies a Function as being a Macro
-var MetaMacro = NewKeyword("macro")
+var (
+	MetaMacro    = NewKeyword("macro")
+	MetaSplicing = NewKeyword("splicing")
+)
 
 var macroMetadata = Metadata{
-	MetaMacro: True,
-	MetaType:  Name("macro"),
+	MetaMacro:    True,
+	MetaType:     Name("macro"),
+	MetaSplicing: False,
 }
 
 // NewMacro instantiates a new Macro

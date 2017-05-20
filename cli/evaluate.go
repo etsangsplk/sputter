@@ -35,7 +35,7 @@ func EvaluateFile() {
 func evalBuffer(src []byte) a.Value {
 	c := e.NewEvalContext()
 	s := e.NewEvaluator(c, a.Str(src))
-	return a.EvalSequence(a.ChildContext(c), s)
+	return s.Eval(a.ChildContext(c))
 }
 
 func exitWithError() {

@@ -19,8 +19,8 @@ type Applicable interface {
 	Apply(Context, Sequence) Value
 }
 
-// EvalSequence evaluates each element of the provided Sequence
-func EvalSequence(c Context, s Sequence) Value {
+// EvalBlock evaluates each element of the provided Sequence
+func EvalBlock(c Context, s Sequence) Value {
 	var r Value = Nil
 	for i := s; i.IsSequence(); i = i.Rest() {
 		r = i.First().Eval(c)

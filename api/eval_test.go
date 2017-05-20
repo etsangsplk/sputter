@@ -34,7 +34,7 @@ func TestEvaluateSequence(t *testing.T) {
 	l := a.NewList(s1, s2)
 
 	c := a.NewContext()
-	r := a.EvalSequence(c, l)
+	r := a.EvalBlock(c, l)
 	as.String("Hello, Foo!", r)
 }
 

@@ -14,7 +14,7 @@ func getTestMap() a.Associative {
 		a.NewVector(s("string"), s("value")),
 	)
 	c := a.NewContext()
-	return r.Expression().Eval(c).(a.Associative)
+	return r.Eval(c).(a.Associative)
 }
 
 func TestAssociative(t *testing.T) {

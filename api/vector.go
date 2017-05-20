@@ -8,7 +8,6 @@ const ExpectedVector = "value is not a vector: %s"
 // Vector is a fixed-length Array of Values
 type Vector interface {
 	Conjoiner
-	MakeExpression
 	Elementer
 	Counted
 	Applicable
@@ -16,10 +15,6 @@ type Vector interface {
 }
 
 type vector []Value
-
-type vectorExpression struct {
-	vector
-}
 
 var emptyVector = vector{}
 
@@ -47,8 +42,13 @@ func (v vector) Apply(c Context, args Sequence) Value {
 	return IndexedApply(v, c, args)
 }
 
-func (v vector) Eval(_ Context) Value {
-	return v
+func (v vector) Eval(c Context) Value {
+	l := len(v)
+	r := make(vector, l)
+	for i := 0; i < l; i++ {
+		r[i] = v[i].Eval(c)
+	}
+	return r
 }
 
 func (v vector) First() Value {
@@ -77,12 +77,6 @@ func (v vector) IsSequence() bool {
 	return len(v) > 0
 }
 
-func (v vector) Expression() Value {
-	return &vectorExpression{
-		vector: v,
-	}
-}
-
 func (v vector) Str() Str {
 	var b bytes.Buffer
 	l := len(v)
@@ -96,20 +90,6 @@ func (v vector) Str() Str {
 	}
 	b.WriteString("]")
 	return Str(b.String())
-}
-
-func (v *vectorExpression) IsExpression() bool {
-	return true
-}
-
-func (v *vectorExpression) Eval(c Context) Value {
-	t := v.vector
-	l := len(t)
-	r := make(vector, l)
-	for i := 0; i < l; i++ {
-		r[i] = t[i].Eval(c)
-	}
-	return r
 }
 
 // AssertVector will cast the Value into a Vector or die trying

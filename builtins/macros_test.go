@@ -9,14 +9,12 @@ import (
 func TestMacroReplace(t *testing.T) {
 	a.GetNamespace(a.UserDomain).Delete("foo")
 
-	runCode(`
+	testCode(t, `
 		(defmacro foo
 			{:doc "this is the macro foo"}
-			[aList]
-			aList)
-	`)
+			[& args]
+			(cons 'str (cons "hello" args)))
 
-	testCode(t, `
-		(foo (1 2 3))
-	`, s("(1 2 3)"))
+		(foo 1 2 3)
+	`, s(`hello123`))
 }

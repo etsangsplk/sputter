@@ -6,8 +6,19 @@ type expander struct {
 	context a.Context
 }
 
-// NewExpander will do just that, expand macros within a sequence
-func NewExpander(c a.Context, s a.Sequence) a.Sequence {
+type splice []a.Value
+
+// Expand will do just that, expand macros within a sequence
+func Expand(c a.Context, v a.Value) a.Value {
+	e := &expander{
+		context: c,
+	}
+
+	return e.expandValue(v)
+}
+
+// ExpandSequence will expand a sequence into a new sequence
+func ExpandSequence(c a.Context, s a.Sequence) a.Sequence {
 	e := &expander{
 		context: c,
 	}
@@ -47,13 +58,20 @@ func (e *expander) expandSequence(s a.Sequence) a.Value {
 func (e *expander) expandList(l a.List) a.Value {
 	f := l.First()
 	if m, ok := e.macro(f); ok {
-		return m.Apply(e.context, l.Rest())
+		res := m.Apply(e.context, l.Rest())
+		if isSplicing(m) {
+			if s, ok := res.(a.Sequence); ok {
+				return makeSplice(s)
+			}
+			panic("can't splice a non sequence")
+		}
+		return res
 	}
 	return a.NewList(e.expandElements(l)...).Expression()
 }
 
 func (e *expander) expandVector(v a.Vector) a.Value {
-	return a.NewVector(e.expandElements(v)...).Expression()
+	return a.NewVector(e.expandElements(v)...)
 }
 
 func (e *expander) expandAssociative(as a.Associative) a.Value {
@@ -62,13 +80,26 @@ func (e *expander) expandAssociative(as a.Associative) a.Value {
 	for i, e := range r {
 		v[i] = e.(a.Vector)
 	}
-	return a.NewAssociative(v...).Expression()
+	return a.NewAssociative(v...)
+}
+
+func makeSplice(s a.Sequence) splice {
+	sp := splice{}
+	for i := s; i.IsSequence(); i = i.Rest() {
+		sp = append(sp, i.First())
+	}
+	return sp
 }
 
 func (e *expander) expandElements(s a.Sequence) []a.Value {
 	r := []a.Value{}
 	for i := s; i.IsSequence(); i = i.Rest() {
-		r = append(r, e.expandValue(i.First()))
+		e := e.expandValue(i.First())
+		if sp, ok := e.(splice); ok {
+			r = append(r, sp...)
+		} else {
+			r = append(r, e)
+		}
 	}
 	return r
 }
@@ -84,4 +115,19 @@ func (e *expander) macro(v a.Value) (a.Function, bool) {
 		}
 	}
 	return nil, false
+}
+
+func isSplicing(m a.Function) bool {
+	if v, ok := m.Metadata().Get(a.MetaSplicing); ok {
+		return v == a.True
+	}
+	return false
+}
+
+func (s splice) Eval(_ a.Context) a.Value {
+	return s
+}
+
+func (s splice) Str() a.Str {
+	return a.MakeSequenceStr(a.NewVector(s...))
 }

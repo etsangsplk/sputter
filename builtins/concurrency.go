@@ -70,7 +70,7 @@ func async(c a.Context, args a.Sequence) a.Value {
 	l.Put("emit", emitFunction(e))
 
 	go func() {
-		a.EvalSequence(l, args)
+		a.EvalBlock(l, args)
 		e.Close()
 	}()
 
@@ -95,7 +95,7 @@ func future(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
 	p := a.NewPromise()
 
-	go p.Deliver(a.EvalSequence(c, args))
+	go p.Deliver(a.EvalBlock(c, args))
 
 	return a.NewFunction(
 		func(_ a.Context, args a.Sequence) a.Value {

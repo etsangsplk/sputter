@@ -22,7 +22,6 @@ type Mapped interface {
 // Associative is a Mappable that is implemented atop an array
 type Associative interface {
 	Conjoiner
-	MakeExpression
 	Getter
 	Counted
 	Applicable
@@ -30,10 +29,6 @@ type Associative interface {
 }
 
 type associative []Vector
-
-type associativeExpression struct {
-	associative
-}
 
 // NewAssociative instantiates a new Associative
 func NewAssociative(v ...Vector) Associative {
@@ -71,8 +66,16 @@ func (a associative) Apply(c Context, args Sequence) Value {
 	panic(Err(KeyNotFound, k))
 }
 
-func (a associative) Eval(_ Context) Value {
-	return a
+func (a associative) Eval(c Context) Value {
+	l := len(a)
+	r := make(associative, l)
+	for i := 0; i < l; i++ {
+		mp := a[i]
+		k, _ := mp.ElementAt(0)
+		v, _ := mp.ElementAt(1)
+		r[i] = NewVector(k.Eval(c), v.Eval(c))
+	}
+	return r
 }
 
 func (a associative) First() Value {
@@ -99,12 +102,6 @@ func (a associative) IsSequence() bool {
 	return len(a) > 0
 }
 
-func (a associative) Expression() Value {
-	return &associativeExpression{
-		associative: a,
-	}
-}
-
 func (a associative) Str() Str {
 	var b bytes.Buffer
 	l := len(a)
@@ -123,23 +120,6 @@ func (a associative) Str() Str {
 	}
 	b.WriteString("}")
 	return Str(b.String())
-}
-
-func (a *associativeExpression) IsExpression() bool {
-	return true
-}
-
-func (a *associativeExpression) Eval(c Context) Value {
-	t := a.associative
-	l := len(t)
-	r := make(associative, l)
-	for i := 0; i < l; i++ {
-		mp := t[i]
-		k, _ := mp.ElementAt(0)
-		v, _ := mp.ElementAt(1)
-		r[i] = NewVector(k.Eval(c), v.Eval(c))
-	}
-	return r
 }
 
 // AssertMapped will cast Value to a Mapped or explode violently

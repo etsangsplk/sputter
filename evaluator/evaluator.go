@@ -6,19 +6,26 @@ import a "github.com/kode4food/sputter/api"
 func NewEvaluator(c a.Context, src a.Str) a.Sequence {
 	l := NewLexer(src)
 	r := NewReader(c, l)
-	e := NewExpander(c, r)
+	e := Expand(c, r).(a.Sequence)
 	return e
 }
 
-// Eval evaluates a previously expanded Reader sequence
+// Read converts the raw source into unexpanded data structures
+func Read(c a.Context, src a.Str) a.Sequence {
+	l := NewLexer(src)
+	return NewReader(c, l)
+}
+
+// Eval evaluates data structures that have not yet been expanded
 func Eval(c a.Context, s a.Sequence) a.Value {
-	return a.EvalSequence(c, s)
+	ex := Expand(c, s).(a.Sequence)
+	return a.EvalBlock(c, ex)
 }
 
 // EvalStr evaluates the specified raw Source
 func EvalStr(c a.Context, src a.Str) a.Value {
-	e := NewEvaluator(c, src)
-	return Eval(c, e)
+	r := Read(c, src)
+	return Eval(c, r)
 }
 
 // NewEvalContext creates a new Context instance that

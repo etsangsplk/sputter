@@ -11,6 +11,8 @@ test: main glide
 assets: bindata
 	go-bindata -o docstring/assets.go -pkg="docstring" \
 	-prefix="docstring/" docstring/*.md
+	go-bindata -o core/assets.go -pkg="core" \
+	-prefix="core/" core/*.lisp
 
 glide:
 	go get github.com/Masterminds/glide

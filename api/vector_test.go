@@ -67,7 +67,7 @@ func TestVectorEval(t *testing.T) {
 	as.True(v.IsVector())
 
 	c := a.NewContext()
-	r := v.Expression().Eval(c)
+	r := v.Eval(c)
 
 	if _, ok := r.(a.Indexed); !ok {
 		as.Fail("result is not a finite sequence")

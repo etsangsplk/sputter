@@ -103,3 +103,9 @@ func TestTrueFalse(t *testing.T) {
 	testCode(t, `false`, a.False)
 	testCode(t, `nil`, a.Nil)
 }
+
+func TestReadEval(t *testing.T) {
+	testCode(t, `
+		(eval (read "(str \"hello\" \"you\" \"test\")"))
+	`, s("helloyoutest"))
+}

@@ -21,6 +21,7 @@ var (
 	emptyMetadata = a.Metadata{}
 	defaultName   = a.Name("<lambda>")
 	restMarker    = a.Name("&")
+	metaDocAsset  = a.NewKeyword("doc-asset")
 )
 
 func makeArgProcessor(cl a.Context, s a.Sequence) argProcessor {
@@ -112,10 +113,32 @@ func optionalName(args a.Sequence) (a.Name, a.Sequence) {
 	return defaultName, args
 }
 
+func loadDocumentation(md a.Metadata) a.Metadata {
+	v, ok := md.Get(metaDocAsset)
+	if !ok {
+		return md
+	}
+
+	fn, ok := v.(a.Str)
+	if !ok || !fn.IsSequence() {
+		return md
+	}
+
+	s := string(fn)
+	if !d.Exists(s) {
+		return md
+	}
+
+	return md.Merge(a.Metadata{
+		a.MetaDoc: d.Get(s),
+	})
+}
+
 func getFunctionDefinition(c a.Context, args a.Sequence) *functionDefinition {
 	a.AssertMinimumArity(args, 3)
 	fn := a.AssertUnqualified(args.First()).Name()
 	md, r := optionalMetadata(c, args.Rest())
+	md = loadDocumentation(md)
 	an := a.AssertVector(r.First())
 
 	return &functionDefinition{
@@ -134,7 +157,7 @@ func defineFunction(closure a.Context, d *functionDefinition) a.Function {
 
 	return a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
 		l := ap(c, args)
-		return a.EvalSequence(l, db)
+		return a.EvalBlock(l, db)
 	}).WithMetadata(d.meta).(a.Function)
 }
 
@@ -149,6 +172,7 @@ func fn(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 	fn, r := optionalName(args)
 	md, r := optionalMetadata(c, r)
+	md = loadDocumentation(md)
 	an := a.AssertVector(r.First())
 
 	return defineFunction(c, &functionDefinition{
@@ -166,17 +190,6 @@ func apply(c a.Context, args a.Sequence) a.Value {
 	f := a.AssertApplicable(args.First().Eval(c))
 	s := a.AssertSequence(args.Rest().First().Eval(c))
 	return f.Apply(c, s)
-}
-
-func eval(c a.Context, args a.Sequence) a.Value {
-	a.AssertArity(args, 1)
-	v := args.First().Eval(c)
-	if _, ok := v.(a.Expression); !ok {
-		if m, ok := v.(a.MakeExpression); ok {
-			v = m.Expression()
-		}
-	}
-	return v.Eval(c)
 }
 
 func init() {
@@ -198,13 +211,6 @@ func init() {
 		a.NewFunction(apply).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("apply"),
 			a.MetaDoc:  d.Get("apply"),
-		}),
-	)
-
-	registerAnnotated(
-		a.NewFunction(eval).WithMetadata(a.Metadata{
-			a.MetaName: a.Name("eval"),
-			//a.MetaDoc:  d.Get("eval"),
 		}),
 	)
 }
