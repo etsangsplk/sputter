@@ -137,7 +137,7 @@ func docstringApplyMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/apply.md", size: 245, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/apply.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -157,7 +157,7 @@ func docstringAssocMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/assoc.md", size: 383, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/assoc.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -177,7 +177,7 @@ func docstringAsyncMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/async.md", size: 767, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/async.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -197,7 +197,7 @@ func docstringChannelMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/channel.md", size: 868, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/channel.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -217,7 +217,7 @@ func docstringConcatMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/concat.md", size: 249, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/concat.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -237,7 +237,7 @@ func docstringCondMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/cond.md", size: 702, mode: os.FileMode(420), modTime: time.Unix(1495205838, 0)}
+	info := bindataFileInfo{name: "docstring/cond.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -257,7 +257,7 @@ func docstringConjMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/conj.md", size: 426, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/conj.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -277,7 +277,7 @@ func docstringConsMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/cons.md", size: 622, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/cons.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -297,7 +297,7 @@ func docstringDefMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/def.md", size: 580, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/def.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -317,7 +317,7 @@ func docstringDefnMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/defn.md", size: 566, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/defn.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -337,7 +337,7 @@ func docstringDoMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/do.md", size: 183, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/do.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -357,7 +357,7 @@ func docstringDropMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/drop.md", size: 390, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/drop.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -377,7 +377,7 @@ func docstringEqMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/eq.md", size: 399, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/eq.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -397,7 +397,7 @@ func docstringEvalMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/eval.md", size: 31, mode: os.FileMode(420), modTime: time.Unix(1495209228, 0)}
+	info := bindataFileInfo{name: "docstring/eval.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -417,7 +417,7 @@ func docstringFilterMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/filter.md", size: 394, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/filter.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -437,7 +437,7 @@ func docstringFirstMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/first.md", size: 352, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/first.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -457,7 +457,7 @@ func docstringFnMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/fn.md", size: 565, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/fn.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -477,7 +477,7 @@ func docstringFutureMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/future.md", size: 558, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/future.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -497,7 +497,7 @@ func docstringHasMetaMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/has-meta.md", size: 594, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/has-meta.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -517,7 +517,7 @@ func docstringIfMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/if.md", size: 317, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/if.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -537,7 +537,7 @@ func docstringIsAssocMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/is-assoc.md", size: 565, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/is-assoc.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -557,7 +557,7 @@ func docstringIsListMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/is-list.md", size: 525, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/is-list.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -577,7 +577,7 @@ func docstringIsMappedMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/is-mapped.md", size: 561, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/is-mapped.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -597,7 +597,7 @@ func docstringIsNilMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/is-nil.md", size: 505, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/is-nil.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -617,7 +617,7 @@ func docstringIsSeqMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/is-seq.md", size: 511, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/is-seq.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -637,7 +637,7 @@ func docstringIsVectorMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/is-vector.md", size: 573, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/is-vector.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -657,7 +657,7 @@ func docstringLenMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/len.md", size: 299, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/len.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -677,7 +677,7 @@ func docstringLetMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/let.md", size: 510, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/let.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -697,7 +697,7 @@ func docstringListMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/list.md", size: 223, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/list.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -717,7 +717,7 @@ func docstringMapMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/map.md", size: 268, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/map.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -737,7 +737,7 @@ func docstringMetaMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/meta.md", size: 313, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/meta.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -757,7 +757,7 @@ func docstringNsMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/ns.md", size: 230, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/ns.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -777,7 +777,7 @@ func docstringNthMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/nth.md", size: 720, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/nth.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -797,7 +797,7 @@ func docstringPromiseMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/promise.md", size: 338, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/promise.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -817,7 +817,7 @@ func docstringQuoteMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/quote.md", size: 387, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/quote.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -837,7 +837,7 @@ func docstringReadMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/read.md", size: 65, mode: os.FileMode(420), modTime: time.Unix(1495209234, 0)}
+	info := bindataFileInfo{name: "docstring/read.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -857,7 +857,7 @@ func docstringReduceMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/reduce.md", size: 738, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/reduce.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -877,7 +877,7 @@ func docstringReplClsMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/repl-cls.md", size: 97, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/repl-cls.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -897,7 +897,7 @@ func docstringReplDocMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/repl-doc.md", size: 162, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/repl-doc.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -917,7 +917,7 @@ func docstringReplHelpMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/repl-help.md", size: 419, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/repl-help.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -937,7 +937,7 @@ func docstringReplQuitMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/repl-quit.md", size: 90, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/repl-quit.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -957,7 +957,7 @@ func docstringReplUseMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/repl-use.md", size: 126, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/repl-use.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -977,7 +977,7 @@ func docstringRestMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/rest.md", size: 341, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/rest.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -997,7 +997,7 @@ func docstringStrMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/str.md", size: 213, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/str.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1017,7 +1017,7 @@ func docstringTakeMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/take.md", size: 420, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/take.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1037,7 +1037,7 @@ func docstringToAssocMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/to-assoc.md", size: 348, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/to-assoc.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1057,7 +1057,7 @@ func docstringToListMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/to-list.md", size: 326, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/to-list.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1077,7 +1077,7 @@ func docstringToVectorMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/to-vector.md", size: 324, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/to-vector.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1097,7 +1097,7 @@ func docstringVectorMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/vector.md", size: 297, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/vector.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1117,7 +1117,7 @@ func docstringWhenMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/when.md", size: 468, mode: os.FileMode(420), modTime: time.Unix(1495357626, 0)}
+	info := bindataFileInfo{name: "docstring/when.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1137,7 +1137,7 @@ func docstringWithMetaMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/with-meta.md", size: 390, mode: os.FileMode(420), modTime: time.Unix(1492855153, 0)}
+	info := bindataFileInfo{name: "docstring/with-meta.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1157,7 +1157,7 @@ func docstringWithNsMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "docstring/with-ns.md", size: 425, mode: os.FileMode(420), modTime: time.Unix(1493125032, 0)}
+	info := bindataFileInfo{name: "docstring/with-ns.md", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1177,7 +1177,7 @@ func core01_branchingLisp() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "core/01_branching.lisp", size: 468, mode: os.FileMode(420), modTime: time.Unix(1495357667, 0)}
+	info := bindataFileInfo{name: "core/01_branching.lisp", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1197,7 +1197,7 @@ func core02_definitionsLisp() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "core/02_definitions.lisp", size: 150, mode: os.FileMode(420), modTime: time.Unix(1495292207, 0)}
+	info := bindataFileInfo{name: "core/02_definitions.lisp", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1217,7 +1217,7 @@ func core03_sequencesLisp() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "core/03_sequences.lisp", size: 419, mode: os.FileMode(420), modTime: time.Unix(1495357306, 0)}
+	info := bindataFileInfo{name: "core/03_sequences.lisp", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1274,61 +1274,61 @@ func AssetNames() []string {
 
 // _bindata is a table, holding each asset generator, mapped to its name.
 var _bindata = map[string]func() (*asset, error){
-	"docstring/apply.md": docstringApplyMd,
-	"docstring/assoc.md": docstringAssocMd,
-	"docstring/async.md": docstringAsyncMd,
-	"docstring/channel.md": docstringChannelMd,
-	"docstring/concat.md": docstringConcatMd,
-	"docstring/cond.md": docstringCondMd,
-	"docstring/conj.md": docstringConjMd,
-	"docstring/cons.md": docstringConsMd,
-	"docstring/def.md": docstringDefMd,
-	"docstring/defn.md": docstringDefnMd,
-	"docstring/do.md": docstringDoMd,
-	"docstring/drop.md": docstringDropMd,
-	"docstring/eq.md": docstringEqMd,
-	"docstring/eval.md": docstringEvalMd,
-	"docstring/filter.md": docstringFilterMd,
-	"docstring/first.md": docstringFirstMd,
-	"docstring/fn.md": docstringFnMd,
-	"docstring/future.md": docstringFutureMd,
-	"docstring/has-meta.md": docstringHasMetaMd,
-	"docstring/if.md": docstringIfMd,
-	"docstring/is-assoc.md": docstringIsAssocMd,
-	"docstring/is-list.md": docstringIsListMd,
-	"docstring/is-mapped.md": docstringIsMappedMd,
-	"docstring/is-nil.md": docstringIsNilMd,
-	"docstring/is-seq.md": docstringIsSeqMd,
-	"docstring/is-vector.md": docstringIsVectorMd,
-	"docstring/len.md": docstringLenMd,
-	"docstring/let.md": docstringLetMd,
-	"docstring/list.md": docstringListMd,
-	"docstring/map.md": docstringMapMd,
-	"docstring/meta.md": docstringMetaMd,
-	"docstring/ns.md": docstringNsMd,
-	"docstring/nth.md": docstringNthMd,
-	"docstring/promise.md": docstringPromiseMd,
-	"docstring/quote.md": docstringQuoteMd,
-	"docstring/read.md": docstringReadMd,
-	"docstring/reduce.md": docstringReduceMd,
-	"docstring/repl-cls.md": docstringReplClsMd,
-	"docstring/repl-doc.md": docstringReplDocMd,
-	"docstring/repl-help.md": docstringReplHelpMd,
-	"docstring/repl-quit.md": docstringReplQuitMd,
-	"docstring/repl-use.md": docstringReplUseMd,
-	"docstring/rest.md": docstringRestMd,
-	"docstring/str.md": docstringStrMd,
-	"docstring/take.md": docstringTakeMd,
-	"docstring/to-assoc.md": docstringToAssocMd,
-	"docstring/to-list.md": docstringToListMd,
-	"docstring/to-vector.md": docstringToVectorMd,
-	"docstring/vector.md": docstringVectorMd,
-	"docstring/when.md": docstringWhenMd,
-	"docstring/with-meta.md": docstringWithMetaMd,
-	"docstring/with-ns.md": docstringWithNsMd,
-	"core/01_branching.lisp": core01_branchingLisp,
+	"docstring/apply.md":       docstringApplyMd,
+	"docstring/assoc.md":       docstringAssocMd,
+	"docstring/async.md":       docstringAsyncMd,
+	"docstring/channel.md":     docstringChannelMd,
+	"docstring/concat.md":      docstringConcatMd,
+	"docstring/cond.md":        docstringCondMd,
+	"docstring/conj.md":        docstringConjMd,
+	"docstring/cons.md":        docstringConsMd,
+	"docstring/def.md":         docstringDefMd,
+	"docstring/defn.md":        docstringDefnMd,
+	"docstring/do.md":          docstringDoMd,
+	"docstring/drop.md":        docstringDropMd,
+	"docstring/eq.md":          docstringEqMd,
+	"docstring/eval.md":        docstringEvalMd,
+	"docstring/filter.md":      docstringFilterMd,
+	"docstring/first.md":       docstringFirstMd,
+	"docstring/fn.md":          docstringFnMd,
+	"docstring/future.md":      docstringFutureMd,
+	"docstring/has-meta.md":    docstringHasMetaMd,
+	"docstring/if.md":          docstringIfMd,
+	"docstring/is-assoc.md":    docstringIsAssocMd,
+	"docstring/is-list.md":     docstringIsListMd,
+	"docstring/is-mapped.md":   docstringIsMappedMd,
+	"docstring/is-nil.md":      docstringIsNilMd,
+	"docstring/is-seq.md":      docstringIsSeqMd,
+	"docstring/is-vector.md":   docstringIsVectorMd,
+	"docstring/len.md":         docstringLenMd,
+	"docstring/let.md":         docstringLetMd,
+	"docstring/list.md":        docstringListMd,
+	"docstring/map.md":         docstringMapMd,
+	"docstring/meta.md":        docstringMetaMd,
+	"docstring/ns.md":          docstringNsMd,
+	"docstring/nth.md":         docstringNthMd,
+	"docstring/promise.md":     docstringPromiseMd,
+	"docstring/quote.md":       docstringQuoteMd,
+	"docstring/read.md":        docstringReadMd,
+	"docstring/reduce.md":      docstringReduceMd,
+	"docstring/repl-cls.md":    docstringReplClsMd,
+	"docstring/repl-doc.md":    docstringReplDocMd,
+	"docstring/repl-help.md":   docstringReplHelpMd,
+	"docstring/repl-quit.md":   docstringReplQuitMd,
+	"docstring/repl-use.md":    docstringReplUseMd,
+	"docstring/rest.md":        docstringRestMd,
+	"docstring/str.md":         docstringStrMd,
+	"docstring/take.md":        docstringTakeMd,
+	"docstring/to-assoc.md":    docstringToAssocMd,
+	"docstring/to-list.md":     docstringToListMd,
+	"docstring/to-vector.md":   docstringToVectorMd,
+	"docstring/vector.md":      docstringVectorMd,
+	"docstring/when.md":        docstringWhenMd,
+	"docstring/with-meta.md":   docstringWithMetaMd,
+	"docstring/with-ns.md":     docstringWithNsMd,
+	"core/01_branching.lisp":   core01_branchingLisp,
 	"core/02_definitions.lisp": core02_definitionsLisp,
-	"core/03_sequences.lisp": core03_sequencesLisp,
+	"core/03_sequences.lisp":   core03_sequencesLisp,
 }
 
 // AssetDir returns the file names below a certain
@@ -1370,65 +1370,66 @@ type bintree struct {
 	Func     func() (*asset, error)
 	Children map[string]*bintree
 }
+
 var _bintree = &bintree{nil, map[string]*bintree{
 	"core": &bintree{nil, map[string]*bintree{
-		"01_branching.lisp": &bintree{core01_branchingLisp, map[string]*bintree{}},
+		"01_branching.lisp":   &bintree{core01_branchingLisp, map[string]*bintree{}},
 		"02_definitions.lisp": &bintree{core02_definitionsLisp, map[string]*bintree{}},
-		"03_sequences.lisp": &bintree{core03_sequencesLisp, map[string]*bintree{}},
+		"03_sequences.lisp":   &bintree{core03_sequencesLisp, map[string]*bintree{}},
 	}},
 	"docstring": &bintree{nil, map[string]*bintree{
-		"apply.md": &bintree{docstringApplyMd, map[string]*bintree{}},
-		"assoc.md": &bintree{docstringAssocMd, map[string]*bintree{}},
-		"async.md": &bintree{docstringAsyncMd, map[string]*bintree{}},
-		"channel.md": &bintree{docstringChannelMd, map[string]*bintree{}},
-		"concat.md": &bintree{docstringConcatMd, map[string]*bintree{}},
-		"cond.md": &bintree{docstringCondMd, map[string]*bintree{}},
-		"conj.md": &bintree{docstringConjMd, map[string]*bintree{}},
-		"cons.md": &bintree{docstringConsMd, map[string]*bintree{}},
-		"def.md": &bintree{docstringDefMd, map[string]*bintree{}},
-		"defn.md": &bintree{docstringDefnMd, map[string]*bintree{}},
-		"do.md": &bintree{docstringDoMd, map[string]*bintree{}},
-		"drop.md": &bintree{docstringDropMd, map[string]*bintree{}},
-		"eq.md": &bintree{docstringEqMd, map[string]*bintree{}},
-		"eval.md": &bintree{docstringEvalMd, map[string]*bintree{}},
-		"filter.md": &bintree{docstringFilterMd, map[string]*bintree{}},
-		"first.md": &bintree{docstringFirstMd, map[string]*bintree{}},
-		"fn.md": &bintree{docstringFnMd, map[string]*bintree{}},
-		"future.md": &bintree{docstringFutureMd, map[string]*bintree{}},
-		"has-meta.md": &bintree{docstringHasMetaMd, map[string]*bintree{}},
-		"if.md": &bintree{docstringIfMd, map[string]*bintree{}},
-		"is-assoc.md": &bintree{docstringIsAssocMd, map[string]*bintree{}},
-		"is-list.md": &bintree{docstringIsListMd, map[string]*bintree{}},
+		"apply.md":     &bintree{docstringApplyMd, map[string]*bintree{}},
+		"assoc.md":     &bintree{docstringAssocMd, map[string]*bintree{}},
+		"async.md":     &bintree{docstringAsyncMd, map[string]*bintree{}},
+		"channel.md":   &bintree{docstringChannelMd, map[string]*bintree{}},
+		"concat.md":    &bintree{docstringConcatMd, map[string]*bintree{}},
+		"cond.md":      &bintree{docstringCondMd, map[string]*bintree{}},
+		"conj.md":      &bintree{docstringConjMd, map[string]*bintree{}},
+		"cons.md":      &bintree{docstringConsMd, map[string]*bintree{}},
+		"def.md":       &bintree{docstringDefMd, map[string]*bintree{}},
+		"defn.md":      &bintree{docstringDefnMd, map[string]*bintree{}},
+		"do.md":        &bintree{docstringDoMd, map[string]*bintree{}},
+		"drop.md":      &bintree{docstringDropMd, map[string]*bintree{}},
+		"eq.md":        &bintree{docstringEqMd, map[string]*bintree{}},
+		"eval.md":      &bintree{docstringEvalMd, map[string]*bintree{}},
+		"filter.md":    &bintree{docstringFilterMd, map[string]*bintree{}},
+		"first.md":     &bintree{docstringFirstMd, map[string]*bintree{}},
+		"fn.md":        &bintree{docstringFnMd, map[string]*bintree{}},
+		"future.md":    &bintree{docstringFutureMd, map[string]*bintree{}},
+		"has-meta.md":  &bintree{docstringHasMetaMd, map[string]*bintree{}},
+		"if.md":        &bintree{docstringIfMd, map[string]*bintree{}},
+		"is-assoc.md":  &bintree{docstringIsAssocMd, map[string]*bintree{}},
+		"is-list.md":   &bintree{docstringIsListMd, map[string]*bintree{}},
 		"is-mapped.md": &bintree{docstringIsMappedMd, map[string]*bintree{}},
-		"is-nil.md": &bintree{docstringIsNilMd, map[string]*bintree{}},
-		"is-seq.md": &bintree{docstringIsSeqMd, map[string]*bintree{}},
+		"is-nil.md":    &bintree{docstringIsNilMd, map[string]*bintree{}},
+		"is-seq.md":    &bintree{docstringIsSeqMd, map[string]*bintree{}},
 		"is-vector.md": &bintree{docstringIsVectorMd, map[string]*bintree{}},
-		"len.md": &bintree{docstringLenMd, map[string]*bintree{}},
-		"let.md": &bintree{docstringLetMd, map[string]*bintree{}},
-		"list.md": &bintree{docstringListMd, map[string]*bintree{}},
-		"map.md": &bintree{docstringMapMd, map[string]*bintree{}},
-		"meta.md": &bintree{docstringMetaMd, map[string]*bintree{}},
-		"ns.md": &bintree{docstringNsMd, map[string]*bintree{}},
-		"nth.md": &bintree{docstringNthMd, map[string]*bintree{}},
-		"promise.md": &bintree{docstringPromiseMd, map[string]*bintree{}},
-		"quote.md": &bintree{docstringQuoteMd, map[string]*bintree{}},
-		"read.md": &bintree{docstringReadMd, map[string]*bintree{}},
-		"reduce.md": &bintree{docstringReduceMd, map[string]*bintree{}},
-		"repl-cls.md": &bintree{docstringReplClsMd, map[string]*bintree{}},
-		"repl-doc.md": &bintree{docstringReplDocMd, map[string]*bintree{}},
+		"len.md":       &bintree{docstringLenMd, map[string]*bintree{}},
+		"let.md":       &bintree{docstringLetMd, map[string]*bintree{}},
+		"list.md":      &bintree{docstringListMd, map[string]*bintree{}},
+		"map.md":       &bintree{docstringMapMd, map[string]*bintree{}},
+		"meta.md":      &bintree{docstringMetaMd, map[string]*bintree{}},
+		"ns.md":        &bintree{docstringNsMd, map[string]*bintree{}},
+		"nth.md":       &bintree{docstringNthMd, map[string]*bintree{}},
+		"promise.md":   &bintree{docstringPromiseMd, map[string]*bintree{}},
+		"quote.md":     &bintree{docstringQuoteMd, map[string]*bintree{}},
+		"read.md":      &bintree{docstringReadMd, map[string]*bintree{}},
+		"reduce.md":    &bintree{docstringReduceMd, map[string]*bintree{}},
+		"repl-cls.md":  &bintree{docstringReplClsMd, map[string]*bintree{}},
+		"repl-doc.md":  &bintree{docstringReplDocMd, map[string]*bintree{}},
 		"repl-help.md": &bintree{docstringReplHelpMd, map[string]*bintree{}},
 		"repl-quit.md": &bintree{docstringReplQuitMd, map[string]*bintree{}},
-		"repl-use.md": &bintree{docstringReplUseMd, map[string]*bintree{}},
-		"rest.md": &bintree{docstringRestMd, map[string]*bintree{}},
-		"str.md": &bintree{docstringStrMd, map[string]*bintree{}},
-		"take.md": &bintree{docstringTakeMd, map[string]*bintree{}},
-		"to-assoc.md": &bintree{docstringToAssocMd, map[string]*bintree{}},
-		"to-list.md": &bintree{docstringToListMd, map[string]*bintree{}},
+		"repl-use.md":  &bintree{docstringReplUseMd, map[string]*bintree{}},
+		"rest.md":      &bintree{docstringRestMd, map[string]*bintree{}},
+		"str.md":       &bintree{docstringStrMd, map[string]*bintree{}},
+		"take.md":      &bintree{docstringTakeMd, map[string]*bintree{}},
+		"to-assoc.md":  &bintree{docstringToAssocMd, map[string]*bintree{}},
+		"to-list.md":   &bintree{docstringToListMd, map[string]*bintree{}},
 		"to-vector.md": &bintree{docstringToVectorMd, map[string]*bintree{}},
-		"vector.md": &bintree{docstringVectorMd, map[string]*bintree{}},
-		"when.md": &bintree{docstringWhenMd, map[string]*bintree{}},
+		"vector.md":    &bintree{docstringVectorMd, map[string]*bintree{}},
+		"when.md":      &bintree{docstringWhenMd, map[string]*bintree{}},
 		"with-meta.md": &bintree{docstringWithMetaMd, map[string]*bintree{}},
-		"with-ns.md": &bintree{docstringWithNsMd, map[string]*bintree{}},
+		"with-ns.md":   &bintree{docstringWithNsMd, map[string]*bintree{}},
 	}},
 }}
 
@@ -1478,4 +1479,3 @@ func _filePath(dir, name string) string {
 	cannonicalName := strings.Replace(name, "\\", "/", -1)
 	return filepath.Join(append([]string{dir}, strings.Split(cannonicalName, "/")...)...)
 }
-

@@ -9,7 +9,7 @@ test: main glide
 	go test `glide novendor`
 
 assets: bindata
-	go-bindata -o assets/assets.go -pkg="assets" docstring/*.md core/*.lisp
+	go-bindata -nometadata -o assets/assets.go -pkg="assets" docstring/*.md core/*.lisp
 
 glide:
 	go get github.com/Masterminds/glide
