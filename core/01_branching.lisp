@@ -1,8 +1,12 @@
+; sputter core: branching
+
 (defmacro when
+  {:doc-asset "when"}
   [test & body]
   (list 'sputter:if test (cons 'sputter:do body)))
 
 (defmacro when-not
+  {:doc-asset "when"}
   [test & body]
   (list 'sputter:if test nil (cons 'sputter:do body)))
 

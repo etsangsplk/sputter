@@ -1,3 +1,5 @@
+; sputter core: definitions
+
 (defmacro defn
   {:doc-asset "defn"}
   [name & rest]

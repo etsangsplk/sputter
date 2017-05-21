@@ -38,10 +38,10 @@ happy to start if you call it with no arguments from the terminal:
 I just started this thing and it's still pretty fragile, but
 that will change rapidly. The current built-in forms are:
 
-  * Control and Branching: `if`, `cond`, `quote`, `do`
+  * Branching: `if`, `cond`, `do`, `when`, `when-not`
   * Numeric: `+`, `-`, `*`, `/`, `!=`, `=`, `<`, `<=`, `>`, `>=`
-  * Variables: `def`, `let`, `ns`, `with-ns`
-  * Functions: `defn`, `fn`, `apply`
+  * Variables: `def`, `let`, `ns`, `with-ns`, `quote`
+  * Functions: `defn`, `fn`, `apply`, `defmacro`
   * Predicates: `eq`, `!eq`, `nil?`, `!nil?`
   * Sequences: `cons`, `conj`, `first`, `rest`, `seq?`, `!seq?`
   * Lists: `list`, `list?`, `!list?`, `to-list`
