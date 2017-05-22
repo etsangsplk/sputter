@@ -7,13 +7,18 @@ import (
 
 // Get resolves documentation using assets produced by go-bindata
 func Get(n string) a.Str {
-	return a.Str(assets.MustAsset(filename(n)))
+	return a.Str(assets.MustGet(filename(n)))
 }
 
 // Exists returns whether or not a specific docstring exists
 func Exists(n string) bool {
-	_, err := assets.AssetInfo(filename(n))
-	return err == nil
+	fn := filename(n)
+	for _, e := range assets.AssetNames() {
+		if fn == e {
+			return true
+		}
+	}
+	return false
 }
 
 func filename(n string) string {

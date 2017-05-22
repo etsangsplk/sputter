@@ -1,7 +1,6 @@
 package core
 
 import (
-	"sort"
 	"strings"
 
 	a "github.com/kode4food/sputter/api"
@@ -13,13 +12,11 @@ import (
 const prefix = "core/"
 
 func init() {
-	names := assets.AssetNames()
-	sort.Strings(names)
-	for _, name := range names {
+	for _, name := range assets.AssetNames() {
 		if !strings.HasPrefix(name, prefix) {
 			continue
 		}
-		src := a.Str(assets.MustAsset(name))
+		src := a.Str(assets.MustGet(name))
 		e.EvalStr(b.Namespace, src)
 	}
 }

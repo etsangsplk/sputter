@@ -8,14 +8,14 @@ test: main glide
 	go vet `glide novendor`
 	go test `glide novendor`
 
-assets: bindata
-	go-bindata -nometadata -o assets/assets.go -pkg="assets" docstring/*.md core/*.lisp
+assets: snapshot
+	go-snapshot -pkg assets -out assets/assets.go docstring/*.md core/*.lisp
 
 glide:
 	go get github.com/Masterminds/glide
 
-bindata:
-	go get github.com/jteeuwen/go-bindata/...
+snapshot:
+	go get github.com/kode4food/go-snapshot
 
 lint:
 	go get -u github.com/golang/lint/golint
