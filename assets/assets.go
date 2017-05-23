@@ -33,7 +33,7 @@ func MustGet(an string) []byte {
 	if r, ok := Get(an); ok {
 		return r
 	}
-	panic(errors.New("could not find asset: "+an))
+	panic(errors.New("could not find asset: " + an))
 }
 
 func uncompress(b []byte) []byte {
