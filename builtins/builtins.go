@@ -25,7 +25,12 @@ func quote(_ a.Context, args a.Sequence) a.Value {
 
 func unquote(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
-	return e.Eval(c, args)
+	ex := e.Expand(c, args.First())
+	v := ex.Eval(c)
+	if m, ok := v.(a.MakeExpression); ok {
+		return m.Expression()
+	}
+	return v
 }
 
 func read(c a.Context, args a.Sequence) a.Value {

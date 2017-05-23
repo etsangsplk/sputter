@@ -211,8 +211,8 @@ func init() {
 		pattern(`^]`, tokenState(VectorEnd)),
 		pattern(`^}`, tokenState(MapEnd)),
 		pattern(`^'`, tokenState(QuoteMarker)),
+		pattern(`^~@`, tokenState(SpliceMarker)),
 		pattern(`^~`, tokenState(UnquoteMarker)),
-		pattern(`^@`, tokenState(SpliceMarker)),
 
 		pattern(`^"(\\\\|\\"|\\[^\\"]|[^"\\])*"`, stringState),
 

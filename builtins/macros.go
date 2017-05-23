@@ -2,6 +2,7 @@ package builtins
 
 import (
 	a "github.com/kode4food/sputter/api"
+	d "github.com/kode4food/sputter/docstring"
 	e "github.com/kode4food/sputter/evaluator"
 )
 
@@ -12,8 +13,7 @@ func defineMacro(closure a.Context, d *functionDefinition) a.Function {
 	return a.NewMacro(func(c a.Context, args a.Sequence) a.Value {
 		l := ap(c, args)
 		ev := a.EvalBlock(l, db)
-		ex := e.Expand(l, ev)
-		return ex
+		return e.Expand(l, ev)
 	}).WithMetadata(d.meta).(a.Function)
 }
 
@@ -28,6 +28,7 @@ func init() {
 	registerAnnotated(
 		a.NewMacro(defmacro).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("defmacro"),
+			a.MetaDoc:  d.Get("defmacro"),
 		}),
 	)
 }

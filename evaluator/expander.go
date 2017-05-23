@@ -2,6 +2,9 @@ package evaluator
 
 import a "github.com/kode4food/sputter/api"
 
+// ExpectedSequence is raised when unquote-splicing expands a non sequence
+const ExpectedSequence = "can not splice a non-sequence: %s"
+
 type expander struct {
 	context a.Context
 }
@@ -63,7 +66,7 @@ func (e *expander) expandList(l a.List) a.Value {
 			if s, ok := res.(a.Sequence); ok {
 				return makeSplice(s)
 			}
-			panic("can't splice a non sequence")
+			panic(a.Err(ExpectedSequence, res))
 		}
 		return res
 	}

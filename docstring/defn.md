@@ -1,5 +1,5 @@
 # (defn name meta? [name**] form+) assigns a namespace function
-Will assign a function as a variable in the current namespace, which is 'user' by default. All variables are immutable and result in an error being raised if an attempt is made to re-assign them. This behavior is different than most Lisps, as they will generally fail silently in such cases.
+Will declare a function in the current namespace, which is 'user' by default.
 
 ## An Example
 
