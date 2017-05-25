@@ -67,24 +67,6 @@ func concat(c a.Context, args a.Sequence) a.Value {
 	return a.Concat(es)
 }
 
-func _map(c a.Context, args a.Sequence) a.Value {
-	a.AssertMinimumArity(args, 2)
-	f := a.AssertApplicable(args.First().Eval(c))
-	s := concat(c, args.Rest()).(a.Sequence)
-	return a.Map(s, func(v a.Value) a.Value {
-		return f.Apply(c, a.NewList(v))
-	})
-}
-
-func filter(c a.Context, args a.Sequence) a.Value {
-	a.AssertMinimumArity(args, 2)
-	f := a.AssertApplicable(args.First().Eval(c))
-	s := concat(c, args.Rest()).(a.Sequence)
-	return a.Filter(s, func(v a.Value) bool {
-		return a.Truthy(f.Apply(c, a.NewList(v)))
-	})
-}
-
 func reduce(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 	f := a.AssertApplicable(args.First().Eval(c))
@@ -104,6 +86,57 @@ func drop(c a.Context, args a.Sequence) a.Value {
 	n := a.AssertInteger(args.First().Eval(c))
 	s := concat(c, args.Rest()).(a.Sequence)
 	return a.Drop(s, n)
+}
+
+type forProc func(a.Context)
+
+func forEach(c a.Context, args a.Sequence) a.Value {
+	a.AssertMinimumArity(args, 2)
+
+	b := a.AssertVector(args.First())
+	bc := b.Count()
+	if bc%2 != 0 {
+		panic(ExpectedBindings)
+	}
+
+	var proc forProc
+	depth := bc / 2
+	for i := depth - 1; i >= 0; i-- {
+		o := i * 2
+		s, _ := b.ElementAt(o)
+		e, _ := b.ElementAt(o + 1)
+		n := a.AssertUnqualified(s).Name()
+		if i == depth-1 {
+			proc = makeTerminal(n, e, args.Rest())
+		} else {
+			proc = makeIntermediate(n, e, proc)
+		}
+	}
+
+	proc(c)
+	return a.Nil
+}
+
+func makeIntermediate(n a.Name, e a.Value, next forProc) forProc {
+	return func(c a.Context) {
+		s := a.AssertSequence(e.Eval(c))
+		for i := s; i.IsSequence(); i = i.Rest() {
+			l := a.ChildContext(c)
+			l.Put(n, i.First())
+			next(l)
+		}
+	}
+}
+
+func makeTerminal(n a.Name, e a.Value, b a.Sequence) forProc {
+	return func(c a.Context) {
+		s := a.AssertSequence(e.Eval(c))
+		for i := s; i.IsSequence(); i = i.Rest() {
+			l := a.ChildContext(c)
+			l.Put(n, i.First())
+			a.EvalBlock(l, b)
+		}
+	}
 }
 
 func init() {
@@ -155,27 +188,6 @@ func init() {
 	)
 
 	registerAnnotated(
-		a.NewFunction(concat).WithMetadata(a.Metadata{
-			a.MetaName: a.Name("concat"),
-			a.MetaDoc:  d.Get("concat"),
-		}),
-	)
-
-	registerAnnotated(
-		a.NewFunction(_map).WithMetadata(a.Metadata{
-			a.MetaName: a.Name("map"),
-			a.MetaDoc:  d.Get("map"),
-		}),
-	)
-
-	registerAnnotated(
-		a.NewFunction(filter).WithMetadata(a.Metadata{
-			a.MetaName: a.Name("filter"),
-			a.MetaDoc:  d.Get("filter"),
-		}),
-	)
-
-	registerAnnotated(
 		a.NewFunction(reduce).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("reduce"),
 			a.MetaDoc:  d.Get("reduce"),
@@ -193,6 +205,12 @@ func init() {
 		a.NewFunction(drop).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("drop"),
 			a.MetaDoc:  d.Get("drop"),
+		}),
+	)
+
+	registerAnnotated(
+		a.NewFunction(forEach).WithMetadata(a.Metadata{
+			a.MetaName: a.Name("for-each"),
 		}),
 	)
 }

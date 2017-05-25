@@ -46,30 +46,20 @@ func emitFunction(e a.Emitter) a.Function {
 	}).WithMetadata(emitterMetadata).(a.Function)
 }
 
-func channel(_ a.Context, args a.Sequence) a.Value {
-	buf := 0
-	if a.AssertArityRange(args, 0, 1) == 1 {
-		v := a.AssertNumber(args.First())
-		f, _ := v.Float64()
-		buf = int(f)
-	}
-	e, s := a.NewChannel(buf)
-
-	return a.NewAssociative(
-		a.NewVector(MetaEmitter, emitFunction(e)),
-		a.NewVector(MetaClose, closeFunction(e)),
-		a.NewVector(MetaSequence, s),
-	)
-}
-
 func async(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
-	e, s := a.NewChannel(0)
+	e, s := a.NewChannel()
 
 	l := a.ChildContext(c)
 	l.Put("emit", emitFunction(e))
 
 	go func() {
+		defer func() {
+			// check if channel still opened
+			if rec := recover(); rec != nil {
+				e.Error(rec)
+			}
+		}()
 		a.EvalBlock(l, args)
 		e.Close()
 	}()
@@ -106,13 +96,6 @@ func future(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	registerAnnotated(
-		a.NewFunction(channel).WithMetadata(a.Metadata{
-			a.MetaName: a.Name("channel"),
-			a.MetaDoc:  d.Get("channel"),
-		}),
-	)
-
 	registerAnnotated(
 		a.NewFunction(async).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("async"),

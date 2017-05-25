@@ -7,28 +7,21 @@ import (
 	"github.com/kode4food/sputter/assert"
 )
 
-func TestLazyMapper(t *testing.T) {
+func TestMap(t *testing.T) {
 	as := assert.New(t)
 
-	c := 0
 	l := a.NewList(s("first"), s("middle"), s("last"))
 	w := a.Map(l, func(v a.Value) a.Value {
-		c++
 		return s("this is the " + string(v.(a.Str)))
 	})
 
-	as.Number(0, c)
-
 	v1 := w.First()
-	as.Number(1, c)
 	as.String("this is the first", v1)
 
 	v2 := w.Rest().First()
-	as.Number(2, c)
 	as.String("this is the middle", v2)
 
 	v3 := w.Rest().Rest().First()
-	as.Number(3, c)
 	as.String("this is the last", v3)
 
 	r1 := w.Rest().Rest().Rest()
@@ -38,30 +31,23 @@ func TestLazyMapper(t *testing.T) {
 	p2 := p1.Prepend(s("also not mapped"))
 	v4 := p1.First()
 	r2 := p1.Rest()
-	as.Number(3, c)
 	as.String("not mapped", v4)
 	as.Equal(w, r2)
 	as.String("also not mapped", p2.First())
 }
 
-func TestLazyFilter(t *testing.T) {
+func TestFilter(t *testing.T) {
 	as := assert.New(t)
 
-	c := 0
 	l := a.NewList(s("first"), s("filtered out"), s("last"))
 	w := a.Filter(l, func(v a.Value) bool {
-		c++
 		return string(v.(a.Str)) != "filtered out"
 	})
 
-	as.Number(0, c)
-
 	v1 := w.First()
-	as.Number(1, c)
 	as.String("first", v1)
 
 	v2 := w.Rest().First()
-	as.Number(3, c)
 	as.String("last", v2)
 
 	r1 := w.Rest().Rest()
@@ -70,37 +56,25 @@ func TestLazyFilter(t *testing.T) {
 	p := w.Prepend(s("filtered out"))
 	v4 := p.First()
 	r2 := p.Rest()
-	as.Number(3, c)
 	as.String("filtered out", v4)
 	as.Equal(w, r2)
 }
 
-func TestLazyFilteredAndMapped(t *testing.T) {
+func TestFilteredAndMapped(t *testing.T) {
 	as := assert.New(t)
 
-	c1 := 0
-	c2 := 0
 	l := a.NewList(s("first"), s("middle"), s("last"))
 	w1 := a.Filter(l, func(v a.Value) bool {
-		c1++
 		return string(v.(a.Str)) != "middle"
 	})
 	w2 := a.Map(w1, func(v a.Value) a.Value {
-		c2++
 		return s("this is the " + string(v.(a.Str)))
 	})
 
-	as.Number(0, c1)
-	as.Number(0, c2)
-
 	v1 := w2.First()
-	as.Number(1, c1)
-	as.Number(1, c2)
 	as.String("this is the first", v1)
 
 	v2 := w2.Rest().First()
-	as.Number(3, c1)
-	as.Number(2, c2)
 	as.String("this is the last", v2)
 
 	r1 := w2.Rest().Rest()
@@ -113,7 +87,7 @@ func testNext(as *assert.Wrapper, i *a.Iterator, expected a.Value) {
 	as.Equal(expected, v)
 }
 
-func TestLazyConcat(t *testing.T) {
+func TestConcat(t *testing.T) {
 	as := assert.New(t)
 
 	l1 := a.NewList(s("first"), s("middle"), s("last"))
@@ -185,8 +159,8 @@ func TestTakeDrop(t *testing.T) {
 
 	as.String(`("1" "2" "3" "4")`, t1)
 	as.String(`("0" "1" "2" "3" "4")`, t2)
-	as.String(`("5" "6" "7" "8" "9" "10")`, d1)
-	as.String(`("4" "5" "6" "7" "8" "9" "10")`, d2)
+	as.String(`["5" "6" "7" "8" "9" "10"]`, d1)
+	as.String(`["4" "5" "6" "7" "8" "9" "10"]`, d2)
 	as.String(`("5" "6" "7" "8" "9" "10")`, t3)
 	as.String(`()`, d3)
 	as.String(`()`, d4)

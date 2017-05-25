@@ -8,6 +8,7 @@ import (
 	"os/user"
 	"path"
 	"regexp"
+	"runtime"
 	"strings"
 	"time"
 
@@ -294,6 +295,12 @@ func shutdown(_ a.Context, args a.Sequence) a.Value {
 	return nothing
 }
 
+func debugInfo(_ a.Context, _ a.Sequence) a.Value {
+	runtime.GC()
+	fmt.Println("Number of goroutines: ", runtime.NumGoroutine())
+	return nothing
+}
+
 func cls(_ a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 0)
 	fmt.Println(clear)
@@ -369,6 +376,12 @@ func registerBuiltIns() {
 		a.NewFunction(shutdown).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("quit"),
 			a.MetaDoc:  d.Get("repl-quit"),
+		}),
+	)
+
+	registerBuiltIn(
+		a.NewFunction(debugInfo).WithMetadata(a.Metadata{
+			a.MetaName: a.Name("debug-info"),
 		}),
 	)
 

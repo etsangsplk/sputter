@@ -6,364 +6,116 @@ type ValueMapper func(Value) Value
 // ValueFilter returns true if the Value remains part of a filtered Sequence
 type ValueFilter func(Value) bool
 
-type lazyElement struct {
+type compElement struct {
 	first Value
 	rest  Sequence
 }
 
-func (l *lazyElement) First() Value {
-	return l.first
+func (c *compElement) First() Value {
+	return c.first
 }
 
-func (l *lazyElement) Rest() Sequence {
-	return l.rest
+func (c *compElement) Rest() Sequence {
+	return c.rest
 }
 
-func (l *lazyElement) IsSequence() bool {
+func (c *compElement) IsSequence() bool {
 	return true
 }
 
-func (l *lazyElement) Prepend(v Value) Sequence {
-	return &lazyElement{
+func (c *compElement) Prepend(v Value) Sequence {
+	return &compElement{
 		first: v,
-		rest:  l,
+		rest:  c,
 	}
 }
 
-func (l *lazyElement) Eval(_ Context) Value {
-	return l
+func (c *compElement) Eval(_ Context) Value {
+	return c
 }
 
-func (l *lazyElement) Str() Str {
-	return MakeSequenceStr(l)
+func (c *compElement) Str() Str {
+	return MakeSequenceStr(c)
 }
 
-type lazyMap struct {
-	once     Do
-	first    Value
-	rest     Sequence
-	isSeq    bool
-	sequence Sequence
-	mapper   ValueMapper
-}
-
-// Map creates a new lazy mapping Sequence that wraps the
-// original and only maps its Values on demand
-func Map(s Sequence, m ValueMapper) Sequence {
-	return &lazyMap{
-		once:     Once(),
-		rest:     EmptyList,
-		sequence: s,
-		mapper:   m,
+// Map creates a new mapped Sequence
+func Map(s Sequence, mapper ValueMapper) Sequence {
+	if !s.IsSequence() {
+		return EmptyList
 	}
+	f := &compElement{}
+	var l = f
+	for i := s; i.IsSequence(); i = i.Rest() {
+		n := &compElement{first: mapper(i.First())}
+		l.rest = n
+		l = n
+	}
+	l.rest = EmptyList
+	return f.rest
 }
 
-func (l *lazyMap) resolve() *lazyMap {
-	l.once(func() {
-		if l.sequence.IsSequence() {
-			l.isSeq = true
-			l.first = l.mapper(l.sequence.First())
-			l.rest = &lazyMap{
-				once:     Once(),
-				rest:     EmptyList,
-				sequence: l.sequence.Rest(),
-				mapper:   l.mapper,
-			}
+// Filter creates a new filtered Sequence
+func Filter(s Sequence, filter ValueFilter) Sequence {
+	if !s.IsSequence() {
+		return EmptyList
+	}
+	f := &compElement{}
+	var l = f
+	for i := s; i.IsSequence(); i = i.Rest() {
+		v := i.First()
+		if filter(v) {
+			n := &compElement{first: v}
+			l.rest = n
+			l = n
 		}
-		l.sequence = nil
-		l.mapper = nil
-	})
-	return l
-}
-
-func (l *lazyMap) First() Value {
-	return l.resolve().first
-}
-
-func (l *lazyMap) Rest() Sequence {
-	return l.resolve().rest
-}
-
-func (l *lazyMap) IsSequence() bool {
-	return l.resolve().isSeq
-}
-
-func (l *lazyMap) Prepend(v Value) Sequence {
-	return &lazyElement{
-		first: v,
-		rest:  l,
 	}
+	l.rest = EmptyList
+	return f.rest
 }
 
-func (l *lazyMap) Eval(_ Context) Value {
-	return l
-}
-
-func (l *lazyMap) Str() Str {
-	return MakeSequenceStr(l)
-}
-
-type lazyFilter struct {
-	once     Do
-	first    Value
-	rest     Sequence
-	isSeq    bool
-	sequence Sequence
-	filter   ValueFilter
-}
-
-// Filter creates a new lazy filter Sequence that wraps the
-// original and only filters the next Value(s) on demand
-func Filter(s Sequence, f ValueFilter) Sequence {
-	return &lazyFilter{
-		once:     Once(),
-		rest:     EmptyList,
-		sequence: s,
-		filter:   f,
-	}
-}
-
-func (l *lazyFilter) resolve() *lazyFilter {
-	l.once(func() {
-		for i := l.sequence; i.IsSequence(); i = i.Rest() {
-			if v := i.First(); l.filter(v) {
-				l.isSeq = true
-				l.first = v
-				l.rest = &lazyFilter{
-					once:     Once(),
-					rest:     EmptyList,
-					sequence: i.Rest(),
-					filter:   l.filter,
-				}
-				break
-			}
-		}
-		l.sequence = nil
-		l.filter = nil
-	})
-	return l
-}
-
-func (l *lazyFilter) First() Value {
-	return l.resolve().first
-}
-
-func (l *lazyFilter) Rest() Sequence {
-	return l.resolve().rest
-}
-
-func (l *lazyFilter) IsSequence() bool {
-	return l.resolve().isSeq
-}
-
-func (l *lazyFilter) Prepend(v Value) Sequence {
-	return &lazyElement{
-		first: v,
-		rest:  l,
-	}
-}
-
-func (l *lazyFilter) Eval(_ Context) Value {
-	return l
-}
-
-func (l *lazyFilter) Str() Str {
-	return MakeSequenceStr(l)
-}
-
-type lazyConcat struct {
-	once     Do
-	first    Value
-	rest     Sequence
-	isSeq    bool
-	sequence Sequence
-}
-
-// Concat creates a new sequence based on the content of
-// several provided Sequences. The results are computed lazily
+// Concat creates a new sequence based on the content of several Sequences
 func Concat(s Sequence) Sequence {
-	return &lazyConcat{
-		once:     Once(),
-		rest:     EmptyList,
-		sequence: s,
+	if !s.IsSequence() {
+		return EmptyList
 	}
-}
 
-func (l *lazyConcat) resolve() *lazyConcat {
-	l.once(func() {
-		for i := l.sequence; i.IsSequence(); i = i.Rest() {
-			if f := AssertSequence(i.First()); f.IsSequence() {
-				l.first = f.First()
-				l.rest = &lazyConcat{
-					once:     Once(),
-					rest:     EmptyList,
-					sequence: i.Rest().Prepend(f.Rest()),
-				}
-				l.isSeq = true
-				break
-			}
+	f := &compElement{}
+	l := f
+	for i := s; i.IsSequence(); i = i.Rest() {
+		for j := AssertSequence(i.First()); j.IsSequence(); j = j.Rest() {
+			n := &compElement{first: j.First()}
+			l.rest = n
+			l = n
 		}
-		l.sequence = nil
-	})
-	return l
-}
-
-func (l *lazyConcat) First() Value {
-	return l.resolve().first
-}
-
-func (l *lazyConcat) Rest() Sequence {
-	return l.resolve().rest
-}
-
-func (l *lazyConcat) IsSequence() bool {
-	return l.resolve().isSeq
-}
-
-func (l *lazyConcat) Prepend(v Value) Sequence {
-	return &lazyElement{
-		first: v,
-		rest:  l,
 	}
+	l.rest = EmptyList
+	return f.rest
 }
 
-func (l *lazyConcat) Eval(_ Context) Value {
-	return l
-}
-
-func (l *lazyConcat) Str() Str {
-	return MakeSequenceStr(l)
-}
-
-type lazyTake struct {
-	once     Do
-	first    Value
-	rest     Sequence
-	isSeq    bool
-	sequence Sequence
-	count    int
-}
-
-// Take creates a new Sequence based on the first elements of the source
-// sequence. The result is computed lazily
+// Take creates a Sequence based on the first elements of the source
 func Take(s Sequence, count int) Sequence {
-	return &lazyTake{
-		once:     Once(),
-		rest:     EmptyList,
-		sequence: s,
-		count:    count,
+	if !s.IsSequence() {
+		return EmptyList
 	}
-}
-
-func (l *lazyTake) resolve() *lazyTake {
-	l.once(func() {
-		s := l.sequence
-		if l.count > 0 && s.IsSequence() {
-			l.isSeq = true
-			l.first = s.First()
-			l.rest = &lazyTake{
-				once:     Once(),
-				rest:     EmptyList,
-				sequence: s.Rest(),
-				count:    l.count - 1,
-			}
-		}
-		l.sequence = nil
-	})
-	return l
-}
-
-func (l *lazyTake) First() Value {
-	return l.resolve().first
-}
-
-func (l *lazyTake) Rest() Sequence {
-	return l.resolve().rest
-}
-
-func (l *lazyTake) IsSequence() bool {
-	return l.resolve().isSeq
-}
-
-func (l *lazyTake) Prepend(v Value) Sequence {
-	return &lazyElement{
-		first: v,
-		rest:  l,
+	f := &compElement{}
+	l := f
+	for i, e := 0, s; i < count; i++ {
+		n := &compElement{first: e.First()}
+		l.rest = n
+		l = n
+		e = e.Rest()
 	}
+	l.rest = EmptyList
+	return f.rest
 }
 
-func (l *lazyTake) Eval(_ Context) Value {
-	return l
-}
-
-func (l *lazyTake) Str() Str {
-	return MakeSequenceStr(l)
-}
-
-type lazyDrop struct {
-	once     Do
-	first    Value
-	rest     Sequence
-	isSeq    bool
-	sequence Sequence
-	count    int
-}
-
-// Drop creates a new Sequence based on dropping the first elements of
-// the source sequence. The result is computed lazily
+// Drop creates a Sequence based on dropping the first elements of the source
 func Drop(s Sequence, count int) Sequence {
-	return &lazyDrop{
-		once:     Once(),
-		rest:     EmptyList,
-		sequence: s,
-		count:    count,
+	e := s
+	for i := 0; i < count && e.IsSequence(); i++ {
+		e = e.Rest()
 	}
-}
-
-func (l *lazyDrop) resolve() *lazyDrop {
-	l.once(func() {
-		i := l.sequence
-		for c := l.count; c > 0; c-- {
-			if !i.IsSequence() {
-				l.sequence = nil
-				return
-			}
-			i = i.Rest()
-		}
-
-		l.isSeq = i.IsSequence()
-		l.first = i.First()
-		l.rest = i.Rest()
-		l.sequence = nil
-	})
-	return l
-}
-
-func (l *lazyDrop) First() Value {
-	return l.resolve().first
-}
-
-func (l *lazyDrop) Rest() Sequence {
-	return l.resolve().rest
-}
-
-func (l *lazyDrop) IsSequence() bool {
-	return l.resolve().isSeq
-}
-
-func (l *lazyDrop) Prepend(v Value) Sequence {
-	return &lazyElement{
-		first: v,
-		rest:  l,
-	}
-}
-
-func (l *lazyDrop) Eval(_ Context) Value {
-	return l
-}
-
-func (l *lazyDrop) Str() Str {
-	return MakeSequenceStr(l)
+	return e
 }
 
 // Reduce performs a reduce operation over a Sequence, starting with the

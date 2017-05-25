@@ -21,6 +21,7 @@ type Do func(func())
 type Emitter interface {
 	Value
 	Emit(Value) Emitter
+	Error(interface{}) Emitter
 	Close() Emitter
 }
 
@@ -31,17 +32,22 @@ type Promise interface {
 	Value() Value
 }
 
+type channelResult struct {
+	value Value
+	error interface{}
+}
+
 type channelEmitter struct {
-	ch chan Value
+	ch chan channelResult
 }
 
 type channelSequence struct {
 	once Do
-	ch   chan Value
+	ch   chan channelResult
 
-	isSeq bool
-	first Value
-	rest  Sequence
+	isSeq  bool
+	result channelResult
+	rest   Sequence
 }
 
 type promise struct {
@@ -49,6 +55,9 @@ type promise struct {
 	state uint32
 	val   Value
 }
+
+var emptyResult = channelResult{value: Nil, error: nil}
+var closeChannel = channelResult{value: Nil, error: "close"}
 
 // Once creates a Do instance for performing an action only once
 func Once() Do {
@@ -78,19 +87,20 @@ func Never() Do {
 }
 
 // NewChannel produces a Emitter and Sequence pair
-func NewChannel(buf int) (Emitter, Sequence) {
-	ch := make(chan Value, buf)
+func NewChannel() (Emitter, Sequence) {
+	ch := make(chan channelResult, 0)
 	return NewChannelEmitter(ch), NewChannelSequence(ch)
 }
 
 // NewChannelEmitter produces an Emitter for sending Values to a Go chan
-func NewChannelEmitter(ch chan Value) Emitter {
+func NewChannelEmitter(ch chan channelResult) Emitter {
 	r := &channelEmitter{
 		ch: ch,
 	}
 	runtime.SetFinalizer(r, func(e *channelEmitter) {
-		if e.ch != nil {
-			close(e.ch)
+		if ch := e.ch; ch != nil {
+			defer func() { recover() }()
+			close(ch)
 			e.ch = nil
 		}
 	})
@@ -100,17 +110,31 @@ func NewChannelEmitter(ch chan Value) Emitter {
 // Emit will send a Value to the Go chan
 func (e *channelEmitter) Emit(v Value) Emitter {
 	if e.ch != nil {
-		e.ch <- v
+		e.ch <- channelResult{v, nil}
+		r, _ := <-e.ch
+		if r.error != nil {
+			e.Close()
+		}
+	}
+	return e
+}
+
+// Error will send an Error to the Go chan
+func (e *channelEmitter) Error(err interface{}) Emitter {
+	if ch := e.ch; ch != nil {
+		ch <- channelResult{nil, err}
+		<-ch // consume the response
+		e.Close()
 	}
 	return e
 }
 
 // Close will close the Go chan
 func (e *channelEmitter) Close() Emitter {
-	if e.ch != nil {
-		close(e.ch)
+	runtime.SetFinalizer(e, nil)
+	if ch := e.ch; ch != nil {
+		close(ch)
 		e.ch = nil
-		runtime.SetFinalizer(e, nil)
 	}
 	return e
 }
@@ -128,24 +152,39 @@ func (e *channelEmitter) Str() Str {
 }
 
 // NewChannelSequence produces a new Sequence whose Values come from a Go chan
-func NewChannelSequence(ch chan Value) Sequence {
-	return &channelSequence{
-		once: Once(),
-		ch:   ch,
-		rest: EmptyList,
+func NewChannelSequence(ch chan channelResult) Sequence {
+	r := &channelSequence{
+		once:   Once(),
+		ch:     ch,
+		result: emptyResult,
+		rest:   EmptyList,
 	}
+	runtime.SetFinalizer(r, func(c *channelSequence) {
+		if ch := c.ch; ch != nil {
+			defer func() { recover() }()
+			<-ch // consume whatever is there
+			ch <- closeChannel
+			c.ch = nil
+		}
+	})
+	return r
 }
 
 func (c *channelSequence) resolve() *channelSequence {
 	c.once(func() {
+		runtime.SetFinalizer(c, nil)
 		ch := c.ch
-		if first, isSeq := <-ch; isSeq {
+		if result, isSeq := <-ch; isSeq {
+			ch <- emptyResult
 			c.isSeq = isSeq
-			c.first = first
+			c.result = result
 			c.rest = NewChannelSequence(ch)
 		}
 		c.ch = nil
 	})
+	if e := c.result.error; e != nil {
+		panic(e)
+	}
 	return c
 }
 
@@ -154,7 +193,7 @@ func (c *channelSequence) IsSequence() bool {
 }
 
 func (c *channelSequence) First() Value {
-	return c.resolve().first
+	return c.resolve().result.value
 }
 
 func (c *channelSequence) Rest() Sequence {
@@ -163,10 +202,10 @@ func (c *channelSequence) Rest() Sequence {
 
 func (c *channelSequence) Prepend(v Value) Sequence {
 	return &channelSequence{
-		once:  Never(),
-		isSeq: true,
-		first: v,
-		rest:  c,
+		once:   Never(),
+		isSeq:  true,
+		result: channelResult{value: v, error: nil},
+		rest:   c,
 	}
 }
 

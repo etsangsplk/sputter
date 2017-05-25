@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
+	_ "github.com/kode4food/sputter/core"
 )
 
 func TestAssoc(t *testing.T) {

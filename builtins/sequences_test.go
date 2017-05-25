@@ -21,27 +21,6 @@ func TestSequence(t *testing.T) {
 	testBadCode(t, `(nth '(1 2 3) 5)`, a.Err(a.IndexNotFound, "5"))
 }
 
-func TestMapFilter(t *testing.T) {
-	ns := a.GetNamespace(a.UserDomain)
-	ns.Delete("x")
-	ns.Delete("y")
-
-	testCode(t, `
-	    ;; the conj below is invalid, but never evaluated
-		(def x (concat '(1 2) (conj 3 (list 4))))
-		(def y
-			(map
-				(fn [x] (* x 2))
-				(filter
-					(fn [x] (= x 6))
-					[5 6])))
-		(apply +
-			(map
-				(fn [z] (first z))
-				[x y]))
-	`, f(13))
-}
-
 func TestReduce(t *testing.T) {
 	ns := a.GetNamespace(a.UserDomain)
 	ns.Delete("x")
