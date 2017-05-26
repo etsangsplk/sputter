@@ -17,15 +17,11 @@ var (
 
 	// MetaPromise is the key used to identify a Promise
 	MetaPromise = a.NewKeyword("promise")
-
-	// MetaFuture is the key used to identify a Future
-	MetaFuture = a.NewKeyword("future")
 )
 
 var (
 	emitterMetadata = a.Metadata{MetaEmitter: a.True}
 	promiseMetadata = a.Metadata{MetaPromise: a.True}
-	futureMetadata  = a.Metadata{MetaFuture: a.True}
 )
 
 func closeFunction(e a.Emitter) a.Function {
@@ -57,26 +53,6 @@ func channel(_ a.Context, args a.Sequence) a.Value {
 	)
 }
 
-func generate(c a.Context, args a.Sequence) a.Value {
-	a.AssertMinimumArity(args, 1)
-	e, s := a.NewChannel()
-
-	go func() {
-		defer func() {
-			// check if channel still opened
-			if rec := recover(); rec != nil {
-				e.Error(rec)
-			}
-		}()
-		l := a.ChildContext(c)
-		l.Put("emit", emitFunction(e))
-		a.EvalBlock(l, args)
-		e.Close()
-	}()
-
-	return s
-}
-
 func promise(_ a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 0)
 	p := a.NewPromise()
@@ -89,20 +65,6 @@ func promise(_ a.Context, args a.Sequence) a.Value {
 			return p.Value()
 		},
 	).WithMetadata(promiseMetadata).(a.Function)
-}
-
-func future(c a.Context, args a.Sequence) a.Value {
-	a.AssertMinimumArity(args, 1)
-	p := a.NewPromise()
-
-	go p.Deliver(a.EvalBlock(a.ChildContext(c), args))
-
-	return a.NewFunction(
-		func(_ a.Context, args a.Sequence) a.Value {
-			a.AssertArity(args, 0)
-			return p.Value()
-		},
-	).WithMetadata(futureMetadata).(a.Function)
 }
 
 func async(c a.Context, args a.Sequence) a.Value {
@@ -120,23 +82,9 @@ func init() {
 	)
 
 	registerAnnotated(
-		a.NewFunction(generate).WithMetadata(a.Metadata{
-			a.MetaName: a.Name("generate"),
-			a.MetaDoc:  d.Get("generate"),
-		}),
-	)
-
-	registerAnnotated(
 		a.NewFunction(promise).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("promise"),
 			a.MetaDoc:  d.Get("promise"),
-		}),
-	)
-
-	registerAnnotated(
-		a.NewFunction(future).WithMetadata(a.Metadata{
-			a.MetaName: a.Name("future"),
-			a.MetaDoc:  d.Get("future"),
 		}),
 	)
 
