@@ -51,7 +51,7 @@ that will change rapidly. The current built-in forms are:
   * Mapped Sequences: `mapped?`, `!mapped?`
   * Comprehensions: `concat`, `map`, `filter`, `reduce`, `take`, `drop`
   * Metadata: `meta`, `with-meta`
-  * Concurrency: `async`, `channel`, `promise`, `future`
+  * Concurrency: `async`, `generate`, `channel`, `promise`, `future`
   * Strings: `str`
   * I/O: `print`, `println`, `pr`, `prn`
 

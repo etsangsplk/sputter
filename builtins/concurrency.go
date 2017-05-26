@@ -57,12 +57,9 @@ func channel(_ a.Context, args a.Sequence) a.Value {
 	)
 }
 
-func async(c a.Context, args a.Sequence) a.Value {
+func generate(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
 	e, s := a.NewChannel()
-
-	l := a.ChildContext(c)
-	l.Put("emit", emitFunction(e))
 
 	go func() {
 		defer func() {
@@ -71,6 +68,8 @@ func async(c a.Context, args a.Sequence) a.Value {
 				e.Error(rec)
 			}
 		}()
+		l := a.ChildContext(c)
+		l.Put("emit", emitFunction(e))
 		a.EvalBlock(l, args)
 		e.Close()
 	}()
@@ -96,7 +95,7 @@ func future(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
 	p := a.NewPromise()
 
-	go p.Deliver(a.EvalBlock(c, args))
+	go p.Deliver(a.EvalBlock(a.ChildContext(c), args))
 
 	return a.NewFunction(
 		func(_ a.Context, args a.Sequence) a.Value {
@@ -104,6 +103,12 @@ func future(c a.Context, args a.Sequence) a.Value {
 			return p.Value()
 		},
 	).WithMetadata(futureMetadata).(a.Function)
+}
+
+func async(c a.Context, args a.Sequence) a.Value {
+	a.AssertMinimumArity(args, 1)
+	go a.EvalBlock(a.ChildContext(c), args)
+	return a.Nil
 }
 
 func init() {
@@ -115,9 +120,9 @@ func init() {
 	)
 
 	registerAnnotated(
-		a.NewFunction(async).WithMetadata(a.Metadata{
-			a.MetaName: a.Name("async"),
-			a.MetaDoc:  d.Get("async"),
+		a.NewFunction(generate).WithMetadata(a.Metadata{
+			a.MetaName: a.Name("generate"),
+			a.MetaDoc:  d.Get("generate"),
 		}),
 	)
 
@@ -132,6 +137,13 @@ func init() {
 		a.NewFunction(future).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("future"),
 			a.MetaDoc:  d.Get("future"),
+		}),
+	)
+
+	registerAnnotated(
+		a.NewFunction(async).WithMetadata(a.Metadata{
+			a.MetaName: a.Name("async"),
+			a.MetaDoc:  d.Get("async"),
 		}),
 	)
 }

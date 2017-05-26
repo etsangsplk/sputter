@@ -19,12 +19,12 @@ func TestChannel(t *testing.T) {
 	`, s("hello"))
 }
 
-func TestAsync(t *testing.T) {
+func TestLazySequence(t *testing.T) {
 	ns := a.GetNamespace(a.UserDomain)
 	ns.Delete("g")
 
 	testCode(t, `
-		(def g (async
+		(def g (generate
 			(emit 99)
 			(emit 100 1000)))
 		(apply + g)

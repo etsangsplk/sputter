@@ -1,25 +1,22 @@
 ; sputter core: sequences
 
-(defmacro lazy-seq [& forms]
-  (cons 'sputter:async forms))
-
 (defn concat
   {:doc-asset "concat"}
   [& forms]
-  (lazy-seq
+  (generate
     (for-each [f forms, e f] (emit e))))
 
 (defn filter
   {:doc-asset "filter"}
   [fn & forms]
-  (lazy-seq
+  (generate
     (for-each [f forms, e f]
       (when (fn e) (emit e)))))
 
 (defn map
   {:doc-asset "map"}
   [fn & forms]
-  (lazy-seq
+  (generate
     (for-each [f forms, e f] (emit (fn e)))))
 
 (defmacro to-assoc

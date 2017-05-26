@@ -9,12 +9,19 @@ A channel is a data structure that is used to generate a lazy sequence of values
 
 ## An Example
 
-  (let [c     (channel)
-        c-emit  (:emit c)
-        c-close (:close c)]
+  (let [ch (channel)
+        em (:emit ch)
+        cl (:close ch)]
+        
     (async
-      (c-emit "foo")
-      (c-emit "bar")
-      (c-close))
+      (em "foo")
+      (em "bar")
+      (cl))
 
-    (to-vector (:seq c)))
+    (to-vector (:seq ch)))
+
+Channels represent the low-level underpinnings of the `generate` function, which is in most cases the preferred way to generate lazy sequences. The example above could be rewritten:
+
+  (to-vector (generate
+    (emit "foo")
+    (emit "bar")))

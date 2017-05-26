@@ -1,13 +1,11 @@
-# (async form+) generates an asynchronous sequence
-Evaluates the specified forms in a separate thread of execution. Returns a sequence that will iterate over any of the values that are emitted. Values are emitted using a locally scoped function of the form `(emit value)`. The forms are executed as a co-routine, meaning that a call to emit will *block* until the corresponding element is resolved by a consumer of the sequence.
+# (async form**) asynchronously evaluates a block 
+The provided forms will be evaluated in a separate thread of execution. Any resulting value of the block will be discarded.
 
 ## An Example
 
-  (def colors (async
-    (emit "red")
-    (emit "orange")
-    (emit "yellow")))
+  (def x (promise))
+  
+  (async
+    (x "hello"))
 
-  (to-vector colors)
-
-This example will assign the lazy sequence return by the async call to the variable `colors`. The to-vector call will block until that variable is fully consumed, and then return the vector _["red" "orange" "yellow"]_.
+  (str (x) " you!")
