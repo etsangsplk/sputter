@@ -21,6 +21,7 @@
         (cons 'cond (rest (rest clauses)))))))
 
 (defmacro and
+  {:doc-asset "and"}
   [& clauses]
   (cond
     (= 0 (len clauses)) true
@@ -34,6 +35,7 @@
           'sputter/and))))
 
 (defmacro or
+  {:doc-asset "or"}
   [& clauses]
   (cond
     (= 0 (len clauses)) true
