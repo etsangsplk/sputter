@@ -90,8 +90,9 @@ func init() {
 
 	registerAnnotated(
 		a.NewFunction(async).WithMetadata(a.Metadata{
-			a.MetaName: a.Name("async"),
-			a.MetaDoc:  d.Get("async"),
+			a.MetaName:    a.Name("async"),
+			a.MetaDoc:     d.Get("async"),
+			a.MetaClosure: a.True,
 		}),
 	)
 }

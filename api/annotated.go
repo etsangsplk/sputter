@@ -23,6 +23,9 @@ var (
 
 	// MetaInstance is the Metadata key for a Value's instance ID
 	MetaInstance = NewKeyword("instance")
+
+	// MetaClosure marks a Value as requiring a Closure
+	MetaClosure = NewKeyword("closure")
 )
 
 // Metadata stores metadata about an Annotated Value

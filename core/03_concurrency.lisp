@@ -6,10 +6,11 @@
   [& forms]
   (list 'sputter:let
     (vector 'sputter/ch (list 'sputter:channel)
+            'sputter/cl (list :close 'sputter/ch)
             'emit (list :emit 'sputter/ch))
     (list 'sputter:async
       (list 'sputter:let (vector 'x (cons 'sputter:do forms))
-        (list (list :close 'sputter/ch))
+        (list 'sputter/cl)
         'x))
     (list :seq 'sputter/ch)))
 

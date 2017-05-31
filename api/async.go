@@ -193,7 +193,6 @@ func (c *channelSequence) resolve() *channelSequence {
 			c.result = result
 			c.rest = NewChannelSequence(ch)
 		}
-		c.ch = nil
 	})
 	if e := c.result.error; e != nil {
 		panic(e)

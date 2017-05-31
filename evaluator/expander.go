@@ -1,6 +1,8 @@
 package evaluator
 
-import a "github.com/kode4food/sputter/api"
+import (
+	a "github.com/kode4food/sputter/api"
+)
 
 // ExpectedSequence is raised when unquote-splicing expands a non sequence
 const ExpectedSequence = "can not splice a non-sequence: %s"
@@ -40,9 +42,31 @@ func (e *expander) expandValue(v a.Value) a.Value {
 
 func (e *expander) makeExpression(v a.Value) a.Value {
 	if m, ok := v.(a.MakeExpression); ok {
-		return m.Expression()
+		ex := m.Expression()
+		return e.makeClosure(ex)
 	}
 	return v
+}
+
+func (e *expander) makeClosure(v a.Value) a.Value {
+	if l, ok := v.(a.List); ok && l.IsSequence() {
+		if s, ok := l.First().(a.Symbol); ok {
+			if e.requiresClosure(s) {
+				return NewClosure(v)
+			}
+		}
+	}
+	return v
+}
+
+func (e *expander) requiresClosure(s a.Symbol) bool {
+	if sv, ok := s.Resolve(e.context); ok {
+		if an, ok := sv.(a.Annotated); ok {
+			r, _ := an.Metadata().Get(a.MetaClosure)
+			return r == a.True
+		}
+	}
+	return false
 }
 
 func (e *expander) expandSequence(s a.Sequence) a.Value {
@@ -70,7 +94,7 @@ func (e *expander) expandList(l a.List) a.Value {
 		}
 		return res
 	}
-	return a.NewList(e.expandElements(l)...).Expression()
+	return e.makeExpression(a.NewList(e.expandElements(l)...))
 }
 
 func (e *expander) expandVector(v a.Vector) a.Value {
