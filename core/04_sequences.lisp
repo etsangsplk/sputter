@@ -8,16 +8,16 @@
 
 (defn filter
   {:doc-asset "filter"}
-  [fn & forms]
+  [filterFn & forms]
   (generate
     (for-each [f forms, e f]
-      (when (fn e) (emit e)))))
+      (when (filterFn e) (emit e)))))
 
 (defn map
   {:doc-asset "map"}
-  [fn & forms]
+  [mapFn & forms]
   (generate
-    (for-each [f forms, e f] (emit (fn e)))))
+    (for-each [f forms, e f] (emit (mapFn e)))))
 
 (defmacro to-assoc
   {:doc-asset "to-assoc"}

@@ -7,6 +7,8 @@ import (
 )
 
 func TestList(t *testing.T) {
+	a.GetNamespace(a.UserDomain).Delete("x")
+
 	testCode(t, `(list? '(1 2 3))`, a.True)
 	testCode(t, `(list? ())`, a.True)
 	testCode(t, `(list? [1 2 3])`, a.False)
@@ -18,7 +20,6 @@ func TestList(t *testing.T) {
 		(first (apply list (map (fn [x] (* x 2)) [1 2 3 4])))
 	`, f(2))
 
-	a.GetNamespace(a.UserDomain).Delete("x")
 	testCode(t, `
 		(def x '(1 2 3 4))
 		(x 2)

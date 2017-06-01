@@ -1,4 +1,4 @@
-package evaluator_test
+package builtins_test
 
 import (
 	"testing"
@@ -20,9 +20,7 @@ func TestClosure(t *testing.T) {
 	c1.Put("bar", s("bar_val"))
 	c1.Put("baz", s("baz_val"))
 
-	s1 := a.NewLocalSymbol("foo").Expression()
-	s2 := a.NewLocalSymbol("baz").Expression()
-	cl := e.NewClosure(a.NewVector(s1, s2))
+	cl := e.EvalStr(c1, "[foo, baz]")
 	v1 := cl.Eval(c1).(a.Vector)
 
 	r1, _ := v1.ElementAt(0)
