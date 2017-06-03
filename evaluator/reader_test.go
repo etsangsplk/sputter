@@ -211,4 +211,6 @@ func TestReaderErrors(t *testing.T) {
 
 	testReaderError(t, "(", e.ListNotClosed)
 	testReaderError(t, "'", a.Err(e.PrefixedNotPaired, "sputter:quote"))
+	testReaderError(t, "~@", a.Err(e.PrefixedNotPaired, "sputter:unquote-splicing"))
+	testReaderError(t, "~", a.Err(e.PrefixedNotPaired, "sputter:unquote"))
 }

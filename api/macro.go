@@ -1,8 +1,10 @@
 package api
 
-// MetaMacro is the Metadata key that identifies a Function as being a Macro
 var (
-	MetaMacro    = NewKeyword("macro")
+	// MetaMacro identifies a Function as being a Macro
+	MetaMacro = NewKeyword("macro")
+
+	// MetaSplicing identifies a Macro as requiring its result to be spliced
 	MetaSplicing = NewKeyword("splicing")
 )
 

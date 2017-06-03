@@ -13,7 +13,7 @@
 (defmacro cond
   {:doc-asset "cond"}
   [& clauses]
-  (when (seq? clauses)
+  (sputter:when (seq? clauses)
     (if (= 1 (len clauses))
       (clauses 0)
       (list 'sputter:if
@@ -23,7 +23,7 @@
 (defmacro and
   {:doc-asset "and"}
   [& clauses]
-  (cond
+  (sputter:cond
     (= 0 (len clauses)) true
     (= 1 (len clauses)) (clauses 0)
     :else
@@ -37,7 +37,7 @@
 (defmacro or
   {:doc-asset "or"}
   [& clauses]
-  (cond
+  (sputter:cond
     (= 0 (len clauses)) true
     (= 1 (len clauses)) (clauses 0)
     :else

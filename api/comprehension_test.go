@@ -9,6 +9,9 @@ import (
 
 func TestMap(t *testing.T) {
 	as := assert.New(t)
+	as.Identical(a.EmptyList, a.Map(a.EmptyList, func(v a.Value) a.Value {
+		return a.Str("nope")
+	}))
 
 	l := a.NewList(s("first"), s("middle"), s("last"))
 	w := a.Map(l, func(v a.Value) a.Value {
@@ -31,6 +34,8 @@ func TestMap(t *testing.T) {
 	p2 := p1.Prepend(s("also not mapped"))
 	v4 := p1.First()
 	r2 := p1.Rest()
+
+	as.Identical(p1, p1.Eval(nil))
 	as.String("not mapped", v4)
 	as.Equal(w, r2)
 	as.String("also not mapped", p2.First())
@@ -38,6 +43,9 @@ func TestMap(t *testing.T) {
 
 func TestFilter(t *testing.T) {
 	as := assert.New(t)
+	as.Identical(a.EmptyList, a.Filter(a.EmptyList, func(v a.Value) bool {
+		return true
+	}))
 
 	l := a.NewList(s("first"), s("filtered out"), s("last"))
 	w := a.Filter(l, func(v a.Value) bool {
@@ -89,6 +97,7 @@ func testNext(as *assert.Wrapper, i *a.Iterator, expected a.Value) {
 
 func TestConcat(t *testing.T) {
 	as := assert.New(t)
+	as.Identical(a.EmptyList, a.Concat(a.EmptyList))
 
 	l1 := a.NewList(s("first"), s("middle"), s("last"))
 	l2 := a.EmptyList
@@ -142,6 +151,7 @@ func TestReduce(t *testing.T) {
 
 func TestTakeDrop(t *testing.T) {
 	as := assert.New(t)
+	as.Identical(a.EmptyList, a.Take(a.EmptyList, 4))
 
 	s1 := []string{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"}
 	v1 := a.NewVector()

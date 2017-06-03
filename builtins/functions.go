@@ -161,7 +161,7 @@ func defineFunction(closure a.Context, d *functionDefinition) a.Function {
 	}).WithMetadata(d.meta).(a.Function)
 }
 
-func fn(c a.Context, args a.Sequence) a.Value {
+func makefn(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 	fn, r := optionalName(args)
 	md, r := optionalMetadata(c, r)
@@ -187,9 +187,8 @@ func apply(c a.Context, args a.Sequence) a.Value {
 
 func init() {
 	registerAnnotated(
-		a.NewFunction(fn).WithMetadata(a.Metadata{
-			a.MetaName: a.Name("fn"),
-			a.MetaDoc:  d.Get("fn"),
+		a.NewFunction(makefn).WithMetadata(a.Metadata{
+			a.MetaName: a.Name("make-fn"),
 		}),
 	)
 

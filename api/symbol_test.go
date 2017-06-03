@@ -14,7 +14,9 @@ func TestSymbol(t *testing.T) {
 	c.Put("howdy", s("ho"))
 
 	sym := a.NewLocalSymbol("howdy")
+	as.Identical(sym, sym.Eval(nil))
 	as.True(sym.IsSymbol())
+	as.True(sym.Expression().(a.Expression).IsExpression())
 	as.String("ho", sym.Expression().Eval(c))
 	as.String("howdy", sym)
 }

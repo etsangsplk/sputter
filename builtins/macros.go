@@ -6,18 +6,14 @@ import (
 	e "github.com/kode4food/sputter/evaluator"
 )
 
-func evalExpandBlock(c a.Context, s a.Sequence) a.Value {
-	ev := a.EvalBlock(c, s)
-	return e.Expand(c, ev)
-}
-
 func defineMacro(closure a.Context, d *functionDefinition) a.Function {
 	ap := makeArgProcessor(closure, d.args)
 	db := e.ExpandSequence(closure, d.body)
 
 	return a.NewMacro(func(c a.Context, args a.Sequence) a.Value {
 		l := ap(c, args)
-		return evalExpandBlock(l, db)
+		ev := a.EvalBlock(l, db)
+		return e.Expand(l, ev)
 	}).WithMetadata(d.meta).(a.Function)
 }
 
@@ -28,11 +24,23 @@ func defmacro(c a.Context, args a.Sequence) a.Value {
 	return m
 }
 
+func macroexpand(c a.Context, args a.Sequence) a.Value {
+	a.AssertMinimumArity(args, 1)
+	ev := a.EvalBlock(c, args)
+	return e.Expand(c, ev).Str()
+}
+
 func init() {
 	registerAnnotated(
 		a.NewMacro(defmacro).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("defmacro"),
 			a.MetaDoc:  d.Get("defmacro"),
+		}),
+	)
+
+	registerAnnotated(
+		a.NewMacro(macroexpand).WithMetadata(a.Metadata{
+			a.MetaName: a.Name("macroexpand"),
 		}),
 	)
 }

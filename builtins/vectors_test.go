@@ -5,6 +5,7 @@ import (
 
 	a "github.com/kode4food/sputter/api"
 	"github.com/kode4food/sputter/assert"
+	_ "github.com/kode4food/sputter/core"
 )
 
 func TestVector(t *testing.T) {

@@ -66,10 +66,7 @@ func (c *context) Get(n Name) (Value, bool) {
 	if v, ok := c.vars[n]; ok {
 		return v, true
 	}
-	if c.parent != nil {
-		return c.parent.Get(n)
-	}
-	return Nil, false
+	return c.parent.Get(n)
 }
 
 // Put puts a Value into the immediate Context

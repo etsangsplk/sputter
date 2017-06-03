@@ -66,11 +66,13 @@ func (ns *namespace) Str() Str {
 // GetNamespace returns the Namespace for the specified domain.
 func GetNamespace(n Name) Namespace {
 	return namespaces.Get(n, func() u.Any {
-		return &namespace{
+		ns := &namespace{
 			Context: NewContext(),
 			domain:  n,
 			symbols: u.NewCache(),
 		}
+		ns.Put(ContextDomain, ns)
+		return ns
 	}).(Namespace)
 }
 
@@ -112,18 +114,22 @@ func init() {
 	userContext := ChildContext(builtInContext)
 
 	namespaces.Get(BuiltInDomain, func() u.Any {
-		return &namespace{
+		ns := &namespace{
 			Context: builtInContext,
 			domain:  BuiltInDomain,
 			symbols: u.NewCache(),
 		}
+		ns.Put(ContextDomain, ns)
+		return ns
 	})
 
 	namespaces.Get(UserDomain, func() u.Any {
-		return &namespace{
+		ns := &namespace{
 			Context: userContext,
 			domain:  UserDomain,
 			symbols: u.NewCache(),
 		}
+		ns.Put(ContextDomain, ns)
+		return ns
 	})
 }

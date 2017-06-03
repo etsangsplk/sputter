@@ -26,6 +26,10 @@ func TestTheFloatTests(t *testing.T) {
 	as.Number(10.5, 10.5)
 	as.Number(10, 10)
 
+	as.Compare(a.EqualTo, a.NewFloat(10.5), a.NewFloat(10.5))
+	as.Compare(a.GreaterThan, a.NewFloat(10.5), a.NewFloat(10.0))
+	as.Compare(a.LessThan, a.NewFloat(10.0), a.NewFloat(10.5))
+
 	defer as.ExpectError(a.Err(assert.InvalidTestExpression, "10"))
 	as.Number(10, "10")
 }

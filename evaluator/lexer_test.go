@@ -16,6 +16,8 @@ func makeToken(t e.TokenType, v a.Value) *e.Token {
 }
 
 func assertToken(as *assert.Wrapper, like *e.Token, value *e.Token) {
+	as.Identical(like, like.Eval(nil))
+	as.Identical(value, value.Eval(nil))
 	as.Number(float64(like.Type), float64(value.Type))
 }
 

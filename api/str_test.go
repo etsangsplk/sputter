@@ -19,6 +19,8 @@ func TestStr(t *testing.T) {
 	as := assert.New(t)
 
 	s1 := s("hello")
+	as.Identical(s1, a.AssertStr(s1))
+	as.Identical(s1, s1.Eval(nil))
 	as.Number(5, a.Count(s1))
 	as.String("h", s1.First())
 	as.String("ello", s1.Rest())

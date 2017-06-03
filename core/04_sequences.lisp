@@ -3,21 +3,21 @@
 (defn concat
   {:doc-asset "concat"}
   [& forms]
-  (generate
-    (for-each [f forms, e f] (emit e))))
+  (sputter:generate
+    (for-each [form forms, elem form] (emit elem))))
 
 (defn filter
   {:doc-asset "filter"}
-  [filterFn & forms]
-  (generate
-    (for-each [f forms, e f]
-      (when (filterFn e) (emit e)))))
+  [func & forms]
+  (sputter:generate
+    (sputter:for-each [form forms, elem form]
+      (sputter:when (func elem) (emit elem)))))
 
 (defn map
   {:doc-asset "map"}
-  [mapFn & forms]
-  (generate
-    (for-each [f forms, e f] (emit (mapFn e)))))
+  [func & forms]
+  (sputter:generate
+    (for-each [form forms, elem form] (emit (func elem)))))
 
 (defmacro to-assoc
   {:doc-asset "to-assoc"}

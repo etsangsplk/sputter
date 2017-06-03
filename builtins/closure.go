@@ -1,18 +1,23 @@
 package builtins
 
-import a "github.com/kode4food/sputter/api"
+import (
+	a "github.com/kode4food/sputter/api"
+	e "github.com/kode4food/sputter/evaluator"
+)
+
+type names []a.Name
 
 type closure struct {
-	names []a.Name
+	names names
 	body  a.Value
 }
 
-var emptyNames = []a.Name{}
+var emptyNames = names{}
 
-func makeNames(s a.Sequence) []a.Name {
+func makeNames(s a.Sequence) names {
 	v := a.AssertVector(s)
 	l := v.Count()
-	r := make([]a.Name, l)
+	r := make(names, l)
 	for i := 0; i < l; i++ {
 		v, _ := v.ElementAt(i)
 		r[i] = a.AssertUnqualified(v).Name()
@@ -20,7 +25,7 @@ func makeNames(s a.Sequence) []a.Name {
 	return r
 }
 
-func consolidateNames(include []a.Name, exclude []a.Name) []a.Name {
+func consolidateNames(include names, exclude names) names {
 	s := map[string]bool{}
 	for _, n := range exclude {
 		s[string(n)] = false
@@ -31,7 +36,7 @@ func consolidateNames(include []a.Name, exclude []a.Name) []a.Name {
 			s[sn] = true
 		}
 	}
-	r := []a.Name{}
+	r := names{}
 	for k, v := range s {
 		if v {
 			r = append(r, a.Name(k))
@@ -40,24 +45,26 @@ func consolidateNames(include []a.Name, exclude []a.Name) []a.Name {
 	return r
 }
 
-func visitValue(v a.Value) []a.Name {
+func visitValue(v a.Value) names {
 	if s, ok := v.(a.Sequence); ok {
 		return visitSequence(s)
 	}
-	if _, ok := v.(a.Expression); !ok {
-		return emptyNames
+	if cl, ok := v.(*closure); ok {
+		return cl.names
 	}
 	if s, ok := v.(a.Symbol); ok && s.Domain() == a.LocalDomain {
-		return []a.Name{s.Name()}
+		if _, ok := v.(a.Expression); ok {
+			return names{s.Name()}
+		}
 	}
 	return emptyNames
 }
 
-func visitSequence(s a.Sequence) []a.Name {
+func visitSequence(s a.Sequence) names {
 	if _, ok := s.(a.Str); ok {
 		return emptyNames
 	}
-	r := []a.Name{}
+	r := names{}
 	for i := s; i.IsSequence(); i = i.Rest() {
 		n := visitValue(i.First())
 		r = append(r, n...)
@@ -67,23 +74,24 @@ func visitSequence(s a.Sequence) []a.Name {
 
 func makeClosure(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
-	ex := makeNames(a.AssertVector(args.First()))
-	body := evalExpandBlock(c, args.Rest())
-	names := consolidateNames(visitValue(body), ex)
+	nv := makeNames(a.AssertVector(args.First()))
+	eb := a.EvalBlock(c, args.Rest())
+	cb := e.Expand(c, eb)
+	cn := consolidateNames(visitValue(cb), nv)
 
-	if len(names) > 0 {
+	if len(cn) > 0 {
 		return &closure{
-			names: names,
-			body:  body,
+			names: cn,
+			body:  cb,
 		}
 	}
-	return body
+	return cb
 }
 
 func (cl *closure) Eval(c a.Context) a.Value {
-	names := cl.names
-	vars := make(a.Variables, len(names))
-	for _, n := range names {
+	cn := cl.names
+	vars := make(a.Variables, len(cn))
+	for _, n := range cn {
 		if v, ok := c.Get(n); ok {
 			vars[n] = v
 		}

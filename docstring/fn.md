@@ -1,5 +1,5 @@
 # (fn name? meta? [name**] form+) creates an anonymous function
-Will create an anonymous function that be passed around in a first-class manner.
+Will create an anonymous function that may be passed around in a first-class manner.
 
 ## An Example
 

@@ -20,6 +20,7 @@ func TestMetadata(t *testing.T) {
 	})
 
 	s1 := v1.Str()
+	as.Identical(v2, v2.Eval(nil))
 	as.Contains(`"foo" true`, s1)
 	as.Contains(`"bar" false`, s1)
 

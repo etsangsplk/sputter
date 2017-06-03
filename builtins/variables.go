@@ -15,6 +15,7 @@ func def(c a.Context, args a.Sequence) a.Value {
 	s := args.First()
 	n := a.AssertUnqualified(s).Name()
 	v := args.Rest().First()
+
 	ns.Put(n, v.Eval(c))
 	return s
 }

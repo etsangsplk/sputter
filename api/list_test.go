@@ -89,6 +89,7 @@ func TestListEval(t *testing.T) {
 	c.Put(helloThere.Name(), helloThere)
 
 	fl := a.NewList(helloThere).Expression()
+	as.True(fl.(a.Expression).IsExpression())
 	as.String("there", fl.Eval(c))
 
 	sym := a.NewLocalSymbol("hello").Expression()

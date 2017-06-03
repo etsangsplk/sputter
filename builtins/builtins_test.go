@@ -90,6 +90,15 @@ func TestQuote(t *testing.T) {
 	as.Number(3, v1)
 }
 
+func TestUnquote(t *testing.T) {
+	as := assert.New(t)
+
+	c := e.NewEvalContext()
+	c.Put("foo", a.NewFloat(456))
+	r1 := e.EvalStr(c, `'[123 ~foo]`)
+	as.String("[123 (sputter:unquote foo)]", r1)
+}
+
 func TestDo(t *testing.T) {
 	testCode(t, `
 		(do

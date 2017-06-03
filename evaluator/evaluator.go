@@ -2,14 +2,6 @@ package evaluator
 
 import a "github.com/kode4food/sputter/api"
 
-// NewEvaluator creates a new Evaluator using the given Context and raw source
-func NewEvaluator(c a.Context, src a.Str) a.Sequence {
-	l := NewLexer(src)
-	r := NewReader(c, l)
-	e := Expand(c, r).(a.Sequence)
-	return e
-}
-
 // Read converts the raw source into unexpanded data structures
 func Read(c a.Context, src a.Str) a.Sequence {
 	l := NewLexer(src)

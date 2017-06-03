@@ -59,6 +59,7 @@ func TestNestedContext(t *testing.T) {
 	assertGet(as, c2, "hello", s("you"))
 	assertGet(as, c2, "howdy", s("ho"))
 	assertGet(as, c2, "foo", s("bar"))
+	assertMissing(as, c2, "no-way")
 }
 
 func TestRebind(t *testing.T) {

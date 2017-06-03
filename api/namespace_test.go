@@ -12,6 +12,7 @@ func TestNamespace(t *testing.T) {
 	ns1 := a.GetNamespace("user")
 	ns2 := a.GetNamespace(a.UserDomain)
 
+	as.Identical(ns1, ns1.Eval(nil))
 	as.Equal(ns1, ns2)
 	as.Equal(a.UserDomain, ns1.Domain())
 	as.Equal(a.Name("user"), ns2.Domain())

@@ -43,7 +43,7 @@ func TestExpander(t *testing.T) {
 		as.True(ok)
 		as.String("you", v1)
 	} else {
-		as.Fail("prepare did not transform")
+		as.Fail("expand did not transform")
 	}
 }
 
@@ -54,20 +54,20 @@ func TestSimpleData(t *testing.T) {
 	v1, ok := e.EvalStr(c, `'99`).(a.Number)
 	as.True(ok)
 	as.Number(99, v1)
+}
 
-	c = e.NewEvalContext()
-	v2, ok := e.EvalStr(c, `'[1 2 3]`).(a.Vector)
+func TestSimpleExpand(t *testing.T) {
+	as := assert.New(t)
+
+	c := e.NewEvalContext()
+	v2, ok := e.EvalStr(c, `[1 2 3]`).(a.Vector)
 	as.True(ok)
 	as.String("[1 2 3]", v2)
-	_, ok = v2.(a.Expression)
-	as.False(ok)
 
 	c = e.NewEvalContext()
-	v3, ok := e.EvalStr(c, `'{:name "bob"}`).(a.Associative)
+	v3, ok := e.EvalStr(c, `{:name "bob"}`).(a.Associative)
 	as.True(ok)
 	as.String(`{:name "bob"}`, v3)
-	_, ok = v3.(a.Expression)
-	as.False(ok)
 }
 
 func TestNestedData(t *testing.T) {
