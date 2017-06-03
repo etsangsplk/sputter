@@ -99,6 +99,19 @@ func TestUnquote(t *testing.T) {
 	as.String("[123 (sputter:unquote foo)]", r1)
 }
 
+func TestUnquoteMacro(t *testing.T) {
+	ns := a.GetNamespace(a.UserDomain)
+	ns.Delete("test")
+
+	testCode(t, `
+		(defmacro test
+			[x & y]
+			'(~x ~@y))
+			
+		(test vector 1 2 3)
+	`, s("[1 2 3]"))
+}
+
 func TestDo(t *testing.T) {
 	testCode(t, `
 		(do
