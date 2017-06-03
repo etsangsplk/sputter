@@ -39,6 +39,9 @@ func TestApply(t *testing.T) {
 }
 
 func TestRestFunctions(t *testing.T) {
+	ns := a.GetNamespace(a.UserDomain)
+	ns.Delete("test")
+
 	testCode(t, `
 		(def test (fn [f & r] (apply vector (cons f r))))
 		(test 1 2 3 4 5 6 7)
