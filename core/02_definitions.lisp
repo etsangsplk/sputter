@@ -15,5 +15,4 @@
 (defmacro defn
   {:doc-asset "defn"}
   [name & forms]
-  (list 'sputter:def name
-    (cons 'fn (cons name forms))))
+  `(def ~name (fn ~name ~@forms)))

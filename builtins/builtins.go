@@ -15,22 +15,7 @@ func registerAnnotated(v a.Annotated) {
 }
 
 func do(c a.Context, args a.Sequence) a.Value {
-	return a.EvalBlock(c, args)
-}
-
-func quote(_ a.Context, args a.Sequence) a.Value {
-	a.AssertArity(args, 1)
-	return args.First()
-}
-
-func unquote(c a.Context, args a.Sequence) a.Value {
-	a.AssertArity(args, 1)
-	ex := e.Expand(c, args.First())
-	v := ex.Eval(c)
-	if m, ok := v.(a.MakeExpression); ok {
-		return m.Expression()
-	}
-	return v
+	return a.NewBlock(args).Eval(c)
 }
 
 func read(c a.Context, args a.Sequence) a.Value {
@@ -44,7 +29,7 @@ func eval(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
 	v := args.First().Eval(c)
 	s := a.AssertSequence(v)
-	return e.Eval(c, s)
+	return e.EvalBlock(c, s)
 }
 
 func init() {
@@ -52,26 +37,6 @@ func init() {
 		a.NewFunction(do).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("do"),
 			a.MetaDoc:  d.Get("do"),
-		}),
-	)
-
-	registerAnnotated(
-		a.NewMacro(quote).WithMetadata(a.Metadata{
-			a.MetaName: a.Name("quote"),
-			a.MetaDoc:  d.Get("quote"),
-		}),
-	)
-
-	registerAnnotated(
-		a.NewMacro(unquote).WithMetadata(a.Metadata{
-			a.MetaName: a.Name("unquote"),
-		}),
-	)
-
-	registerAnnotated(
-		a.NewMacro(unquote).WithMetadata(a.Metadata{
-			a.MetaName:     a.Name("unquote-splicing"),
-			a.MetaSplicing: a.True,
 		}),
 	)
 

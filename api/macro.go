@@ -4,7 +4,7 @@ var (
 	// MetaMacro identifies a Function as being a Macro
 	MetaMacro = NewKeyword("macro")
 
-	// MetaSplicing identifies a Macro as requiring its result to be spliced
+	// MetaSplicing identifies a Macro as requiring element splicing
 	MetaSplicing = NewKeyword("splicing")
 )
 

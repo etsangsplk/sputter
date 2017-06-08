@@ -19,15 +19,6 @@ type Applicable interface {
 	Apply(Context, Sequence) Value
 }
 
-// EvalBlock evaluates each element of the provided Sequence
-func EvalBlock(c Context, s Sequence) Value {
-	var r Value = Nil
-	for i := s; i.IsSequence(); i = i.Rest() {
-		r = i.First().Eval(c)
-	}
-	return r
-}
-
 // AssertApplicable will cast a Value into an Applicable or explode violently
 func AssertApplicable(v Value) Applicable {
 	if r, ok := v.(Applicable); ok {

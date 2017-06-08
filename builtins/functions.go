@@ -153,11 +153,11 @@ func getFunctionDefinition(c a.Context, args a.Sequence) *functionDefinition {
 
 func defineFunction(closure a.Context, d *functionDefinition) a.Function {
 	ap := makeArgProcessor(closure, d.args)
-	db := d.body
+	db := a.NewBlock(d.body)
 
 	return a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
 		l := ap(c, args)
-		return a.EvalBlock(l, db)
+		return db.Eval(l)
 	}).WithMetadata(d.meta).(a.Function)
 }
 

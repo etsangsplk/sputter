@@ -128,13 +128,14 @@ func makeIntermediate(n a.Name, e a.Value, next forProc) forProc {
 	}
 }
 
-func makeTerminal(n a.Name, e a.Value, b a.Sequence) forProc {
+func makeTerminal(n a.Name, e a.Value, s a.Sequence) forProc {
+	b := a.NewBlock(s)
 	return func(c a.Context) {
 		s := a.AssertSequence(e.Eval(c))
 		for i := s; i.IsSequence(); i = i.Rest() {
 			l := a.ChildContext(c)
 			l.Put(n, i.First())
-			a.EvalBlock(l, b)
+			b.Eval(l)
 		}
 	}
 }

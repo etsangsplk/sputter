@@ -35,6 +35,10 @@ type Sequence interface {
 	IsSequence() bool
 }
 
+type block struct {
+	Sequence
+}
+
 // Conjoiner is a Sequence that can be Conjoined in some way
 type Conjoiner interface {
 	Sequence
@@ -49,6 +53,23 @@ type Counted interface {
 // Indexed interfaces allow a Sequence item to be retrieved by index
 type Indexed interface {
 	Elementer
+}
+
+// NewBlock identifies a Sequence as being block-processed
+func NewBlock(s Sequence) Sequence {
+	return &block{Sequence: s}
+}
+
+func (b *block) Eval(c Context) Value {
+	var r Value = Nil
+	for i := b.Sequence; i.IsSequence(); i = i.Rest() {
+		r = i.First().Eval(c)
+	}
+	return r
+}
+
+func (b *block) Str() Str {
+	return b.Sequence.Str()
 }
 
 // Count will return the Count from a Counted Sequence or explode

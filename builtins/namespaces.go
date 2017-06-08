@@ -13,7 +13,7 @@ func withNamespace(c a.Context, args a.Sequence) a.Value {
 
 	sc := a.WithNamespace(a.ChildContext(c), ns)
 	sc.Put(a.ContextDomain, ns)
-	return a.EvalBlock(sc, args.Rest())
+	return a.NewBlock(args.Rest()).Eval(sc)
 }
 
 func getNamespace(_ a.Context, args a.Sequence) a.Value {

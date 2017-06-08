@@ -122,7 +122,7 @@ func (s *symbolExpression) Eval(c Context) Value {
 	if r, ok := s.Resolve(c); ok {
 		return r
 	}
-	panic(Err(UnknownSymbol, s.name))
+	panic(Err(UnknownSymbol, s.Qualified()))
 }
 
 // AssertUnqualified will cast a Value into a Symbol and explode

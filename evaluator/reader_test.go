@@ -179,7 +179,7 @@ func TestBuiltIns(t *testing.T) {
 	tr := e.NewReader(b, l)
 	ex := e.ExpandSequence(b, tr)
 	c := a.ChildContext(b)
-	as.String("there", a.EvalBlock(c, ex))
+	as.String("there", a.NewBlock(ex).Eval(c))
 }
 
 func testReaderError(t *testing.T, src string, err string) {
@@ -196,7 +196,7 @@ func testReaderError(t *testing.T, src string, err string) {
 	c := a.NewContext()
 	l := e.NewLexer(s(src))
 	tr := e.NewReader(c, l)
-	a.EvalBlock(c, tr)
+	a.NewBlock(tr).Eval(c)
 }
 
 func TestReaderErrors(t *testing.T) {

@@ -75,8 +75,7 @@ func visitSequence(s a.Sequence) names {
 func makeClosure(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
 	nv := makeNames(a.AssertVector(args.First()))
-	eb := a.EvalBlock(c, args.Rest())
-	cb := e.Expand(c, eb)
+	cb := e.EvalExpand(c, args.Rest())
 	cn := consolidateNames(visitValue(cb), nv)
 
 	if len(cn) > 0 {

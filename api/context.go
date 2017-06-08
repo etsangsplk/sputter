@@ -10,6 +10,7 @@ const AlreadyBound = "symbol is already bound in this context: %s"
 // Context represents a mutable variable scope
 type Context interface {
 	Get(Name) (Value, bool)
+	Has(Name) (Context, bool)
 	Put(Name, Value)
 	Delete(Name)
 }
@@ -59,6 +60,16 @@ func (c *rootContext) Get(n Name) (Value, bool) {
 	return Nil, false
 }
 
+// Has looks up the Context in which a value exists
+func (c *rootContext) Has(n Name) (Context, bool) {
+	c.RLock()
+	defer c.RUnlock()
+	if _, ok := c.vars[n]; ok {
+		return c, ok
+	}
+	return nil, false
+}
+
 // Get retrieves a value from the Context chain
 func (c *context) Get(n Name) (Value, bool) {
 	c.RLock()
@@ -67,6 +78,16 @@ func (c *context) Get(n Name) (Value, bool) {
 		return v, true
 	}
 	return c.parent.Get(n)
+}
+
+// Has looks up the Context in which a value exists
+func (c *context) Has(n Name) (Context, bool) {
+	c.RLock()
+	defer c.RUnlock()
+	if _, ok := c.vars[n]; ok {
+		return c, true
+	}
+	return c.parent.Has(n)
 }
 
 // Put puts a Value into the immediate Context

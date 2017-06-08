@@ -69,7 +69,7 @@ func promise(_ a.Context, args a.Sequence) a.Value {
 
 func async(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
-	go a.EvalBlock(a.ChildContext(c), args)
+	go a.NewBlock(args).Eval(a.ChildContext(c))
 	return a.Nil
 }
 

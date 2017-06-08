@@ -8,16 +8,22 @@ func Read(c a.Context, src a.Str) a.Sequence {
 	return NewReader(c, l)
 }
 
-// Eval evaluates data structures that have not yet been expanded
-func Eval(c a.Context, s a.Sequence) a.Value {
+// EvalBlock evaluates data structures that have not yet been expanded
+func EvalBlock(c a.Context, s a.Sequence) a.Value {
 	ex := Expand(c, s).(a.Sequence)
-	return a.EvalBlock(c, ex)
+	return a.NewBlock(ex).Eval(c)
 }
 
 // EvalStr evaluates the specified raw Source
 func EvalStr(c a.Context, src a.Str) a.Value {
 	r := Read(c, src)
-	return Eval(c, r)
+	return EvalBlock(c, r)
+}
+
+// EvalExpand evaluates a block and then expands its macros
+func EvalExpand(c a.Context, s a.Sequence) a.Value {
+	ev := a.NewBlock(s).Eval(c)
+	return Expand(c, ev)
 }
 
 // NewEvalContext creates a new Context instance that

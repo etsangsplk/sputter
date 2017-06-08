@@ -8,12 +8,11 @@ import (
 
 func defineMacro(closure a.Context, d *functionDefinition) a.Function {
 	ap := makeArgProcessor(closure, d.args)
-	db := e.ExpandSequence(closure, d.body)
 
 	return a.NewMacro(func(c a.Context, args a.Sequence) a.Value {
 		l := ap(c, args)
-		ev := a.EvalBlock(l, db)
-		return e.Expand(l, ev)
+		db := e.ExpandSequence(l, d.body)
+		return e.EvalExpand(l, db)
 	}).WithMetadata(d.meta).(a.Function)
 }
 
@@ -26,7 +25,7 @@ func defmacro(c a.Context, args a.Sequence) a.Value {
 
 func macroexpand(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
-	ev := a.EvalBlock(c, args)
+	ev := a.NewBlock(args).Eval(c)
 	return e.Expand(c, ev).Str()
 }
 

@@ -26,6 +26,7 @@ const (
 	MapStart
 	MapEnd
 	QuoteMarker
+	SyntaxMarker
 	UnquoteMarker
 	SpliceMarker
 	Whitespace
@@ -211,6 +212,7 @@ func init() {
 		pattern(`^]`, tokenState(VectorEnd)),
 		pattern(`^}`, tokenState(MapEnd)),
 		pattern(`^'`, tokenState(QuoteMarker)),
+		pattern("^`", tokenState(SyntaxMarker)),
 		pattern(`^~@`, tokenState(SpliceMarker)),
 		pattern(`^~`, tokenState(UnquoteMarker)),
 

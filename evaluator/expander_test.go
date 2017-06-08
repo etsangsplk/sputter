@@ -36,7 +36,7 @@ func TestExpander(t *testing.T) {
 	l := e.NewLexer(`(hello)`)
 	tr := e.NewReader(b, l)
 	ex := e.ExpandSequence(b, tr)
-	v := a.EvalBlock(b, ex)
+	v := a.NewBlock(ex).Eval(b)
 
 	if rv, ok := v.(a.Vector); ok {
 		v1, ok := rv.ElementAt(0)

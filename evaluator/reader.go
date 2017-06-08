@@ -42,6 +42,7 @@ var specialNames = a.Variables{
 
 var (
 	quote    = a.NewQualifiedSymbol("quote", a.BuiltInDomain)
+	syntax   = a.NewQualifiedSymbol("syntax-quote", a.BuiltInDomain)
 	unquote  = a.NewQualifiedSymbol("unquote", a.BuiltInDomain)
 	splicing = a.NewQualifiedSymbol("unquote-splicing", a.BuiltInDomain)
 )
@@ -83,6 +84,8 @@ func (r *reader) value(t *Token) a.Value {
 	switch t.Type {
 	case QuoteMarker:
 		return r.prefixed(quote)
+	case SyntaxMarker:
+		return r.prefixed(syntax)
 	case UnquoteMarker:
 		return r.prefixed(unquote)
 	case SpliceMarker:
