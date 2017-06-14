@@ -1,17 +1,11 @@
 package api
 
-var (
-	// MetaMacro identifies a Function as being a Macro
-	MetaMacro = NewKeyword("macro")
-
-	// MetaSplicing identifies a Macro as requiring element splicing
-	MetaSplicing = NewKeyword("splicing")
-)
+// MetaMacro identifies a Function as being a Macro
+var MetaMacro = NewKeyword("macro")
 
 var macroMetadata = Metadata{
-	MetaMacro:    True,
-	MetaType:     Name("macro"),
-	MetaSplicing: False,
+	MetaMacro: True,
+	MetaType:  Name("macro"),
 }
 
 // NewMacro instantiates a new Macro

@@ -115,6 +115,11 @@ func unquote(c a.Context, args a.Sequence) a.Value {
 	return e.Expand(c, args.First())
 }
 
+func unquoteSplicing(c a.Context, args a.Sequence) a.Value {
+	a.AssertArity(args, 1)
+	return e.NewSplice(e.Expand(c, args.First()))
+}
+
 func syntaxquote(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
 	sc := &syntaxContext{
@@ -136,15 +141,13 @@ func init() {
 
 	registerAnnotated(
 		a.NewMacro(unquote).WithMetadata(a.Metadata{
-			a.MetaName:     a.Name("unquote"),
-			a.MetaSplicing: a.False,
+			a.MetaName: a.Name("unquote"),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewMacro(unquote).WithMetadata(a.Metadata{
-			a.MetaName:     a.Name("unquote-splicing"),
-			a.MetaSplicing: a.True,
+		a.NewMacro(unquoteSplicing).WithMetadata(a.Metadata{
+			a.MetaName: a.Name("unquote-splicing"),
 		}),
 	)
 
