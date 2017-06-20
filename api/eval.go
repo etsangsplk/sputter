@@ -3,16 +3,6 @@ package api
 // ExpectedApplicable is thrown when a Value is not Applicable
 const ExpectedApplicable = "value does not support application: %s"
 
-// MakeExpression marks Types that can be converted to Expression
-type MakeExpression interface {
-	Expression() Value
-}
-
-// Expression marks a Type as being a transformative Expression
-type Expression interface {
-	IsExpression() bool
-}
-
 // Applicable is the standard signature for any Value that can be applied
 // to a sequence of arguments
 type Applicable interface {

@@ -19,7 +19,7 @@ var helloName = a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
 func TestEvaluate(t *testing.T) {
 	as := assert.New(t)
 
-	l := a.NewList(helloName, s("World")).Expression()
+	l := a.NewList(helloName, s("World"))
 	c := a.NewContext()
 	r := l.Eval(c)
 
@@ -29,8 +29,8 @@ func TestEvaluate(t *testing.T) {
 func TestEvaluateSequence(t *testing.T) {
 	as := assert.New(t)
 
-	s1 := a.NewList(helloName, s("World")).Expression()
-	s2 := a.NewList(helloName, s("Foo")).Expression()
+	s1 := a.NewList(helloName, s("World"))
+	s2 := a.NewList(helloName, s("Foo"))
 	l := a.NewList(s1, s2)
 
 	c := a.NewContext()

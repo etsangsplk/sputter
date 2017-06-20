@@ -3,7 +3,6 @@ package api
 // List contains a node to a singly-linked List
 type List interface {
 	Conjoiner
-	MakeExpression
 	Elementer
 	Counted
 	Applicable
@@ -14,10 +13,6 @@ type list struct {
 	first Value
 	rest  *list
 	count int
-}
-
-type listExpression struct {
-	*list
 }
 
 // EmptyList represents an empty List
@@ -85,33 +80,21 @@ func (l *list) Apply(c Context, args Sequence) Value {
 	return IndexedApply(l, c, args)
 }
 
-func (l *list) Eval(_ Context) Value {
-	return l
-}
-
-func (l *list) Expression() Value {
-	if l == EmptyList {
-		return l
+func (l *list) Eval(c Context) Value {
+	if l == emptyList {
+		return emptyList
 	}
-	return &listExpression{
-		list: l,
-	}
-}
 
-func (l *list) Str() Str {
-	return MakeSequenceStr(l)
-}
-
-func (l *listExpression) IsExpression() bool {
-	return true
-}
-
-func (l *listExpression) Eval(c Context) Value {
 	t := l.first
 	if a, ok := t.Eval(c).(Applicable); ok {
 		return a.Apply(c, l.rest)
 	}
 	panic(Err(ExpectedApplicable, t))
+
+}
+
+func (l *list) Str() Str {
+	return MakeSequenceStr(l)
 }
 
 func init() {

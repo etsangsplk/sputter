@@ -14,10 +14,8 @@ func TestSymbol(t *testing.T) {
 	c.Put("howdy", s("ho"))
 
 	sym := a.NewLocalSymbol("howdy")
-	as.Identical(sym, sym.Eval(nil))
 	as.True(sym.IsSymbol())
-	as.True(sym.Expression().(a.Expression).IsExpression())
-	as.String("ho", sym.Expression().Eval(c))
+	as.String("ho", sym.Eval(c))
 	as.String("howdy", sym)
 }
 
@@ -37,9 +35,9 @@ func TestQualifiedSymbol(t *testing.T) {
 	c2 := a.NewContext()
 	c2.Put(a.ContextDomain, a.GetNamespace("ns2"))
 
-	s1 := a.ParseSymbol("ns1:foo").Expression().(a.Symbol)
-	s2 := a.ParseSymbol("ns2:foo").Expression().(a.Symbol)
-	s3 := a.ParseSymbol("foo").Expression().(a.Symbol)
+	s1 := a.ParseSymbol("ns1:foo")
+	s2 := a.ParseSymbol("ns2:foo")
+	s3 := a.ParseSymbol("foo")
 
 	as.Equal(a.GetNamespace("ns1"), s1.Namespace(c2))
 	as.Equal(a.GetNamespace("ns2"), s2.Namespace(c1))
@@ -67,7 +65,7 @@ func TestUnknownSymbol(t *testing.T) {
 
 	defer as.ExpectError(a.Err(a.UnknownSymbol, "howdy"))
 	c := a.NewContext()
-	sym := a.NewLocalSymbol("howdy").Expression()
+	sym := a.NewLocalSymbol("howdy")
 	sym.Eval(c)
 }
 

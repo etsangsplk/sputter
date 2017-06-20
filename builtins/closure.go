@@ -53,9 +53,7 @@ func visitValue(v a.Value) names {
 		return cl.names
 	}
 	if s, ok := v.(a.Symbol); ok && s.Domain() == a.LocalDomain {
-		if _, ok := v.(a.Expression); ok {
-			return names{s.Name()}
-		}
+		return names{s.Name()}
 	}
 	return emptyNames
 }

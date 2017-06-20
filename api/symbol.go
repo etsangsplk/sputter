@@ -15,7 +15,6 @@ const (
 
 // Symbol is a qualified identifier that can be resolved
 type Symbol interface {
-	MakeExpression
 	Value
 	IsSymbol() bool
 	Name() Name
@@ -28,10 +27,6 @@ type Symbol interface {
 type symbol struct {
 	name   Name
 	domain Name
-}
-
-type symbolExpression struct {
-	*symbol
 }
 
 func qualifiedName(name Name, domain Name) Name {
@@ -100,29 +95,15 @@ func (s *symbol) Resolve(c Context) (Value, bool) {
 	return GetContextNamespace(c).Get(n)
 }
 
-func (s *symbol) Expression() Value {
-	return &symbolExpression{
-		symbol: s,
-	}
-}
-
-func (s *symbol) Eval(_ Context) Value {
-	return s
-}
-
-func (s *symbol) Str() Str {
-	return Str(s.Qualified())
-}
-
-func (s *symbolExpression) IsExpression() bool {
-	return true
-}
-
-func (s *symbolExpression) Eval(c Context) Value {
+func (s *symbol) Eval(c Context) Value {
 	if r, ok := s.Resolve(c); ok {
 		return r
 	}
 	panic(Err(UnknownSymbol, s.Qualified()))
+}
+
+func (s *symbol) Str() Str {
+	return Str(s.Qualified())
 }
 
 // AssertUnqualified will cast a Value into a Symbol and explode

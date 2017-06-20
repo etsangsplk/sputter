@@ -30,13 +30,6 @@ func (e *expander) expandValue(v a.Value) a.Value {
 	if s, ok := v.(a.Sequence); ok {
 		return e.expandSequence(s)
 	}
-	return e.makeExpression(v)
-}
-
-func (e *expander) makeExpression(v a.Value) a.Value {
-	if m, ok := v.(a.MakeExpression); ok {
-		return m.Expression()
-	}
 	return v
 }
 
@@ -58,7 +51,7 @@ func (e *expander) expandList(l a.List) a.Value {
 	if m, ok := e.macro(f); ok {
 		return m.Apply(e.context, l.Rest())
 	}
-	return e.makeExpression(a.NewList(e.expandElements(l)...))
+	return a.NewList(e.expandElements(l)...)
 }
 
 func (e *expander) expandVector(v a.Vector) a.Value {
