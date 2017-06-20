@@ -84,7 +84,7 @@ func (e *expander) macro(v a.Value) (a.Function, bool) {
 	if s, ok := v.(a.Symbol); ok {
 		if r, ok := s.Resolve(e.context); ok {
 			if f, ok := r.(a.Function); ok {
-				if a.IsMacro(f) {
+				if a.IsMacro(f) && !a.IsSpecialForm(f) {
 					return f, true
 				}
 			}

@@ -134,8 +134,9 @@ func syntaxquote(c a.Context, args a.Sequence) a.Value {
 func init() {
 	registerAnnotated(
 		a.NewMacro(quote).WithMetadata(a.Metadata{
-			a.MetaName: a.Name("quote"),
-			a.MetaDoc:  d.Get("quote"),
+			a.MetaName:    a.Name("quote"),
+			a.MetaDoc:     d.Get("quote"),
+			a.MetaSpecial: a.True,
 		}),
 	)
 
