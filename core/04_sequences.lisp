@@ -22,17 +22,14 @@
 (defmacro to-assoc
   {:doc-asset "to-assoc"}
   [& forms]
-  (list 'sputter:apply 'sputter:assoc
-    (cons 'concat forms)))
+  `(apply assoc (concat ~@forms)))
 
 (defmacro to-list
   {:doc-asset "to-list"}
   [& forms]
-  (list 'sputter:apply 'sputter:list
-    (cons 'concat forms)))
+  `(apply list (concat ~@forms)))
 
 (defmacro to-vector
   {:doc-asset "to-vector"}
   [& forms]
-  (list 'sputter:apply 'sputter:vector
-    (cons 'concat forms)))
+  `(apply vector (concat ~@forms)))
