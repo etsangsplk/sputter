@@ -9,6 +9,9 @@ import (
 	d "github.com/kode4food/sputter/docstring"
 )
 
+// UnsupportedSyntaxQuote is raised when you try to quote what can't be quoted
+const UnsupportedSyntaxQuote = "Unsupported type in syntax quote: %s"
+
 const genSymTemplate = "x-%s-gensym-%d"
 
 var (
@@ -96,7 +99,7 @@ func (sc *syntaxContext) quoteSequence(s a.Sequence) a.Value {
 	if as, ok := s.(a.Associative); ok {
 		return sc.quoteAssociative(as)
 	}
-	panic("what are you having me quote here? " + string(s.Str()))
+	panic(a.Err(UnsupportedSyntaxQuote, s))
 }
 
 func (sc *syntaxContext) quoteAssociative(as a.Associative) a.Value {

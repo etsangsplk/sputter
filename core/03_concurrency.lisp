@@ -5,8 +5,8 @@
   {:doc-asset "async"}
   [& forms]
   (list 'sputter:closure
-    (vector))
-    (cons 'sputter:do-async forms))
+    (vector)
+    (cons 'sputter:do-async forms)))
   
 (defmacro generate
   {:doc-asset "generate"}
