@@ -15,21 +15,20 @@ func registerAnnotated(v a.Annotated) {
 }
 
 func do(c a.Context, args a.Sequence) a.Value {
-	return a.NewBlock(args).Eval(c)
+	return a.EvalBlock(c, args)
 }
 
 func read(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
-	v := args.First().Eval(c)
+	v := a.Eval(c, args.First())
 	s := a.AssertStr(v)
-	return e.Read(c, s)
+	return e.ReadStr(c, s)
 }
 
 func eval(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
-	v := args.First().Eval(c)
-	s := a.AssertSequence(v)
-	return e.EvalBlock(c, s)
+	v := a.Eval(c, args.First())
+	return a.Eval(c, v)
 }
 
 func init() {

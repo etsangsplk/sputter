@@ -7,7 +7,6 @@ import (
 
 	a "github.com/kode4food/sputter/api"
 	d "github.com/kode4food/sputter/docstring"
-	e "github.com/kode4food/sputter/evaluator"
 )
 
 const genSymTemplate = "x-%s-gensym-%d"
@@ -17,17 +16,23 @@ var (
 	sList   = a.NewQualifiedSymbol("list", a.BuiltInDomain)
 	sVector = a.NewQualifiedSymbol("vector", a.BuiltInDomain)
 	sAssoc  = a.NewQualifiedSymbol("assoc", a.BuiltInDomain)
+	sApply  = a.NewQualifiedSymbol("apply", a.BuiltInDomain)
+	sToSeq  = a.NewQualifiedSymbol("to-seq!", a.BuiltInDomain)
 )
 
 var genSymIncrement uint64
 
 type syntaxContext struct {
 	context a.Context
-	genSyms map[string]a.Value
+	genSyms map[string]a.Symbol
 }
 
 func (sc *syntaxContext) quote(v a.Value) a.Value {
-	return sc.quoteValue(v)
+	r := sc.quoteValue(v)
+	fmt.Println("============================")
+	fmt.Println(r.Str())
+	fmt.Println("----------------------------")
+	return r
 }
 
 func (sc *syntaxContext) quoteValue(v a.Value) a.Value {
@@ -41,13 +46,13 @@ func (sc *syntaxContext) quoteValue(v a.Value) a.Value {
 }
 
 func (sc *syntaxContext) quoteSymbol(s a.Symbol) a.Value {
-	if gs, ok := sc.genSym(s); ok {
-		return gs
+	if gs, ok := sc.generateSymbol(s); ok {
+		return a.NewList(sQuote, gs)
 	}
-	return sc.qualifySymbol(s)
+	return a.NewList(sQuote, sc.qualifySymbol(s))
 }
 
-func (sc *syntaxContext) genSym(s a.Symbol) (a.Value, bool) {
+func (sc *syntaxContext) generateSymbol(s a.Symbol) (a.Symbol, bool) {
 	if s.Domain() != a.LocalDomain {
 		return nil, false
 	}
@@ -63,26 +68,29 @@ func (sc *syntaxContext) genSym(s a.Symbol) (a.Value, bool) {
 
 	idx := atomic.AddUint64(&genSymIncrement, 1)
 	q := fmt.Sprintf(genSymTemplate, n[0:len(n)-1], idx)
-	r := a.NewList(sQuote, a.NewLocalSymbol(a.Name(q)))
+	r := a.NewLocalSymbol(a.Name(q))
 	sc.genSyms[n] = r
 	return r, true
 }
 
 func (sc *syntaxContext) qualifySymbol(s a.Symbol) a.Value {
 	if s.Domain() != a.LocalDomain {
-		return a.NewList(sQuote, s)
+		return s
 	}
 	n := s.Name()
 	if c, ok := sc.context.Has(s.Name()); ok {
 		if c != sc.context {
 			ns := a.GetContextNamespace(c)
-			return a.NewList(sQuote, ns.Intern(n))
+			return ns.Intern(n)
 		}
 	}
 	return s
 }
 
 func (sc *syntaxContext) quoteSequence(s a.Sequence) a.Value {
+	if st, ok := s.(a.Str); ok {
+		return st
+	}
 	var sym a.Symbol
 	if l, ok := s.(a.List); ok && l.Count() > 0 {
 		sym = sList
@@ -91,18 +99,48 @@ func (sc *syntaxContext) quoteSequence(s a.Sequence) a.Value {
 	} else if an, ok := s.(a.Associative); ok && an.Count() > 0 {
 		sym = sAssoc
 	} else {
-		return s
+		panic("what are you having me quote here?")
 	}
-	return a.NewList(sc.quoteElements(s)...).Prepend(sym)
+	return a.NewList(sApply, sym, sc.quoteElements(s))
 }
 
-func (sc *syntaxContext) quoteElements(s a.Sequence) []a.Value {
+func (sc *syntaxContext) quoteElements(s a.Sequence) a.Value {
 	r := []a.Value{}
 	for i := s; i.IsSequence(); i = i.Rest() {
-		e := sc.quoteValue(i.First())
-		r = append(r, e)
+		v := i.First()
+		if f, ok := isUnquoteSplicing(v); ok {
+			r = append(r, a.NewList(sQuote, a.Eval(sc.context, f)))
+			continue
+		}
+		if f, ok := isUnquote(v); ok {
+			r = append(r, a.NewList(sList, a.Eval(sc.context, f)))
+			continue
+		}
+		r = append(r, a.NewList(sList, sc.quoteValue(v)))
 	}
-	return r
+	return a.NewList(r...).Prepend(sToSeq)
+}
+
+func isUnquote(v a.Value) (a.Value, bool) {
+	return isWrapperMacro("unquote", v)
+}
+
+func isUnquoteSplicing(v a.Value) (a.Value, bool) {
+	return isWrapperMacro("unquote-splicing", v)
+}
+
+func isWrapperMacro(n a.Name, v a.Value) (a.Value, bool) {
+	if l, ok := v.(a.List); ok && l.Count() > 0 {
+		if s, ok := l.First().(a.Symbol); ok {
+			r := l.Rest().First()
+			return r, isBuiltInDomain(s) && s.Name() == n
+		}
+	}
+	return nil, false
+}
+
+func isBuiltInDomain(s a.Symbol) bool {
+	return s.Domain() == a.BuiltInDomain
 }
 
 func quote(_ a.Context, args a.Sequence) a.Value {
@@ -110,25 +148,13 @@ func quote(_ a.Context, args a.Sequence) a.Value {
 	return args.First()
 }
 
-func unquote(c a.Context, args a.Sequence) a.Value {
-	a.AssertArity(args, 1)
-	return e.Expand(c, args.First())
-}
-
-func unquoteSplicing(c a.Context, args a.Sequence) a.Value {
-	a.AssertArity(args, 1)
-	return e.NewSplice(e.Expand(c, args.First()))
-}
-
 func syntaxquote(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
 	sc := &syntaxContext{
 		context: c,
-		genSyms: make(map[string]a.Value),
+		genSyms: make(map[string]a.Symbol),
 	}
-	q := sc.quote(args.First())
-	r := e.Expand(c, q)
-	return r
+	return sc.quote(args.First())
 }
 
 func init() {
@@ -137,18 +163,6 @@ func init() {
 			a.MetaName:    a.Name("quote"),
 			a.MetaDoc:     d.Get("quote"),
 			a.MetaSpecial: a.True,
-		}),
-	)
-
-	registerAnnotated(
-		a.NewMacro(unquote).WithMetadata(a.Metadata{
-			a.MetaName: a.Name("unquote"),
-		}),
-	)
-
-	registerAnnotated(
-		a.NewMacro(unquoteSplicing).WithMetadata(a.Metadata{
-			a.MetaName: a.Name("unquote-splicing"),
 		}),
 	)
 

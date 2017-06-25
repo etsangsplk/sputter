@@ -21,7 +21,7 @@ func TestClosure(t *testing.T) {
 	c1.Put("baz", s("baz_val"))
 
 	cl := e.EvalStr(c1, "((future [foo, baz]))")
-	v1 := cl.Eval(c1).(a.Vector)
+	v1 := a.Eval(c1, cl).(a.Vector)
 
 	r1, _ := v1.ElementAt(0)
 	r2, _ := v1.ElementAt(1)

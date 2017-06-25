@@ -17,9 +17,12 @@ type Variables map[Name]Value
 
 // Value is the generic interface for all 'Values'
 type Value interface {
-	Eval(c Context) Value
 	Str() Str
 }
+
+// ValueProcessor is the standard function interface for a func that
+// processes a Value against a Context (example: Emit)
+type ValueProcessor func(Context, Value) Value
 
 // Comparer is an interface for a Value capable of comparing.
 type Comparer interface {
@@ -80,11 +83,6 @@ func (n Name) Name() Name {
 	return n
 }
 
-// Eval is self-evaluating
-func (n Name) Eval(_ Context) Value {
-	return n
-}
-
 // Str converts this Value into a Str
 func (n Name) Str() Str {
 	return Str(n)
@@ -93,16 +91,11 @@ func (n Name) Str() Str {
 // Apply makes Bool Applicable
 func (b Bool) Apply(c Context, args Sequence) Value {
 	for i := args; i.IsSequence(); i = i.Rest() {
-		if i.First().Eval(c) != b {
+		if Eval(c, i.First()) != b {
 			return False
 		}
 	}
 	return True
-}
-
-// Eval is self-evaluating
-func (b Bool) Eval(_ Context) Value {
-	return b
 }
 
 // Str converts this Value into a Str
@@ -115,7 +108,7 @@ func (b Bool) Str() Str {
 
 func (n *nilValue) Apply(c Context, args Sequence) Value {
 	for i := args; i.IsSequence(); i = i.Rest() {
-		if i.First().Eval(c) != Nil {
+		if Eval(c, i.First()) != Nil {
 			return False
 		}
 	}
@@ -124,10 +117,6 @@ func (n *nilValue) Apply(c Context, args Sequence) Value {
 
 func (n *nilValue) Str() Str {
 	return "nil"
-}
-
-func (n *nilValue) Eval(_ Context) Value {
-	return n
 }
 
 // Truthy evaluates whether or not a Value is Truthy

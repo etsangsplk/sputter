@@ -11,7 +11,7 @@ func list(c a.Context, args a.Sequence) a.Value {
 		r := make([]a.Value, l)
 		idx := 0
 		for i := args; i.IsSequence(); i = i.Rest() {
-			r[idx] = i.First().Eval(c)
+			r[idx] = a.Eval(c, i.First())
 			idx++
 		}
 		return a.NewList(r...)
@@ -22,7 +22,7 @@ func list(c a.Context, args a.Sequence) a.Value {
 func listFromUncounted(c a.Context, args a.Sequence) a.Value {
 	r := []a.Value{}
 	for i := args; i.IsSequence(); i = i.Rest() {
-		r = append(r, i.First().Eval(c))
+		r = append(r, a.Eval(c, i.First()))
 	}
 	return a.NewList(r...)
 }

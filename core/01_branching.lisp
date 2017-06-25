@@ -3,12 +3,12 @@
 (defmacro when
   {:doc-asset "when"}
   [test & body]
-  `(if ~test (do ~@body)))
+  (list 'if test (cons 'do body) nil))
 
 (defmacro when-not
   {:doc-asset "when"}
   [test & body]
-  `(if ~test nil (do ~@body)))
+  (list 'if test nil (cons 'do body)))
 
 (defmacro cond
   {:doc-asset "cond"}

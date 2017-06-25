@@ -35,7 +35,6 @@ func TestMap(t *testing.T) {
 	v4 := p1.First()
 	r2 := p1.Rest()
 
-	as.Identical(p1, p1.Eval(nil))
 	as.String("not mapped", v4)
 	as.Equal(w, r2)
 	as.String("also not mapped", p2.First())

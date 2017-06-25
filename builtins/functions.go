@@ -15,7 +15,10 @@ type functionDefinition struct {
 	meta a.Metadata
 }
 
-type argProcessor func(c a.Context, args a.Sequence) a.Context
+type (
+	evalFunc     a.ValueProcessor
+	argProcessor func(c a.Context, args a.Sequence, e evalFunc) a.Context
+)
 
 var (
 	emptyMetadata = a.Metadata{}
@@ -51,18 +54,18 @@ func parseRestArg(s a.Sequence) a.Name {
 func makeRestArgProcessor(cl a.Context, an []a.Name, rn a.Name) argProcessor {
 	ac := len(an)
 
-	return func(c a.Context, args a.Sequence) a.Context {
+	return func(c a.Context, args a.Sequence, e evalFunc) a.Context {
 		a.AssertMinimumArity(args, ac)
 		l := a.ChildContext(cl)
 		i := args
 		for _, n := range an {
-			l.Put(n, i.First().Eval(c))
+			l.Put(n, e(c, i.First()))
 			i = i.Rest()
 		}
 
 		r := []a.Value{}
 		for ; i.IsSequence(); i = i.Rest() {
-			r = append(r, i.First().Eval(c))
+			r = append(r, e(c, i.First()))
 		}
 		l.Put(rn, a.NewList(r...))
 		return l
@@ -72,12 +75,12 @@ func makeRestArgProcessor(cl a.Context, an []a.Name, rn a.Name) argProcessor {
 func makeFixedArgProcessor(cl a.Context, an []a.Name) argProcessor {
 	ac := len(an)
 
-	return func(c a.Context, args a.Sequence) a.Context {
+	return func(c a.Context, args a.Sequence, e evalFunc) a.Context {
 		a.AssertArity(args, ac)
 		l := a.ChildContext(cl)
 		i := args
 		for _, n := range an {
-			l.Put(n, i.First().Eval(c))
+			l.Put(n, e(c, i.First()))
 			i = i.Rest()
 		}
 		return l
@@ -95,7 +98,7 @@ func optionalMetadata(c a.Context, args a.Sequence) (a.Metadata, a.Sequence) {
 	}
 
 	if m, ok := r.First().(a.Mapped); ok {
-		em := m.Eval(c).(a.Mapped)
+		em := a.Eval(c, m).(a.Mapped)
 		md = md.Merge(toMetadata(em))
 		r = r.Rest()
 	}
@@ -156,12 +159,12 @@ func defineFunction(closure a.Context, d *functionDefinition) a.Function {
 	db := a.NewBlock(d.body)
 
 	return a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
-		l := ap(c, args)
-		return db.Eval(l)
+		l := ap(c, args, a.Eval)
+		return a.Eval(l, db)
 	}).WithMetadata(d.meta).(a.Function)
 }
 
-func makefn(c a.Context, args a.Sequence) a.Value {
+func makeFn(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 	fn, r := optionalName(args)
 	md, r := optionalMetadata(c, r)
@@ -180,15 +183,15 @@ func makefn(c a.Context, args a.Sequence) a.Value {
 
 func apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 2)
-	f := a.AssertApplicable(args.First().Eval(c))
-	s := a.AssertSequence(args.Rest().First().Eval(c))
+	f := a.AssertApplicable(a.Eval(c, args.First()))
+	s := a.AssertSequence(a.Eval(c, args.Rest().First()))
 	return f.Apply(c, s)
 }
 
 func init() {
 	registerAnnotated(
-		a.NewFunction(makefn).WithMetadata(a.Metadata{
-			a.MetaName: a.Name("make-fn"),
+		a.NewFunction(makeFn).WithMetadata(a.Metadata{
+			a.MetaName: a.Name("fn"),
 		}),
 	)
 

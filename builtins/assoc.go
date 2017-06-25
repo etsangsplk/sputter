@@ -15,10 +15,10 @@ func assoc(c a.Context, args a.Sequence) a.Value {
 		r := make([]a.Vector, ml)
 		i := args
 		for idx := 0; idx < ml; idx++ {
-			k := i.First().Eval(c)
+			k := a.Eval(c, i.First())
 			i = i.Rest()
 
-			v := i.First().Eval(c)
+			v := a.Eval(c, i.First())
 			i = i.Rest()
 
 			r[idx] = a.NewVector(k, v)
@@ -36,7 +36,7 @@ func assocFromUncounted(c a.Context, args a.Sequence) a.Value {
 		if i.IsSequence() {
 			v := i.First()
 			r = append(r, a.NewVector(
-				k.Eval(c), v.Eval(c),
+				a.Eval(c, k), a.Eval(c, v),
 			))
 		} else {
 			panic(a.ExpectedPair)

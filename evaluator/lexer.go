@@ -66,8 +66,8 @@ var (
 	matchers mactchEntries
 )
 
-// NewLexer creates a new lexer Sequence
-func NewLexer(src a.Str) a.Sequence {
+// Scan creates a new lexer Sequence
+func Scan(src a.Str) a.Sequence {
 	l := &lexer{
 		once: a.Once(),
 		src:  string(src),
@@ -126,18 +126,9 @@ func (l *lexer) Prepend(v a.Value) a.Sequence {
 	panic("not implemented")
 }
 
-func (l *lexer) Eval(_ a.Context) a.Value {
-	return l
-}
-
 func (l *lexer) Str() a.Str {
 	// insulated by a filter
 	panic("not implemented")
-}
-
-// Eval is self-evaluating
-func (t *Token) Eval(_ a.Context) a.Value {
-	return t
 }
 
 // Str converts this Value into a Str

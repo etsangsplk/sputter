@@ -16,7 +16,7 @@ func def(c a.Context, args a.Sequence) a.Value {
 	n := a.AssertUnqualified(s).Name()
 	v := args.Rest().First()
 
-	ns.Put(n, v.Eval(c))
+	ns.Put(n, a.Eval(c, v))
 	return s
 }
 
@@ -35,10 +35,10 @@ func let(c a.Context, args a.Sequence) a.Value {
 		n := a.AssertUnqualified(s).Name()
 		i++
 		v, _ := b.ElementAt(i)
-		l.Put(n, v.Eval(l))
+		l.Put(n, a.Eval(l, v))
 	}
 
-	return a.NewBlock(args.Rest()).Eval(l)
+	return a.EvalBlock(l, args.Rest())
 }
 
 func init() {

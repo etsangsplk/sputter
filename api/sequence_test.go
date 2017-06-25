@@ -13,7 +13,6 @@ func (n *noCountSequence) First() a.Value               { return nil }
 func (n *noCountSequence) Rest() a.Sequence             { return nil }
 func (n *noCountSequence) Prepend(v a.Value) a.Sequence { return nil }
 func (n *noCountSequence) IsSequence() bool             { return false }
-func (n *noCountSequence) Eval(_ a.Context) a.Value     { return n }
 func (n *noCountSequence) Str() a.Str                   { return s("()") }
 
 func TestNonCountableSequence(t *testing.T) {

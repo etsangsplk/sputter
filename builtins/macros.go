@@ -3,16 +3,15 @@ package builtins
 import (
 	a "github.com/kode4food/sputter/api"
 	d "github.com/kode4food/sputter/docstring"
-	e "github.com/kode4food/sputter/evaluator"
 )
 
 func defineMacro(closure a.Context, d *functionDefinition) a.Function {
 	ap := makeArgProcessor(closure, d.args)
+	db := a.NewBlock(d.body)
 
 	return a.NewMacro(func(c a.Context, args a.Sequence) a.Value {
-		l := ap(c, args)
-		db := e.ExpandSequence(l, d.body)
-		return e.EvalExpand(l, db)
+		l := ap(c, args, a.Identity)
+		return a.Eval(l, db)
 	}).WithMetadata(d.meta).(a.Function)
 }
 
@@ -23,22 +22,34 @@ func defmacro(c a.Context, args a.Sequence) a.Value {
 	return m
 }
 
+func macroexpand1(c a.Context, args a.Sequence) a.Value {
+	a.AssertMinimumArity(args, 1)
+	r, _ := a.MacroExpand1(c, args.First())
+	return r
+}
+
 func macroexpand(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
-	ev := a.NewBlock(args).Eval(c)
-	return e.Expand(c, ev).Str()
+	r, _ := a.MacroExpand(c, args.First())
+	return r
 }
 
 func init() {
 	registerAnnotated(
-		a.NewMacro(defmacro).WithMetadata(a.Metadata{
+		a.NewFunction(defmacro).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("defmacro"),
 			a.MetaDoc:  d.Get("defmacro"),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewMacro(macroexpand).WithMetadata(a.Metadata{
+		a.NewFunction(macroexpand1).WithMetadata(a.Metadata{
+			a.MetaName: a.Name("macroexpand1"),
+		}),
+	)
+
+	registerAnnotated(
+		a.NewFunction(macroexpand).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("macroexpand"),
 		}),
 	)

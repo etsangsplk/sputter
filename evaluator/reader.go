@@ -52,8 +52,8 @@ type reader struct {
 	iter    *a.Iterator
 }
 
-// NewReader completely consumes a Lexer before returning a Value Sequence
-func NewReader(context a.Context, lexer a.Sequence) a.Sequence {
+// Read completely consumes a Lexer before returning a Value Sequence
+func Read(context a.Context, lexer a.Sequence) a.Sequence {
 	r := a.NewVector()
 	iter := a.Iterate(lexer)
 	ri := &reader{
@@ -63,7 +63,7 @@ func NewReader(context a.Context, lexer a.Sequence) a.Sequence {
 	for f, ok := ri.nextValue(); ok; f, ok = ri.nextValue() {
 		r = r.Conjoin(f).(a.Vector)
 	}
-	return r
+	return a.NewBlock(r)
 }
 
 func (r *reader) nextToken() (*Token, bool) {

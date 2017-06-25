@@ -34,13 +34,9 @@ func (k *keyword) Name() Name {
 	return k.name
 }
 
-func (k *keyword) Eval(_ Context) Value {
-	return k
-}
-
 func (k *keyword) Apply(c Context, args Sequence) Value {
 	AssertArity(args, 1)
-	v := args.First().Eval(c)
+	v := Eval(c, args.First())
 	if g, ok := v.(Getter); ok {
 		if r, ok := g.Get(k); ok {
 			return r

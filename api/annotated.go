@@ -57,11 +57,6 @@ func (m Metadata) Get(key Value) (Value, bool) {
 	return Nil, false
 }
 
-// Eval is self-evaluating
-func (m Metadata) Eval(_ Context) Value {
-	return m
-}
-
 // Str converts this Value into a Str
 func (m Metadata) Str() Str {
 	var b bytes.Buffer

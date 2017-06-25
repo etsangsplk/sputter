@@ -14,8 +14,6 @@ func TestChannel(t *testing.T) {
 
 	e, seq := a.NewChannel()
 	seq = seq.Prepend(f(1))
-	as.Identical(e, e.Eval(nil))
-	as.Identical(seq, seq.Eval(nil))
 	as.Contains(":type channel-emitter", e)
 	as.Contains(":type channel-sequence", seq)
 

@@ -19,17 +19,17 @@ func f(f float64) a.Number {
 
 func TestCreateReader(t *testing.T) {
 	as := assert.New(t)
-	l := e.NewLexer("99")
+	l := e.Scan("99")
 	c := a.NewContext()
-	tr := e.NewReader(c, l)
+	tr := e.Read(c, l)
 	as.NotNil(tr)
 }
 
 func TestReadInteger(t *testing.T) {
 	as := assert.New(t)
-	l := e.NewLexer("99")
+	l := e.Scan("99")
 	c := a.NewContext()
-	tr := e.NewReader(c, l)
+	tr := e.Read(c, l)
 	v := tr.First()
 	n, ok := v.(a.Number)
 	as.True(ok)
@@ -38,9 +38,9 @@ func TestReadInteger(t *testing.T) {
 
 func TestReadList(t *testing.T) {
 	as := assert.New(t)
-	l := e.NewLexer(`(99 "hello" 55.12)`)
+	l := e.Scan(`(99 "hello" 55.12)`)
 	c := a.NewContext()
-	tr := e.NewReader(c, l)
+	tr := e.Read(c, l)
 	v := tr.First()
 	list, ok := v.(a.List)
 	as.True(ok)
@@ -64,9 +64,9 @@ func TestReadList(t *testing.T) {
 
 func TestReadVector(t *testing.T) {
 	as := assert.New(t)
-	l := e.NewLexer(`[99 "hello" 55.12]`)
+	l := e.Scan(`[99 "hello" 55.12]`)
 	c := a.NewContext()
-	tr := e.NewReader(c, l)
+	tr := e.Read(c, l)
 	v := tr.First()
 	vector, ok := v.(a.Vector)
 	as.True(ok)
@@ -86,9 +86,9 @@ func TestReadVector(t *testing.T) {
 
 func TestReadMap(t *testing.T) {
 	as := assert.New(t)
-	l := e.NewLexer(`{:name "blah" :age 99}`)
+	l := e.Scan(`{:name "blah" :age 99}`)
 	c := a.NewContext()
-	tr := e.NewReader(c, l)
+	tr := e.Read(c, l)
 	v := tr.First()
 	m, ok := v.(a.Associative)
 	as.True(ok)
@@ -97,9 +97,9 @@ func TestReadMap(t *testing.T) {
 
 func TestReadNestedList(t *testing.T) {
 	as := assert.New(t)
-	l := e.NewLexer(`(99 ("hello" "there") 55.12)`)
+	l := e.Scan(`(99 ("hello" "there") 55.12)`)
 	c := a.NewContext()
-	tr := e.NewReader(c, l)
+	tr := e.Read(c, l)
 	v := tr.First()
 	list, ok := v.(a.List)
 	as.True(ok)
@@ -148,7 +148,7 @@ func TestEvaluable(t *testing.T) {
 	hello := a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
 		i := a.Iterate(args)
 		arg, _ := i.Next()
-		v := arg.Eval(c)
+		v := a.Eval(c, arg)
 		return s("Hello, " + string(v.(a.Str)) + "!")
 	}).WithMetadata(a.Metadata{
 		a.MetaName: a.Name("hello"),
@@ -175,11 +175,10 @@ func TestBuiltIns(t *testing.T) {
 		a.MetaName: a.Name("hello"),
 	}).(a.Function))
 
-	l := e.NewLexer(`(hello)`)
-	tr := e.NewReader(b, l)
-	ex := e.ExpandSequence(b, tr)
+	l := e.Scan(`(hello)`)
+	tr := e.Read(b, l)
 	c := a.ChildContext(b)
-	as.String("there", a.NewBlock(ex).Eval(c))
+	as.String("there", a.Eval(c, tr))
 }
 
 func testReaderError(t *testing.T, src string, err string) {
@@ -194,9 +193,9 @@ func testReaderError(t *testing.T, src string, err string) {
 	}()
 
 	c := a.NewContext()
-	l := e.NewLexer(s(src))
-	tr := e.NewReader(c, l)
-	a.NewBlock(tr).Eval(c)
+	l := e.Scan(s(src))
+	tr := e.Read(c, l)
+	a.Eval(c, tr)
 }
 
 func TestReaderErrors(t *testing.T) {

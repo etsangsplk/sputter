@@ -18,24 +18,15 @@ func NewMacro(e SequenceProcessor) Function {
 	return NewFunction(e).WithMetadata(macroMetadata).(Function)
 }
 
-// IsMacro tests an Applicable as being marked a Macro
-func IsMacro(a Applicable) bool {
+// IsMacro tests an Applicable as being marked a Macro and is a special form
+func IsMacro(a Applicable) (bool, bool) {
 	if an, ok := a.(Annotated); ok {
 		if v, ok := an.Metadata().Get(MetaMacro); ok {
-			return v == True
+			if sp, ok := an.Metadata().Get(MetaSpecial); ok {
+				return v == True, sp == True
+			}
+			return v == True, false
 		}
 	}
-	return false
-}
-
-// IsSpecialForm tests a Macro as being marked as a special form
-func IsSpecialForm(a Applicable) bool {
-	if !IsMacro(a) {
-		return false
-	}
-	an, _ := a.(Annotated)
-	if v, ok := an.Metadata().Get(MetaSpecial); ok {
-		return v == True
-	}
-	return false
+	return false, false
 }

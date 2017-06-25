@@ -34,7 +34,6 @@ func TestConvertNumber(t *testing.T) {
 	n4 := a.NewRatio(40, 2)
 	n5 := f(20)
 
-	as.Identical(n4, n4.Eval(nil))
 	testExact(as, n1, 12.8)
 	testExact(as, n2, 12.9)
 	testExact(as, n3, 25)

@@ -174,14 +174,6 @@ func (r *rat) Float64() (float64, bool) {
 	return (*big.Rat)(r).Float64()
 }
 
-func (d *dec) Eval(_ Context) Value {
-	return d
-}
-
-func (r *rat) Eval(_ Context) Value {
-	return r
-}
-
 // Str converts this Value into a Str
 func (d *dec) Str() Str {
 	return Str((*apd.Decimal)(d).ToStandard())

@@ -32,17 +32,15 @@ func EvaluateFile() {
 	}
 }
 
-func makeEvaluator(c a.Context, src a.Str) a.Sequence {
-	l := e.NewLexer(src)
-	r := e.NewReader(c, l)
-	e := e.Expand(c, r).(a.Sequence)
-	return e
+func readSource(c a.Context, src a.Str) a.Sequence {
+	l := e.Scan(src)
+	return e.Read(c, l)
 }
 
 func evalBuffer(src []byte) a.Value {
 	c := e.NewEvalContext()
-	s := makeEvaluator(c, a.Str(src))
-	return s.Eval(a.ChildContext(c))
+	r := readSource(c, a.Str(src))
+	return a.Eval(c, r)
 }
 
 func exitWithError() {

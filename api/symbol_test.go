@@ -15,7 +15,7 @@ func TestSymbol(t *testing.T) {
 
 	sym := a.NewLocalSymbol("howdy")
 	as.True(sym.IsSymbol())
-	as.String("ho", sym.Eval(c))
+	as.String("ho", a.Eval(c, sym))
 	as.String("howdy", sym)
 }
 
@@ -43,10 +43,10 @@ func TestQualifiedSymbol(t *testing.T) {
 	as.Equal(a.GetNamespace("ns2"), s2.Namespace(c1))
 	as.Equal(a.GetNamespace("ns1"), s3.Namespace(c1))
 
-	as.String("foo-ns1", s1.Eval(empty))
-	as.String("foo-ns2", s2.Eval(empty))
-	as.String("foo-ns1", s3.Eval(c1))
-	as.String("foo-ns2", s3.Eval(c2))
+	as.String("foo-ns1", a.Eval(empty, s1))
+	as.String("foo-ns2", a.Eval(empty, s2))
+	as.String("foo-ns1", a.Eval(c1, s3))
+	as.String("foo-ns2", a.Eval(c2, s3))
 }
 
 func TestSymbolInterning(t *testing.T) {
@@ -66,7 +66,7 @@ func TestUnknownSymbol(t *testing.T) {
 	defer as.ExpectError(a.Err(a.UnknownSymbol, "howdy"))
 	c := a.NewContext()
 	sym := a.NewLocalSymbol("howdy")
-	sym.Eval(c)
+	a.Eval(c, sym)
 }
 
 func TestSymbolParsing(t *testing.T) {

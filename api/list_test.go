@@ -89,13 +89,13 @@ func TestListEval(t *testing.T) {
 	c.Put(helloThere.Name(), helloThere)
 
 	fl := a.NewList(helloThere)
-	as.String("there", fl.Eval(c))
+	as.String("there", a.Eval(c, fl))
 
 	sym := a.NewLocalSymbol("hello")
 	sl := a.NewList(sym)
-	as.String("there", sl.Eval(c))
+	as.String("there", a.Eval(c, sl))
 
-	as.Equal(a.EmptyList, a.EmptyList.Eval(c))
+	as.Equal(a.EmptyList, a.Eval(c, a.EmptyList))
 }
 
 func testBrokenEval(t *testing.T, val a.Value, err string) {
@@ -103,7 +103,7 @@ func testBrokenEval(t *testing.T, val a.Value, err string) {
 
 	defer as.ExpectError(err)
 	c := a.NewContext()
-	val.Eval(c)
+	a.Eval(c, val)
 }
 
 func TestNonFunction(t *testing.T) {

@@ -55,10 +55,6 @@ func (ns *namespace) Intern(n Name) Symbol {
 	}).(Symbol)
 }
 
-func (ns *namespace) Eval(_ Context) Value {
-	return ns
-}
-
 func (ns *namespace) Str() Str {
 	return "(ns " + Str(ns.domain) + ")"
 }

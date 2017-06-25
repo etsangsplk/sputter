@@ -35,10 +35,6 @@ type Sequence interface {
 	IsSequence() bool
 }
 
-type block struct {
-	Sequence
-}
-
 // Conjoiner is a Sequence that can be Conjoined in some way
 type Conjoiner interface {
 	Sequence
@@ -55,23 +51,6 @@ type Indexed interface {
 	Elementer
 }
 
-// NewBlock identifies a Sequence as being block-processed
-func NewBlock(s Sequence) Sequence {
-	return &block{Sequence: s}
-}
-
-func (b *block) Eval(c Context) Value {
-	var r Value = Nil
-	for i := b.Sequence; i.IsSequence(); i = i.Rest() {
-		r = i.First().Eval(c)
-	}
-	return r
-}
-
-func (b *block) Str() Str {
-	return b.Sequence.Str()
-}
-
 // Count will return the Count from a Counted Sequence or explode
 func Count(v Value) int {
 	if c, ok := v.(Counted); ok {
@@ -83,12 +62,12 @@ func Count(v Value) int {
 // IndexedApply provides 'nth' behavior for Indexed Sequences
 func IndexedApply(s Indexed, c Context, args Sequence) Value {
 	i := AssertArityRange(args, 1, 2)
-	idx := AssertInteger(args.First().Eval(c))
+	idx := AssertInteger(Eval(c, args.First()))
 	if r, ok := s.ElementAt(idx); ok {
 		return r
 	}
 	if i == 2 {
-		return args.Rest().First().Eval(c)
+		return Eval(c, args.Rest().First())
 	}
 	panic(Err(IndexNotFound, strconv.Itoa(idx)))
 }

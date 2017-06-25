@@ -86,17 +86,16 @@ func (l *list) Eval(c Context) Value {
 	}
 
 	t := l.first
-	if a, ok := t.Eval(c).(Applicable); ok {
+	if a, ok := Eval(c, t).(Applicable); ok {
 		return a.Apply(c, l.rest)
 	}
 	panic(Err(ExpectedApplicable, t))
-
 }
 
 func (l *list) Str() Str {
 	return MakeSequenceStr(l)
 }
-
+	
 func init() {
 	emptyList = &list{
 		first: Nil,

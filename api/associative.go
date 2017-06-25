@@ -59,7 +59,7 @@ func (a associative) Get(key Value) (Value, bool) {
 
 func (a associative) Apply(c Context, args Sequence) Value {
 	AssertArity(args, 1)
-	k := args.First().Eval(c)
+	k := Eval(c, args.First())
 	if r, ok := a.Get(k); ok {
 		return r
 	}
@@ -73,7 +73,7 @@ func (a associative) Eval(c Context) Value {
 		mp := a[i]
 		k, _ := mp.ElementAt(0)
 		v, _ := mp.ElementAt(1)
-		r[i] = NewVector(k.Eval(c), v.Eval(c))
+		r[i] = NewVector(Eval(c, k), Eval(c, v))
 	}
 	return r
 }

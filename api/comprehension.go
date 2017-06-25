@@ -30,10 +30,6 @@ func (c *compElement) Prepend(v Value) Sequence {
 	}
 }
 
-func (c *compElement) Eval(_ Context) Value {
-	return c
-}
-
 func (c *compElement) Str() Str {
 	return MakeSequenceStr(c)
 }

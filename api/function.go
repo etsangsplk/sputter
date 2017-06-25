@@ -77,10 +77,6 @@ func (f *function) Apply(c Context, args Sequence) Value {
 	return f.exec(c, args)
 }
 
-func (f *function) Eval(_ Context) Value {
-	return f
-}
-
 func (f *function) Str() Str {
 	return MakeDumpStr(f)
 }

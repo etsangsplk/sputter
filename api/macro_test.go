@@ -16,8 +16,11 @@ func TestMacro(t *testing.T) {
 		a.MetaName: a.Name("orig"),
 	}).(a.Function)
 
-	as.True(a.IsMacro(m1))
-	as.False(a.IsMacro(a.NewFunction(nil)))
+	ok, _ := a.IsMacro(m1)
+	as.True(ok)
+
+	ok, _ = a.IsMacro(a.NewFunction(nil))
+	as.False(ok)
 
 	m2 := m1.WithMetadata(a.Metadata{
 		foo:        s("bar"),

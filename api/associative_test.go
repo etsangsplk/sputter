@@ -14,7 +14,7 @@ func getTestMap() a.Associative {
 		a.NewVector(s("string"), s("value")),
 	)
 	c := a.NewContext()
-	return r.Eval(c).(a.Associative)
+	return a.Eval(c, r).(a.Associative)
 }
 
 func TestAssociative(t *testing.T) {
@@ -79,7 +79,7 @@ func TestAssociativePrepend(t *testing.T) {
 	as.True(ok)
 	as.String("bar", r)
 
-	if e2, ok := m2.Eval(a.NewContext()).(a.Associative); ok {
+	if e2, ok := a.Eval(a.NewContext(), m2).(a.Associative); ok {
 		as.True(&e2 != &m2)
 	} else {
 		as.Fail("map.Eval() didn't return an Associative")

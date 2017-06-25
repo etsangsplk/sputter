@@ -1,15 +1,12 @@
 package builtins
 
-import (
-	a "github.com/kode4food/sputter/api"
-	e "github.com/kode4food/sputter/evaluator"
-)
+import a "github.com/kode4food/sputter/api"
 
 type names []a.Name
 
 type closure struct {
 	names names
-	body  a.Value
+	body  a.Sequence
 }
 
 var emptyNames = names{}
@@ -73,7 +70,8 @@ func visitSequence(s a.Sequence) names {
 func makeClosure(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
 	nv := makeNames(a.AssertVector(args.First()))
-	cb := e.EvalExpand(c, args.Rest())
+	ex, _ := a.MacroExpand(c, args.Rest())
+	cb := ex.(a.Sequence)
 	cn := consolidateNames(visitValue(cb), nv)
 
 	if len(cn) > 0 {
@@ -96,7 +94,7 @@ func (cl *closure) Eval(c a.Context) a.Value {
 
 	ns := a.GetContextNamespace(c)
 	l := a.ChildContextVars(ns, vars)
-	return cl.body.Eval(l)
+	return a.EvalBlock(l, cl.body)
 }
 
 func (cl *closure) Str() a.Str {

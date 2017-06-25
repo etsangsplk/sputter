@@ -46,7 +46,7 @@ func (v vector) Eval(c Context) Value {
 	l := len(v)
 	r := make(vector, l)
 	for i := 0; i < l; i++ {
-		r[i] = v[i].Eval(c)
+		r[i] = Eval(c, v[i])
 	}
 	return r
 }

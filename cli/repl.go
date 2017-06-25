@@ -211,10 +211,6 @@ func (r *REPL) Paint(line []rune, pos int) []rune {
 	return line
 }
 
-func (s *sentinel) Eval(_ a.Context) a.Value {
-	return s
-}
-
 func (s *sentinel) Str() a.Str {
 	return ""
 }

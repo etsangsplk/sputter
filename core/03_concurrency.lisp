@@ -4,7 +4,9 @@
 (defmacro async
   {:doc-asset "async"}
   [& forms]
-  `(closure [] (do-async ~@forms)))
+  (cons 'do-async forms))
+  ;`(closure [] (do-async ~@forms)))
+  ;`(do-async ~@forms))
 
 (defmacro generate
   {:doc-asset "generate"}
@@ -22,7 +24,12 @@
 (defmacro future
   {:doc-asset "future"}
   [& forms]
-  `(let
-    [promise# (promise)]
-    (async (promise# (do ~@forms)))
-    promise#))
+  (list 'sputter:let
+    (vector 'sputter/pr (list 'sputter:promise))
+    (list 'sputter:async
+      (list 'sputter/pr (cons 'sputter:do forms)))
+    'sputter/pr))
+;  `(let
+;    [promise# (promise)]
+;    (async (promise# (do ~@forms)))
+;    promise#))

@@ -11,7 +11,6 @@ func TestNames(t *testing.T) {
 	as := assert.New(t)
 
 	n := a.Name("hello")
-	as.Identical(n, n.Eval(nil))
 	as.Equal(a.Name("hello"), n.Name())
 }
 

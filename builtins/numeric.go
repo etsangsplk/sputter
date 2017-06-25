@@ -13,7 +13,7 @@ var (
 func reduceNum(c a.Context, s a.Sequence, v a.Number, f reduceFunc) a.Value {
 	r := v
 	for i := s; i.IsSequence(); i = i.Rest() {
-		fv := a.AssertNumber(i.First().Eval(c))
+		fv := a.AssertNumber(a.Eval(c, i.First()))
 		r = f(r, fv)
 	}
 	return r
@@ -21,14 +21,14 @@ func reduceNum(c a.Context, s a.Sequence, v a.Number, f reduceFunc) a.Value {
 
 func fetchFirstNumber(c a.Context, args a.Sequence) (a.Number, a.Sequence) {
 	a.AssertMinimumArity(args, 1)
-	nv := a.AssertNumber(args.First().Eval(c))
+	nv := a.AssertNumber(a.Eval(c, args.First()))
 	return nv, args.Rest()
 }
 
 func compare(c a.Context, s a.Sequence, f compareFunc) a.Value {
 	cur, r := fetchFirstNumber(c, s)
 	for i := r; i.IsSequence(); i = i.Rest() {
-		v := a.AssertNumber(i.First().Eval(c))
+		v := a.AssertNumber(a.Eval(c, i.First()))
 		if !f(cur, v) {
 			return a.False
 		}

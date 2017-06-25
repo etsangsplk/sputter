@@ -16,8 +16,6 @@ func makeToken(t e.TokenType, v a.Value) *e.Token {
 }
 
 func assertToken(as *assert.Wrapper, like *e.Token, value *e.Token) {
-	as.Identical(like, like.Eval(nil))
-	as.Identical(value, value.Eval(nil))
 	as.Number(float64(like.Type), float64(value.Type))
 }
 
@@ -35,20 +33,20 @@ func assertTokenSequence(as *assert.Wrapper, s a.Sequence, tokens []*e.Token) {
 
 func TestCreateLexer(t *testing.T) {
 	as := assert.New(t)
-	l := e.NewLexer("hello")
+	l := e.Scan("hello")
 	as.NotNil(l)
 	as.String(`([1 "hello"])`, l)
 }
 
 func TestWhitespace(t *testing.T) {
 	as := assert.New(t)
-	l := e.NewLexer("   \t ")
+	l := e.Scan("   \t ")
 	assertTokenSequence(as, l, []*e.Token{})
 }
 
 func TestEmptyList(t *testing.T) {
 	as := assert.New(t)
-	l := e.NewLexer(" ( \t ) ")
+	l := e.Scan(" ( \t ) ")
 	assertTokenSequence(as, l, []*e.Token{
 		makeToken(e.ListStart, s("(")),
 		makeToken(e.ListEnd, s(")")),
@@ -57,7 +55,7 @@ func TestEmptyList(t *testing.T) {
 
 func TestNumbers(t *testing.T) {
 	as := assert.New(t)
-	l := e.NewLexer(" 10 12.8 8E+10 99.598e+10 54e+12 1/2")
+	l := e.Scan(" 10 12.8 8E+10 99.598e+10 54e+12 1/2")
 	assertTokenSequence(as, l, []*e.Token{
 		makeToken(e.Number, f(10)),
 		makeToken(e.Number, f(12.8)),
@@ -70,7 +68,7 @@ func TestNumbers(t *testing.T) {
 
 func TestStrings(t *testing.T) {
 	as := assert.New(t)
-	l := e.NewLexer(` "hello there" "how's \"life\"?"  `)
+	l := e.Scan(` "hello there" "how's \"life\"?"  `)
 	assertTokenSequence(as, l, []*e.Token{
 		makeToken(e.String, s(`hello there`)),
 		makeToken(e.String, s(`how's "life"?`)),
@@ -79,7 +77,7 @@ func TestStrings(t *testing.T) {
 
 func TestMultiLine(t *testing.T) {
 	as := assert.New(t)
-	l := e.NewLexer(` "hello there"
+	l := e.Scan(` "hello there"
   "how's life?"
 99`)
 

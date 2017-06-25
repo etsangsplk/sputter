@@ -74,10 +74,6 @@ func (n *wrapped) Type() a.Name {
 	return n.meta[a.MetaType].(a.Name)
 }
 
-func (n *wrapped) Eval(_ a.Context) a.Value {
-	return n
-}
-
 func (n *wrapped) Str() a.Str {
 	return a.MakeDumpStr(n)
 }
