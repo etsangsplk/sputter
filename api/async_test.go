@@ -61,9 +61,9 @@ func TestPromise(t *testing.T) {
 	}()
 
 	as.Contains(":type promise", p1)
-	as.String("hello", p1.Value())
+	as.String("hello", p1.Resolve())
 	p1.Deliver(s("hello"))
-	as.String("hello", p1.Value())
+	as.String("hello", p1.Resolve())
 
 	defer as.ExpectError(a.ExpectedUndelivered)
 	p1.Deliver(s("goodbye"))

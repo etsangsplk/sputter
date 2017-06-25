@@ -35,7 +35,7 @@ type Emitter interface {
 type Promise interface {
 	Value
 	Deliver(Value) Value
-	Value() Value
+	Resolve() Value
 }
 
 type channelResult struct {
@@ -233,7 +233,7 @@ func NewPromise() Promise {
 	}
 }
 
-func (p *promise) Value() Value {
+func (p *promise) Resolve() Value {
 	if atomic.LoadUint32(&p.state) == deliveredState {
 		return p.val
 	}

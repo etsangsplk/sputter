@@ -71,7 +71,7 @@ func makeClosure(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
 	nv := makeNames(a.AssertVector(args.First()))
 	ex, _ := a.MacroExpand(c, args.Rest())
-	cb := ex.(a.Sequence)
+	cb := a.NewBlock(ex.(a.Sequence))
 	cn := consolidateNames(visitValue(cb), nv)
 
 	if len(cn) > 0 {
@@ -94,7 +94,7 @@ func (cl *closure) Eval(c a.Context) a.Value {
 
 	ns := a.GetContextNamespace(c)
 	l := a.ChildContextVars(ns, vars)
-	return a.EvalBlock(l, cl.body)
+	return a.Eval(l, cl.body)
 }
 
 func (cl *closure) Str() a.Str {

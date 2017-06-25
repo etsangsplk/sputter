@@ -62,7 +62,7 @@ func promise(_ a.Context, args a.Sequence) a.Value {
 			if a.AssertArityRange(args, 0, 1) == 1 {
 				return p.Deliver(args.First())
 			}
-			return p.Value()
+			return p.Resolve()
 		},
 	).WithMetadata(promiseMetadata).(a.Function)
 }
