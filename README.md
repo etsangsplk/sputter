@@ -41,7 +41,7 @@ that will change rapidly. The current built-in forms are:
   * Branching: `if`, `cond`, `do`, `when`, `when-not`, `and`, `or`
   * Numeric: `+`, `-`, `*`, `/`, `!=`, `=`, `<`, `<=`, `>`, `>=`
   * Variables: `def`, `let`, `ns`, `with-ns`, `quote`
-  * Functions: `defn`, `fn`, `apply`, `defmacro`
+  * Functions: `defn`, `fn`, `lambda`, `apply`, `defmacro`
   * Predicates: `eq`, `!eq`, `nil?`, `!nil?`
   * Sequences: `cons`, `conj`, `first`, `rest`, `seq?`, `!seq?`
   * Lists: `list`, `list?`, `!list?`, `to-list`
