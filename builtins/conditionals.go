@@ -21,8 +21,9 @@ func _if(c a.Context, args a.Sequence) a.Value {
 func init() {
 	registerAnnotated(
 		a.NewFunction(_if).WithMetadata(a.Metadata{
-			a.MetaName: a.Name("if"),
-			a.MetaDoc:  d.Get("if"),
+			a.MetaName:    a.Name("if"),
+			a.MetaDoc:     d.Get("if"),
+			a.MetaSpecial: a.True,
 		}),
 	)
 }

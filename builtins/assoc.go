@@ -5,7 +5,7 @@ import (
 	d "github.com/kode4food/sputter/docstring"
 )
 
-func assoc(c a.Context, args a.Sequence) a.Value {
+func assoc(_ a.Context, args a.Sequence) a.Value {
 	if cnt, ok := args.(a.Counted); ok {
 		l := cnt.Count()
 		if l%2 != 0 {
@@ -15,29 +15,27 @@ func assoc(c a.Context, args a.Sequence) a.Value {
 		r := make([]a.Vector, ml)
 		i := args
 		for idx := 0; idx < ml; idx++ {
-			k := a.Eval(c, i.First())
+			k := i.First()
 			i = i.Rest()
 
-			v := a.Eval(c, i.First())
+			v := i.First()
 			i = i.Rest()
 
 			r[idx] = a.NewVector(k, v)
 		}
 		return a.NewAssociative(r...)
 	}
-	return assocFromUncounted(c, args)
+	return assocFromUncounted(args)
 }
 
-func assocFromUncounted(c a.Context, args a.Sequence) a.Value {
+func assocFromUncounted(args a.Sequence) a.Value {
 	r := []a.Vector{}
 	for i := args; i.IsSequence(); i = i.Rest() {
 		k := i.First()
 		i = i.Rest()
 		if i.IsSequence() {
 			v := i.First()
-			r = append(r, a.NewVector(
-				a.Eval(c, k), a.Eval(c, v),
-			))
+			r = append(r, a.NewVector(k, v))
 		} else {
 			panic(a.ExpectedPair)
 		}

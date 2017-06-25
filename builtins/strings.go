@@ -7,10 +7,10 @@ import (
 	d "github.com/kode4food/sputter/docstring"
 )
 
-func str(c a.Context, args a.Sequence) a.Value {
+func str(_ a.Context, args a.Sequence) a.Value {
 	var b bytes.Buffer
 	for i := args; i.IsSequence(); i = i.Rest() {
-		v := a.Eval(c, i.First())
+		v := i.First()
 		if v == a.Nil {
 			continue
 		} else if s, ok := v.(a.Str); ok {

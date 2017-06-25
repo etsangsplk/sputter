@@ -30,3 +30,13 @@ func IsMacro(a Applicable) (bool, bool) {
 	}
 	return false, false
 }
+
+// IsSpecialForm tests an Applicable as being marked a special form
+func IsSpecialForm(a Applicable) bool {
+	if an, ok := a.(Annotated); ok {
+		if sp, ok := an.Metadata().Get(MetaSpecial); ok {
+			return sp == True
+		}
+	}
+	return false
+}

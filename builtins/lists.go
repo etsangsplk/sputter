@@ -11,18 +11,18 @@ func list(c a.Context, args a.Sequence) a.Value {
 		r := make([]a.Value, l)
 		idx := 0
 		for i := args; i.IsSequence(); i = i.Rest() {
-			r[idx] = a.Eval(c, i.First())
+			r[idx] = i.First()
 			idx++
 		}
 		return a.NewList(r...)
 	}
-	return listFromUncounted(c, args)
+	return listFromUncounted(args)
 }
 
-func listFromUncounted(c a.Context, args a.Sequence) a.Value {
+func listFromUncounted(args a.Sequence) a.Value {
 	r := []a.Value{}
 	for i := args; i.IsSequence(); i = i.Rest() {
-		r = append(r, a.Eval(c, i.First()))
+		r = append(r, i.First())
 	}
 	return a.NewList(r...)
 }

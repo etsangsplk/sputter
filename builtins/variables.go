@@ -44,15 +44,17 @@ func let(c a.Context, args a.Sequence) a.Value {
 func init() {
 	registerAnnotated(
 		a.NewFunction(def).WithMetadata(a.Metadata{
-			a.MetaName: a.Name("def"),
-			a.MetaDoc:  d.Get("def"),
+			a.MetaName:    a.Name("def"),
+			a.MetaDoc:     d.Get("def"),
+			a.MetaSpecial: a.True,
 		}),
 	)
 
 	registerAnnotated(
 		a.NewFunction(let).WithMetadata(a.Metadata{
-			a.MetaName: a.Name("let"),
-			a.MetaDoc:  d.Get("let"),
+			a.MetaName:    a.Name("let"),
+			a.MetaDoc:     d.Get("let"),
+			a.MetaSpecial: a.True,
 		}),
 	)
 }

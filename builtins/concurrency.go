@@ -33,10 +33,10 @@ func closeFunction(e a.Emitter) a.Function {
 }
 
 func emitFunction(e a.Emitter) a.Function {
-	return a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
+	return a.NewFunction(func(_ a.Context, args a.Sequence) a.Value {
 		a.AssertMinimumArity(args, 1)
 		for i := args; i.IsSequence(); i = i.Rest() {
-			e.Emit(a.Eval(c, i.First()))
+			e.Emit(i.First())
 		}
 		return a.Nil
 	}).WithMetadata(emitterMetadata).(a.Function)
@@ -58,9 +58,9 @@ func promise(_ a.Context, args a.Sequence) a.Value {
 	p := a.NewPromise()
 
 	return a.NewFunction(
-		func(c a.Context, args a.Sequence) a.Value {
+		func(_ a.Context, args a.Sequence) a.Value {
 			if a.AssertArityRange(args, 0, 1) == 1 {
-				return p.Deliver(a.Eval(c, args.First()))
+				return p.Deliver(args.First())
 			}
 			return p.Value()
 		},
@@ -90,7 +90,8 @@ func init() {
 
 	registerAnnotated(
 		a.NewFunction(async).WithMetadata(a.Metadata{
-			a.MetaName: a.Name("do-async"),
+			a.MetaName:    a.Name("do-async"),
+			a.MetaSpecial: a.True,
 		}),
 	)
 }

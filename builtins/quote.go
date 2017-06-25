@@ -17,7 +17,7 @@ var (
 	sVector = a.NewQualifiedSymbol("vector", a.BuiltInDomain)
 	sAssoc  = a.NewQualifiedSymbol("assoc", a.BuiltInDomain)
 	sApply  = a.NewQualifiedSymbol("apply", a.BuiltInDomain)
-	sToSeq  = a.NewQualifiedSymbol("to-seq!", a.BuiltInDomain)
+	sAppend = a.NewQualifiedSymbol("append", a.BuiltInDomain)
 )
 
 var genSymIncrement uint64
@@ -28,11 +28,7 @@ type syntaxContext struct {
 }
 
 func (sc *syntaxContext) quote(v a.Value) a.Value {
-	r := sc.quoteValue(v)
-	fmt.Println("============================")
-	fmt.Println(r.Str())
-	fmt.Println("----------------------------")
-	return r
+	return sc.quoteValue(v)
 }
 
 func (sc *syntaxContext) quoteValue(v a.Value) a.Value {
@@ -109,16 +105,16 @@ func (sc *syntaxContext) quoteElements(s a.Sequence) a.Value {
 	for i := s; i.IsSequence(); i = i.Rest() {
 		v := i.First()
 		if f, ok := isUnquoteSplicing(v); ok {
-			r = append(r, a.NewList(sQuote, a.Eval(sc.context, f)))
+			r = append(r, f)
 			continue
 		}
 		if f, ok := isUnquote(v); ok {
-			r = append(r, a.NewList(sList, a.Eval(sc.context, f)))
+			r = append(r, a.NewList(sList, f))
 			continue
 		}
 		r = append(r, a.NewList(sList, sc.quoteValue(v)))
 	}
-	return a.NewList(r...).Prepend(sToSeq)
+	return a.NewList(r...).Prepend(sAppend)
 }
 
 func isUnquote(v a.Value) (a.Value, bool) {

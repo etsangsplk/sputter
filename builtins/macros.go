@@ -10,7 +10,7 @@ func defineMacro(closure a.Context, d *functionDefinition) a.Function {
 	db := a.NewBlock(d.body)
 
 	return a.NewMacro(func(c a.Context, args a.Sequence) a.Value {
-		l := ap(c, args, a.Identity)
+		l := ap(c, args)
 		return a.Eval(l, db)
 	}).WithMetadata(d.meta).(a.Function)
 }
@@ -37,20 +37,23 @@ func macroexpand(c a.Context, args a.Sequence) a.Value {
 func init() {
 	registerAnnotated(
 		a.NewFunction(defmacro).WithMetadata(a.Metadata{
-			a.MetaName: a.Name("defmacro"),
-			a.MetaDoc:  d.Get("defmacro"),
+			a.MetaName:    a.Name("defmacro"),
+			a.MetaDoc:     d.Get("defmacro"),
+			a.MetaSpecial: a.True,
 		}),
 	)
 
 	registerAnnotated(
 		a.NewFunction(macroexpand1).WithMetadata(a.Metadata{
-			a.MetaName: a.Name("macroexpand1"),
+			a.MetaName:    a.Name("macroexpand1"),
+			a.MetaSpecial: a.True,
 		}),
 	)
 
 	registerAnnotated(
 		a.NewFunction(macroexpand).WithMetadata(a.Metadata{
-			a.MetaName: a.Name("macroexpand"),
+			a.MetaName:    a.Name("macroexpand"),
+			a.MetaSpecial: a.True,
 		}),
 	)
 }

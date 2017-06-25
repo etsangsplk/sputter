@@ -15,10 +15,7 @@ type functionDefinition struct {
 	meta a.Metadata
 }
 
-type (
-	evalFunc     a.ValueProcessor
-	argProcessor func(c a.Context, args a.Sequence, e evalFunc) a.Context
-)
+type argProcessor func(c a.Context, args a.Sequence) a.Context
 
 var (
 	emptyMetadata = a.Metadata{}
@@ -54,18 +51,18 @@ func parseRestArg(s a.Sequence) a.Name {
 func makeRestArgProcessor(cl a.Context, an []a.Name, rn a.Name) argProcessor {
 	ac := len(an)
 
-	return func(c a.Context, args a.Sequence, e evalFunc) a.Context {
+	return func(c a.Context, args a.Sequence) a.Context {
 		a.AssertMinimumArity(args, ac)
 		l := a.ChildContext(cl)
 		i := args
 		for _, n := range an {
-			l.Put(n, e(c, i.First()))
+			l.Put(n, i.First())
 			i = i.Rest()
 		}
 
 		r := []a.Value{}
 		for ; i.IsSequence(); i = i.Rest() {
-			r = append(r, e(c, i.First()))
+			r = append(r, i.First())
 		}
 		l.Put(rn, a.NewList(r...))
 		return l
@@ -75,12 +72,12 @@ func makeRestArgProcessor(cl a.Context, an []a.Name, rn a.Name) argProcessor {
 func makeFixedArgProcessor(cl a.Context, an []a.Name) argProcessor {
 	ac := len(an)
 
-	return func(c a.Context, args a.Sequence, e evalFunc) a.Context {
+	return func(c a.Context, args a.Sequence) a.Context {
 		a.AssertArity(args, ac)
 		l := a.ChildContext(cl)
 		i := args
 		for _, n := range an {
-			l.Put(n, e(c, i.First()))
+			l.Put(n, i.First())
 			i = i.Rest()
 		}
 		return l
@@ -159,7 +156,7 @@ func defineFunction(closure a.Context, d *functionDefinition) a.Function {
 	db := a.NewBlock(d.body)
 
 	return a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
-		l := ap(c, args, a.Eval)
+		l := ap(c, args)
 		return a.Eval(l, db)
 	}).WithMetadata(d.meta).(a.Function)
 }
@@ -183,15 +180,16 @@ func makeFn(c a.Context, args a.Sequence) a.Value {
 
 func apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 2)
-	f := a.AssertApplicable(a.Eval(c, args.First()))
-	s := a.AssertSequence(a.Eval(c, args.Rest().First()))
+	f := a.AssertApplicable(args.First())
+	s := a.AssertSequence(args.Rest().First())
 	return f.Apply(c, s)
 }
 
 func init() {
 	registerAnnotated(
 		a.NewFunction(makeFn).WithMetadata(a.Metadata{
-			a.MetaName: a.Name("fn"),
+			a.MetaName:    a.Name("fn"),
+			a.MetaSpecial: a.True,
 		}),
 	)
 

@@ -53,11 +53,6 @@ func MacroExpand(c Context, v Value) (Value, bool) {
 	}
 }
 
-// Identity is a ValueProcessor that returns the Value passed
-func Identity(_ Context, v Value) Value {
-	return v
-}
-
 // Eval is a ValueProcessor that expands and evaluates a Value
 func Eval(c Context, v Value) Value {
 	ex, _ := MacroExpand(c, v)

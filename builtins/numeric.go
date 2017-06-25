@@ -10,25 +10,25 @@ var (
 	one  = a.NewFloat(1)
 )
 
-func reduceNum(c a.Context, s a.Sequence, v a.Number, f reduceFunc) a.Value {
+func reduceNum(s a.Sequence, v a.Number, f reduceFunc) a.Value {
 	r := v
 	for i := s; i.IsSequence(); i = i.Rest() {
-		fv := a.AssertNumber(a.Eval(c, i.First()))
+		fv := a.AssertNumber(i.First())
 		r = f(r, fv)
 	}
 	return r
 }
 
-func fetchFirstNumber(c a.Context, args a.Sequence) (a.Number, a.Sequence) {
+func fetchFirstNumber(args a.Sequence) (a.Number, a.Sequence) {
 	a.AssertMinimumArity(args, 1)
-	nv := a.AssertNumber(a.Eval(c, args.First()))
+	nv := a.AssertNumber(args.First())
 	return nv, args.Rest()
 }
 
-func compare(c a.Context, s a.Sequence, f compareFunc) a.Value {
-	cur, r := fetchFirstNumber(c, s)
+func compare(_ a.Context, s a.Sequence, f compareFunc) a.Value {
+	cur, r := fetchFirstNumber(s)
 	for i := r; i.IsSequence(); i = i.Rest() {
-		v := a.AssertNumber(a.Eval(c, i.First()))
+		v := a.AssertNumber(i.First())
 		if !f(cur, v) {
 			return a.False
 		}
@@ -37,36 +37,36 @@ func compare(c a.Context, s a.Sequence, f compareFunc) a.Value {
 	return a.True
 }
 
-func add(c a.Context, args a.Sequence) a.Value {
+func add(_ a.Context, args a.Sequence) a.Value {
 	if !args.IsSequence() {
 		return zero
 	}
-	f, r := fetchFirstNumber(c, args)
-	return reduceNum(c, r, f, func(p a.Number, n a.Number) a.Number {
+	f, r := fetchFirstNumber(args)
+	return reduceNum(r, f, func(p a.Number, n a.Number) a.Number {
 		return p.Add(n)
 	})
 }
 
-func sub(c a.Context, args a.Sequence) a.Value {
-	f, r := fetchFirstNumber(c, args)
-	return reduceNum(c, r, f, func(p a.Number, n a.Number) a.Number {
+func sub(_ a.Context, args a.Sequence) a.Value {
+	f, r := fetchFirstNumber(args)
+	return reduceNum(r, f, func(p a.Number, n a.Number) a.Number {
 		return p.Sub(n)
 	})
 }
 
-func mul(c a.Context, args a.Sequence) a.Value {
+func mul(_ a.Context, args a.Sequence) a.Value {
 	if !args.IsSequence() {
 		return one
 	}
-	f, r := fetchFirstNumber(c, args)
-	return reduceNum(c, r, f, func(p a.Number, n a.Number) a.Number {
+	f, r := fetchFirstNumber(args)
+	return reduceNum(r, f, func(p a.Number, n a.Number) a.Number {
 		return p.Mul(n)
 	})
 }
 
-func div(c a.Context, args a.Sequence) a.Value {
-	f, r := fetchFirstNumber(c, args)
-	return reduceNum(c, r, f, func(p a.Number, n a.Number) a.Number {
+func div(_ a.Context, args a.Sequence) a.Value {
+	f, r := fetchFirstNumber(args)
+	return reduceNum(r, f, func(p a.Number, n a.Number) a.Number {
 		return p.Div(n)
 	})
 }

@@ -20,22 +20,23 @@ func do(c a.Context, args a.Sequence) a.Value {
 
 func read(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
-	v := a.Eval(c, args.First())
+	v := args.First()
 	s := a.AssertStr(v)
 	return e.ReadStr(c, s)
 }
 
 func eval(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
-	v := a.Eval(c, args.First())
+	v := args.First()
 	return a.Eval(c, v)
 }
 
 func init() {
 	registerAnnotated(
 		a.NewFunction(do).WithMetadata(a.Metadata{
-			a.MetaName: a.Name("do"),
-			a.MetaDoc:  d.Get("do"),
+			a.MetaName:    a.Name("do"),
+			a.MetaDoc:     d.Get("do"),
+			a.MetaSpecial: a.True,
 		}),
 	)
 

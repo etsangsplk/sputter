@@ -5,24 +5,24 @@ import (
 	d "github.com/kode4food/sputter/docstring"
 )
 
-func vector(c a.Context, args a.Sequence) a.Value {
+func vector(_ a.Context, args a.Sequence) a.Value {
 	if cnt, ok := args.(a.Counted); ok {
 		l := cnt.Count()
 		r := make([]a.Value, l)
 		idx := 0
 		for i := args; i.IsSequence(); i = i.Rest() {
-			r[idx] = a.Eval(c, i.First())
+			r[idx] = i.First()
 			idx++
 		}
 		return a.NewVector(r...)
 	}
-	return vectorFromUncounted(c, args)
+	return vectorFromUncounted(args)
 }
 
-func vectorFromUncounted(c a.Context, args a.Sequence) a.Value {
+func vectorFromUncounted(args a.Sequence) a.Value {
 	r := []a.Value{}
 	for i := args; i.IsSequence(); i = i.Rest() {
-		r = append(r, a.Eval(c, i.First()))
+		r = append(r, i.First())
 	}
 	return a.NewVector(r...)
 }

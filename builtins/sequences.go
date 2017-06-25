@@ -12,91 +12,81 @@ func isSequence(v a.Value) bool {
 	return false
 }
 
-func fetchSequence(c a.Context, args a.Sequence) a.Sequence {
+func fetchSequence(args a.Sequence) a.Sequence {
 	a.AssertArity(args, 1)
-	return a.AssertSequence(a.Eval(c, args.First()))
+	return a.AssertSequence(args.First())
 }
 
-func first(c a.Context, args a.Sequence) a.Value {
-	return fetchSequence(c, args).First()
+func first(_ a.Context, args a.Sequence) a.Value {
+	return fetchSequence(args).First()
 }
 
-func rest(c a.Context, args a.Sequence) a.Value {
-	return fetchSequence(c, args).Rest()
+func rest(_ a.Context, args a.Sequence) a.Value {
+	return fetchSequence(args).Rest()
 }
 
-func cons(c a.Context, args a.Sequence) a.Value {
+func cons(_ a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 2)
-	f := a.Eval(c, args.First())
-	r := a.Eval(c, args.Rest().First())
+	f := args.First()
+	r := args.Rest().First()
 	return a.AssertSequence(r).Prepend(f)
 }
 
-func conj(c a.Context, args a.Sequence) a.Value {
+func conj(_ a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
-	s := a.AssertConjoiner(a.Eval(c, args.First()))
+	s := a.AssertConjoiner(args.First())
 	for i := args.Rest(); i.IsSequence(); i = i.Rest() {
-		v := a.Eval(c, i.First())
+		v := i.First()
 		s = s.Conjoin(v).(a.Conjoiner)
 	}
 	return s
 }
 
-func _len(c a.Context, args a.Sequence) a.Value {
-	s := fetchSequence(c, args)
+func _len(_ a.Context, args a.Sequence) a.Value {
+	s := fetchSequence(args)
 	l := a.Count(s)
 	return a.NewFloat(float64(l))
 }
 
 func nth(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
-	s := a.AssertIndexed(a.Eval(c, args.First()))
+	s := a.AssertIndexed(args.First())
 	return a.IndexedApply(s, c, args.Rest())
 }
 
-func _append(c a.Context, args a.Sequence) a.Value {
+func _append(_ a.Context, args a.Sequence) a.Value {
 	if a.AssertMinimumArity(args, 1) == 1 {
-		r := a.Eval(c, args.First())
+		r := args.First()
 		return a.AssertSequence(r)
 	}
 
 	es := a.Map(args, func(v a.Value) a.Value {
-		r := a.Eval(c, v)
-		if r == a.Nil {
+		if v == a.Nil {
 			return a.EmptyList
 		}
-		return a.AssertSequence(r)
+		return a.AssertSequence(v)
 	})
 
 	return a.Concat(es)
 }
 
-func toSeq(c a.Context, args a.Sequence) a.Value {
-	s := _append(c, args).(a.Sequence)
-	r := []a.Value{}
-	for i := s; i.IsSequence(); i = i.Rest() {
-		r = append(r, i.First())
-	}
-	return a.NewVector(r...)
-}
-
 func reduce(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
-	f := a.AssertApplicable(a.Eval(c, args.First()))
+	f := a.AssertApplicable(args.First())
 	s := _append(c, args.Rest()).(a.Sequence)
 	return a.Reduce(c, s, f)
 }
 
 func take(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
-	n := a.AssertInteger(a.Eval(c, args.First()))
+	n := a.AssertInteger(args.First())
 	s := _append(c, args.Rest()).(a.Sequence)
 	return a.Take(s, n)
 }
 
 func drop(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
-	n := a.AssertInteger(a.Eval(c, args.First()))
+	n := a.AssertInteger(args.First())
 	s := _append(c, args.Rest()).(a.Sequence)
 	return a.Drop(s, n)
 }
@@ -207,12 +197,6 @@ func init() {
 	)
 
 	registerAnnotated(
-		a.NewFunction(toSeq).WithMetadata(a.Metadata{
-			a.MetaName: a.Name("to-seq!"),
-		}),
-	)
-
-	registerAnnotated(
 		a.NewFunction(reduce).WithMetadata(a.Metadata{
 			a.MetaName: a.Name("reduce"),
 			a.MetaDoc:  d.Get("reduce"),
@@ -235,7 +219,8 @@ func init() {
 
 	registerAnnotated(
 		a.NewFunction(forEach).WithMetadata(a.Metadata{
-			a.MetaName: a.Name("for-each"),
+			a.MetaName:    a.Name("for-each"),
+			a.MetaSpecial: a.True,
 		}),
 	)
 }

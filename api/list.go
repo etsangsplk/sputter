@@ -87,15 +87,28 @@ func (l *list) Eval(c Context) Value {
 
 	t := l.first
 	if a, ok := Eval(c, t).(Applicable); ok {
-		return a.Apply(c, l.rest)
+		if IsSpecialForm(a) {
+			return a.Apply(c, l.rest)
+		}
+		return a.Apply(c, l.evalArgs(c, l.rest))
 	}
 	panic(Err(ExpectedApplicable, t))
+}
+
+func (l *list) evalArgs(c Context, args *list) Vector {
+	ac := args.count
+	r := make(vector, ac)
+	for idx, i := 0, args; idx < ac; idx++ {
+		r[idx] = Eval(c, i.first)
+		i = i.rest
+	}
+	return r
 }
 
 func (l *list) Str() Str {
 	return MakeSequenceStr(l)
 }
-	
+
 func init() {
 	emptyList = &list{
 		first: Nil,
