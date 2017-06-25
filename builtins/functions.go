@@ -189,6 +189,7 @@ func init() {
 	registerAnnotated(
 		a.NewFunction(lambda).WithMetadata(a.Metadata{
 			a.MetaName:    a.Name("lambda"),
+			a.MetaDoc:     d.Get("fn"),
 			a.MetaSpecial: a.True,
 		}),
 	)
