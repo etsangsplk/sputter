@@ -1,8 +1,6 @@
 package api_test
 
-import (
-	a "github.com/kode4food/sputter/api"
-)
+import a "github.com/kode4food/sputter/api"
 
 func s(s string) a.Str {
 	return a.Str(s)

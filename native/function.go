@@ -15,7 +15,7 @@ type funcInfo struct {
 
 type (
 	funcResolver   func(v reflect.Value) reflect.Value
-	argumentReader func(c a.Context, args a.Sequence) []reflect.Value
+	argumentReader func(args a.Sequence) []reflect.Value
 	resultGetters  []outMapper
 	argSetters     []inMapper
 )
@@ -86,8 +86,8 @@ func (fi funcInfo) makeVoidFuncMapper() outMapper {
 
 	return func(v reflect.Value) a.Value {
 		fn := fi.fn(v)
-		return a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
-			fin := prepareArgs(c, args)
+		return a.NewFunction(func(_ a.Context, args a.Sequence) a.Value {
+			fin := prepareArgs(args)
 			fn.Call(fin)
 			return a.Nil
 		})
@@ -100,8 +100,8 @@ func (fi funcInfo) makeSingularFuncMapper() outMapper {
 
 	return func(v reflect.Value) a.Value {
 		fn := fi.fn(v)
-		return a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
-			fin := prepareArgs(c, args)
+		return a.NewFunction(func(_ a.Context, args a.Sequence) a.Value {
+			fin := prepareArgs(args)
 			r := fn.Call(fin)
 			return out[0](r[0])
 		})
@@ -116,7 +116,7 @@ func (fi funcInfo) makePluralFuncMapper() outMapper {
 	return func(v reflect.Value) a.Value {
 		fn := fi.fn(v)
 		return a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
-			fin := prepareArgs(c, args)
+			fin := prepareArgs(args)
 			r := fn.Call(fin)
 			fout := make([]a.Value, olen)
 			for i := 0; i < olen; i++ {
@@ -131,12 +131,12 @@ func (fi funcInfo) makeArgPreparer() argumentReader {
 	in := fi.in
 	ilen := len(in)
 
-	return func(c a.Context, args a.Sequence) []reflect.Value {
+	return func(args a.Sequence) []reflect.Value {
 		a.AssertArity(args, ilen)
 		fin := make([]reflect.Value, ilen)
 		e := args
 		for i := 0; i < ilen; i++ {
-			fin[i] = in[i](a.Eval(c, e.First()))
+			fin[i] = in[i](e.First())
 			e = e.Rest()
 		}
 		return fin
