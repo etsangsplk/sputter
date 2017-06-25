@@ -397,8 +397,9 @@ func registerBuiltIns() {
 
 	registerBuiltIn(
 		a.NewFunction(doc).WithMetadata(a.Metadata{
-			a.MetaName: a.Name("doc"),
-			a.MetaDoc:  d.Get("repl-doc"),
+			a.MetaName:    a.Name("doc"),
+			a.MetaDoc:     d.Get("repl-doc"),
+			a.MetaSpecial: a.True,
 		}),
 	)
 }

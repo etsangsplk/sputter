@@ -87,17 +87,28 @@ func (sc *syntaxContext) quoteSequence(s a.Sequence) a.Value {
 	if st, ok := s.(a.Str); ok {
 		return st
 	}
-	var sym a.Symbol
-	if l, ok := s.(a.List); ok && l.Count() > 0 {
-		sym = sList
-	} else if v, ok := s.(a.Vector); ok && v.Count() > 0 {
-		sym = sVector
-	} else if an, ok := s.(a.Associative); ok && an.Count() > 0 {
-		sym = sAssoc
-	} else {
-		panic("what are you having me quote here?")
+	if l, ok := s.(a.List); ok {
+		return a.NewList(sApply, sList, sc.quoteElements(l))
 	}
-	return a.NewList(sApply, sym, sc.quoteElements(s))
+	if v, ok := s.(a.Vector); ok {
+		return a.NewList(sApply, sVector, sc.quoteElements(v))
+	}
+	if as, ok := s.(a.Associative); ok {
+		return sc.quoteAssociative(as)
+	}
+	panic("what are you having me quote here? " + string(s.Str()))
+}
+
+func (sc *syntaxContext) quoteAssociative(as a.Associative) a.Value {
+	r := []a.Value{}
+	for i := as.(a.Sequence); i.IsSequence(); i = i.Rest() {
+		p := i.First().(a.Vector)
+		k, _ := p.ElementAt(0)
+		v, _ := p.ElementAt(1)
+		r = append(r, k)
+		r = append(r, v)
+	}
+	return a.NewList(sApply, sAssoc, sc.quoteElements(a.NewVector(r...)))
 }
 
 func (sc *syntaxContext) quoteElements(s a.Sequence) a.Value {

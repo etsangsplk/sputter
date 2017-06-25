@@ -43,8 +43,8 @@ func MacroExpand1(c Context, v Value) (Value, bool) {
 
 // MacroExpand repeatedly performs a macro expansion until no more can occur
 func MacroExpand(c Context, v Value) (Value, bool) {
+	var ok bool
 	r := v
-	ok := false
 	for i := 0; ; i++ {
 		if r, ok = MacroExpand1(c, r); ok {
 			continue
