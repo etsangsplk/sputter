@@ -58,6 +58,6 @@ func TestUnquoteMacro(t *testing.T) {
 	ns := a.GetNamespace(a.UserDomain)
 	ns.Delete("test")
 
-	runCode("(defmacro test [x & y] `(~x ~@y))")
-	testCode(t, "(test vector 1 2 3)", s("[1 2 3]"))
+	runCode("(defmacro test [x & y] `(~x ~@y {:hello 99}))")
+	testCode(t, "(test vector 1 2 3)", s("[1 2 3 {:hello 99}]"))
 }
