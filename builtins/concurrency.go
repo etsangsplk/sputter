@@ -67,7 +67,7 @@ func promise(_ a.Context, args a.Sequence) a.Value {
 	).WithMetadata(promiseMetadata).(a.Function)
 }
 
-func async(c a.Context, args a.Sequence) a.Value {
+func doAsync(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
 	go a.EvalBlock(a.ChildContext(c), args)
 	return a.Nil
@@ -89,7 +89,7 @@ func init() {
 	)
 
 	registerAnnotated(
-		a.NewFunction(async).WithMetadata(a.Metadata{
+		a.NewFunction(doAsync).WithMetadata(a.Metadata{
 			a.MetaName:    a.Name("do-async"),
 			a.MetaSpecial: a.True,
 		}),

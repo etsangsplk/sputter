@@ -12,7 +12,7 @@ func TestChannel(t *testing.T) {
 
 	testCode(t, `
 		(def c (channel))
-		(async
+		(do-async
 			(apply (:emit c) '("hello"))
 			(apply (:close c) ()))
 		(first (:seq c))
@@ -24,7 +24,7 @@ func TestPromise(t *testing.T) {
 
 	testCode(t, `
 		(def p (promise))
-		(async (p "hello"))
+		(do-async (p "hello"))
 		(p)
 	`, s("hello"))
 }

@@ -17,10 +17,6 @@ func TestList(t *testing.T) {
 	testCode(t, `(list)`, a.EmptyList)
 
 	testCode(t, `
-		(first (apply list (map (fn [x] (* x 2)) [1 2 3 4])))
-	`, f(2))
-
-	testCode(t, `
 		(def x '(1 2 3 4))
 		(x 2)
 	`, f(3))

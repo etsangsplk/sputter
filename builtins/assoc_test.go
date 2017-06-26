@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
-	_ "github.com/kode4food/sputter/core"
 )
 
 func TestAssoc(t *testing.T) {
@@ -19,7 +18,7 @@ func TestAssoc(t *testing.T) {
 	testCode(t, `(:name {:name "Sputter" :age 45})`, s("Sputter"))
 
 	testCode(t, `
-		(:name (apply assoc (concat '(:name "Sputter") '(:age 45))))
+		(:name (apply assoc (append '(:name "Sputter") '(:age 45))))
 	`, s("Sputter"))
 
 	a.GetNamespace(a.UserDomain).Delete("x")
@@ -31,7 +30,7 @@ func TestAssoc(t *testing.T) {
 	testBadCode(t, `(assoc :too "few" :args)`, a.ExpectedPair)
 
 	testBadCode(t, `
-		(apply assoc (concat '(:name "Sputter") '(:age)))
+		(apply assoc (append '(:name "Sputter") '(:age)))
 	`, a.ExpectedPair)
 }
 

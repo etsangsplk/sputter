@@ -5,7 +5,6 @@ import (
 
 	a "github.com/kode4food/sputter/api"
 	"github.com/kode4food/sputter/assert"
-	_ "github.com/kode4food/sputter/core"
 )
 
 func TestVector(t *testing.T) {
@@ -14,7 +13,7 @@ func TestVector(t *testing.T) {
 	r1 := runCode(`(vector 1 (- 5 3) (+ 1 2))`)
 	as.String("[1 2 3]", r1)
 
-	r2 := runCode(`(apply vector (concat '(1) '((- 5 3)) '((+ 1 2))))`)
+	r2 := runCode(`(apply vector (append '(1) '((- 5 3)) '((+ 1 2))))`)
 	as.String("[1 (- 5 3) (+ 1 2)]", r2)
 
 	testCode(t, `(vector? [1 2 3])`, a.True)
