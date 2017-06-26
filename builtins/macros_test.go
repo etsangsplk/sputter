@@ -20,14 +20,25 @@ func TestMacroReplace(t *testing.T) {
 }
 
 func TestMacroExpand(t *testing.T) {
-	a.GetNamespace(a.UserDomain).Delete("foo")
+	ns := a.GetNamespace(a.UserDomain)
+	ns.Delete("foo1")
+	ns.Delete("foo2")
 
 	testCode(t, `
-		(defmacro foo
-			{:doc "this is the macro foo"}
+		(defmacro foo1
+			{:doc "this is the macro foo1"}
 			[& args]
 			(cons 'str (cons "hello" args)))
 
-		(macroexpand (foo 1 2 3))
+		(macroexpand1 (foo1 1 2 3))
 	`, s(`(str "hello" 1 2 3)`))
+
+	testCode(t, `
+		(defmacro foo2
+			{:doc "this is the macro foo2"}
+			[& args]
+			(foo1 (args 0) (args 1) (args 2)))
+
+		(macroexpand (foo2 1 2 3))
+	`, s("hello123"))
 }
