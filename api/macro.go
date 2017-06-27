@@ -21,12 +21,8 @@ func NewMacro(e SequenceProcessor) Function {
 // IsMacro tests an Applicable as being marked a Macro and is a special form
 func IsMacro(a Applicable) (bool, bool) {
 	if an, ok := a.(Annotated); ok {
-		if v, ok := an.Metadata().Get(MetaMacro); ok {
-			if sp, ok := an.Metadata().Get(MetaSpecial); ok {
-				return v == True, sp == True
-			}
-			return v == True, false
-		}
+		md := an.Metadata()
+		return md.IsTrue(MetaMacro), md.IsTrue(MetaSpecial)
 	}
 	return false, false
 }
@@ -34,9 +30,7 @@ func IsMacro(a Applicable) (bool, bool) {
 // IsSpecialForm tests an Applicable as being marked a special form
 func IsSpecialForm(a Applicable) bool {
 	if an, ok := a.(Annotated); ok {
-		if sp, ok := an.Metadata().Get(MetaSpecial); ok {
-			return sp == True
-		}
+		return an.Metadata().IsTrue(MetaSpecial)
 	}
 	return false
 }

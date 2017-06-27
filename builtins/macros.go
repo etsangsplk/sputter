@@ -7,7 +7,8 @@ import (
 
 func defineMacro(closure a.Context, d *functionDefinition) a.Function {
 	ap := makeArgProcessor(closure, d.args)
-	db := a.NewBlock(d.body)
+	ex := a.MacroExpandAll(closure, d.body).(a.Sequence)
+	db := a.NewBlock(ex)
 
 	return a.NewMacro(func(c a.Context, args a.Sequence) a.Value {
 		l := ap(c, args)
@@ -34,6 +35,11 @@ func macroexpand(c a.Context, args a.Sequence) a.Value {
 	return r
 }
 
+func macroexpandAll(c a.Context, args a.Sequence) a.Value {
+	a.AssertMinimumArity(args, 1)
+	return a.MacroExpandAll(c, args.First())
+}
+
 func init() {
 	registerAnnotated(
 		a.NewFunction(defmacro).WithMetadata(a.Metadata{
@@ -53,6 +59,13 @@ func init() {
 	registerAnnotated(
 		a.NewFunction(macroexpand).WithMetadata(a.Metadata{
 			a.MetaName:    a.Name("macroexpand"),
+			a.MetaSpecial: a.True,
+		}),
+	)
+
+	registerAnnotated(
+		a.NewFunction(macroexpandAll).WithMetadata(a.Metadata{
+			a.MetaName:    a.Name("macroexpand-all"),
 			a.MetaSpecial: a.True,
 		}),
 	)

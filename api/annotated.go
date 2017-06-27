@@ -57,6 +57,13 @@ func (m Metadata) Get(key Value) (Value, bool) {
 	return Nil, false
 }
 
+func (m Metadata) IsTrue(key Value) bool {
+	if r, ok := m[key]; ok {
+		return r == True
+	}
+	return false
+}
+
 // Str converts this Value into a Str
 func (m Metadata) Str() Str {
 	var b bytes.Buffer

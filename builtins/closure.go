@@ -1,6 +1,10 @@
 package builtins
 
-import a "github.com/kode4food/sputter/api"
+import (
+	"bytes"
+
+	a "github.com/kode4food/sputter/api"
+)
 
 type names []a.Name
 
@@ -70,7 +74,7 @@ func visitSequence(s a.Sequence) names {
 func makeClosure(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
 	nv := makeNames(a.AssertVector(args.First()))
-	ex, _ := a.MacroExpand(c, args.Rest())
+	ex := a.MacroExpandAll(c, args.Rest())
 	cb := a.NewBlock(ex.(a.Sequence))
 	cn := consolidateNames(visitValue(cb), nv)
 
@@ -98,7 +102,23 @@ func (cl *closure) Eval(c a.Context) a.Value {
 }
 
 func (cl *closure) Str() a.Str {
-	return a.MakeDumpStr(cl)
+	var buf bytes.Buffer
+	buf.WriteString("(closure ")
+	buf.WriteString(string(cl.nameVector().Str()))
+	buf.WriteString(" ")
+	buf.WriteString(string(cl.body.Str()))
+	buf.WriteString(")")
+	return a.Str(buf.String())
+}
+
+func (cl *closure) nameVector() a.Vector {
+	ni := cl.names
+	nl := len(ni)
+	nv := make([]a.Value, nl)
+	for i := 0; i < nl; i++ {
+		nv[i] = ni[i]
+	}
+	return a.NewVector(nv...)
 }
 
 func init() {

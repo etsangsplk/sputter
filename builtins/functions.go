@@ -153,7 +153,8 @@ func getFunctionDefinition(c a.Context, args a.Sequence) *functionDefinition {
 
 func defineFunction(closure a.Context, d *functionDefinition) a.Function {
 	ap := makeArgProcessor(closure, d.args)
-	db := a.NewBlock(d.body)
+	ex := a.MacroExpandAll(closure, d.body).(a.Sequence)
+	db := a.NewBlock(ex)
 
 	return a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
 		l := ap(c, args)

@@ -24,35 +24,6 @@ type block struct {
 	Sequence
 }
 
-// MacroExpand1 performs a single macro expansion
-func MacroExpand1(c Context, v Value) (Value, bool) {
-	if l, ok := v.(List); ok && l.IsSequence() {
-		f := l.First()
-		if s, ok := f.(Symbol); ok {
-			if r, ok := s.Resolve(c); ok {
-				if f, ok := r.(Function); ok {
-					if ok, sp := IsMacro(f); ok && !sp {
-						return f.Apply(c, l.Rest()), true
-					}
-				}
-			}
-		}
-	}
-	return v, false
-}
-
-// MacroExpand repeatedly performs a macro expansion until no more can occur
-func MacroExpand(c Context, v Value) (Value, bool) {
-	var ok bool
-	r := v
-	for i := 0; ; i++ {
-		if r, ok = MacroExpand1(c, r); ok {
-			continue
-		}
-		return r, i > 0
-	}
-}
-
 // Eval is a ValueProcessor that expands and evaluates a Value
 func Eval(c Context, v Value) Value {
 	ex, _ := MacroExpand(c, v)
