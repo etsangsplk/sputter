@@ -57,6 +57,7 @@ func (m Metadata) Get(key Value) (Value, bool) {
 	return Nil, false
 }
 
+// IsTrue tests whether or not the specified key has a True value
 func (m Metadata) IsTrue(key Value) bool {
 	if r, ok := m[key]; ok {
 		return r == True
