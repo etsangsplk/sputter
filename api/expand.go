@@ -18,9 +18,9 @@ func MacroExpand1(c Context, v Value) (Value, bool) {
 		f := l.First()
 		if s, ok := f.(Symbol); ok {
 			if r, ok := s.Resolve(c); ok {
-				if f, ok := r.(Function); ok {
-					if ok, sp := IsMacro(f); ok && !sp {
-						return f.Apply(c, l.Rest()), true
+				if a, ok := r.(Applicable); ok {
+					if ok, sp := IsMacro(a); ok && !sp {
+						return a.Apply(c, l.Rest()), true
 					}
 				}
 			}

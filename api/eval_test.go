@@ -26,6 +26,19 @@ func TestEvaluate(t *testing.T) {
 	as.String("Hello, World!", r)
 }
 
+func TestBlock(t *testing.T) {
+	as := assert.New(t)
+
+	s1 := a.NewList(helloName, s("World"))
+	s2 := a.NewList(helloName, s("Foo"))
+	l := a.NewBlock(a.NewList(s1, s2))
+	as.True(l.IsBlock())
+
+	c := a.NewContext()
+	r := a.Eval(c, l)
+	as.String("Hello, Foo!", r)
+}
+
 func TestEvaluateBlock(t *testing.T) {
 	as := assert.New(t)
 
