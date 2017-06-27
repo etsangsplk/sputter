@@ -11,6 +11,7 @@ type Vector interface {
 	Elementer
 	Counted
 	Applicable
+	Evaluable
 	IsVector() bool
 }
 

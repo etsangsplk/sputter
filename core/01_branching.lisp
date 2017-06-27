@@ -14,17 +14,17 @@
 (defmacro cond
   {:doc-asset "cond"}
   [& clauses]
-  (sputter:when (seq? clauses)
+  (when (seq? clauses)
     (if (= 1 (len clauses))
       (clauses 0)
       (list 'sputter:if
         (clauses 0) (clauses 1)
-        (cons 'cond (rest (rest clauses)))))))
+        (cons 'sputter:cond (rest (rest clauses)))))))
 
 (defmacro and
   {:doc-asset "and"}
   [& clauses]
-  (sputter:cond
+  (cond
     (= 0 (len clauses)) true
     (= 1 (len clauses)) (clauses 0)
     :else
@@ -32,13 +32,13 @@
         (vector 'sputter/and (clauses 0))
         (list 'sputter:if
           'sputter/and
-          (cons 'and (rest clauses))
+          (cons 'sputter:and (rest clauses))
           'sputter/and))))
 
 (defmacro or
   {:doc-asset "or"}
   [& clauses]
-  (sputter:cond
+  (cond
     (= 0 (len clauses)) true
     (= 1 (len clauses)) (clauses 0)
     :else
@@ -46,4 +46,4 @@
         (vector 'sputter/or (clauses 0))
         (list 'sputter:if
           'sputter/or 'sputter/or
-          (cons 'or (rest clauses))))))
+          (cons 'sputter:or (rest clauses))))))

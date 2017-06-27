@@ -6,25 +6,7 @@ import (
 )
 
 func list(c a.Context, args a.Sequence) a.Value {
-	if cnt, ok := args.(a.Counted); ok {
-		l := cnt.Count()
-		r := make([]a.Value, l)
-		idx := 0
-		for i := args; i.IsSequence(); i = i.Rest() {
-			r[idx] = i.First()
-			idx++
-		}
-		return a.NewList(r...)
-	}
-	return listFromUncounted(args)
-}
-
-func listFromUncounted(args a.Sequence) a.Value {
-	r := []a.Value{}
-	for i := args; i.IsSequence(); i = i.Rest() {
-		r = append(r, i.First())
-	}
-	return a.NewList(r...)
+	return a.ToList(args)
 }
 
 func isList(v a.Value) bool {

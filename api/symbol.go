@@ -16,6 +16,7 @@ const (
 // Symbol is a qualified identifier that can be resolved
 type Symbol interface {
 	Value
+	Evaluable
 	IsSymbol() bool
 	Name() Name
 	Domain() Name

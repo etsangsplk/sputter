@@ -1,15 +1,15 @@
 package api
 
-type form struct {
-	List
-	fn   Applicable
-	args Sequence
-}
-
 type specialForm struct {
 	List
 	fn   Applicable
-	args Sequence
+	args Vector
+}
+
+type evaluatingForm struct {
+	List
+	fn   Applicable
+	args Vector
 }
 
 // MacroExpand1 performs a single macro expansion
@@ -102,21 +102,7 @@ func MakeForm(l List) (List, bool) {
 			ns := GetNamespace(d)
 			if g, ok := ns.Get(s.Name()); ok {
 				if ap, ok := g.(Applicable); ok {
-					var r List
-					if IsSpecialForm(ap) {
-						r = &specialForm{
-							List: l,
-							fn:   ap,
-							args: l.Rest(),
-						}
-					} else {
-						r = &form{
-							List: l,
-							fn:   ap,
-							args: l.Rest(),
-						}
-					}
-					return r, true
+					return makeFormObject(l, ap), true
 				}
 			}
 		}
@@ -124,20 +110,25 @@ func MakeForm(l List) (List, bool) {
 	return nil, false
 }
 
+func makeFormObject(l List, a Applicable) List {
+	if IsSpecialForm(a) {
+		return &specialForm{
+			List: l,
+			fn:   a,
+			args: ToVector(l.Rest()),
+		}
+	}
+	return &evaluatingForm{
+		List: l,
+		fn:   a,
+		args: ToVector(l.Rest()),
+	}
+}
+
 func (s *specialForm) Eval(c Context) Value {
 	return s.fn.Apply(c, s.args)
 }
 
-func (f *form) Eval(c Context) Value {
-	return f.fn.Apply(c, f.evalArgs(c, f.args))
-}
-
-func (f *form) evalArgs(c Context, args Sequence) Vector {
-	ac := Count(args)
-	r := make(vector, ac)
-	for idx, i := 0, args; idx < ac; idx++ {
-		r[idx] = Eval(c, i.First())
-		i = i.Rest()
-	}
-	return r
+func (f *evaluatingForm) Eval(c Context) Value {
+	return f.fn.Apply(c, f.args.Eval(c).(Vector))
 }

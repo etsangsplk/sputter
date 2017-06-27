@@ -6,41 +6,7 @@ import (
 )
 
 func assoc(_ a.Context, args a.Sequence) a.Value {
-	if cnt, ok := args.(a.Counted); ok {
-		l := cnt.Count()
-		if l%2 != 0 {
-			panic(a.ExpectedPair)
-		}
-		ml := l / 2
-		r := make([]a.Vector, ml)
-		i := args
-		for idx := 0; idx < ml; idx++ {
-			k := i.First()
-			i = i.Rest()
-
-			v := i.First()
-			i = i.Rest()
-
-			r[idx] = a.NewVector(k, v)
-		}
-		return a.NewAssociative(r...)
-	}
-	return assocFromUncounted(args)
-}
-
-func assocFromUncounted(args a.Sequence) a.Value {
-	r := []a.Vector{}
-	for i := args; i.IsSequence(); i = i.Rest() {
-		k := i.First()
-		i = i.Rest()
-		if i.IsSequence() {
-			v := i.First()
-			r = append(r, a.NewVector(k, v))
-		} else {
-			panic(a.ExpectedPair)
-		}
-	}
-	return a.NewAssociative(r...)
+	return a.ToAssociative(args)
 }
 
 func isAssociative(v a.Value) bool {

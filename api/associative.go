@@ -25,6 +25,7 @@ type Associative interface {
 	Getter
 	Counted
 	Applicable
+	Evaluable
 	IsAssociative() bool
 }
 

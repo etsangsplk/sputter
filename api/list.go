@@ -6,6 +6,7 @@ type List interface {
 	Elementer
 	Counted
 	Applicable
+	Evaluable
 	IsList() bool
 }
 

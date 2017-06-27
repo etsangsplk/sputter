@@ -363,8 +363,9 @@ func registerBuiltIn(v a.Annotated) {
 func registerBuiltIns() {
 	registerBuiltIn(
 		a.NewFunction(use).WithMetadata(a.Metadata{
-			a.MetaName: a.Name("use"),
-			a.MetaDoc:  d.Get("repl-use"),
+			a.MetaName:    a.Name("use"),
+			a.MetaDoc:     d.Get("repl-use"),
+			a.MetaSpecial: a.True,
 		}),
 	)
 

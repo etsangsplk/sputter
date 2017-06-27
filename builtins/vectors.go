@@ -6,25 +6,7 @@ import (
 )
 
 func vector(_ a.Context, args a.Sequence) a.Value {
-	if cnt, ok := args.(a.Counted); ok {
-		l := cnt.Count()
-		r := make([]a.Value, l)
-		idx := 0
-		for i := args; i.IsSequence(); i = i.Rest() {
-			r[idx] = i.First()
-			idx++
-		}
-		return a.NewVector(r...)
-	}
-	return vectorFromUncounted(args)
-}
-
-func vectorFromUncounted(args a.Sequence) a.Value {
-	r := []a.Value{}
-	for i := args; i.IsSequence(); i = i.Rest() {
-		r = append(r, i.First())
-	}
-	return a.NewVector(r...)
+	return a.ToVector(args)
 }
 
 func isVector(v a.Value) bool {

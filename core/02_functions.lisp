@@ -5,7 +5,7 @@
   {:doc-asset "fn"}
   [& forms]
   (list 'sputter:closure
-    (sputter:cond
+    (cond
       (and (> (len forms) 0) (vector? (forms 0))) (forms 0)
       (and (> (len forms) 1) (vector? (forms 1))) (forms 1)
       (and (> (len forms) 2) (vector? (forms 2))) (forms 2)
