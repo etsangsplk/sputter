@@ -22,7 +22,12 @@ func TestMacro(t *testing.T) {
 	ok, _ = a.IsMacro(a.NewFunction(nil))
 	as.False(ok)
 
-	ok, _ = a.IsMacro(a.NewKeyword("some_keyword"))
+	k1 := a.NewKeyword("some_keyword")
+
+	ok, _ = a.IsMacro(k1)
+	as.False(ok)
+
+	ok = a.IsSpecialForm(k1)
 	as.False(ok)
 
 	m2 := m1.WithMetadata(a.Metadata{

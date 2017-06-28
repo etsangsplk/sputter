@@ -48,18 +48,29 @@ func TestNestedContext(t *testing.T) {
 	c1.Put("hello", s("there"))
 	c1.Put("howdy", s("ho"))
 
-	c2 := a.ChildContext(c1)
-	c2.Put("hello", s("you"))
-	c2.Put("foo", s("bar"))
-
 	assertGet(as, c1, "hello", s("there"))
 	assertGet(as, c1, "howdy", s("ho"))
 	assertMissing(as, c1, "foo")
+
+	c2 := a.ChildContext(c1)
+	c2.Put("hello", s("you"))
+	c2.Put("foo", s("bar"))
 
 	assertGet(as, c2, "hello", s("you"))
 	assertGet(as, c2, "howdy", s("ho"))
 	assertGet(as, c2, "foo", s("bar"))
 	assertMissing(as, c2, "no-way")
+
+	c3, ok := c2.Has("foo")
+	as.True(ok)
+	as.Identical(c3, c2)
+
+	c4, ok := c2.Has("howdy")
+	as.True(ok)
+	as.Identical(c4, c1)
+
+	_, ok = c2.Has("not there")
+	as.False(ok)
 }
 
 func TestRebind(t *testing.T) {
