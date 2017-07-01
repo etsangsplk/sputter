@@ -16,9 +16,3 @@
   {:doc-asset "defn"}
   [name & forms]
   `(def ~name (fn ~name ~@forms)))
-
-; (defmacro defmulti
-;   [name & forms]
-;   (when forms
-;     (if (seq? (form 0))
-;       )))
