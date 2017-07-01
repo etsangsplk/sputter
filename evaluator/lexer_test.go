@@ -87,3 +87,11 @@ func TestMultiLine(t *testing.T) {
 		makeToken(e.Number, f(99)),
 	})
 }
+
+func TestComments(t *testing.T) {
+	as := assert.New(t)
+	l := e.Scan(`"hello" ; (this is commented)`)
+	assertTokenSequence(as, l, []*e.Token{
+		makeToken(e.String, s(`hello`)),
+	})
+}

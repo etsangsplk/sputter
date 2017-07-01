@@ -1,5 +1,4 @@
-
-; sputter core: branching
+;;;; sputter core: branching
 
 (defmacro when
   {:doc-asset "when"}

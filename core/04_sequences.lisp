@@ -1,5 +1,4 @@
-
-; sputter core: sequences
+;;;; sputter core: sequences
 
 (defn concat
   {:doc-asset "concat"}

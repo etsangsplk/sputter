@@ -35,7 +35,7 @@ func Eval(c Context, v Value) Value {
 
 // EvalBlock expands and evaluates a Sequence as a Block
 func EvalBlock(c Context, s Sequence) Value {
-	var r Value
+	var r Value = Nil
 	for i := s; i.IsSequence(); i = i.Rest() {
 		r = Eval(c, i.First())
 	}

@@ -1,10 +1,9 @@
-
-; sputter core: functions
+;;;; sputter core: functions
 
 (defmacro fn
   {:doc-asset "fn"}
   [& forms]
-  (list 'sputter:closure
+  (list 'sputter:make-closure
     (cond
       (and (> (len forms) 0) (vector? (forms 0))) (forms 0)
       (and (> (len forms) 1) (vector? (forms 1))) (forms 1)
@@ -17,3 +16,9 @@
   {:doc-asset "defn"}
   [name & forms]
   `(def ~name (fn ~name ~@forms)))
+
+; (defmacro defmulti
+;   [name & forms]
+;   (when forms
+;     (if (seq? (form 0))
+;       )))

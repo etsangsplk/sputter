@@ -12,6 +12,9 @@ type Name string
 // Bool represents the values True or False
 type Bool bool
 
+// Names represents a set of Names
+type Names []Name
+
 // Variables represents a mapping from Name to Value
 type Variables map[Name]Value
 

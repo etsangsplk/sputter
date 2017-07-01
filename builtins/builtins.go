@@ -9,6 +9,19 @@ import (
 // Namespace is a special Namespace for built-in identifiers
 var Namespace = a.GetNamespace(a.BuiltInDomain)
 
+func isBuiltInDomain(s a.Symbol) bool {
+	return s.Domain() == a.BuiltInDomain
+}
+
+func isBuiltInCall(n a.Name, v a.Value) (a.List, bool) {
+	if l, ok := v.(a.List); ok && l.Count() > 0 {
+		if s, ok := l.First().(a.Symbol); ok {
+			return l, isBuiltInDomain(s) && s.Name() == n
+		}
+	}
+	return nil, false
+}
+
 func registerAnnotated(v a.Annotated) {
 	n := v.Metadata()[a.MetaName].(a.Name)
 	Namespace.Put(n, v.(a.Value))

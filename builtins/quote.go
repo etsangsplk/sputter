@@ -131,26 +131,19 @@ func (sc *syntaxContext) quoteElements(s a.Sequence) a.Value {
 	return a.NewList(r...).Prepend(sAppend)
 }
 
-func isUnquote(v a.Value) (a.Value, bool) {
-	return isWrapperMacro("unquote", v)
-}
-
-func isUnquoteSplicing(v a.Value) (a.Value, bool) {
-	return isWrapperMacro("unquote-splicing", v)
-}
-
-func isWrapperMacro(n a.Name, v a.Value) (a.Value, bool) {
-	if l, ok := v.(a.List); ok && l.Count() > 0 {
-		if s, ok := l.First().(a.Symbol); ok {
-			r := l.Rest().First()
-			return r, isBuiltInDomain(s) && s.Name() == n
-		}
+func isWrapperCall(n a.Name, v a.Value) (a.Value, bool) {
+	if l, ok := isBuiltInCall(n, v); ok {
+		return l.Rest().First(), true
 	}
 	return nil, false
 }
 
-func isBuiltInDomain(s a.Symbol) bool {
-	return s.Domain() == a.BuiltInDomain
+func isUnquote(v a.Value) (a.Value, bool) {
+	return isWrapperCall("unquote", v)
+}
+
+func isUnquoteSplicing(v a.Value) (a.Value, bool) {
+	return isWrapperCall("unquote-splicing", v)
 }
 
 func quote(_ a.Context, args a.Sequence) a.Value {

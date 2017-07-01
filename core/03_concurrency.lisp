@@ -1,10 +1,9 @@
-
-; sputter core: concurrency
+;;;; sputter core: concurrency
 
 (defmacro async
   {:doc-asset "async"}
   [& forms]
-  (list 'sputter:closure
+  (list 'sputter:make-closure
     (vector)
     (cons 'sputter:do-async forms)))
 

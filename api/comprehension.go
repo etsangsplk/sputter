@@ -55,6 +55,7 @@ func Filter(s Sequence, filter ValueFilter) Sequence {
 	if !s.IsSequence() {
 		return EmptyList
 	}
+
 	f := &compElement{}
 	var l = f
 	for i := s; i.IsSequence(); i = i.Rest() {
@@ -93,6 +94,7 @@ func Take(s Sequence, count int) Sequence {
 	if !s.IsSequence() {
 		return EmptyList
 	}
+
 	f := &compElement{}
 	l := f
 	for i, e := 0, s; i < count; i++ {

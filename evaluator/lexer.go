@@ -194,7 +194,7 @@ func init() {
 
 	matchers = mactchEntries{
 		pattern(`^$`, endState(endOfFile)),
-		pattern(`^;[^\n]*[\n]`, tokenState(Comment)),
+		pattern(`^;[^\n]*([\n]|$)`, tokenState(Comment)),
 		pattern(`^[\s,]+`, tokenState(Whitespace)),
 		pattern(`^\(`, tokenState(ListStart)),
 		pattern(`^\[`, tokenState(VectorStart)),

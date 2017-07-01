@@ -1,24 +1,16 @@
 package builtins
 
-import (
-	"bytes"
+import a "github.com/kode4food/sputter/api"
 
-	a "github.com/kode4food/sputter/api"
+var (
+	sClosure   = a.NewQualifiedSymbol("closure", a.BuiltInDomain)
+	emptyNames = a.Names{}
 )
 
-type names []a.Name
-
-type closure struct {
-	names names
-	body  a.Sequence
-}
-
-var emptyNames = names{}
-
-func makeNames(s a.Sequence) names {
+func assertUnqualifiedNames(s a.Sequence) a.Names {
 	v := a.AssertVector(s)
 	l := v.Count()
-	r := make(names, l)
+	r := make(a.Names, l)
 	for i := 0; i < l; i++ {
 		v, _ := v.ElementAt(i)
 		r[i] = a.AssertUnqualified(v).Name()
@@ -26,7 +18,16 @@ func makeNames(s a.Sequence) names {
 	return r
 }
 
-func consolidateNames(include names, exclude names) names {
+func makeLocalSymbolVector(names a.Names) a.Vector {
+	nl := len(names)
+	nv := make([]a.Value, nl)
+	for i := 0; i < nl; i++ {
+		nv[i] = a.NewLocalSymbol(names[i])
+	}
+	return a.NewVector(nv...)
+}
+
+func consolidateNames(include a.Names, exclude a.Names) a.Names {
 	s := map[string]bool{}
 	for _, n := range exclude {
 		s[string(n)] = false
@@ -37,7 +38,7 @@ func consolidateNames(include names, exclude names) names {
 			s[sn] = true
 		}
 	}
-	r := names{}
+	r := a.Names{}
 	for k, v := range s {
 		if v {
 			r = append(r, a.Name(k))
@@ -46,24 +47,24 @@ func consolidateNames(include names, exclude names) names {
 	return r
 }
 
-func visitValue(v a.Value) names {
+func visitValue(v a.Value) a.Names {
 	if s, ok := v.(a.Sequence); ok {
 		return visitSequence(s)
 	}
-	if cl, ok := v.(*closure); ok {
-		return cl.names
+	if n, ok := isClosure(v); ok {
+		return n
 	}
 	if s, ok := v.(a.Symbol); ok && s.Domain() == a.LocalDomain {
-		return names{s.Name()}
+		return a.Names{s.Name()}
 	}
 	return emptyNames
 }
 
-func visitSequence(s a.Sequence) names {
+func visitSequence(s a.Sequence) a.Names {
 	if _, ok := s.(a.Str); ok {
 		return emptyNames
 	}
-	r := names{}
+	r := a.Names{}
 	for i := s; i.IsSequence(); i = i.Rest() {
 		n := visitValue(i.First())
 		r = append(r, n...)
@@ -73,58 +74,47 @@ func visitSequence(s a.Sequence) names {
 
 func makeClosure(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
-	nv := makeNames(a.AssertVector(args.First()))
-	ex := a.MacroExpandAll(c, args.Rest())
-	cb := a.NewBlock(ex.(a.Sequence))
-	cn := consolidateNames(visitValue(cb), nv)
-
-	if len(cn) > 0 {
-		return &closure{
-			names: cn,
-			body:  cb,
-		}
-	}
-	return cb
+	ex := assertUnqualifiedNames(a.AssertVector(args.First()))
+	cb := a.MacroExpandAll(c, args.Rest())
+	nm := consolidateNames(visitValue(cb), ex)
+	return a.NewList(sClosure, makeLocalSymbolVector(nm), cb)
 }
 
-func (cl *closure) Eval(c a.Context) a.Value {
-	cn := cl.names
-	vars := make(a.Variables, len(cn))
-	for _, n := range cn {
+func isClosure(v a.Value) (a.Names, bool) {
+	if l, ok := isBuiltInCall("closure", v); ok {
+		v := a.AssertVector(l.Rest().First())
+		return assertUnqualifiedNames(v), true
+	}
+	return emptyNames, false
+}
+
+func doClosure(c a.Context, args a.Sequence) a.Value {
+	in := a.AssertVector(args.First())
+	vars := make(a.Variables, in.Count())
+	for i := in.(a.Sequence); i.IsSequence(); i = i.Rest() {
+		n := a.AssertUnqualified(i.First()).Name()
 		if v, ok := c.Get(n); ok {
 			vars[n] = v
 		}
 	}
 
+	cb := a.AssertSequence(args.Rest().First())
 	ns := a.GetContextNamespace(c)
 	l := a.ChildContextVars(ns, vars)
-	return a.Eval(l, cl.body)
-}
-
-func (cl *closure) Str() a.Str {
-	var buf bytes.Buffer
-	buf.WriteString("(closure ")
-	buf.WriteString(string(cl.nameVector().Str()))
-	buf.WriteString(" ")
-	buf.WriteString(string(cl.body.Str()))
-	buf.WriteString(")")
-	return a.Str(buf.String())
-}
-
-func (cl *closure) nameVector() a.Vector {
-	ni := cl.names
-	nl := len(ni)
-	nv := make([]a.Value, nl)
-	for i := 0; i < nl; i++ {
-		nv[i] = ni[i]
-	}
-	return a.NewVector(nv...)
+	return a.EvalBlock(l, cb)
 }
 
 func init() {
 	registerAnnotated(
 		a.NewMacro(makeClosure).WithMetadata(a.Metadata{
-			a.MetaName: a.Name("closure"),
+			a.MetaName: a.Name("make-closure"),
+		}),
+	)
+
+	registerAnnotated(
+		a.NewMacro(doClosure).WithMetadata(a.Metadata{
+			a.MetaName:    a.Name("closure"),
+			a.MetaSpecial: a.True,
 		}),
 	)
 }
