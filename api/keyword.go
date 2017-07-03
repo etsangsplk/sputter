@@ -35,8 +35,15 @@ func (k *keyword) Name() Name {
 }
 
 func (k *keyword) Apply(c Context, args Sequence) Value {
-	AssertArity(args, 1)
-	v := Eval(c, args.First())
+	if AssertMinimumArity(args, 1) == 1 {
+		return k.Get(args.First())
+	}
+	v := k.Get(args.First())
+	a := AssertApplicable(v)
+	return a.Apply(c, args.Rest())
+}
+
+func (k *keyword) Get(v Value) Value {
 	if g, ok := v.(Getter); ok {
 		if r, ok := g.Get(k); ok {
 			return r

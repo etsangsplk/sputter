@@ -62,12 +62,12 @@ func Count(v Value) int {
 // IndexedApply provides 'nth' behavior for Indexed Sequences
 func IndexedApply(s Indexed, c Context, args Sequence) Value {
 	i := AssertArityRange(args, 1, 2)
-	idx := AssertInteger(Eval(c, args.First()))
+	idx := AssertInteger(args.First())
 	if r, ok := s.ElementAt(idx); ok {
 		return r
 	}
 	if i == 2 {
-		return Eval(c, args.Rest().First())
+		return args.Rest().First()
 	}
 	panic(Err(IndexNotFound, strconv.Itoa(idx)))
 }

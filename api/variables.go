@@ -94,7 +94,7 @@ func (n Name) Str() Str {
 // Apply makes Bool Applicable
 func (b Bool) Apply(c Context, args Sequence) Value {
 	for i := args; i.IsSequence(); i = i.Rest() {
-		if Eval(c, i.First()) != b {
+		if i.First() != b {
 			return False
 		}
 	}
@@ -111,7 +111,7 @@ func (b Bool) Str() Str {
 
 func (n *nilValue) Apply(c Context, args Sequence) Value {
 	for i := args; i.IsSequence(); i = i.Rest() {
-		if Eval(c, i.First()) != Nil {
+		if i.First() != Nil {
 			return False
 		}
 	}

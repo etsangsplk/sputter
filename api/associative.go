@@ -60,7 +60,7 @@ func (a associative) Get(key Value) (Value, bool) {
 
 func (a associative) Apply(c Context, args Sequence) Value {
 	AssertArity(args, 1)
-	k := Eval(c, args.First())
+	k := args.First()
 	if r, ok := a.Get(k); ok {
 		return r
 	}
