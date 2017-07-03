@@ -14,7 +14,6 @@ const (
 var functionMetadata = Metadata{
 	MetaName: Name("<anon>"),
 	MetaType: Name("function"),
-	MetaDoc:  Str(""),
 }
 
 // Function is a Value that can be invoked

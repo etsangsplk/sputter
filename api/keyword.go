@@ -2,7 +2,7 @@ package api
 
 import u "github.com/kode4food/sputter/util"
 
-// ExpectedGetter is thrown if the Value is not a Getter
+// ExpectedGetter is thrown if the Value is not a Mapped
 const ExpectedGetter = "expected a propertied value: %s"
 
 var keywords = u.NewCache()
@@ -44,7 +44,7 @@ func (k *keyword) Apply(c Context, args Sequence) Value {
 }
 
 func (k *keyword) Get(v Value) Value {
-	if g, ok := v.(Getter); ok {
+	if g, ok := v.(Mapped); ok {
 		if r, ok := g.Get(k); ok {
 			return r
 		}

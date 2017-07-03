@@ -3,7 +3,7 @@ package api
 // List contains a node to a singly-linked List
 type List interface {
 	Conjoiner
-	Elementer
+	Indexed
 	Counted
 	Applicable
 	Evaluable
@@ -77,8 +77,8 @@ func (l *list) ElementAt(index int) (Value, bool) {
 	return e.first, true
 }
 
-func (l *list) Apply(c Context, args Sequence) Value {
-	return IndexedApply(l, c, args)
+func (l *list) Apply(_ Context, args Sequence) Value {
+	return IndexedApply(l, args)
 }
 
 func (l *list) Eval(c Context) Value {

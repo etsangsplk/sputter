@@ -3,20 +3,8 @@ package api
 // ExpectedBool is thrown when a Value is not a Bool
 const ExpectedBool = "value is not a bool: %s"
 
-// Comparison represents the result of a equality comparison
-type Comparison int
-
-// Name is a Variable name
-type Name string
-
 // Bool represents the values True or False
 type Bool bool
-
-// Names represents a set of Names
-type Names []Name
-
-// Variables represents a mapping from Name to Value
-type Variables map[Name]Value
 
 // Value is the generic interface for all 'Values'
 type Value interface {
@@ -27,10 +15,22 @@ type Value interface {
 // processes a Value against a Context (example: Emit)
 type ValueProcessor func(Context, Value) Value
 
+// Comparison represents the result of a equality comparison
+type Comparison int
+
 // Comparer is an interface for a Value capable of comparing.
 type Comparer interface {
 	Compare(Comparer) Comparison
 }
+
+// Name is a Variable name
+type Name string
+
+// Names represents a set of Names
+type Names []Name
+
+// Variables represents a mapping from Name to Value
+type Variables map[Name]Value
 
 // Named is the generic interface for Values that are named
 type Named interface {
@@ -47,13 +47,18 @@ type Documented interface {
 	Documentation() Str
 }
 
-// Getter is the interface for Values that have retrievable Properties
-type Getter interface {
+// Counted interfaces allow a Value to return a count of its items
+type Counted interface {
+	Count() int
+}
+
+// Mapped is the interface for Values that have retrievable Properties
+type Mapped interface {
 	Get(Value) (Value, bool)
 }
 
-// Elementer is the interface for Values that have indexed elements
-type Elementer interface {
+// Indexed is the interface for Values that have indexed elements
+type Indexed interface {
 	ElementAt(int) (Value, bool)
 }
 
@@ -92,7 +97,7 @@ func (n Name) Str() Str {
 }
 
 // Apply makes Bool Applicable
-func (b Bool) Apply(c Context, args Sequence) Value {
+func (b Bool) Apply(_ Context, args Sequence) Value {
 	for i := args; i.IsSequence(); i = i.Rest() {
 		if i.First() != b {
 			return False
@@ -109,7 +114,7 @@ func (b Bool) Str() Str {
 	return "false"
 }
 
-func (n *nilValue) Apply(c Context, args Sequence) Value {
+func (n *nilValue) Apply(_ Context, args Sequence) Value {
 	for i := args; i.IsSequence(); i = i.Rest() {
 		if i.First() != Nil {
 			return False

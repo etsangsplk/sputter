@@ -46,13 +46,14 @@ that will change rapidly. The current built-in forms are:
   * Sequences: `cons`, `conj`, `first`, `rest`, `seq?`, `!seq?`
   * Lists: `list`, `list?`, `!list?`, `to-list`
   * Vectors: `vector`, `vector?`, `!vector?`, `to-vector`
-  * Associative Arrays: `assoc`, `assoc?`, `!assoc?`, `to-assoc`
+  * Counted Sequences: `len`, `len?`, `!len?`
   * Indexed Sequences: `nth`, `indexed?`, `!indexed?`
+  * Associative Arrays: `assoc`, `assoc?`, `!assoc?`, `to-assoc`
   * Mapped Sequences: `mapped?`, `!mapped?`
   * Comprehensions: `concat`, `map`, `filter`, `reduce`, `take`, `drop`
   * Metadata: `meta`, `with-meta`
   * Concurrency: `async`, `generate`, `channel`, `promise`, `future`
-  * Strings: `str`
+  * Strings: `str`, `str?`, `!str?`
   * I/O: `print`, `println`, `pr`, `prn`
 
 Documentation for most of these forms may be viewed in the

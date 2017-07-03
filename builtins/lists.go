@@ -5,7 +5,7 @@ import (
 	d "github.com/kode4food/sputter/docstring"
 )
 
-func list(c a.Context, args a.Sequence) a.Value {
+func list(_ a.Context, args a.Sequence) a.Value {
 	return a.ToList(args)
 }
 

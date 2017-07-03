@@ -41,26 +41,26 @@ type Conjoiner interface {
 	Conjoin(Value) Sequence
 }
 
-// Counted interfaces allow a Sequence to return a count of its items
-type Counted interface {
-	Count() int
+// IndexedSequence is a Sequence that provides an Indexed interface
+type IndexedSequence interface {
+	Sequence
+	Indexed
 }
 
-// Indexed interfaces allow a Sequence item to be retrieved by index
-type Indexed interface {
-	Elementer
+// CountedSequence is a Sequence that provides a Counted interface
+type CountedSequence interface {
+	Sequence
+	Counted
 }
 
-// Count will return the Count from a Counted Sequence or explode
-func Count(v Value) int {
-	if c, ok := v.(Counted); ok {
-		return c.Count()
-	}
-	panic(Err(ExpectedCounted, v))
+// MappedSequence is a Sequence that provides a Mapped interface
+type MappedSequence interface {
+	Sequence
+	Mapped
 }
 
 // IndexedApply provides 'nth' behavior for Indexed Sequences
-func IndexedApply(s Indexed, c Context, args Sequence) Value {
+func IndexedApply(s Indexed, args Sequence) Value {
 	i := AssertArityRange(args, 1, 2)
 	idx := AssertInteger(args.First())
 	if r, ok := s.ElementAt(idx); ok {
@@ -89,6 +89,14 @@ func MakeSequenceStr(s Sequence) Str {
 	return Str(b.String())
 }
 
+// Count will return the Count from a Counted Sequence or explode
+func Count(v Value) int {
+	if c, ok := v.(CountedSequence); ok {
+		return c.Count()
+	}
+	panic(Err(ExpectedCounted, v))
+}
+
 // AssertSequence will cast a Value into a Sequence or explode violently
 func AssertSequence(v Value) Sequence {
 	if r, ok := v.(Sequence); ok {
@@ -97,12 +105,20 @@ func AssertSequence(v Value) Sequence {
 	panic(Err(ExpectedSequence, v))
 }
 
-// AssertIndexed will cast a Value into an Indexed or explode violently
-func AssertIndexed(v Value) Indexed {
-	if r, ok := v.(Indexed); ok {
+// AssertIndexedSequence will cast a Value into an Indexed or explode violently
+func AssertIndexedSequence(v Value) IndexedSequence {
+	if r, ok := v.(IndexedSequence); ok {
 		return r
 	}
 	panic(Err(ExpectedIndexed, v))
+}
+
+// AssertMappedSequence will cast Value to a Mapped or explode violently
+func AssertMappedSequence(v Value) MappedSequence {
+	if r, ok := v.(MappedSequence); ok {
+		return r
+	}
+	panic(Err(ExpectedMapped, v))
 }
 
 // AssertConjoiner will cast a Value into a Conjoiner or explode violently

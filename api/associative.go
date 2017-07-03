@@ -13,16 +13,10 @@ const (
 	KeyNotFound = "key not found in mapped sequence: %s"
 )
 
-// Mapped interfaces allow a Sequence item to be retrieved by Name
-type Mapped interface {
-	Sequence
-	Getter
-}
-
 // Associative is a Mappable that is implemented atop an array
 type Associative interface {
 	Conjoiner
-	Getter
+	Mapped
 	Counted
 	Applicable
 	Evaluable
@@ -58,7 +52,7 @@ func (a associative) Get(key Value) (Value, bool) {
 	return Nil, false
 }
 
-func (a associative) Apply(c Context, args Sequence) Value {
+func (a associative) Apply(_ Context, args Sequence) Value {
 	AssertArity(args, 1)
 	k := args.First()
 	if r, ok := a.Get(k); ok {
@@ -121,12 +115,4 @@ func (a associative) Str() Str {
 	}
 	b.WriteString("}")
 	return Str(b.String())
-}
-
-// AssertMapped will cast Value to a Mapped or explode violently
-func AssertMapped(v Value) Mapped {
-	if r, ok := v.(Mapped); ok {
-		return r
-	}
-	panic(Err(ExpectedMapped, v))
 }

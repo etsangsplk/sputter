@@ -22,6 +22,13 @@ func str(_ a.Context, args a.Sequence) a.Value {
 	return a.Str(b.String())
 }
 
+func isStr(v a.Value) bool {
+	if _, ok := v.(a.Str); ok {
+		return true
+	}
+	return false
+}
+
 func init() {
 	registerAnnotated(
 		a.NewFunction(str).WithMetadata(a.Metadata{
@@ -29,4 +36,9 @@ func init() {
 			a.MetaDoc:  d.Get("str"),
 		}),
 	)
+
+	registerSequencePredicate(isStr, a.Metadata{
+		a.MetaName: a.Name("str?"),
+		a.MetaDoc:  d.Get("is-str"),
+	})
 }

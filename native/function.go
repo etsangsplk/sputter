@@ -115,7 +115,7 @@ func (fi funcInfo) makePluralFuncMapper() outMapper {
 
 	return func(v reflect.Value) a.Value {
 		fn := fi.fn(v)
-		return a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
+		return a.NewFunction(func(_ a.Context, args a.Sequence) a.Value {
 			fin := prepareArgs(args)
 			r := fn.Call(fin)
 			fout := make([]a.Value, olen)

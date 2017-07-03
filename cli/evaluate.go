@@ -9,7 +9,7 @@ import (
 	e "github.com/kode4food/sputter/evaluator"
 )
 
-const fileNotFound = "File not found: %s"
+const fileNotFound = "file not found: %s"
 
 // EvaluateStdIn reads from StdIn and evaluates it
 func EvaluateStdIn() {

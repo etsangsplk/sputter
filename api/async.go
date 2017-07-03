@@ -96,7 +96,7 @@ func Never() Do {
 	}
 }
 
-func (ch *channelWrapper) close() {
+func (ch *channelWrapper) Close() {
 	if status := atomic.LoadUint32(&ch.status); status != closed {
 		atomic.StoreUint32(&ch.status, closed)
 		close(ch.seq)
@@ -147,10 +147,10 @@ func (e *channelEmitter) Error(err interface{}) Emitter {
 	return e
 }
 
-// Close will close the Go chan
+// Close will Close the Go chan
 func (e *channelEmitter) Close() Emitter {
 	runtime.SetFinalizer(e, nil)
-	e.ch.close()
+	e.ch.Close()
 	return e
 }
 

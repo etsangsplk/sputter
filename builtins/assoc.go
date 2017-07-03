@@ -17,7 +17,7 @@ func isAssociative(v a.Value) bool {
 }
 
 func isMapped(v a.Value) bool {
-	if _, ok := v.(a.Mapped); ok {
+	if _, ok := v.(a.MappedSequence); ok {
 		return true
 	}
 	return false

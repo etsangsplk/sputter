@@ -25,7 +25,7 @@ var (
 )
 
 func closeFunction(e a.Emitter) a.Function {
-	return a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
+	return a.NewFunction(func(_ a.Context, args a.Sequence) a.Value {
 		a.AssertArity(args, 0)
 		e.Close()
 		return a.Nil

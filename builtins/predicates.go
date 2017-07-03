@@ -22,7 +22,7 @@ func registerPredicate(f a.Function) {
 
 func registerSequencePredicate(f a.ValueFilter, md a.Metadata) {
 	registerAnnotated(
-		a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
+		a.NewFunction(func(_ a.Context, args a.Sequence) a.Value {
 			a.AssertMinimumArity(args, 1)
 			for i := args; i.IsSequence(); i = i.Rest() {
 				if !f(i.First()) {
@@ -34,7 +34,7 @@ func registerSequencePredicate(f a.ValueFilter, md a.Metadata) {
 	)
 
 	registerAnnotated(
-		a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
+		a.NewFunction(func(_ a.Context, args a.Sequence) a.Value {
 			a.AssertMinimumArity(args, 1)
 			for i := args; i.IsSequence(); i = i.Rest() {
 				if f(i.First()) {
@@ -59,6 +59,10 @@ func identical(_ a.Context, args a.Sequence) a.Value {
 	return a.True
 }
 
+func isNil(v a.Value) bool {
+	return v == a.Nil
+}
+
 func init() {
 	registerPredicate(
 		a.NewFunction(identical).WithMetadata(a.Metadata{
@@ -67,9 +71,7 @@ func init() {
 		}).(a.Function),
 	)
 
-	registerSequencePredicate(func(v a.Value) bool {
-		return v == a.Nil
-	}, a.Metadata{
+	registerSequencePredicate(isNil, a.Metadata{
 		a.MetaName: a.Name("nil?"),
 		a.MetaDoc:  d.Get("is-nil"),
 	})

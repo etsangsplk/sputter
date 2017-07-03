@@ -11,7 +11,7 @@ import (
 type Wrapped interface {
 	a.Value
 	a.Annotated
-	a.Getter
+	a.Mapped
 	Wrapped() interface{}
 }
 

@@ -15,7 +15,7 @@ type functionDefinition struct {
 	meta a.Metadata
 }
 
-type argProcessor func(c a.Context, args a.Sequence) a.Context
+type argProcessor func(a.Context, a.Sequence) a.Context
 
 var (
 	emptyMetadata = a.Metadata{}
@@ -51,7 +51,7 @@ func parseRestArg(s a.Sequence) a.Name {
 func makeRestArgProcessor(cl a.Context, an []a.Name, rn a.Name) argProcessor {
 	ac := len(an)
 
-	return func(c a.Context, args a.Sequence) a.Context {
+	return func(_ a.Context, args a.Sequence) a.Context {
 		a.AssertMinimumArity(args, ac)
 		l := a.ChildContext(cl)
 		i := args
@@ -67,7 +67,7 @@ func makeRestArgProcessor(cl a.Context, an []a.Name, rn a.Name) argProcessor {
 func makeFixedArgProcessor(cl a.Context, an []a.Name) argProcessor {
 	ac := len(an)
 
-	return func(c a.Context, args a.Sequence) a.Context {
+	return func(_ a.Context, args a.Sequence) a.Context {
 		a.AssertArity(args, ac)
 		l := a.ChildContext(cl)
 		i := args
@@ -89,8 +89,8 @@ func optionalMetadata(c a.Context, args a.Sequence) (a.Metadata, a.Sequence) {
 		md = emptyMetadata
 	}
 
-	if m, ok := r.First().(a.Mapped); ok {
-		em := a.Eval(c, m).(a.Mapped)
+	if m, ok := r.First().(a.MappedSequence); ok {
+		em := a.Eval(c, m).(a.MappedSequence)
 		md = md.Merge(toMetadata(em))
 		r = r.Rest()
 	}

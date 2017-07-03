@@ -8,7 +8,7 @@ const ExpectedVector = "value is not a vector: %s"
 // Vector is a fixed-length Array of Values
 type Vector interface {
 	Conjoiner
-	Elementer
+	Indexed
 	Counted
 	Applicable
 	Evaluable
@@ -39,8 +39,8 @@ func (v vector) ElementAt(index int) (Value, bool) {
 	return Nil, false
 }
 
-func (v vector) Apply(c Context, args Sequence) Value {
-	return IndexedApply(v, c, args)
+func (v vector) Apply(_ Context, args Sequence) Value {
+	return IndexedApply(v, args)
 }
 
 func (v vector) Eval(c Context) Value {

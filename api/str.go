@@ -102,8 +102,8 @@ func (s Str) ElementAt(index int) (Value, bool) {
 }
 
 // Apply makes Str applicable
-func (s Str) Apply(c Context, args Sequence) Value {
-	return IndexedApply(s, c, args)
+func (s Str) Apply(_ Context, args Sequence) Value {
+	return IndexedApply(s, args)
 }
 
 // Str converts this Value into a Str

@@ -332,14 +332,15 @@ func doc(c a.Context, args a.Sequence) a.Value {
 	if v, ok := c.Get(sym.Name()); ok {
 		if an, ok := v.(a.Annotated); ok {
 			md := an.Metadata()
-			doc := string(md[a.MetaDoc].(a.Str))
-			f := formatForREPL(doc)
-			fmt.Println(f)
-			return nothing
+			if doc, ok := md[a.MetaDoc].(a.Str); ok {
+				f := formatForREPL(string(doc))
+				fmt.Println(f)
+				return nothing
+			}
 		}
-		panic(a.Err("IsSymbol is not documented: %s", sym))
+		panic(a.Err("symbol is not documented: %s", sym))
 	}
-	panic(a.Err("Could not resolve symbol: %s", sym))
+	panic(a.Err("could not resolve symbol: %s", sym))
 }
 
 func getBuiltInsNamespace() a.Namespace {

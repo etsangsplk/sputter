@@ -5,9 +5,9 @@ import (
 	d "github.com/kode4food/sputter/docstring"
 )
 
-func toMetadata(args a.Mapped) a.Metadata {
+func toMetadata(args a.MappedSequence) a.Metadata {
 	r := make(a.Metadata)
-	for i := a.Sequence(args); i.IsSequence(); i = i.Rest() {
+	for i := args.(a.Sequence); i.IsSequence(); i = i.Rest() {
 		p := i.First().(a.Sequence)
 		k := p.First()
 		v := p.Rest().First()
@@ -27,7 +27,7 @@ func fromMetadata(m a.Metadata) a.Value {
 func withMeta(_ a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 2)
 	o := a.AssertAnnotated(args.First())
-	m := a.AssertMapped(args.Rest().First())
+	m := a.AssertMappedSequence(args.Rest().First())
 	return o.WithMetadata(toMetadata(m)).(a.Value)
 }
 

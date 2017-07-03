@@ -10,7 +10,7 @@ import (
 )
 
 // UnsupportedSyntaxQuote is raised when you try to quote what can't be quoted
-const UnsupportedSyntaxQuote = "Unsupported type in syntax quote: %s"
+const UnsupportedSyntaxQuote = "unsupported type in syntax quote: %s"
 
 const genSymTemplate = "x-%s-gensym-%d"
 

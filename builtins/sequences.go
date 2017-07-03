@@ -12,6 +12,20 @@ func isSequence(v a.Value) bool {
 	return false
 }
 
+func isCounted(v a.Value) bool {
+	if _, ok := v.(a.CountedSequence); ok {
+		return true
+	}
+	return false
+}
+
+func isIndexed(v a.Value) bool {
+	if _, ok := v.(a.IndexedSequence); ok {
+		return true
+	}
+	return false
+}
+
 func fetchSequence(args a.Sequence) a.Sequence {
 	a.AssertArity(args, 1)
 	return a.AssertSequence(args.First())
@@ -48,10 +62,10 @@ func _len(_ a.Context, args a.Sequence) a.Value {
 	return a.NewFloat(float64(l))
 }
 
-func nth(c a.Context, args a.Sequence) a.Value {
+func nth(_ a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
-	s := a.AssertIndexed(args.First())
-	return a.IndexedApply(s, c, args.Rest())
+	s := a.AssertIndexedSequence(args.First())
+	return a.IndexedApply(s, args.Rest())
 }
 
 func _append(_ a.Context, args a.Sequence) a.Value {
@@ -146,6 +160,16 @@ func init() {
 	registerSequencePredicate(isSequence, a.Metadata{
 		a.MetaName: a.Name("seq?"),
 		a.MetaDoc:  d.Get("is-seq"),
+	})
+
+	registerSequencePredicate(isCounted, a.Metadata{
+		a.MetaName: a.Name("len?"),
+		a.MetaDoc:  d.Get("is-len"),
+	})
+
+	registerSequencePredicate(isIndexed, a.Metadata{
+		a.MetaName: a.Name("indexed?"),
+		a.MetaDoc:  d.Get("is-indexed"),
 	})
 
 	registerAnnotated(
