@@ -1,5 +1,7 @@
 package api
 
+import "bytes"
+
 // ToList takes any sequence and converts it to a List
 func ToList(s Sequence) List {
 	if l, ok := s.(List); ok {
@@ -88,4 +90,23 @@ func uncountedToAssociative(s Sequence) Associative {
 		}
 	}
 	return associative(r)
+}
+
+// ToStr takes any sequence and attempts to convert it to a Str
+func ToStr(s Sequence) Str {
+	if st, ok := s.(Str); ok {
+		return st
+	}
+	var buf bytes.Buffer
+	for i := s; i.IsSequence(); i = i.Rest() {
+		v := i.First()
+		if v == Nil {
+			continue
+		} else if s, ok := v.(Str); ok {
+			buf.WriteString(string(s))
+		} else {
+			buf.WriteString(string(v.Str()))
+		}
+	}
+	return Str(buf.String())
 }

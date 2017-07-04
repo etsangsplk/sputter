@@ -17,10 +17,14 @@ func TestSequenceConversions(t *testing.T) {
 	a1 := a.ToAssociative(l3)
 	a2 := a.ToAssociative(a1)
 
+	l4 := a.NewList(a.Str("hello"), a.Nil, a.Str("there"), v1)
+	s1 := a.ToStr(l4)
+
 	as.String(`["hello" "there"]`, v1)
 	as.Identical(v1, v2)
 	as.String(`("hello" "there")`, l2)
 	as.Identical(l2, l3)
 	as.String(`{"hello" "there"}`, a1)
 	as.Identical(a1, a2)
+	as.String(`hellothere["hello" "there"]`, s1)
 }
