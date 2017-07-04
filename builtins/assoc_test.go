@@ -43,3 +43,15 @@ func TestMapped(t *testing.T) {
 	testCode(t, `(!mapped? '(:name "Sputter" :age 45))`, a.True)
 	testCode(t, `(!mapped? [:name "Sputter" :age 45])`, a.True)
 }
+
+func TestKeywordApply(t *testing.T) {
+	ns := a.GetNamespace(a.UserDomain)
+	ns.Delete("test")
+
+	testCode(t, `
+		(def test {
+			:double (lambda [x] (* x 2))
+		})
+		(:double test 16)
+	`, f(32))
+}
