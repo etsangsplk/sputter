@@ -42,18 +42,18 @@ that will change rapidly. The current built-in forms are:
   * Numeric: `+`, `-`, `*`, `/`, `!=`, `=`, `<`, `<=`, `>`, `>=`
   * Variables: `def`, `let`, `ns`, `with-ns`, `quote`
   * Functions: `defn`, `fn`, `lambda`, `apply`, `defmacro`
-  * Predicates: `eq`, `!eq`, `nil?`, `!nil?`
-  * Sequences: `cons`, `conj`, `first`, `rest`, `seq?`, `!seq?`
-  * Lists: `list`, `list?`, `!list?`, `to-list`
-  * Vectors: `vector`, `vector?`, `!vector?`, `to-vector`
-  * Counted Sequences: `len`, `len?`, `!len?`
-  * Indexed Sequences: `nth`, `indexed?`, `!indexed?`
-  * Associative Arrays: `assoc`, `assoc?`, `!assoc?`, `to-assoc`
-  * Mapped Sequences: `mapped?`, `!mapped?`
+  * Predicates: `eq`, `nil?`
+  * Sequences: `cons`, `conj`, `first`, `rest`, `seq?`
+  * Lists: `list`, `list?`, `to-list`
+  * Vectors: `vector`, `vector?`, `to-vector`
+  * Associative Arrays: `assoc`, `assoc?`, `to-assoc`
+  * Counted Sequences: `len`, `len?`
+  * Indexed Sequences: `nth`, `indexed?`
+  * Mapped Sequences: `mapped?`
   * Comprehensions: `concat`, `map`, `filter`, `reduce`, `take`, `drop`
-  * Metadata: `meta`, `with-meta`
-  * Concurrency: `async`, `generate`, `channel`, `promise`, `future`
-  * Strings: `str`, `str?`, `!str?`
+  * Metadata: `meta`, `meta?`, `with-meta`
+  * Concurrency: `async`, `generate`, `channel`, `future`, `promise`, `promise?`
+  * Strings: `str`, `str?`
   * I/O: `print`, `println`, `pr`, `prn`
 
 Documentation for most of these forms may be viewed in the

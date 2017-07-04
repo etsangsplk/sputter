@@ -20,11 +20,18 @@ func TestChannel(t *testing.T) {
 }
 
 func TestPromise(t *testing.T) {
-	a.GetNamespace(a.UserDomain).Delete("p")
+	ns := a.GetNamespace(a.UserDomain)
+	ns.Delete("p1")
+	ns.Delete("p2")
 
 	testCode(t, `
-		(def p (promise))
-		(do-async (p "hello"))
-		(p)
+		(def p1 (promise))
+		(do-async (p1 "hello"))
+		(p1)
 	`, s("hello"))
+
+	testCode(t, `
+		(def p2 (promise))
+		(promise? p1 p2)
+	`, a.True)
 }

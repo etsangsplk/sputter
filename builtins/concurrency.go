@@ -67,6 +67,15 @@ func promise(_ a.Context, args a.Sequence) a.Value {
 	).WithMetadata(promiseMetadata).(a.Function)
 }
 
+func isPromise(v a.Value) bool {
+	if _, ok := v.(a.Applicable); ok {
+		if an, ok := v.(a.Annotated); ok {
+			return an.Metadata().IsTrue(MetaPromise)
+		}
+	}
+	return false
+}
+
 func doAsync(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
 	go a.EvalBlock(a.ChildContext(c), args)
@@ -94,4 +103,9 @@ func init() {
 			a.MetaSpecial: a.True,
 		}),
 	)
+
+	registerSequencePredicate(isPromise, a.Metadata{
+		a.MetaName: a.Name("promise?"),
+		a.MetaDoc:  d.Get("is-promise"),
+	})
 }
