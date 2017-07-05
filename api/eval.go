@@ -1,5 +1,7 @@
 package api
 
+import "bytes"
+
 // ExpectedApplicable is thrown when a Value is not Applicable
 const ExpectedApplicable = "value does not support application: %s"
 
@@ -53,6 +55,14 @@ func (b *block) IsBlock() bool {
 
 func (b *block) Eval(c Context) Value {
 	return EvalBlock(c, b)
+}
+
+func (b *block) Str() Str {
+	var buf bytes.Buffer
+	for i := b.Sequence; i.IsSequence(); i = i.Rest() {
+		buf.WriteString(string(i.First().Str()))
+	}
+	return Str(buf.String())
 }
 
 // AssertApplicable will cast a Value into an Applicable or explode violently

@@ -1,1 +1,1 @@
-# (eval form) evaluates a form
+# (eval form) expands and evaluates a form

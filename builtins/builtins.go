@@ -34,8 +34,8 @@ func do(c a.Context, args a.Sequence) a.Value {
 func read(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
 	v := args.First()
-	s := a.AssertStr(v)
-	return e.ReadStr(c, s)
+	s := a.AssertSequence(v)
+	return e.ReadStr(c, a.ToStr(s))
 }
 
 func eval(c a.Context, args a.Sequence) a.Value {

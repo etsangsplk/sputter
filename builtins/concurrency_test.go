@@ -34,4 +34,8 @@ func TestPromise(t *testing.T) {
 		(def p2 (promise))
 		(promise? p1 p2)
 	`, a.True)
+
+	testCode(t, `
+		(promise? p1 99)
+	`, a.False)
 }
