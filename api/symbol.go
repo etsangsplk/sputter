@@ -13,22 +13,24 @@ const (
 	ExpectedUnqualified = "symbol should be unqualified: %s"
 )
 
-// Symbol is a qualified identifier that can be resolved
-type Symbol interface {
-	Value
-	Evaluable
-	IsSymbol() bool
-	Name() Name
-	Domain() Name
-	Qualified() Name
-	Namespace(Context) Namespace
-	Resolve(Context) (Value, bool)
-}
+type (
+	// Symbol is a qualified identifier that can be resolved
+	Symbol interface {
+		Value
+		Evaluable
+		IsSymbol() bool
+		Name() Name
+		Domain() Name
+		Qualified() Name
+		Namespace(Context) Namespace
+		Resolve(Context) (Value, bool)
+	}
 
-type symbol struct {
-	name   Name
-	domain Name
-}
+	symbol struct {
+		name   Name
+		domain Name
+	}
+)
 
 func qualifiedName(name Name, domain Name) Name {
 	if domain == LocalDomain {

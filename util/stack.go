@@ -1,24 +1,26 @@
 package util
 
-// Any allows the utilities to take anything
-type Any interface{}
+type (
+	// Any allows the utilities to take anything
+	Any interface{}
 
-// Stack is your standard Stack interface
-type Stack interface {
-	Push(value Any)
-	Peek() (Any, bool)
-	Pop() (Any, bool)
-}
+	// Stack is your standard Stack interface
+	Stack interface {
+		Push(value Any)
+		Peek() (Any, bool)
+		Pop() (Any, bool)
+	}
 
-// stack implements a non-concurrent Stack
-type stack struct {
-	head *entry
-}
+	// stack implements a non-concurrent Stack
+	stack struct {
+		head *entry
+	}
 
-type entry struct {
-	value Any
-	next  *entry
-}
+	entry struct {
+		value Any
+		next  *entry
+	}
+)
 
 // NewStack creates a new Stack instance
 func NewStack() Stack {

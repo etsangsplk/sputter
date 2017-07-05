@@ -15,19 +15,21 @@ const (
 	ExpectedInteger = "value is not an integer: %s"
 )
 
-// Number can represent either floating point or rational numbers
-type Number interface {
-	Value
-	Cmp(r Number) Comparison
-	Add(r Number) Number
-	Sub(r Number) Number
-	Mul(r Number) Number
-	Div(r Number) Number
-	Float64() (float64, bool)
-}
+type (
+	// Number can represent either floating point or rational numbers
+	Number interface {
+		Value
+		Cmp(r Number) Comparison
+		Add(r Number) Number
+		Sub(r Number) Number
+		Mul(r Number) Number
+		Div(r Number) Number
+		Float64() (float64, bool)
+	}
 
-type dec apd.Decimal
-type rat big.Rat
+	dec apd.Decimal
+	rat big.Rat
+)
 
 var ctx = apd.BaseContext.WithPrecision(53)
 

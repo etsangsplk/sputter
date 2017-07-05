@@ -13,17 +13,19 @@ const (
 	KeyNotFound = "key not found in mapped sequence: %s"
 )
 
-// Associative is a Mappable that is implemented atop an array
-type Associative interface {
-	Conjoiner
-	Mapped
-	Counted
-	Applicable
-	Evaluable
-	IsAssociative() bool
-}
+type (
+	// Associative is a Mappable that is implemented atop an array
+	Associative interface {
+		Conjoiner
+		Mapped
+		Counted
+		Applicable
+		Evaluable
+		IsAssociative() bool
+	}
 
-type associative []Vector
+	associative []Vector
+)
 
 // NewAssociative instantiates a new Associative
 func NewAssociative(v ...Vector) Associative {

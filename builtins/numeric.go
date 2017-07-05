@@ -2,8 +2,10 @@ package builtins
 
 import a "github.com/kode4food/sputter/api"
 
-type reduceFunc func(prev a.Number, next a.Number) a.Number
-type compareFunc func(prev a.Number, next a.Number) bool
+type (
+	reduceFunc  func(prev a.Number, next a.Number) a.Number
+	compareFunc func(prev a.Number, next a.Number) bool
+)
 
 var (
 	zero = a.NewFloat(0)

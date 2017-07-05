@@ -9,9 +9,6 @@ import (
 // UnmatchedState is the error returned when the lexer state is invalid
 const UnmatchedState = "unmatched lexing state"
 
-// TokenType is an opaque type for lexer tokens
-type TokenType int
-
 // Token Types
 const (
 	Error TokenType = iota
@@ -34,28 +31,33 @@ const (
 	endOfFile
 )
 
-type lexer struct {
-	once  a.Do
-	src   string
-	isSeq bool
-	first a.Value
-	rest  a.Sequence
-}
+type (
+	// TokenType is an opaque type for lexer tokens
+	TokenType int
 
-// Token is a lexer value
-type Token struct {
-	Type  TokenType
-	Value a.Value
-}
+	lexer struct {
+		once  a.Do
+		src   string
+		isSeq bool
+		first a.Value
+		rest  a.Sequence
+	}
 
-type tokenizer func(s string) *Token
+	// Token is a lexer value
+	Token struct {
+		Type  TokenType
+		Value a.Value
+	}
 
-type matchEntry struct {
-	pattern  *regexp.Regexp
-	function tokenizer
-}
+	tokenizer func(s string) *Token
 
-type mactchEntries []matchEntry
+	matchEntry struct {
+		pattern  *regexp.Regexp
+		function tokenizer
+	}
+
+	matchEntries []matchEntry
+)
 
 var (
 	escaped    = regexp.MustCompile(`\\\\|\\"|\\[^\\"]`)
@@ -63,7 +65,7 @@ var (
 		`\\`: `\`,
 		`\"`: `"`,
 	}
-	matchers mactchEntries
+	matchers matchEntries
 )
 
 // Scan creates a new lexer Sequence
@@ -192,7 +194,7 @@ func init() {
 		}
 	}
 
-	matchers = mactchEntries{
+	matchers = matchEntries{
 		pattern(`^$`, endState(endOfFile)),
 		pattern(`^;[^\n]*([\n]|$)`, tokenState(Comment)),
 		pattern(`^[\s,]+`, tokenState(Whitespace)),

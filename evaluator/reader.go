@@ -32,25 +32,25 @@ const (
 	MapNotPaired = "map does not contain an even number of elements"
 )
 
-var keywordIdentifier = regexp.MustCompile(`^:[^(){}\[\]\s,]+`)
-
-var specialNames = a.Variables{
-	"true":  a.True,
-	"false": a.False,
-	"nil":   a.Nil,
-}
-
-var (
-	quote    = a.NewQualifiedSymbol("quote", a.BuiltInDomain)
-	syntax   = a.NewQualifiedSymbol("syntax-quote", a.BuiltInDomain)
-	unquote  = a.NewQualifiedSymbol("unquote", a.BuiltInDomain)
-	splicing = a.NewQualifiedSymbol("unquote-splicing", a.BuiltInDomain)
-)
-
 type reader struct {
 	context a.Context
 	iter    *a.Iterator
 }
+
+var (
+	keywordIdentifier = regexp.MustCompile(`^:[^(){}\[\]\s,]+`)
+
+	quote    = a.NewQualifiedSymbol("quote", a.BuiltInDomain)
+	syntax   = a.NewQualifiedSymbol("syntax-quote", a.BuiltInDomain)
+	unquote  = a.NewQualifiedSymbol("unquote", a.BuiltInDomain)
+	splicing = a.NewQualifiedSymbol("unquote-splicing", a.BuiltInDomain)
+
+	specialNames = a.Variables{
+		"true":  a.True,
+		"false": a.False,
+		"nil":   a.Nil,
+	}
+)
 
 // Read completely consumes a Lexer before returning a Value Sequence
 func Read(context a.Context, lexer a.Sequence) a.Sequence {

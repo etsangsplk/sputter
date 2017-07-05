@@ -7,28 +7,30 @@ import (
 	u "github.com/kode4food/sputter/util"
 )
 
-// Wrapped is the interface for wrapped Go values
-type Wrapped interface {
-	a.Value
-	a.Annotated
-	a.Mapped
-	Wrapped() interface{}
-}
+type (
+	// Wrapped is the interface for wrapped Go values
+	Wrapped interface {
+		a.Value
+		a.Annotated
+		a.Mapped
+		Wrapped() interface{}
+	}
 
-type wrapped struct {
-	value    reflect.Value
-	typeInfo *typeInfo
-	meta     a.Metadata
-}
+	wrapped struct {
+		value    reflect.Value
+		typeInfo *typeInfo
+		meta     a.Metadata
+	}
 
-type typeInfo struct {
-	name    a.Name
-	typ     reflect.Type
-	getters propertyGetters
-	meta    a.Metadata
-}
+	typeInfo struct {
+		name    a.Name
+		typ     reflect.Type
+		getters propertyGetters
+		meta    a.Metadata
+	}
 
-type propertyGetters map[string]outMapper
+	propertyGetters map[string]outMapper
+)
 
 var types = u.NewCache()
 

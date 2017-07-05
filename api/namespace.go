@@ -19,26 +19,28 @@ const (
 	ExpectedNamespace = "value is not a namespace: %s"
 )
 
+type (
+	// Namespace is a container where Qualified Symbols are mapped to Values
+	Namespace interface {
+		Value
+		Context
+		Domain() Name
+		Intern(Name) Symbol
+	}
+
+	namespace struct {
+		Context
+		domain  Name
+		symbols u.Cache
+	}
+
+	withNamespace struct {
+		Context
+		ns Namespace
+	}
+)
+
 var namespaces = u.NewCache()
-
-// Namespace is a container where Qualified Symbols are mapped to Values
-type Namespace interface {
-	Value
-	Context
-	Domain() Name
-	Intern(Name) Symbol
-}
-
-type namespace struct {
-	Context
-	domain  Name
-	symbols u.Cache
-}
-
-type withNamespace struct {
-	Context
-	ns Namespace
-}
 
 func (ns *namespace) Domain() Name {
 	return ns.domain

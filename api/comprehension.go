@@ -1,15 +1,17 @@
 package api
 
-// ValueMapper returns a mapped representation of the specified Value
-type ValueMapper func(Value) Value
+type (
+	// ValueMapper returns a mapped representation of the specified Value
+	ValueMapper func(Value) Value
 
-// ValueFilter returns true if the Value remains part of a filtered Sequence
-type ValueFilter func(Value) bool
+	// ValueFilter returns true if the Value remains part of a filtered Sequence
+	ValueFilter func(Value) bool
 
-type compElement struct {
-	first Value
-	rest  Sequence
-}
+	compElement struct {
+		first Value
+		rest  Sequence
+	}
+)
 
 func (c *compElement) First() Value {
 	return c.first

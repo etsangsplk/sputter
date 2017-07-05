@@ -20,52 +20,54 @@ const (
 	closed
 )
 
-// Do is a callback interface for performing some action
-type Do func(func())
+type (
+	// Do is a callback interface for performing some action
+	Do func(func())
 
-// Emitter is an interface that is used to emit Values to a Channel
-type Emitter interface {
-	Value
-	Emit(Value) Emitter
-	Error(interface{}) Emitter
-	Close() Emitter
-}
+	// Emitter is an interface that is used to emit Values to a Channel
+	Emitter interface {
+		Value
+		Emit(Value) Emitter
+		Error(interface{}) Emitter
+		Close() Emitter
+	}
 
-// Promise represents a Value that will eventually be resolved
-type Promise interface {
-	Value
-	Deliver(Value) Value
-	Resolve() Value
-}
+	// Promise represents a Value that will eventually be resolved
+	Promise interface {
+		Value
+		Deliver(Value) Value
+		Resolve() Value
+	}
 
-type channelResult struct {
-	value Value
-	error interface{}
-}
+	channelResult struct {
+		value Value
+		error interface{}
+	}
 
-type channelWrapper struct {
-	seq    chan channelResult
-	status uint32
-}
+	channelWrapper struct {
+		seq    chan channelResult
+		status uint32
+	}
 
-type channelEmitter struct {
-	ch *channelWrapper
-}
+	channelEmitter struct {
+		ch *channelWrapper
+	}
 
-type channelSequence struct {
-	once Do
-	ch   *channelWrapper
+	channelSequence struct {
+		once Do
+		ch   *channelWrapper
 
-	isSeq  bool
-	result channelResult
-	rest   Sequence
-}
+		isSeq  bool
+		result channelResult
+		rest   Sequence
+	}
 
-type promise struct {
-	cond  *sync.Cond
-	state uint32
-	val   Value
-}
+	promise struct {
+		cond  *sync.Cond
+		state uint32
+		val   Value
+	}
+)
 
 var emptyResult = channelResult{value: Nil, error: nil}
 

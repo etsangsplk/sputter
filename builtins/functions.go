@@ -8,14 +8,16 @@ import (
 // InvalidRestArgument is thrown if you include more than one rest argument
 const InvalidRestArgument = "rest-argument not well-formed: %s"
 
-type functionDefinition struct {
-	args a.Vector
-	rest bool
-	body a.Sequence
-	meta a.Metadata
-}
+type (
+	functionDefinition struct {
+		args a.Vector
+		rest bool
+		body a.Sequence
+		meta a.Metadata
+	}
 
-type argProcessor func(a.Context, a.Sequence) a.Context
+	argProcessor func(a.Context, a.Sequence) a.Context
+)
 
 var (
 	emptyMetadata = a.Metadata{}

@@ -5,13 +5,13 @@ var (
 	MetaMacro = NewKeyword("macro")
 	// MetaSpecial identifies a Macro as being a special form
 	MetaSpecial = NewKeyword("special-form")
-)
 
-var macroMetadata = Metadata{
-	MetaMacro:   True,
-	MetaType:    Name("macro"),
-	MetaSpecial: False,
-}
+	macroMetadata = Metadata{
+		MetaMacro:   True,
+		MetaType:    Name("macro"),
+		MetaSpecial: False,
+	}
+)
 
 // NewMacro instantiates a new Macro
 func NewMacro(e SequenceProcessor) Function {

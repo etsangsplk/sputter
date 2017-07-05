@@ -18,15 +18,9 @@ import (
 	e "github.com/kode4food/sputter/evaluator"
 )
 
-type any interface{}
-
-type sentinel struct{}
-
-var anyChar = regexp.MustCompile(".")
-
-const replBuiltIns = "*repl-builtins*"
-
 const (
+	replBuiltIns = "*repl-builtins*"
+
 	domain = cyan + "%s" + reset + " "
 	prompt = domain + "[%d]> " + code
 	cont   = domain + "[%d]" + dgray + "␤   " + code
@@ -37,34 +31,41 @@ const (
 	paired = esc + "7m"
 )
 
-var nothing = &sentinel{}
+type (
+	any      interface{}
+	sentinel struct{}
 
-var farewells = []string{
-	"Adiós!",
-	"Au revoir!",
-	"Auf Wiedersehen",
-	"B'bye!",
-	"Bye!",
-	"Bye for now!",
-	"Ciao!",
-	"Have a wonderful day!",
-	"再见!",
-	"じゃあね",
-}
+	// REPL manages a Read-Eval-Print Loop
+	REPL struct {
+		buf bytes.Buffer
+		ctx a.Context
+		ns  a.Namespace
+		rl  *readline.Instance
+		idx int
+	}
+)
 
 var (
+	anyChar = regexp.MustCompile(".")
+
+	nothing = &sentinel{}
+
+	farewells = []string{
+		"Adiós!",
+		"Au revoir!",
+		"Auf Wiedersehen",
+		"B'bye!",
+		"Bye!",
+		"Bye for now!",
+		"Ciao!",
+		"Have a wonderful day!",
+		"再见!",
+		"じゃあね",
+	}
+
 	openers = map[rune]rune{')': '(', ']': '[', '}': '{'}
 	closers = map[rune]rune{'(': ')', '[': ']', '{': '}'}
 )
-
-// REPL manages a Read-Eval-Print Loop
-type REPL struct {
-	buf bytes.Buffer
-	ctx a.Context
-	ns  a.Namespace
-	rl  *readline.Instance
-	idx int
-}
 
 // NewREPL instantiates a new REPL instance
 func NewREPL() *REPL {

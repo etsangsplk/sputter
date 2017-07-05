@@ -11,25 +11,27 @@ const (
 	BadArityRange = "expected between %d and %d arguments, got %d"
 )
 
+type (
+	// Function is a Value that can be invoked
+	Function interface {
+		Value
+		Annotated
+		Named
+		Typed
+		Documented
+		Applicable
+		IsFunction() bool
+	}
+
+	function struct {
+		exec SequenceProcessor
+		meta Metadata
+	}
+)
+
 var functionMetadata = Metadata{
 	MetaName: Name("<anon>"),
 	MetaType: Name("function"),
-}
-
-// Function is a Value that can be invoked
-type Function interface {
-	Value
-	Annotated
-	Named
-	Typed
-	Documented
-	Applicable
-	IsFunction() bool
-}
-
-type function struct {
-	exec SequenceProcessor
-	meta Metadata
 }
 
 // NewFunction instantiates a new Function

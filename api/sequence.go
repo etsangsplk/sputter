@@ -22,42 +22,44 @@ const (
 	IndexNotFound = "index not found in sequence: %s"
 )
 
-// SequenceProcessor is the standard signature for a function that is
-// capable of transforming or validating a Sequence
-type SequenceProcessor func(Context, Sequence) Value
+type (
+	// SequenceProcessor is the standard signature for a function that is
+	// capable of transforming or validating a Sequence
+	SequenceProcessor func(Context, Sequence) Value
 
-// Sequence interfaces expose a lazily resolved sequence of Values
-type Sequence interface {
-	Value
-	First() Value
-	Rest() Sequence
-	Prepend(Value) Sequence
-	IsSequence() bool
-}
+	// Sequence interfaces expose a lazily resolved sequence of Values
+	Sequence interface {
+		Value
+		First() Value
+		Rest() Sequence
+		Prepend(Value) Sequence
+		IsSequence() bool
+	}
 
-// Conjoiner is a Sequence that can be Conjoined in some way
-type Conjoiner interface {
-	Sequence
-	Conjoin(Value) Sequence
-}
+	// Conjoiner is a Sequence that can be Conjoined in some way
+	Conjoiner interface {
+		Sequence
+		Conjoin(Value) Sequence
+	}
 
-// IndexedSequence is a Sequence that provides an Indexed interface
-type IndexedSequence interface {
-	Sequence
-	Indexed
-}
+	// IndexedSequence is a Sequence that provides an Indexed interface
+	IndexedSequence interface {
+		Sequence
+		Indexed
+	}
 
-// CountedSequence is a Sequence that provides a Counted interface
-type CountedSequence interface {
-	Sequence
-	Counted
-}
+	// CountedSequence is a Sequence that provides a Counted interface
+	CountedSequence interface {
+		Sequence
+		Counted
+	}
 
-// MappedSequence is a Sequence that provides a Mapped interface
-type MappedSequence interface {
-	Sequence
-	Mapped
-}
+	// MappedSequence is a Sequence that provides a Mapped interface
+	MappedSequence interface {
+		Sequence
+		Mapped
+	}
+)
 
 // IndexedApply provides 'nth' behavior for Indexed Sequences
 func IndexedApply(s Indexed, args Sequence) Value {

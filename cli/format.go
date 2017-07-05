@@ -47,19 +47,19 @@ var (
 	ticks  = regexp.MustCompile("`[^`]*`")
 	unders = regexp.MustCompile("_[^_]*_")
 	stars  = regexp.MustCompile("[*][^*]*[*]")
+
+	lineFormatters = map[*regexp.Regexp]formatter{
+		regexp.MustCompile("^#\\s.*$"):   formatHeader1,
+		regexp.MustCompile("^##\\s.*$"):  formatHeader2,
+		regexp.MustCompile("^\\s\\s.*$"): formatIndent,
+	}
+
+	docFormatters = map[*regexp.Regexp]formatter{
+		ticks:  trimmedFormatter("`", code),
+		unders: trimmedFormatter("_", result),
+		stars:  trimmedFormatter("*", bold),
+	}
 )
-
-var lineFormatters = map[*regexp.Regexp]formatter{
-	regexp.MustCompile("^#\\s.*$"):   formatHeader1,
-	regexp.MustCompile("^##\\s.*$"):  formatHeader2,
-	regexp.MustCompile("^\\s\\s.*$"): formatIndent,
-}
-
-var docFormatters = map[*regexp.Regexp]formatter{
-	ticks:  trimmedFormatter("`", code),
-	unders: trimmedFormatter("_", result),
-	stars:  trimmedFormatter("*", bold),
-}
 
 func formatMarkdown(s string) string {
 	lines := strings.Split(strings.TrimSpace(s), "\n")

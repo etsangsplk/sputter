@@ -2,19 +2,22 @@ package util
 
 import "sync"
 
-// Cache implements a simple cache
-type Cache interface {
-	Get(key Any, res CacheResolver) Any
-}
+type (
+	// Cache implements a simple cache
+	Cache interface {
+		Get(key Any, res CacheResolver) Any
+	}
 
-type cache struct {
-	sync.RWMutex
-	data valueMap
-}
+	// CacheResolver is used to resolve the value of a cached item
+	CacheResolver func() Any
 
-// CacheResolver is used to resolve the value of a cached item
-type CacheResolver func() Any
-type valueMap map[Any]Any
+	cache struct {
+		sync.RWMutex
+		data valueMap
+	}
+
+	valueMap map[Any]Any
+)
 
 // NewCache creates a new synchronous Cache instance
 func NewCache() Cache {

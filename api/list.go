@@ -16,9 +16,11 @@ type list struct {
 	count int
 }
 
-// EmptyList represents an empty List
-var EmptyList List
-var emptyList *list
+var (
+	// EmptyList represents an empty List
+	EmptyList List
+	emptyList *list
+)
 
 // NewList creates a new List instance
 func NewList(v ...Value) List {

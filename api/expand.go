@@ -1,16 +1,18 @@
 package api
 
-type specialForm struct {
-	List
-	fn   Applicable
-	args Vector
-}
+type (
+	specialForm struct {
+		List
+		fn   Applicable
+		args Vector
+	}
 
-type evaluatingForm struct {
-	List
-	fn   Applicable
-	args Vector
-}
+	evaluatingForm struct {
+		List
+		fn   Applicable
+		args Vector
+	}
+)
 
 // MacroExpand1 performs a single macro expansion
 func MacroExpand1(c Context, v Value) (Value, bool) {

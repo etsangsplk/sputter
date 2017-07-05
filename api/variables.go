@@ -1,70 +1,9 @@
 package api
 
-// ExpectedBool is thrown when a Value is not a Bool
-const ExpectedBool = "value is not a bool: %s"
-
-// Bool represents the values True or False
-type Bool bool
-
-// Value is the generic interface for all 'Values'
-type Value interface {
-	Str() Str
-}
-
-// ValueProcessor is the standard function interface for a func that
-// processes a Value against a Context (example: Emit)
-type ValueProcessor func(Context, Value) Value
-
-// Comparison represents the result of a equality comparison
-type Comparison int
-
-// Comparer is an interface for a Value capable of comparing.
-type Comparer interface {
-	Compare(Comparer) Comparison
-}
-
-// Name is a Variable name
-type Name string
-
-// Names represents a set of Names
-type Names []Name
-
-// Variables represents a mapping from Name to Value
-type Variables map[Name]Value
-
-// Named is the generic interface for Values that are named
-type Named interface {
-	Name() Name
-}
-
-// Typed is the generic interface for Values that are typed
-type Typed interface {
-	Type() Name
-}
-
-// Documented is the generic interface for Values that are documented
-type Documented interface {
-	Documentation() Str
-}
-
-// Counted interfaces allow a Value to return a count of its items
-type Counted interface {
-	Count() int
-}
-
-// Mapped is the interface for Values that have retrievable Properties
-type Mapped interface {
-	Get(Value) (Value, bool)
-}
-
-// Indexed is the interface for Values that have indexed elements
-type Indexed interface {
-	ElementAt(int) (Value, bool)
-}
-
-type nilValue struct{}
-
 const (
+	// ExpectedBool is thrown when a Value is not a Bool
+	ExpectedBool = "value is not a bool: %s"
+
 	// LessThan means left Value is less than right Value
 	LessThan Comparison = -1
 
@@ -73,6 +12,69 @@ const (
 
 	// GreaterThan means left Value is greater than right Value
 	GreaterThan Comparison = 1
+)
+
+type (
+	// Bool represents the values True or False
+	Bool bool
+
+	// Value is the generic interface for all 'Values'
+	Value interface {
+		Str() Str
+	}
+
+	// ValueProcessor is the standard function interface for a func that
+	// processes a Value against a Context (example: Emit)
+	ValueProcessor func(Context, Value) Value
+
+	// Comparison represents the result of a equality comparison
+	Comparison int
+
+	// Comparer is an interface for a Value capable of comparing.
+	Comparer interface {
+		Compare(Comparer) Comparison
+	}
+
+	// Name is a Variable name
+	Name string
+
+	// Names represents a set of Names
+	Names []Name
+
+	// Variables represents a mapping from Name to Value
+	Variables map[Name]Value
+
+	// Named is the generic interface for Values that are named
+	Named interface {
+		Name() Name
+	}
+
+	// Typed is the generic interface for Values that are typed
+	Typed interface {
+		Type() Name
+	}
+
+	// Documented is the generic interface for Values that are documented
+	Documented interface {
+		Documentation() Str
+	}
+
+	// Counted interfaces allow a Value to return a count of its items
+	Counted interface {
+		Count() int
+	}
+
+	// Mapped is the interface for Values that have retrievable Properties
+	Mapped interface {
+		Get(Value) (Value, bool)
+	}
+
+	// Indexed is the interface for Values that have indexed elements
+	Indexed interface {
+		ElementAt(int) (Value, bool)
+	}
+
+	nilValue struct{}
 )
 
 var (

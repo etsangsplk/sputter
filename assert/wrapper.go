@@ -11,14 +11,16 @@ import (
 // InvalidTestExpression is thrown if an unsupported expression type is used
 const InvalidTestExpression = "invalid test expression: %s"
 
-// Any is the friendly name for a generic interface
-type Any interface{}
+type (
+	// Any is the friendly name for a generic interface
+	Any interface{}
 
-// Wrapper wraps the testify assertions module in order to perform
-// checking and conversion that is Sputter-specific
-type Wrapper struct {
-	as *assert.Assertions
-}
+	// Wrapper wraps the testify assertions module in order to perform
+	// checking and conversion that is Sputter-specific
+	Wrapper struct {
+		as *assert.Assertions
+	}
+)
 
 // New instantiates a new Wrapper instance from the specified test
 func New(t *testing.T) *Wrapper {

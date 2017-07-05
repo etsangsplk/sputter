@@ -5,6 +5,8 @@ import (
 	d "github.com/kode4food/sputter/docstring"
 )
 
+type forProc func(a.Context)
+
 func isSequence(v a.Value) bool {
 	if s, ok := v.(a.Sequence); ok {
 		return s.IsSequence()
@@ -104,8 +106,6 @@ func drop(c a.Context, args a.Sequence) a.Value {
 	s := _append(c, args.Rest()).(a.Sequence)
 	return a.Drop(s, n)
 }
-
-type forProc func(a.Context)
 
 func forEach(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)

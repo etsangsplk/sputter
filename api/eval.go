@@ -5,26 +5,28 @@ import "bytes"
 // ExpectedApplicable is thrown when a Value is not Applicable
 const ExpectedApplicable = "value does not support application: %s"
 
-// Applicable is the standard signature for any Value that can be applied
-// to a sequence of arguments
-type Applicable interface {
-	Apply(Context, Sequence) Value
-}
+type (
+	// Applicable is the standard signature for any Value that can be applied
+	// to a sequence of arguments
+	Applicable interface {
+		Apply(Context, Sequence) Value
+	}
 
-// Evaluable identifies a Value as being directly evaluable
-type Evaluable interface {
-	Eval(Context) Value
-}
+	// Evaluable identifies a Value as being directly evaluable
+	Evaluable interface {
+		Eval(Context) Value
+	}
 
-// Block evaluates a Sequence as a Block, returning the last expression
-type Block interface {
-	Sequence
-	IsBlock() bool
-}
+	// Block evaluates a Sequence as a Block, returning the last expression
+	Block interface {
+		Sequence
+		IsBlock() bool
+	}
 
-type block struct {
-	Sequence
-}
+	block struct {
+		Sequence
+	}
+)
 
 // Eval is a ValueProcessor that expands and evaluates a Value
 func Eval(c Context, v Value) Value {

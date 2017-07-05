@@ -9,10 +9,12 @@ import (
 	n "github.com/kode4food/sputter/native"
 )
 
-type outputFunc func(io.Writer, a.Value)
+const (
+	stdinReader  = a.Name("*stdin*")
+	stdoutWriter = a.Name("*stdout*")
+)
 
-const stdinReader = a.Name("*stdin*")
-const stdoutWriter = a.Name("*stdout*")
+type outputFunc func(io.Writer, a.Value)
 
 func getStdOut(c a.Context) io.Writer {
 	if v, ok := c.Get(stdoutWriter); ok {

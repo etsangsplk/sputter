@@ -2,28 +2,32 @@ package api
 
 import "sync"
 
-const defaultContextEntries = 16
+const (
+	// AlreadyBound is thrown when an attempt is made to rebind a Name
+	AlreadyBound = "symbol is already bound in this context: %s"
 
-// AlreadyBound is thrown when an attempt is made to rebind a Name
-const AlreadyBound = "symbol is already bound in this context: %s"
+	defaultContextEntries = 16
+)
 
-// Context represents a mutable variable scope
-type Context interface {
-	Get(Name) (Value, bool)
-	Has(Name) (Context, bool)
-	Put(Name, Value)
-	Delete(Name)
-}
+type (
+	// Context represents a mutable variable scope
+	Context interface {
+		Get(Name) (Value, bool)
+		Has(Name) (Context, bool)
+		Put(Name, Value)
+		Delete(Name)
+	}
 
-type context struct {
-	sync.RWMutex
-	parent Context
-	vars   Variables
-}
+	context struct {
+		sync.RWMutex
+		parent Context
+		vars   Variables
+	}
 
-type rootContext struct {
-	*context
-}
+	rootContext struct {
+		*context
+	}
+)
 
 // NewContext creates a new independent Context instance
 func NewContext() Context {

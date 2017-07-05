@@ -5,17 +5,19 @@ import "bytes"
 // ExpectedVector is raised if a value is not a Vector
 const ExpectedVector = "value is not a vector: %s"
 
-// Vector is a fixed-length Array of Values
-type Vector interface {
-	Conjoiner
-	Indexed
-	Counted
-	Applicable
-	Evaluable
-	IsVector() bool
-}
+type (
+	// Vector is a fixed-length Array of Values
+	Vector interface {
+		Conjoiner
+		Indexed
+		Counted
+		Applicable
+		Evaluable
+		IsVector() bool
+	}
 
-type vector []Value
+	vector []Value
+)
 
 var emptyVector = vector{}
 

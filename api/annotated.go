@@ -25,14 +25,16 @@ var (
 	MetaInstance = NewKeyword("instance")
 )
 
-// Metadata stores metadata about an Annotated Value
-type Metadata map[Value]Value
+type (
+	// Metadata stores metadata about an Annotated Value
+	Metadata map[Value]Value
 
-// Annotated is implemented if a Value is Annotated with Metadata
-type Annotated interface {
-	Metadata() Metadata
-	WithMetadata(md Metadata) Annotated
-}
+	// Annotated is implemented if a Value is Annotated with Metadata
+	Annotated interface {
+		Metadata() Metadata
+		WithMetadata(md Metadata) Annotated
+	}
+)
 
 // Merge merges two Metadata sets into a new one
 func (m Metadata) Merge(nv Metadata) Metadata {

@@ -9,10 +9,17 @@ import (
 	d "github.com/kode4food/sputter/docstring"
 )
 
-// UnsupportedSyntaxQuote is raised when you try to quote what can't be quoted
-const UnsupportedSyntaxQuote = "unsupported type in syntax quote: %s"
+const (
+	// UnsupportedSyntaxQuote is raised when something can't be quoted
+	UnsupportedSyntaxQuote = "unsupported type in syntax quote: %s"
 
-const genSymTemplate = "x-%s-gensym-%d"
+	genSymTemplate = "x-%s-gensym-%d"
+)
+
+type syntaxContext struct {
+	context a.Context
+	genSyms map[string]a.Symbol
+}
 
 var (
 	sQuote  = a.NewQualifiedSymbol("quote", a.BuiltInDomain)
@@ -21,14 +28,9 @@ var (
 	sAssoc  = a.NewQualifiedSymbol("assoc", a.BuiltInDomain)
 	sApply  = a.NewQualifiedSymbol("apply", a.BuiltInDomain)
 	sAppend = a.NewQualifiedSymbol("append", a.BuiltInDomain)
+
+	genSymIncrement uint64
 )
-
-var genSymIncrement uint64
-
-type syntaxContext struct {
-	context a.Context
-	genSyms map[string]a.Symbol
-}
 
 func (sc *syntaxContext) quote(v a.Value) a.Value {
 	return sc.quoteValue(v)

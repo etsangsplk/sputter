@@ -7,13 +7,13 @@ import (
 	u "github.com/kode4food/sputter/util"
 )
 
-type funcInfo struct {
-	fn  funcResolver
-	in  argSetters
-	out resultGetters
-}
-
 type (
+	funcInfo struct {
+		fn  funcResolver
+		in  argSetters
+		out resultGetters
+	}
+
 	funcResolver   func(v reflect.Value) reflect.Value
 	argumentReader func(args a.Sequence) []reflect.Value
 	resultGetters  []outMapper
