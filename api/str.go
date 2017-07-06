@@ -13,7 +13,8 @@ const ExpectedStr = "value is not a string: %s"
 type Str string
 
 var (
-	escape   = regexp.MustCompile(`[\\"]`)
+	escape = regexp.MustCompile(`[\\"]`)
+
 	emptyStr Str
 )
 

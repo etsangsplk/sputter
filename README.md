@@ -55,6 +55,7 @@ that will change rapidly. The current built-in forms are:
   * Concurrency: `async`, `generate`, `channel`, `future`, `promise`, `promise?`
   * Strings: `str`, `str?`
   * I/O: `print`, `println`, `pr`, `prn`
+  * Operating System: `*env*`, `*args*`
 
 Documentation for most of these forms may be viewed in the
 REPL using the `doc` function.
