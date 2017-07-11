@@ -19,7 +19,7 @@ func NewLazySequence(r Resolver) Sequence {
 	return &lazySequence{
 		once:     Once(),
 		resolver: r,
-		result:   nil,
+		result:   Nil,
 		rest:     EmptyList,
 	}
 }
@@ -33,7 +33,7 @@ func (l *lazySequence) resolve() *lazySequence {
 		l.rest = &lazySequence{
 			once:     Once(),
 			resolver: r,
-			result:   nil,
+			result:   Nil,
 			rest:     EmptyList,
 		}
 	})

@@ -110,10 +110,14 @@ func StrOutput(w *bufio.Writer, v Value) {
 
 // LineInput is the standard single line input function
 func LineInput(r *bufio.Reader) (Value, bool) {
-	if l, err := r.ReadBytes('\n'); err == nil {
+	l, err := r.ReadBytes('\n')
+	if err == nil {
 		return Str(l[0 : len(l)-1]), true
 	}
-	return nil, false
+	if err == io.EOF && len(l) > 0 {
+		return Str(l), true
+	}
+	return Nil, false
 }
 
 // RuneInput is the standard single rune input function
@@ -121,5 +125,5 @@ func RuneInput(r *bufio.Reader) (Value, bool) {
 	if c, _, err := r.ReadRune(); err == nil {
 		return Str(string(c)), true
 	}
-	return nil, false
+	return Nil, false
 }
