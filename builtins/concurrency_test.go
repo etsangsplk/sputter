@@ -23,6 +23,7 @@ func TestPromise(t *testing.T) {
 	ns := a.GetNamespace(a.UserDomain)
 	ns.Delete("p1")
 	ns.Delete("p2")
+	ns.Delete("p3")
 
 	testCode(t, `
 		(def p1 (promise))
@@ -34,6 +35,11 @@ func TestPromise(t *testing.T) {
 		(def p2 (promise))
 		(promise? p1 p2)
 	`, a.True)
+
+	testCode(t, `
+		(def p3 (promise 99))
+		(p3)
+	`, f(99))
 
 	testCode(t, `
 		(promise? p1 99)

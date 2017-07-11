@@ -9,6 +9,37 @@ import (
 	"github.com/kode4food/sputter/assert"
 )
 
+func TestConditionals(t *testing.T) {
+	as := assert.New(t)
+
+	i := 0
+	inc := func() {
+		i++
+	}
+
+	once := a.Once()
+	never := a.Never()
+	always := a.Always()
+
+	as.Number(0, i)
+	once(inc)
+	as.Number(1, i)
+	once(inc)
+	as.Number(1, i)
+
+	never(inc)
+	as.Number(1, i)
+	never(inc)
+	as.Number(1, i)
+
+	always(inc)
+	as.Number(2, i)
+	always(inc)
+	as.Number(3, i)
+	always(inc)
+	as.Number(4, i)
+}
+
 func TestChannel(t *testing.T) {
 	as := assert.New(t)
 
