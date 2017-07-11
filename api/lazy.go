@@ -1,12 +1,12 @@
 package api
 
 type (
-	// Resolver is used to resolve the elements of a lazy Sequence
-	Resolver func() (Value, bool, Resolver)
+	// LazyResolver is used to resolve the elements of a lazy Sequence
+	LazyResolver func() (Value, bool, LazyResolver)
 
 	lazySequence struct {
 		once     Do
-		resolver Resolver
+		resolver LazyResolver
 
 		isSeq  bool
 		result Value
@@ -14,8 +14,8 @@ type (
 	}
 )
 
-// NewLazySequence creates a new lazy Sequence based on the provided Resolver
-func NewLazySequence(r Resolver) Sequence {
+// NewLazySequence creates a new lazy Sequence based on the provided LazyResolver
+func NewLazySequence(r LazyResolver) Sequence {
 	return &lazySequence{
 		once:     Once(),
 		resolver: r,
@@ -30,11 +30,13 @@ func (l *lazySequence) resolve() *lazySequence {
 		l.isSeq = ok
 		l.result = v
 		l.resolver = nil
-		l.rest = &lazySequence{
-			once:     Once(),
-			resolver: r,
-			result:   Nil,
-			rest:     EmptyList,
+		if ok {
+			l.rest = &lazySequence{
+				once:     Once(),
+				resolver: r,
+				result:   Nil,
+				rest:     EmptyList,
+			}
 		}
 	})
 	return l

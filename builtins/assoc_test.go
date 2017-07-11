@@ -18,7 +18,7 @@ func TestAssoc(t *testing.T) {
 	testCode(t, `(:name {:name "Sputter" :age 45})`, s("Sputter"))
 
 	testCode(t, `
-		(:name (apply assoc (append '(:name "Sputter") '(:age 45))))
+		(:name (apply assoc (concat '(:name "Sputter") '(:age 45))))
 	`, s("Sputter"))
 
 	a.GetNamespace(a.UserDomain).Delete("x")
@@ -30,7 +30,7 @@ func TestAssoc(t *testing.T) {
 	testBadCode(t, `(assoc :too "few" :args)`, a.ExpectedPair)
 
 	testBadCode(t, `
-		(apply assoc (append '(:name "Sputter") '(:age)))
+		(apply assoc (concat '(:name "Sputter") '(:age)))
 	`, a.ExpectedPair)
 }
 

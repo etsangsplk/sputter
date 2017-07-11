@@ -8,11 +8,11 @@ import (
 )
 
 func TestLazySeq(t *testing.T) {
-	var inc a.Resolver
+	var inc a.LazyResolver
 	as := assert.New(t)
 
 	i := 0
-	inc = func() (a.Value, bool, a.Resolver) {
+	inc = func() (a.Value, bool, a.LazyResolver) {
 		if i >= 10 {
 			return a.Nil, false, nil
 		}

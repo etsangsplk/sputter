@@ -49,10 +49,10 @@ type (
 
 // NewReader wraps a Go Reader, coupling it with an input function
 func NewReader(r io.Reader, i InputFunc) Reader {
-	var resolver Resolver
+	var resolver LazyResolver
 	br := bufio.NewReader(r)
 
-	resolver = func() (Value, bool, Resolver) {
+	resolver = func() (Value, bool, LazyResolver) {
 		if v, ok := i(br); ok {
 			return v, ok, resolver
 		}

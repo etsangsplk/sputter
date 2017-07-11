@@ -7,11 +7,6 @@ type (
 	compareFunc func(prev a.Number, next a.Number) bool
 )
 
-var (
-	zero = a.NewFloat(0)
-	one  = a.NewFloat(1)
-)
-
 func reduceNum(s a.Sequence, v a.Number, f reduceFunc) a.Value {
 	r := v
 	for i := s; i.IsSequence(); i = i.Rest() {
@@ -41,7 +36,7 @@ func compare(_ a.Context, s a.Sequence, f compareFunc) a.Value {
 
 func add(_ a.Context, args a.Sequence) a.Value {
 	if !args.IsSequence() {
-		return zero
+		return a.Zero
 	}
 	f, r := fetchFirstNumber(args)
 	return reduceNum(r, f, func(p a.Number, n a.Number) a.Number {
@@ -58,7 +53,7 @@ func sub(_ a.Context, args a.Sequence) a.Value {
 
 func mul(_ a.Context, args a.Sequence) a.Value {
 	if !args.IsSequence() {
-		return one
+		return a.One
 	}
 	f, r := fetchFirstNumber(args)
 	return reduceNum(r, f, func(p a.Number, n a.Number) a.Number {
@@ -113,6 +108,9 @@ func lte(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
+	Namespace.Put("inf", a.PosInfinity)
+	Namespace.Put("-inf", a.NegInfinity)
+
 	registerAnnotated(
 		a.NewFunction(add).WithMetadata(a.Properties{
 			a.MetaName: a.Name("+"),

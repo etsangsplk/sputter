@@ -9,9 +9,6 @@ import (
 
 func TestMap(t *testing.T) {
 	as := assert.New(t)
-	as.Identical(a.EmptyList, a.Map(a.EmptyList, func(v a.Value) a.Value {
-		return a.Str("nope")
-	}))
 
 	l := a.NewList(s("first"), s("middle"), s("last"))
 	w := a.Map(l, func(v a.Value) a.Value {
@@ -36,15 +33,12 @@ func TestMap(t *testing.T) {
 	r2 := p1.Rest()
 
 	as.String("not mapped", v4)
-	as.Equal(w, r2)
+	as.Equal(w.First(), r2.First())
 	as.String("also not mapped", p2.First())
 }
 
 func TestFilter(t *testing.T) {
 	as := assert.New(t)
-	as.Identical(a.EmptyList, a.Filter(a.EmptyList, func(v a.Value) bool {
-		return true
-	}))
 
 	l := a.NewList(s("first"), s("filtered out"), s("last"))
 	w := a.Filter(l, func(v a.Value) bool {
@@ -64,7 +58,7 @@ func TestFilter(t *testing.T) {
 	v4 := p.First()
 	r2 := p.Rest()
 	as.String("filtered out", v4)
-	as.Equal(w, r2)
+	as.Equal(w.First(), r2.First())
 }
 
 func TestFilteredAndMapped(t *testing.T) {
@@ -96,7 +90,6 @@ func testNext(as *assert.Wrapper, i *a.Iterator, expected a.Value) {
 
 func TestConcat(t *testing.T) {
 	as := assert.New(t)
-	as.Identical(a.EmptyList, a.Concat(a.EmptyList))
 
 	l1 := a.NewList(s("first"), s("middle"), s("last"))
 	l2 := a.EmptyList
@@ -124,33 +117,27 @@ func TestConcat(t *testing.T) {
 	as.False(ok)
 
 	s := `("first" "middle" "last" 1 2 3 "blah1" "blah2" "blah3")`
-	as.String(s, w1)
+	as.String(s, a.MakeSequenceStr(w1))
 }
 
 func TestReduce(t *testing.T) {
 	as := assert.New(t)
 
-	add := a.NewFunction(
-		func(_ a.Context, args a.Sequence) a.Value {
-			v := args.(a.Vector)
-			n1, _ := v.ElementAt(0)
-			n2, _ := v.ElementAt(1)
-			return n1.(a.Number).Add(n2.(a.Number))
-		},
-	)
+	add := func(l, r a.Value) a.Value {
+		return l.(a.Number).Add(r.(a.Number))
+	}
 
-	as.Number(30, a.Reduce(nil, a.NewVector(f(10), f(20)), add))
-	as.Number(60, a.Reduce(nil, a.NewVector(f(10), f(20), f(30)), add))
-	as.Number(100, a.Reduce(nil, a.NewVector(f(10), f(20), f(30), f(40)), add))
+	as.Number(30, a.Reduce(a.NewVector(f(10), f(20)), add))
+	as.Number(60, a.Reduce(a.NewVector(f(10), f(20), f(30)), add))
+	as.Number(100, a.Reduce(a.NewVector(f(10), f(20), f(30), f(40)), add))
 
 	err := a.Err(a.BadMinimumArity, 2, 1)
 	defer as.ExpectError(err)
-	a.Reduce(nil, a.NewVector(f(10)), add)
+	a.Reduce(a.NewVector(f(10)), add)
 }
 
 func TestTakeDrop(t *testing.T) {
 	as := assert.New(t)
-	as.Identical(a.EmptyList, a.Take(a.EmptyList, 4))
 
 	s1 := []string{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"}
 	v1 := a.NewVector()
@@ -166,11 +153,11 @@ func TestTakeDrop(t *testing.T) {
 	d3 := a.Drop(t3, 6)
 	d4 := a.Drop(t3, 8)
 
-	as.String(`("1" "2" "3" "4")`, t1)
-	as.String(`("0" "1" "2" "3" "4")`, t2)
-	as.String(`["5" "6" "7" "8" "9" "10"]`, d1)
-	as.String(`["4" "5" "6" "7" "8" "9" "10"]`, d2)
-	as.String(`("5" "6" "7" "8" "9" "10")`, t3)
-	as.String(`()`, d3)
-	as.String(`()`, d4)
+	as.String(`("1" "2" "3" "4")`, a.MakeSequenceStr(t1))
+	as.String(`("0" "1" "2" "3" "4")`, a.MakeSequenceStr(t2))
+	as.String(`("5" "6" "7" "8" "9" "10")`, a.MakeSequenceStr(d1))
+	as.String(`("4" "5" "6" "7" "8" "9" "10")`, a.MakeSequenceStr(d2))
+	as.String(`("5" "6" "7" "8" "9" "10")`, a.MakeSequenceStr(t3))
+	as.False(d3.IsSequence())
+	as.False(d4.IsSequence())
 }

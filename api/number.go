@@ -31,7 +31,21 @@ type (
 	rat big.Rat
 )
 
-var ctx = apd.BaseContext.WithPrecision(53)
+var (
+	ctx = apd.BaseContext.WithPrecision(53)
+
+	// Zero is a convenience wrapper for the number 0
+	Zero = NewFloat(0)
+
+	// One is a convenience wrapper for the number 1
+	One = NewFloat(1)
+
+	// PosInfinity is a convenience wrapper for positive infinity
+	PosInfinity = &dec{Form: apd.Infinite}
+
+	// NegInfinity is a convenience wrapper for negative infinity
+	NegInfinity = &dec{Form: apd.Infinite, Negative: true}
+)
 
 // NewFloat generates a new Number from a float64 value
 func NewFloat(f float64) Number {

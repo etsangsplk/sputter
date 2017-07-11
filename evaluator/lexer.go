@@ -62,10 +62,10 @@ var (
 
 // Scan creates a new lexer Sequence
 func Scan(src a.Str) a.Sequence {
-	var resolver a.Resolver
+	var resolver a.LazyResolver
 	s := string(src)
 
-	resolver = func() (a.Value, bool, a.Resolver) {
+	resolver = func() (a.Value, bool, a.LazyResolver) {
 		if t, rs := matchToken(s); t.Type != endOfFile {
 			s = rs
 			return t, true, resolver

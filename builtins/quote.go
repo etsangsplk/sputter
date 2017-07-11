@@ -27,7 +27,7 @@ var (
 	vectorSym = a.NewBuiltInSymbol("vector")
 	assocSym  = a.NewBuiltInSymbol("assoc")
 	applySym  = a.NewBuiltInSymbol("apply")
-	appendSym = a.NewBuiltInSymbol("append")
+	concatSym = a.NewBuiltInSymbol("concat")
 
 	genSymIncrement uint64
 )
@@ -130,7 +130,7 @@ func (sc *syntaxContext) quoteElements(s a.Sequence) a.Value {
 		}
 		r = append(r, a.NewList(listSym, sc.quoteValue(v)))
 	}
-	return a.NewList(r...).Prepend(appendSym)
+	return a.NewList(r...).Prepend(concatSym)
 }
 
 func isWrapperCall(n a.Name, v a.Value) (a.Value, bool) {

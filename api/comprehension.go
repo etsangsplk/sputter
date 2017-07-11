@@ -4,127 +4,136 @@ type (
 	// ValueMapper returns a mapped representation of the specified Value
 	ValueMapper func(Value) Value
 
-	// ValueFilter returns true if the Value remains part of a filtered Sequence
+	// ValueFilter returns true if the Value remains part of a Sequence
 	ValueFilter func(Value) bool
 
-	compElement struct {
-		first Value
-		rest  Sequence
-	}
+	// ValueReducer combines two Values in some way in reducing a Sequence
+	ValueReducer func(Value, Value) Value
 )
-
-func (c *compElement) First() Value {
-	return c.first
-}
-
-func (c *compElement) Rest() Sequence {
-	return c.rest
-}
-
-func (c *compElement) IsSequence() bool {
-	return true
-}
-
-func (c *compElement) Prepend(v Value) Sequence {
-	return &compElement{
-		first: v,
-		rest:  c,
-	}
-}
-
-func (c *compElement) Str() Str {
-	return MakeSequenceStr(c)
-}
 
 // Map creates a new mapped Sequence
 func Map(s Sequence, mapper ValueMapper) Sequence {
-	if !s.IsSequence() {
-		return EmptyList
+	var res LazyResolver
+	e := s
+
+	res = func() (Value, bool, LazyResolver) {
+		if e.IsSequence() {
+			r := mapper(e.First())
+			e = e.Rest()
+			return r, true, res
+		}
+		return Nil, false, nil
 	}
-	f := &compElement{}
-	var l = f
-	for i := s; i.IsSequence(); i = i.Rest() {
-		n := &compElement{first: mapper(i.First())}
-		l.rest = n
-		l = n
-	}
-	l.rest = EmptyList
-	return f.rest
+	return NewLazySequence(res)
 }
 
 // Filter creates a new filtered Sequence
 func Filter(s Sequence, filter ValueFilter) Sequence {
-	if !s.IsSequence() {
-		return EmptyList
-	}
+	var res LazyResolver
+	e := s
 
-	f := &compElement{}
-	var l = f
-	for i := s; i.IsSequence(); i = i.Rest() {
-		v := i.First()
-		if filter(v) {
-			n := &compElement{first: v}
-			l.rest = n
-			l = n
+	res = func() (Value, bool, LazyResolver) {
+		for e.IsSequence() {
+			v := e.First()
+			e = e.Rest()
+			if filter(v) {
+				return v, true, res
+			}
 		}
+		return Nil, false, nil
 	}
-	l.rest = EmptyList
-	return f.rest
+	return NewLazySequence(res)
 }
 
 // Concat creates a new sequence based on the content of several Sequences
 func Concat(s Sequence) Sequence {
-	if !s.IsSequence() {
-		return EmptyList
-	}
+	var res LazyResolver
+	e := s
 
-	f := &compElement{}
-	l := f
-	for i := s; i.IsSequence(); i = i.Rest() {
-		for j := AssertSequence(i.First()); j.IsSequence(); j = j.Rest() {
-			n := &compElement{first: j.First()}
-			l.rest = n
-			l = n
+	res = func() (Value, bool, LazyResolver) {
+		for e.IsSequence() {
+			v := AssertSequence(e.First())
+			e = e.Rest()
+			if v.IsSequence() {
+				r := v.First()
+				e = e.Prepend(v.Rest())
+				return r, true, res
+			}
 		}
+		return Nil, false, nil
 	}
-	l.rest = EmptyList
-	return f.rest
+	return NewLazySequence(res)
 }
 
 // Take creates a Sequence based on the first elements of the source
 func Take(s Sequence, count int) Sequence {
-	if !s.IsSequence() {
-		return EmptyList
-	}
+	var res LazyResolver
+	i, e := 0, s
 
-	f := &compElement{}
-	l := f
-	for i, e := 0, s; i < count; i++ {
-		n := &compElement{first: e.First()}
-		l.rest = n
-		l = n
-		e = e.Rest()
+	res = func() (Value, bool, LazyResolver) {
+		if e.IsSequence() && i < count {
+			r := e.First()
+			e = e.Rest()
+			i++
+			return r, true, res
+		}
+		return Nil, false, nil
 	}
-	l.rest = EmptyList
-	return f.rest
+	return NewLazySequence(res)
 }
 
 // Drop creates a Sequence based on dropping the first elements of the source
 func Drop(s Sequence, count int) Sequence {
+	var first, rest LazyResolver
 	e := s
-	for i := 0; i < count && e.IsSequence(); i++ {
-		e = e.Rest()
+
+	first = func() (Value, bool, LazyResolver) {
+		for i := 0; i < count && e.IsSequence(); i++ {
+			e = e.Rest()
+		}
+		return rest()
 	}
-	return e
+
+	rest = func() (Value, bool, LazyResolver) {
+		if e.IsSequence() {
+			r := e.First()
+			e = e.Rest()
+			return r, true, rest
+		}
+		return Nil, false, nil
+	}
+
+	return NewLazySequence(first)
 }
 
 // Reduce performs a reduce operation over a Sequence, starting with the
 // first two elements of that sequence.
-func Reduce(c Context, s Sequence, a Applicable) Value {
+func Reduce(s Sequence, reduce ValueReducer) Value {
 	AssertMinimumArity(s, 2)
 	r := s.First()
 	for i := s.Rest(); i.IsSequence(); i = i.Rest() {
-		r = a.Apply(c, NewVector(r, i.First()))
+		r = reduce(r, i.First())
 	}
 	return r
+}
+
+// MakeValueFilter converts an Applicable into a ValueFilter
+func MakeValueFilter(c Context, f Applicable) ValueFilter {
+	return func(v Value) bool {
+		return Truthy(f.Apply(c, NewVector(v)))
+	}
+}
+
+// MakeValueMapper converts an Applicable into a ValueMapper
+func MakeValueMapper(c Context, f Applicable) ValueMapper {
+	return func(v Value) Value {
+		return f.Apply(c, NewVector(v))
+	}
+}
+
+// MakeValueReducer converts an Applicable into a ValueReducer
+func MakeValueReducer(c Context, f Applicable) ValueReducer {
+	return func(l, r Value) Value {
+		return f.Apply(c, NewVector(l, r))
+	}
 }

@@ -1,26 +1,13 @@
 ;;;; sputter core: sequences
 
-(defn concat
-  {:doc-asset "concat"}
+(defmacro range
+  {:doc-asset "range"}
   [& forms]
-  (generate
-    (sputter:for-each [form forms, elem form]
-      (emit elem))))
-
-(defn filter
-  {:doc-asset "filter"}
-  [func & forms]
-  (generate
-    (sputter:for-each [form forms, elem form]
-      (when (func elem)
-        (emit elem)))))
-
-(defn map
-  {:doc-asset "map"}
-  [func & forms]
-  (generate
-    (sputter:for-each [form forms, elem form]
-      (emit (func elem)))))
+  (cond
+    (= (len forms) 0) (list 'sputter:make-range 0 'sputter:inf 1)
+    (= (len forms) 1) (list 'sputter:make-range 0 (forms 0) 1)
+    (= (len forms) 2) (list 'sputter:make-range (forms 0) (forms 1) 1)
+    :else             (cons 'sputter:make-range forms)))
 
 (defmacro to-assoc
   {:doc-asset "to-assoc"}

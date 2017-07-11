@@ -20,7 +20,7 @@ snapshot:
 lint:
 	go get -u github.com/golang/lint/golint
 
-init: glide bindata lint
+init: glide assets lint
 	glide install
 
 install: init main test

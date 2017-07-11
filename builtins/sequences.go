@@ -70,41 +70,54 @@ func nth(_ a.Context, args a.Sequence) a.Value {
 	return a.IndexedApply(s, args.Rest())
 }
 
-func _append(_ a.Context, args a.Sequence) a.Value {
+func concat(_ a.Context, args a.Sequence) a.Value {
 	if a.AssertMinimumArity(args, 1) == 1 {
-		r := args.First()
-		return a.AssertSequence(r)
+		return a.AssertSequence(args.First())
 	}
+	return a.Concat(args)
+}
 
-	es := a.Map(args, func(v a.Value) a.Value {
-		if v == a.Nil {
-			return a.EmptyList
-		}
-		return a.AssertSequence(v)
-	})
+func filter(c a.Context, args a.Sequence) a.Value {
+	a.AssertMinimumArity(args, 2)
+	f := a.AssertApplicable(args.First())
+	s := a.Concat(args.Rest())
+	return a.Filter(s, a.MakeValueFilter(c, f))
+}
 
-	return a.Concat(es)
+func _map(c a.Context, args a.Sequence) a.Value {
+	a.AssertMinimumArity(args, 2)
+	f := a.AssertApplicable(args.First())
+	s := a.Concat(args.Rest())
+	return a.Map(s, a.MakeValueMapper(c, f))
 }
 
 func reduce(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 	f := a.AssertApplicable(args.First())
-	s := _append(c, args.Rest()).(a.Sequence)
-	return a.Reduce(c, s, f)
+	s := a.Concat(args.Rest())
+	return a.Reduce(s, a.MakeValueReducer(c, f))
 }
 
-func take(c a.Context, args a.Sequence) a.Value {
+func take(_ a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 	n := a.AssertInteger(args.First())
-	s := _append(c, args.Rest()).(a.Sequence)
+	s := a.Concat(args.Rest())
 	return a.Take(s, n)
 }
 
-func drop(c a.Context, args a.Sequence) a.Value {
+func drop(_ a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 	n := a.AssertInteger(args.First())
-	s := _append(c, args.Rest()).(a.Sequence)
+	s := a.Concat(args.Rest())
 	return a.Drop(s, n)
+}
+
+func makeRange(_ a.Context, args a.Sequence) a.Value {
+	a.AssertArity(args, 3)
+	low := a.AssertNumber(args.First())
+	high := a.AssertNumber(args.Rest().First())
+	step := a.AssertNumber(args.Rest().Rest().First())
+	return a.NewRange(low, high, step)
 }
 
 func forEach(c a.Context, args a.Sequence) a.Value {
@@ -215,8 +228,23 @@ func init() {
 	)
 
 	registerAnnotated(
-		a.NewFunction(_append).WithMetadata(a.Properties{
-			a.MetaName: a.Name("append"),
+		a.NewFunction(concat).WithMetadata(a.Properties{
+			a.MetaName: a.Name("concat"),
+			a.MetaDoc:  d.Get("concat"),
+		}),
+	)
+
+	registerAnnotated(
+		a.NewFunction(filter).WithMetadata(a.Properties{
+			a.MetaName: a.Name("filter"),
+			a.MetaDoc:  d.Get("filter"),
+		}),
+	)
+
+	registerAnnotated(
+		a.NewFunction(_map).WithMetadata(a.Properties{
+			a.MetaName: a.Name("map"),
+			a.MetaDoc:  d.Get("map"),
 		}),
 	)
 
@@ -238,6 +266,12 @@ func init() {
 		a.NewFunction(drop).WithMetadata(a.Properties{
 			a.MetaName: a.Name("drop"),
 			a.MetaDoc:  d.Get("drop"),
+		}),
+	)
+
+	registerAnnotated(
+		a.NewFunction(makeRange).WithMetadata(a.Properties{
+			a.MetaName: a.Name("make-range"),
 		}),
 	)
 
