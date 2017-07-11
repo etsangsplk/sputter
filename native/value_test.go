@@ -61,7 +61,7 @@ func TestReflect(t *testing.T) {
 
 	w := bytes.NewBufferString("")
 	tk := a.NewKeyword("test")
-	n := r.New(w).(a.Annotated).WithMetadata(a.Metadata{
+	n := r.New(w).(a.Annotated).WithMetadata(a.Properties{
 		tk: a.True,
 	}).(r.Wrapped)
 

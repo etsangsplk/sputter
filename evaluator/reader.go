@@ -40,10 +40,10 @@ type reader struct {
 var (
 	keywordIdentifier = regexp.MustCompile(`^:[^(){}\[\]\s,]+`)
 
-	quote    = a.NewQualifiedSymbol("quote", a.BuiltInDomain)
-	syntax   = a.NewQualifiedSymbol("syntax-quote", a.BuiltInDomain)
-	unquote  = a.NewQualifiedSymbol("unquote", a.BuiltInDomain)
-	splicing = a.NewQualifiedSymbol("unquote-splicing", a.BuiltInDomain)
+	quoteSym    = a.NewBuiltInSymbol("quote")
+	syntaxSym   = a.NewBuiltInSymbol("syntax-quote")
+	unquoteSym  = a.NewBuiltInSymbol("unquote")
+	splicingSym = a.NewBuiltInSymbol("unquote-splicing")
 
 	specialNames = a.Variables{
 		"true":  a.True,
@@ -83,13 +83,13 @@ func (r *reader) nextValue() (a.Value, bool) {
 func (r *reader) value(t *Token) a.Value {
 	switch t.Type {
 	case QuoteMarker:
-		return r.prefixed(quote)
+		return r.prefixed(quoteSym)
 	case SyntaxMarker:
-		return r.prefixed(syntax)
+		return r.prefixed(syntaxSym)
 	case UnquoteMarker:
-		return r.prefixed(unquote)
+		return r.prefixed(unquoteSym)
 	case SpliceMarker:
-		return r.prefixed(splicing)
+		return r.prefixed(splicingSym)
 	case ListStart:
 		return r.list()
 	case VectorStart:

@@ -1,7 +1,5 @@
 package api
 
-import "bytes"
-
 // ExpectedAnnotated is thrown if a Value is not Annotated
 const ExpectedAnnotated = "value does not support annotation: %s"
 
@@ -26,64 +24,19 @@ var (
 )
 
 type (
-	// Metadata stores metadata about an Annotated Value
-	Metadata map[Value]Value
-
 	// Annotated is implemented if a Value is Annotated with Metadata
 	Annotated interface {
-		Metadata() Metadata
-		WithMetadata(md Metadata) Annotated
+		Metadata() Object
+		WithMetadata(md Object) Annotated
 	}
 )
 
-// Merge merges two Metadata sets into a new one
-func (m Metadata) Merge(nv Metadata) Metadata {
-	if len(m) == 0 {
-		return nv
-	}
-	r := make(Metadata)
-	for k, v := range m {
-		r[k] = v
-	}
-	for k, v := range nv {
-		r[k] = v
-	}
-	return r
-}
-
-// Get returns the Value corresponding to the key in the Metadata
-func (m Metadata) Get(key Value) (Value, bool) {
-	if r, ok := m[key]; ok {
-		return r, true
-	}
-	return Nil, false
-}
-
 // IsTrue tests whether or not the specified key has a True value
-func (m Metadata) IsTrue(key Value) bool {
-	if r, ok := m[key]; ok {
+func IsTrue(o Object, key Value) bool {
+	if r, ok := o.Get(key); ok {
 		return r == True
 	}
 	return false
-}
-
-// Str converts this Value into a Str
-func (m Metadata) Str() Str {
-	var b bytes.Buffer
-	c := false
-	b.WriteString("{")
-	for k, v := range m {
-		if c {
-			b.WriteString(", ")
-		} else {
-			c = true
-		}
-		b.WriteString(string(k.Str()))
-		b.WriteString(" ")
-		b.WriteString(string(v.Str()))
-	}
-	b.WriteString("}")
-	return Str(b.String())
 }
 
 // AssertAnnotated will cast a Value to Annotated or die trying

@@ -22,12 +22,12 @@ type syntaxContext struct {
 }
 
 var (
-	sQuote  = a.NewQualifiedSymbol("quote", a.BuiltInDomain)
-	sList   = a.NewQualifiedSymbol("list", a.BuiltInDomain)
-	sVector = a.NewQualifiedSymbol("vector", a.BuiltInDomain)
-	sAssoc  = a.NewQualifiedSymbol("assoc", a.BuiltInDomain)
-	sApply  = a.NewQualifiedSymbol("apply", a.BuiltInDomain)
-	sAppend = a.NewQualifiedSymbol("append", a.BuiltInDomain)
+	quoteSym  = a.NewBuiltInSymbol("quote")
+	listSym   = a.NewBuiltInSymbol("list")
+	vectorSym = a.NewBuiltInSymbol("vector")
+	assocSym  = a.NewBuiltInSymbol("assoc")
+	applySym  = a.NewBuiltInSymbol("apply")
+	appendSym = a.NewBuiltInSymbol("append")
 
 	genSymIncrement uint64
 )
@@ -48,9 +48,9 @@ func (sc *syntaxContext) quoteValue(v a.Value) a.Value {
 
 func (sc *syntaxContext) quoteSymbol(s a.Symbol) a.Value {
 	if gs, ok := sc.generateSymbol(s); ok {
-		return a.NewList(sQuote, gs)
+		return a.NewList(quoteSym, gs)
 	}
-	return a.NewList(sQuote, sc.qualifySymbol(s))
+	return a.NewList(quoteSym, sc.qualifySymbol(s))
 }
 
 func (sc *syntaxContext) generateSymbol(s a.Symbol) (a.Symbol, bool) {
@@ -93,10 +93,10 @@ func (sc *syntaxContext) quoteSequence(s a.Sequence) a.Value {
 		return st
 	}
 	if l, ok := s.(a.List); ok {
-		return a.NewList(sApply, sList, sc.quoteElements(l))
+		return a.NewList(applySym, listSym, sc.quoteElements(l))
 	}
 	if v, ok := s.(a.Vector); ok {
-		return a.NewList(sApply, sVector, sc.quoteElements(v))
+		return a.NewList(applySym, vectorSym, sc.quoteElements(v))
 	}
 	if as, ok := s.(a.Associative); ok {
 		return sc.quoteAssociative(as)
@@ -113,7 +113,7 @@ func (sc *syntaxContext) quoteAssociative(as a.Associative) a.Value {
 		r = append(r, k)
 		r = append(r, v)
 	}
-	return a.NewList(sApply, sAssoc, sc.quoteElements(a.NewVector(r...)))
+	return a.NewList(applySym, assocSym, sc.quoteElements(a.NewVector(r...)))
 }
 
 func (sc *syntaxContext) quoteElements(s a.Sequence) a.Value {
@@ -125,12 +125,12 @@ func (sc *syntaxContext) quoteElements(s a.Sequence) a.Value {
 			continue
 		}
 		if f, ok := isUnquote(v); ok {
-			r = append(r, a.NewList(sList, f))
+			r = append(r, a.NewList(listSym, f))
 			continue
 		}
-		r = append(r, a.NewList(sList, sc.quoteValue(v)))
+		r = append(r, a.NewList(listSym, sc.quoteValue(v)))
 	}
-	return a.NewList(r...).Prepend(sAppend)
+	return a.NewList(r...).Prepend(appendSym)
 }
 
 func isWrapperCall(n a.Name, v a.Value) (a.Value, bool) {
@@ -164,7 +164,7 @@ func syntaxquote(c a.Context, args a.Sequence) a.Value {
 
 func init() {
 	registerAnnotated(
-		a.NewMacro(quote).WithMetadata(a.Metadata{
+		a.NewMacro(quote).WithMetadata(a.Properties{
 			a.MetaName:    a.Name("quote"),
 			a.MetaDoc:     d.Get("quote"),
 			a.MetaSpecial: a.True,
@@ -172,7 +172,7 @@ func init() {
 	)
 
 	registerAnnotated(
-		a.NewMacro(syntaxquote).WithMetadata(a.Metadata{
+		a.NewMacro(syntaxquote).WithMetadata(a.Properties{
 			a.MetaName: a.Name("syntax-quote"),
 		}),
 	)

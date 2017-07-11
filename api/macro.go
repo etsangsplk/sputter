@@ -6,11 +6,11 @@ var (
 	// MetaSpecial identifies a Macro as being a special form
 	MetaSpecial = NewKeyword("special-form")
 
-	macroMetadata = Metadata{
+	macroMetadata = NewObject(Properties{
 		MetaMacro:   True,
 		MetaType:    Name("macro"),
 		MetaSpecial: False,
-	}
+	})
 )
 
 // NewMacro instantiates a new Macro
@@ -22,7 +22,7 @@ func NewMacro(e SequenceProcessor) Function {
 func IsMacro(a Applicable) (bool, bool) {
 	if an, ok := a.(Annotated); ok {
 		md := an.Metadata()
-		return md.IsTrue(MetaMacro), md.IsTrue(MetaSpecial)
+		return IsTrue(md, MetaMacro), IsTrue(md, MetaSpecial)
 	}
 	return false, false
 }
@@ -30,7 +30,7 @@ func IsMacro(a Applicable) (bool, bool) {
 // IsSpecialForm tests an Applicable as being marked a special form
 func IsSpecialForm(a Applicable) bool {
 	if an, ok := a.(Annotated); ok {
-		return an.Metadata().IsTrue(MetaSpecial)
+		return IsTrue(an.Metadata(), MetaSpecial)
 	}
 	return false
 }

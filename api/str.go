@@ -115,20 +115,17 @@ func (s Str) Str() Str {
 	return Str(`"` + r + `"`)
 }
 
-// MakeDumpStr takes a Value and attempts to spit out a bunch of metadata
+// MakeDumpStr takes a Value and attempts to spit out a bunch of info
 func MakeDumpStr(v Value) Str {
-	m := Metadata{}
+	m := NewObject(Properties{})
 	if n, ok := v.(Named); ok {
-		m = m.Merge(Metadata{MetaName: n.Name()})
+		m = m.Child(Properties{MetaName: n.Name()})
 	}
 	if t, ok := v.(Typed); ok {
-		m = m.Merge(Metadata{MetaType: t.Type()})
+		m = m.Child(Properties{MetaType: t.Type()})
 	}
 	p := Str(fmt.Sprintf("%p", &v))
-	m = m.Merge(Metadata{MetaInstance: p})
-	if a, ok := v.(Annotated); ok {
-		m = m.Merge(Metadata{MetaMeta: a.Metadata()})
-	}
+	m = m.Child(Properties{MetaInstance: p})
 	return m.Str()
 }
 

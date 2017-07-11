@@ -3,7 +3,7 @@ package builtins
 import a "github.com/kode4food/sputter/api"
 
 var (
-	sClosure   = a.NewQualifiedSymbol("closure", a.BuiltInDomain)
+	closureSym = a.NewBuiltInSymbol("closure")
 	emptyNames = a.Names{}
 )
 
@@ -77,7 +77,7 @@ func makeClosure(c a.Context, args a.Sequence) a.Value {
 	ex := assertUnqualifiedNames(a.AssertVector(args.First()))
 	cb := a.MacroExpandAll(c, args.Rest())
 	nm := consolidateNames(visitValue(cb), ex)
-	return a.NewList(sClosure, makeLocalSymbolVector(nm), cb)
+	return a.NewList(closureSym, makeLocalSymbolVector(nm), cb)
 }
 
 func isClosure(v a.Value) (a.Names, bool) {
@@ -106,13 +106,13 @@ func doClosure(c a.Context, args a.Sequence) a.Value {
 
 func init() {
 	registerAnnotated(
-		a.NewMacro(makeClosure).WithMetadata(a.Metadata{
+		a.NewMacro(makeClosure).WithMetadata(a.Properties{
 			a.MetaName: a.Name("make-closure"),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewMacro(doClosure).WithMetadata(a.Metadata{
+		a.NewMacro(doClosure).WithMetadata(a.Properties{
 			a.MetaName:    a.Name("closure"),
 			a.MetaSpecial: a.True,
 		}),

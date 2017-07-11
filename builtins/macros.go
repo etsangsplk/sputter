@@ -42,7 +42,7 @@ func macroexpandAll(c a.Context, args a.Sequence) a.Value {
 
 func init() {
 	registerAnnotated(
-		a.NewFunction(defmacro).WithMetadata(a.Metadata{
+		a.NewFunction(defmacro).WithMetadata(a.Properties{
 			a.MetaName:    a.Name("defmacro"),
 			a.MetaDoc:     d.Get("defmacro"),
 			a.MetaSpecial: a.True,
@@ -50,21 +50,21 @@ func init() {
 	)
 
 	registerAnnotated(
-		a.NewFunction(macroexpand1).WithMetadata(a.Metadata{
+		a.NewFunction(macroexpand1).WithMetadata(a.Properties{
 			a.MetaName:    a.Name("macroexpand1"),
 			a.MetaSpecial: a.True,
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(macroexpand).WithMetadata(a.Metadata{
+		a.NewFunction(macroexpand).WithMetadata(a.Properties{
 			a.MetaName:    a.Name("macroexpand"),
 			a.MetaSpecial: a.True,
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(macroexpandAll).WithMetadata(a.Metadata{
+		a.NewFunction(macroexpandAll).WithMetadata(a.Properties{
 			a.MetaName:    a.Name("macroexpand-all"),
 			a.MetaSpecial: a.True,
 		}),

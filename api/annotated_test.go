@@ -10,11 +10,12 @@ import (
 func TestMetadata(t *testing.T) {
 	as := assert.New(t)
 
-	v1 := a.Metadata{
+	v1 := a.Properties{
 		s("foo"): a.True,
 		s("bar"): a.False,
 	}
-	v2 := v1.Merge(a.Metadata{
+
+	v2 := v1.Child(a.Properties{
 		s("foo"):   a.False,
 		s("hello"): s("there"),
 	})
@@ -29,9 +30,9 @@ func TestMetadata(t *testing.T) {
 	as.Contains(`"foo" false`, s2)
 	as.NotContains(`"foo" true`, s2)
 
-	v1 = a.Metadata{}
-	v2 = a.Metadata{s("test"): a.True}
-	v3 := v1.Merge(v2)
+	v1 = a.Properties{}
+	v2 = a.Properties{s("test"): a.True}
+	v3 := v1.Child(v2.Flatten())
 	s3 := v3.Str()
 	as.Contains(`"test" true`, s3)
 	as.Equal(v2, v3)

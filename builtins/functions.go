@@ -13,14 +13,14 @@ type (
 		args a.Vector
 		rest bool
 		body a.Sequence
-		meta a.Metadata
+		meta a.Object
 	}
 
 	argProcessor func(a.Context, a.Sequence) a.Context
 )
 
 var (
-	emptyMetadata = a.Metadata{}
+	emptyMetadata = a.Properties{}
 	defaultName   = a.Name("<lambda>")
 	restMarker    = a.Name("&")
 	metaDocAsset  = a.NewKeyword("doc-asset")
@@ -81,11 +81,11 @@ func makeFixedArgProcessor(cl a.Context, an []a.Name) argProcessor {
 	}
 }
 
-func optionalMetadata(c a.Context, args a.Sequence) (a.Metadata, a.Sequence) {
+func optionalMetadata(c a.Context, args a.Sequence) (a.Object, a.Sequence) {
 	r := args
-	var md a.Metadata
+	var md a.Object
 	if s, ok := r.First().(a.Str); ok {
-		md = a.Metadata{a.MetaDoc: s}
+		md = a.Properties{a.MetaDoc: s}
 		r = r.Rest()
 	} else {
 		md = emptyMetadata
@@ -93,7 +93,7 @@ func optionalMetadata(c a.Context, args a.Sequence) (a.Metadata, a.Sequence) {
 
 	if m, ok := r.First().(a.MappedSequence); ok {
 		em := a.Eval(c, m).(a.MappedSequence)
-		md = md.Merge(toMetadata(em))
+		md = md.Child(toProperties(em))
 		r = r.Rest()
 	}
 	return md, r
@@ -110,7 +110,7 @@ func optionalName(args a.Sequence) (a.Name, a.Sequence) {
 	return defaultName, args
 }
 
-func loadDocumentation(md a.Metadata) a.Metadata {
+func loadDocumentation(md a.Object) a.Object {
 	v, ok := md.Get(metaDocAsset)
 	if !ok {
 		return md
@@ -126,7 +126,7 @@ func loadDocumentation(md a.Metadata) a.Metadata {
 		return md
 	}
 
-	return md.Merge(a.Metadata{
+	return md.Child(a.Properties{
 		a.MetaDoc: d.Get(s),
 	})
 }
@@ -141,7 +141,7 @@ func getFunctionDefinition(c a.Context, args a.Sequence) *functionDefinition {
 	return &functionDefinition{
 		args: an,
 		body: r.Rest(),
-		meta: md.Merge(a.Metadata{
+		meta: md.Child(a.Properties{
 			a.MetaName: fn,
 			a.MetaArgs: an,
 		}),
@@ -169,7 +169,7 @@ func lambda(c a.Context, args a.Sequence) a.Value {
 	return defineFunction(c, &functionDefinition{
 		args: an,
 		body: r.Rest(),
-		meta: md.Merge(a.Metadata{
+		meta: md.Child(a.Properties{
 			a.MetaName: fn,
 			a.MetaArgs: an,
 		}),
@@ -183,9 +183,16 @@ func apply(c a.Context, args a.Sequence) a.Value {
 	return f.Apply(c, s)
 }
 
+func isApplicable(v a.Value) bool {
+	if _, ok := v.(a.Applicable); ok {
+		return true
+	}
+	return false
+}
+
 func init() {
 	registerAnnotated(
-		a.NewFunction(lambda).WithMetadata(a.Metadata{
+		a.NewFunction(lambda).WithMetadata(a.Properties{
 			a.MetaName:    a.Name("lambda"),
 			a.MetaDoc:     d.Get("fn"),
 			a.MetaSpecial: a.True,
@@ -193,9 +200,13 @@ func init() {
 	)
 
 	registerAnnotated(
-		a.NewFunction(apply).WithMetadata(a.Metadata{
+		a.NewFunction(apply).WithMetadata(a.Properties{
 			a.MetaName: a.Name("apply"),
 			a.MetaDoc:  d.Get("apply"),
 		}),
 	)
+
+	registerSequencePredicate(isApplicable, a.Properties{
+		a.MetaName: a.Name("apply?"),
+	})
 }

@@ -18,13 +18,13 @@ func isVector(v a.Value) bool {
 
 func init() {
 	registerAnnotated(
-		a.NewFunction(vector).WithMetadata(a.Metadata{
+		a.NewFunction(vector).WithMetadata(a.Properties{
 			a.MetaName: a.Name("vector"),
 			a.MetaDoc:  d.Get("vector"),
 		}),
 	)
 
-	registerSequencePredicate(isVector, a.Metadata{
+	registerSequencePredicate(isVector, a.Properties{
 		a.MetaName: a.Name("vector?"),
 		a.MetaDoc:  d.Get("is-vector"),
 	})

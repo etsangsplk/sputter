@@ -26,10 +26,9 @@ type (
 
 	// Emitter is an interface that is used to emit Values to a Channel
 	Emitter interface {
-		Value
-		Emit(Value) Emitter
-		Error(interface{}) Emitter
-		Close() Emitter
+		Writer
+		Closer
+		Error(interface{})
 	}
 
 	// Promise represents a Value that will eventually be resolved
@@ -91,7 +90,14 @@ func Once() Do {
 	}
 }
 
-// Never returns a Do instance for performing never performing an action
+// Always returns a Do instance for always performing an action
+func Always() Do {
+	return func(f func()) {
+		f()
+	}
+}
+
+// Never returns a Do instance for never performing an action
 func Never() Do {
 	return func(_ func()) {
 		// no-op
@@ -129,31 +135,28 @@ func NewChannelEmitter(ch *channelWrapper) Emitter {
 	return r
 }
 
-// Emit will send a Value to the Go chan
-func (e *channelEmitter) Emit(v Value) Emitter {
+// Write will send a Value to the Go chan
+func (e *channelEmitter) Write(v Value) {
 	if s := atomic.LoadUint32(&e.ch.status); s == ready {
 		e.ch.seq <- channelResult{v, nil}
 	}
 	if s := atomic.LoadUint32(&e.ch.status); s == closeRequested {
 		e.Close()
 	}
-	return e
 }
 
 // Error will send an Error to the Go chan
-func (e *channelEmitter) Error(err interface{}) Emitter {
+func (e *channelEmitter) Error(err interface{}) {
 	if s := atomic.LoadUint32(&e.ch.status); s == ready {
 		e.ch.seq <- channelResult{nil, err}
 	}
 	e.Close()
-	return e
 }
 
 // Close will Close the Go chan
-func (e *channelEmitter) Close() Emitter {
+func (e *channelEmitter) Close() {
 	runtime.SetFinalizer(e, nil)
 	e.ch.Close()
-	return e
 }
 
 func (e *channelEmitter) Type() Name {
@@ -233,6 +236,13 @@ func NewPromise() Promise {
 		cond:  sync.NewCond(new(sync.Mutex)),
 		state: undeliveredState,
 	}
+}
+
+func (p *promise) Apply(_ Context, args Sequence) Value {
+	if AssertArityRange(args, 0, 1) == 1 {
+		return p.Deliver(args.First())
+	}
+	return p.Resolve()
 }
 
 func (p *promise) Resolve() Value {

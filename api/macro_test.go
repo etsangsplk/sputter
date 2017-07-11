@@ -12,7 +12,7 @@ func TestMacro(t *testing.T) {
 
 	foo := a.NewKeyword("foo")
 
-	m1 := a.NewMacro(nil).WithMetadata(a.Metadata{
+	m1 := a.NewMacro(nil).WithMetadata(a.Properties{
 		a.MetaName: a.Name("orig"),
 	}).(a.Function)
 
@@ -30,17 +30,27 @@ func TestMacro(t *testing.T) {
 	ok = a.IsSpecialForm(k1)
 	as.False(ok)
 
-	m2 := m1.WithMetadata(a.Metadata{
+	m2 := m1.WithMetadata(a.Properties{
 		foo:        s("bar"),
 		a.MetaName: a.Name("changed"),
 	}).(a.Function)
 
-	as.True(m1.Metadata()[a.MetaMacro])
-	as.True(m2.Metadata()[a.MetaMacro])
+	v, _ := m1.Metadata().Get(a.MetaMacro)
+	as.True(v)
+	v, _ = m2.Metadata().Get(a.MetaMacro)
+	as.True(v)
 
 	as.Contains(":type macro", m1)
-	as.String("orig", m1.Metadata()[a.MetaName])
-	as.String("changed", m2.Metadata()[a.MetaName])
-	as.String("bar", m2.Metadata()[foo])
-	as.Nil(m1.Metadata()[foo])
+
+	v, _ = m1.Metadata().Get(a.MetaName)
+	as.String("orig", v)
+
+	v, _ = m2.Metadata().Get(a.MetaName)
+	as.String("changed", v)
+
+	v, _ = m2.Metadata().Get(foo)
+	as.String("bar", v)
+
+	v, _ = m1.Metadata().Get(foo)
+	as.Nil(v)
 }

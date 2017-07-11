@@ -25,18 +25,18 @@ func isMapped(v a.Value) bool {
 
 func init() {
 	registerAnnotated(
-		a.NewFunction(assoc).WithMetadata(a.Metadata{
+		a.NewFunction(assoc).WithMetadata(a.Properties{
 			a.MetaName: a.Name("assoc"),
 			a.MetaDoc:  d.Get("assoc"),
 		}),
 	)
 
-	registerSequencePredicate(isAssociative, a.Metadata{
+	registerSequencePredicate(isAssociative, a.Properties{
 		a.MetaName: a.Name("assoc?"),
 		a.MetaDoc:  d.Get("is-assoc"),
 	})
 
-	registerSequencePredicate(isMapped, a.Metadata{
+	registerSequencePredicate(isMapped, a.Properties{
 		a.MetaName: a.Name("mapped?"),
 		a.MetaDoc:  d.Get("is-mapped"),
 	})

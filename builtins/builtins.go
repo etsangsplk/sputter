@@ -23,8 +23,8 @@ func isBuiltInCall(n a.Name, v a.Value) (a.List, bool) {
 }
 
 func registerAnnotated(v a.Annotated) {
-	n := v.Metadata()[a.MetaName].(a.Name)
-	Namespace.Put(n, v.(a.Value))
+	n, _ := v.Metadata().Get(a.MetaName)
+	Namespace.Put(n.(a.Name), v.(a.Value))
 }
 
 func do(c a.Context, args a.Sequence) a.Value {
@@ -46,7 +46,7 @@ func eval(c a.Context, args a.Sequence) a.Value {
 
 func init() {
 	registerAnnotated(
-		a.NewFunction(do).WithMetadata(a.Metadata{
+		a.NewFunction(do).WithMetadata(a.Properties{
 			a.MetaName:    a.Name("do"),
 			a.MetaDoc:     d.Get("do"),
 			a.MetaSpecial: a.True,
@@ -54,14 +54,14 @@ func init() {
 	)
 
 	registerAnnotated(
-		a.NewFunction(read).WithMetadata(a.Metadata{
+		a.NewFunction(read).WithMetadata(a.Properties{
 			a.MetaName: a.Name("read"),
 			a.MetaDoc:  d.Get("read"),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(eval).WithMetadata(a.Metadata{
+		a.NewFunction(eval).WithMetadata(a.Properties{
 			a.MetaName: a.Name("eval"),
 			a.MetaDoc:  d.Get("eval"),
 		}),

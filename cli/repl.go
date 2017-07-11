@@ -333,7 +333,7 @@ func doc(c a.Context, args a.Sequence) a.Value {
 	if v, ok := c.Get(sym.Name()); ok {
 		if an, ok := v.(a.Annotated); ok {
 			md := an.Metadata()
-			if doc, ok := md[a.MetaDoc].(a.Str); ok {
+			if doc, ok := md.GetValue(a.MetaDoc).(a.Str); ok {
 				f := formatForREPL(string(doc))
 				fmt.Println(f)
 				return nothing
@@ -358,13 +358,13 @@ func registerBuiltIn(v a.Annotated) {
 	ns.Delete(replBuiltIns)
 	ns.Put(replBuiltIns, bi)
 
-	n := v.Metadata()[a.MetaName].(a.Name)
+	n := v.Metadata().GetValue(a.MetaName).(a.Name)
 	ns.Put(n, v.(a.Value))
 }
 
 func registerBuiltIns() {
 	registerBuiltIn(
-		a.NewFunction(use).WithMetadata(a.Metadata{
+		a.NewFunction(use).WithMetadata(a.Properties{
 			a.MetaName:    a.Name("use"),
 			a.MetaDoc:     d.Get("repl-use"),
 			a.MetaSpecial: a.True,
@@ -372,34 +372,34 @@ func registerBuiltIns() {
 	)
 
 	registerBuiltIn(
-		a.NewFunction(shutdown).WithMetadata(a.Metadata{
+		a.NewFunction(shutdown).WithMetadata(a.Properties{
 			a.MetaName: a.Name("quit"),
 			a.MetaDoc:  d.Get("repl-quit"),
 		}),
 	)
 
 	registerBuiltIn(
-		a.NewFunction(debugInfo).WithMetadata(a.Metadata{
+		a.NewFunction(debugInfo).WithMetadata(a.Properties{
 			a.MetaName: a.Name("debug-info"),
 		}),
 	)
 
 	registerBuiltIn(
-		a.NewFunction(cls).WithMetadata(a.Metadata{
+		a.NewFunction(cls).WithMetadata(a.Properties{
 			a.MetaName: a.Name("cls"),
 			a.MetaDoc:  d.Get("repl-cls"),
 		}),
 	)
 
 	registerBuiltIn(
-		a.NewFunction(help).WithMetadata(a.Metadata{
+		a.NewFunction(help).WithMetadata(a.Properties{
 			a.MetaName: a.Name("help"),
 			a.MetaDoc:  d.Get("repl-help"),
 		}),
 	)
 
 	registerBuiltIn(
-		a.NewFunction(doc).WithMetadata(a.Metadata{
+		a.NewFunction(doc).WithMetadata(a.Properties{
 			a.MetaName:    a.Name("doc"),
 			a.MetaDoc:     d.Get("repl-doc"),
 			a.MetaSpecial: a.True,

@@ -157,92 +157,92 @@ func makeTerminal(n a.Name, e a.Value, bl a.Sequence) forProc {
 }
 
 func init() {
-	registerSequencePredicate(isSequence, a.Metadata{
+	registerSequencePredicate(isSequence, a.Properties{
 		a.MetaName: a.Name("seq?"),
 		a.MetaDoc:  d.Get("is-seq"),
 	})
 
-	registerSequencePredicate(isCounted, a.Metadata{
+	registerSequencePredicate(isCounted, a.Properties{
 		a.MetaName: a.Name("len?"),
 		a.MetaDoc:  d.Get("is-len"),
 	})
 
-	registerSequencePredicate(isIndexed, a.Metadata{
+	registerSequencePredicate(isIndexed, a.Properties{
 		a.MetaName: a.Name("indexed?"),
 		a.MetaDoc:  d.Get("is-indexed"),
 	})
 
 	registerAnnotated(
-		a.NewFunction(first).WithMetadata(a.Metadata{
+		a.NewFunction(first).WithMetadata(a.Properties{
 			a.MetaName: a.Name("first"),
 			a.MetaDoc:  d.Get("first"),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(rest).WithMetadata(a.Metadata{
+		a.NewFunction(rest).WithMetadata(a.Properties{
 			a.MetaName: a.Name("rest"),
 			a.MetaDoc:  d.Get("rest"),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(cons).WithMetadata(a.Metadata{
+		a.NewFunction(cons).WithMetadata(a.Properties{
 			a.MetaName: a.Name("cons"),
 			a.MetaDoc:  d.Get("cons"),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(conj).WithMetadata(a.Metadata{
+		a.NewFunction(conj).WithMetadata(a.Properties{
 			a.MetaName: a.Name("conj"),
 			a.MetaDoc:  d.Get("conj"),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(_len).WithMetadata(a.Metadata{
+		a.NewFunction(_len).WithMetadata(a.Properties{
 			a.MetaName: a.Name("len"),
 			a.MetaDoc:  d.Get("len"),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(nth).WithMetadata(a.Metadata{
+		a.NewFunction(nth).WithMetadata(a.Properties{
 			a.MetaName: a.Name("nth"),
 			a.MetaDoc:  d.Get("nth"),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(_append).WithMetadata(a.Metadata{
+		a.NewFunction(_append).WithMetadata(a.Properties{
 			a.MetaName: a.Name("append"),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(reduce).WithMetadata(a.Metadata{
+		a.NewFunction(reduce).WithMetadata(a.Properties{
 			a.MetaName: a.Name("reduce"),
 			a.MetaDoc:  d.Get("reduce"),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(take).WithMetadata(a.Metadata{
+		a.NewFunction(take).WithMetadata(a.Properties{
 			a.MetaName: a.Name("take"),
 			a.MetaDoc:  d.Get("take"),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(drop).WithMetadata(a.Metadata{
+		a.NewFunction(drop).WithMetadata(a.Properties{
 			a.MetaName: a.Name("drop"),
 			a.MetaDoc:  d.Get("drop"),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(forEach).WithMetadata(a.Metadata{
+		a.NewFunction(forEach).WithMetadata(a.Properties{
 			a.MetaName:    a.Name("for-each"),
 			a.MetaSpecial: a.True,
 		}),

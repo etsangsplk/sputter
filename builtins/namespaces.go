@@ -24,7 +24,7 @@ func getNamespace(_ a.Context, args a.Sequence) a.Value {
 
 func init() {
 	registerAnnotated(
-		a.NewFunction(withNamespace).WithMetadata(a.Metadata{
+		a.NewFunction(withNamespace).WithMetadata(a.Properties{
 			a.MetaName:    a.Name("with-ns"),
 			a.MetaDoc:     d.Get("with-ns"),
 			a.MetaSpecial: a.True,
@@ -32,7 +32,7 @@ func init() {
 	)
 
 	registerAnnotated(
-		a.NewFunction(getNamespace).WithMetadata(a.Metadata{
+		a.NewFunction(getNamespace).WithMetadata(a.Properties{
 			a.MetaName:    a.Name("ns"),
 			a.MetaDoc:     d.Get("ns"),
 			a.MetaSpecial: a.True,

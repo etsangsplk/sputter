@@ -35,14 +35,6 @@ type (
 	// TokenType is an opaque type for lexer tokens
 	TokenType int
 
-	lexer struct {
-		once  a.Do
-		src   string
-		isSeq bool
-		first a.Value
-		rest  a.Sequence
-	}
-
 	// Token is a lexer value
 	Token struct {
 		Type  TokenType
@@ -70,35 +62,25 @@ var (
 
 // Scan creates a new lexer Sequence
 func Scan(src a.Str) a.Sequence {
-	l := &lexer{
-		once: a.Once(),
-		src:  string(src),
+	var resolver a.Resolver
+	s := string(src)
+
+	resolver = func() (a.Value, bool, a.Resolver) {
+		if t, rs := matchToken(s); t.Type != endOfFile {
+			s = rs
+			return t, true, resolver
+		}
+		return nil, false, nil
 	}
+
+	l := a.NewLazySequence(resolver)
 
 	return a.Filter(l, func(v a.Value) bool {
 		return isNotWhitespace(v.(*Token))
 	})
 }
 
-func (l *lexer) resolve() *lexer {
-	l.once(func() {
-		t, rsrc := l.matchToken()
-
-		if t.Type != endOfFile {
-			l.isSeq = true
-			l.first = t
-		}
-		l.rest = &lexer{
-			once: a.Once(),
-			rest: a.EmptyList,
-			src:  rsrc,
-		}
-	})
-	return l
-}
-
-func (l *lexer) matchToken() (*Token, string) {
-	src := l.src
+func matchToken(src string) (*Token, string) {
 	for _, s := range matchers {
 		if i := s.pattern.FindStringIndex(src); i != nil {
 			f := src[:i[1]]
@@ -109,28 +91,6 @@ func (l *lexer) matchToken() (*Token, string) {
 	// Shouldn't happen because of the patterns that are defined,
 	// but is here as a safety net
 	panic(UnmatchedState)
-}
-
-func (l *lexer) IsSequence() bool {
-	return l.resolve().isSeq
-}
-
-func (l *lexer) First() a.Value {
-	return l.resolve().first
-}
-
-func (l *lexer) Rest() a.Sequence {
-	return l.resolve().rest
-}
-
-func (l *lexer) Prepend(v a.Value) a.Sequence {
-	// insulated by a filter
-	panic("not implemented")
-}
-
-func (l *lexer) Str() a.Str {
-	// insulated by a filter
-	panic("not implemented")
 }
 
 // Str converts this Value into a Str

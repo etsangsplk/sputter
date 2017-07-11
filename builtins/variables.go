@@ -43,7 +43,7 @@ func let(c a.Context, args a.Sequence) a.Value {
 
 func init() {
 	registerAnnotated(
-		a.NewFunction(def).WithMetadata(a.Metadata{
+		a.NewFunction(def).WithMetadata(a.Properties{
 			a.MetaName:    a.Name("def"),
 			a.MetaDoc:     d.Get("def"),
 			a.MetaSpecial: a.True,
@@ -51,7 +51,7 @@ func init() {
 	)
 
 	registerAnnotated(
-		a.NewFunction(let).WithMetadata(a.Metadata{
+		a.NewFunction(let).WithMetadata(a.Properties{
 			a.MetaName:    a.Name("let"),
 			a.MetaDoc:     d.Get("let"),
 			a.MetaSpecial: a.True,

@@ -45,6 +45,11 @@ func NewQualifiedSymbol(name Name, domain Name) Symbol {
 	return ns.Intern(name)
 }
 
+// NewBuiltInSymbol returns a Symbol qualified to the BuiltIn domain
+func NewBuiltInSymbol(name Name) Symbol {
+	return NewQualifiedSymbol(name, BuiltInDomain)
+}
+
 // NewLocalSymbol returns a Symbol from the local domain
 func NewLocalSymbol(name Name) Symbol {
 	return NewQualifiedSymbol(name, LocalDomain)

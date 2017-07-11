@@ -6,23 +6,25 @@ import (
 
 	a "github.com/kode4food/sputter/api"
 	"github.com/kode4food/sputter/assert"
-	n "github.com/kode4food/sputter/native"
 )
+
+const stdoutName = "*stdout*"
 
 func testOutput(t *testing.T, src string, expected string) {
 	as := assert.New(t)
 
-	ns := a.GetNamespace(a.UserDomain)
-	o, _ := ns.Get("*stdout*")
-	ns.Delete("*stdout*")
-	w := bytes.NewBufferString("")
-	ns.Put("*stdout*", n.New(w))
+	ns := a.GetNamespace(a.BuiltInDomain)
+	o, _ := ns.Get(stdoutName)
+	ns.Delete(stdoutName)
+	b := bytes.NewBufferString("")
+	w := a.NewWriter(b, a.StrOutput)
+	ns.Put(stdoutName, w)
 
 	runCode(src)
 
-	ns.Delete("*stdout*")
-	ns.Put("*stdout*", o)
-	as.String(expected, w.String())
+	ns.Delete(stdoutName)
+	ns.Put(stdoutName, o)
+	as.String(expected, b.String())
 }
 
 func TestIO(t *testing.T) {

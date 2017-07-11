@@ -19,14 +19,14 @@ type (
 	wrapped struct {
 		value    reflect.Value
 		typeInfo *typeInfo
-		meta     a.Metadata
+		meta     a.Object
 	}
 
 	typeInfo struct {
 		name    a.Name
 		typ     reflect.Type
 		getters propertyGetters
-		meta    a.Metadata
+		meta    a.Object
 	}
 
 	propertyGetters map[string]outMapper
@@ -51,16 +51,16 @@ func (n *wrapped) Wrapped() interface{} {
 }
 
 // Metadata makes wrapped Annotated
-func (n *wrapped) Metadata() a.Metadata {
+func (n *wrapped) Metadata() a.Object {
 	return n.meta
 }
 
 // WithMetadata copies the wrapped with new Metadata
-func (n *wrapped) WithMetadata(md a.Metadata) a.Annotated {
+func (n *wrapped) WithMetadata(md a.Object) a.Annotated {
 	return &wrapped{
 		value:    n.value,
 		typeInfo: n.typeInfo,
-		meta:     n.meta.Merge(md),
+		meta:     n.meta.Child(md.Flatten()),
 	}
 }
 
@@ -73,7 +73,8 @@ func (n *wrapped) Get(key a.Value) (a.Value, bool) {
 }
 
 func (n *wrapped) Type() a.Name {
-	return n.meta[a.MetaType].(a.Name)
+	t, _ := n.meta.Get(a.MetaType)
+	return t.(a.Name)
 }
 
 func (n *wrapped) Str() a.Str {
@@ -84,10 +85,8 @@ func getTypeInfo(t reflect.Type) *typeInfo {
 	tn := typeName(t)
 	return types.Get(tn, func() u.Any {
 		return &typeInfo{
-			name: tn,
-			meta: a.Metadata{
-				a.MetaType: tn,
-			},
+			name:    tn,
+			meta:    a.Properties{a.MetaType: tn},
 			getters: makePropertyGetters(t),
 		}
 	}).(*typeInfo)

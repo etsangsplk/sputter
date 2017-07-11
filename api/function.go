@@ -25,11 +25,11 @@ type (
 
 	function struct {
 		exec SequenceProcessor
-		meta Metadata
+		meta Object
 	}
 )
 
-var functionMetadata = Metadata{
+var functionMetadata = Properties{
 	MetaName: Name("<anon>"),
 	MetaType: Name("function"),
 }
@@ -46,23 +46,25 @@ func (f *function) IsFunction() bool {
 	return true
 }
 
-func (f *function) Metadata() Metadata {
+func (f *function) Metadata() Object {
 	return f.meta
 }
 
-func (f *function) WithMetadata(md Metadata) Annotated {
+func (f *function) WithMetadata(md Object) Annotated {
 	return &function{
 		exec: f.exec,
-		meta: f.meta.Merge(md),
+		meta: f.meta.Child(md.Flatten()),
 	}
 }
 
 func (f *function) Name() Name {
-	return f.Metadata()[MetaName].(Name)
+	n, _ := f.Metadata().Get(MetaName)
+	return n.(Name)
 }
 
 func (f *function) Documentation() Str {
-	return f.Metadata()[MetaDoc].(Str)
+	d, _ := f.Metadata().Get(MetaDoc)
+	return d.(Str)
 }
 
 func (f *function) Type() Name {

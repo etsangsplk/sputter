@@ -6,72 +6,43 @@ import (
 )
 
 var (
+	// MetaChannel is the key used to identify a Channel
+	MetaChannel = a.NewKeyword("channel")
+
 	// MetaEmitter is the key used to emit to a Channel
 	MetaEmitter = a.NewKeyword("emit")
 
-	// MetaClose is the key used to close a Channel
-	MetaClose = a.NewKeyword("close")
-
 	// MetaSequence is the key used to retrieve the Sequence from a Channel
 	MetaSequence = a.NewKeyword("seq")
-
-	// MetaPromise is the key used to identify a Promise
-	MetaPromise = a.NewKeyword("promise")
 )
 
-var (
-	emitterMetadata = a.Metadata{MetaEmitter: a.True}
-	promiseMetadata = a.Metadata{MetaPromise: a.True}
-)
-
-func closeFunction(e a.Emitter) a.Function {
-	return a.NewFunction(func(_ a.Context, args a.Sequence) a.Value {
-		a.AssertArity(args, 0)
-		e.Close()
-		return a.Nil
-	})
-}
-
-func emitFunction(e a.Emitter) a.Function {
-	return a.NewFunction(func(_ a.Context, args a.Sequence) a.Value {
-		a.AssertMinimumArity(args, 1)
-		for i := args; i.IsSequence(); i = i.Rest() {
-			e.Emit(i.First())
-		}
-		return a.Nil
-	}).WithMetadata(emitterMetadata).(a.Function)
+var channelPrototype = a.Properties{
+	MetaChannel: a.True,
 }
 
 func channel(_ a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 0)
 	e, s := a.NewChannel()
 
-	return a.NewAssociative(
-		a.NewVector(MetaEmitter, emitFunction(e)),
-		a.NewVector(MetaClose, closeFunction(e)),
-		a.NewVector(MetaSequence, s),
-	)
+	return channelPrototype.Child(a.Properties{
+		MetaEmitter:  bindWriter(e),
+		MetaClose:    bindCloser(e),
+		MetaSequence: s,
+	})
 }
 
 func promise(_ a.Context, args a.Sequence) a.Value {
-	a.AssertArity(args, 0)
-	p := a.NewPromise()
-
-	return a.NewFunction(
-		func(_ a.Context, args a.Sequence) a.Value {
-			if a.AssertArityRange(args, 0, 1) == 1 {
-				return p.Deliver(args.First())
-			}
-			return p.Resolve()
-		},
-	).WithMetadata(promiseMetadata).(a.Function)
+	if a.AssertArityRange(args, 0, 1) == 1 {
+		p := a.NewPromise()
+		p.Deliver(args.First())
+		return p
+	}
+	return a.NewPromise()
 }
 
 func isPromise(v a.Value) bool {
-	if _, ok := v.(a.Applicable); ok {
-		if an, ok := v.(a.Annotated); ok {
-			return an.Metadata().IsTrue(MetaPromise)
-		}
+	if _, ok := v.(a.Promise); ok {
+		return true
 	}
 	return false
 }
@@ -84,27 +55,27 @@ func doAsync(c a.Context, args a.Sequence) a.Value {
 
 func init() {
 	registerAnnotated(
-		a.NewFunction(channel).WithMetadata(a.Metadata{
+		a.NewFunction(channel).WithMetadata(a.Properties{
 			a.MetaName: a.Name("channel"),
 			a.MetaDoc:  d.Get("channel"),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(promise).WithMetadata(a.Metadata{
+		a.NewFunction(promise).WithMetadata(a.Properties{
 			a.MetaName: a.Name("promise"),
 			a.MetaDoc:  d.Get("promise"),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(doAsync).WithMetadata(a.Metadata{
+		a.NewFunction(doAsync).WithMetadata(a.Properties{
 			a.MetaName:    a.Name("do-async"),
 			a.MetaSpecial: a.True,
 		}),
 	)
 
-	registerSequencePredicate(isPromise, a.Metadata{
+	registerSequencePredicate(isPromise, a.Properties{
 		a.MetaName: a.Name("promise?"),
 		a.MetaDoc:  d.Get("is-promise"),
 	})

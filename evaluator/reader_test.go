@@ -150,7 +150,7 @@ func TestEvaluable(t *testing.T) {
 		arg, _ := i.Next()
 		v := a.Eval(c, arg)
 		return s("Hello, " + string(v.(a.Str)) + "!")
-	}).WithMetadata(a.Metadata{
+	}).WithMetadata(a.Properties{
 		a.MetaName: a.Name("hello"),
 	}).(a.Function)
 
@@ -171,7 +171,7 @@ func TestBuiltIns(t *testing.T) {
 
 	ns.Put("hello", a.NewFunction(func(_ a.Context, _ a.Sequence) a.Value {
 		return s("there")
-	}).WithMetadata(a.Metadata{
+	}).WithMetadata(a.Properties{
 		a.MetaName: a.Name("hello"),
 	}).(a.Function))
 

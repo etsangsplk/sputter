@@ -18,13 +18,13 @@ func isList(v a.Value) bool {
 
 func init() {
 	registerAnnotated(
-		a.NewFunction(list).WithMetadata(a.Metadata{
+		a.NewFunction(list).WithMetadata(a.Properties{
 			a.MetaName: a.Name("list"),
 			a.MetaDoc:  d.Get("list"),
 		}),
 	)
 
-	registerSequencePredicate(isList, a.Metadata{
+	registerSequencePredicate(isList, a.Properties{
 		a.MetaName: a.Name("list?"),
 		a.MetaDoc:  d.Get("is-list"),
 	})

@@ -18,13 +18,13 @@ func isStr(v a.Value) bool {
 
 func init() {
 	registerAnnotated(
-		a.NewFunction(str).WithMetadata(a.Metadata{
+		a.NewFunction(str).WithMetadata(a.Properties{
 			a.MetaName: a.Name("str"),
 			a.MetaDoc:  d.Get("str"),
 		}),
 	)
 
-	registerSequencePredicate(isStr, a.Metadata{
+	registerSequencePredicate(isStr, a.Properties{
 		a.MetaName: a.Name("str?"),
 		a.MetaDoc:  d.Get("is-str"),
 	})

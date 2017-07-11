@@ -20,13 +20,13 @@ func TestChannel(t *testing.T) {
 	var wg sync.WaitGroup
 
 	gen := func() {
-		e.Emit(f(2))
+		e.Write(f(2))
 		time.Sleep(time.Millisecond * 50)
-		e.Emit(f(3))
+		e.Write(f(3))
 		time.Sleep(time.Millisecond * 30)
-		e.Emit(s("foo"))
+		e.Write(s("foo"))
 		time.Sleep(time.Millisecond * 10)
-		e.Emit(s("bar"))
+		e.Write(s("bar"))
 		e.Close()
 		wg.Done()
 	}

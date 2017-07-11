@@ -9,9 +9,9 @@ import (
 
 var helloThere = a.NewFunction(func(_ a.Context, _ a.Sequence) a.Value {
 	return s("there")
-}).WithMetadata(a.Metadata{
+}).WithMetadata(a.NewObject(a.Properties{
 	a.MetaName: a.Name("hello"),
-}).(a.Function)
+})).(a.Function)
 
 func TestSimpleList(t *testing.T) {
 	as := assert.New(t)

@@ -12,7 +12,7 @@ var helloName = a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
 	n, _ := i.Next()
 	v := a.Eval(c, n)
 	return s("Hello, " + string(v.(a.Str)) + "!")
-}).WithMetadata(a.Metadata{
+}).WithMetadata(a.Properties{
 	a.MetaName: a.Name("hello"),
 }).(a.Function)
 

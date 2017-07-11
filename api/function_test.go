@@ -13,7 +13,7 @@ func TestFunction(t *testing.T) {
 
 	f1 := a.NewFunction(func(_ a.Context, _ a.Sequence) a.Value {
 		return s("hello")
-	}).WithMetadata(a.Metadata{
+	}).WithMetadata(a.Properties{
 		a.MetaName: a.Name("test-function"),
 		a.MetaDoc:  s("this is a test"),
 	}).(a.Function)
@@ -21,14 +21,19 @@ func TestFunction(t *testing.T) {
 	as.True(f1.IsFunction())
 
 	f2 := a.NewFunction(nil)
-	f3 := f1.WithMetadata(a.Metadata{a.MetaDoc: s("modified")})
+	f3 := f1.WithMetadata(a.Properties{
+		a.MetaDoc: s("modified"),
+	})
 
 	as.NotNil(f1.Metadata())
 	as.NotNil(f2.Metadata())
 	as.NotIdentical(f1.Metadata(), f3.Metadata())
 
-	as.String("this is a test", f1.Metadata()[a.MetaDoc])
-	as.String("modified", f3.Metadata()[a.MetaDoc])
+	v, _ := f1.Metadata().Get(a.MetaDoc)
+	as.String("this is a test", v)
+
+	v, _ = f3.Metadata().Get(a.MetaDoc)
+	as.String("modified", v)
 
 	as.Contains(":name test-function", f1)
 	as.String("this is a test", f1.Documentation())
@@ -36,7 +41,7 @@ func TestFunction(t *testing.T) {
 	c := a.NewContext()
 	as.String("hello", f1.Apply(c, a.EmptyList))
 
-	f4 := a.NewFunction(nil).WithMetadata(a.Metadata{
+	f4 := a.NewFunction(nil).WithMetadata(a.Properties{
 		a.MetaType: f(99),
 	}).(a.Function)
 

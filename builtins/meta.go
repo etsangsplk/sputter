@@ -5,8 +5,8 @@ import (
 	d "github.com/kode4food/sputter/docstring"
 )
 
-func toMetadata(args a.MappedSequence) a.Metadata {
-	r := make(a.Metadata)
+func toProperties(args a.MappedSequence) a.Properties {
+	r := make(a.Properties)
 	for i := args.(a.Sequence); i.IsSequence(); i = i.Rest() {
 		p := i.First().(a.Sequence)
 		k := p.First()
@@ -16,9 +16,9 @@ func toMetadata(args a.MappedSequence) a.Metadata {
 	return r
 }
 
-func fromMetadata(m a.Metadata) a.Value {
+func fromMetadata(m a.Object) a.Value {
 	r := []a.Vector{}
-	for k, v := range m {
+	for k, v := range m.Flatten() {
 		r = append(r, a.NewVector(k, v))
 	}
 	return a.NewAssociative(r...)
@@ -28,7 +28,7 @@ func withMeta(_ a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 2)
 	o := a.AssertAnnotated(args.First())
 	m := a.AssertMappedSequence(args.Rest().First())
-	return o.WithMetadata(toMetadata(m)).(a.Value)
+	return o.WithMetadata(toProperties(m)).(a.Value)
 }
 
 func meta(_ a.Context, args a.Sequence) a.Value {
@@ -46,20 +46,20 @@ func isAnnotated(v a.Value) bool {
 
 func init() {
 	registerAnnotated(
-		a.NewFunction(withMeta).WithMetadata(a.Metadata{
+		a.NewFunction(withMeta).WithMetadata(a.Properties{
 			a.MetaName: a.Name("with-meta"),
 			a.MetaDoc:  d.Get("with-meta"),
 		}),
 	)
 
 	registerAnnotated(
-		a.NewFunction(meta).WithMetadata(a.Metadata{
+		a.NewFunction(meta).WithMetadata(a.Properties{
 			a.MetaName: a.Name("meta"),
 			a.MetaDoc:  d.Get("meta"),
 		}),
 	)
 
-	registerSequencePredicate(isAnnotated, a.Metadata{
+	registerSequencePredicate(isAnnotated, a.Properties{
 		a.MetaName: a.Name("meta?"),
 		a.MetaDoc:  d.Get("has-meta"),
 	})
