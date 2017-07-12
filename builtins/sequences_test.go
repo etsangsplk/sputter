@@ -85,3 +85,14 @@ func TestTakeDrop(t *testing.T) {
 		(nth (apply vector (drop 3 x y)) 0)
 	`, f(4))
 }
+
+func TestForLoop(t *testing.T) {
+	testCode(t, `
+		(let [ch (channel) emit (:emit ch) close (:close ch) seq (:seq ch)]
+			(do-async
+				(for-each [i (make-range 1 5 1), j (make-range 1 10 2)]
+					(emit (* i j)))
+				(close))
+			(reduce (lambda [x y] (+ x y)) seq))
+	`, f(250))
+}
