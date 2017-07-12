@@ -39,18 +39,16 @@ func makeReader(r io.Reader, i a.InputFunc) a.Reader {
 func makeWriter(w io.Writer, o a.OutputFunc) a.Object {
 	wrapped := a.NewWriter(w, o)
 
-	if c, ok := w.(a.Closer); ok {
-		return writerPrototype.Child(a.Properties{
-			MetaWriter: wrapped,
-			MetaWrite:  bindWriter(wrapped),
-			MetaClose:  bindCloser(c),
-		})
-	}
-
-	return writerPrototype.Child(a.Properties{
+	wrapper := a.Properties{
 		MetaWriter: wrapped,
 		MetaWrite:  bindWriter(wrapped),
-	})
+	}
+
+	if c, ok := w.(a.Closer); ok {
+		wrapper[MetaClose] = bindCloser(c)
+	}
+
+	return writerPrototype.Child(wrapper)
 }
 
 func bindWriter(w a.Writer) a.Function {
