@@ -86,7 +86,7 @@ func TestTakeDrop(t *testing.T) {
 	`, f(4))
 }
 
-func TestForLoop(t *testing.T) {
+func TestForEachLoop(t *testing.T) {
 	testCode(t, `
 		(let [ch (channel) emit (:emit ch) close (:close ch) seq (:seq ch)]
 			(do-async

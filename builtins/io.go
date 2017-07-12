@@ -18,6 +18,9 @@ const (
 type outputFunc func(a.Writer, a.Value)
 
 var (
+	// MetaWriter is the key used to wrap a Writer
+	MetaWriter = a.NewKeyword("writer")
+
 	// MetaWrite is key used to write to a Writer
 	MetaWrite = a.NewKeyword("write")
 
@@ -38,13 +41,15 @@ func makeWriter(w io.Writer, o a.OutputFunc) a.Object {
 
 	if c, ok := w.(a.Closer); ok {
 		return writerPrototype.Child(a.Properties{
-			MetaWrite: bindWriter(wrapped),
-			MetaClose: bindCloser(c),
+			MetaWriter: wrapped,
+			MetaWrite:  bindWriter(wrapped),
+			MetaClose:  bindCloser(c),
 		})
 	}
 
 	return writerPrototype.Child(a.Properties{
-		MetaWrite: bindWriter(wrapped),
+		MetaWriter: wrapped,
+		MetaWrite:  bindWriter(wrapped),
 	})
 }
 
@@ -68,8 +73,12 @@ func bindCloser(c a.Closer) a.Function {
 
 func getWriter(c a.Context, n a.Name) a.Writer {
 	if v, ok := c.Get(n); ok {
-		if w, ok := v.(a.Writer); ok {
-			return w
+		if o, ok := v.(a.Object); ok {
+			if p, ok := o.Get(MetaWriter); ok {
+				if w, ok := p.(a.Writer); ok {
+					return w
+				}
+			}
 		}
 		panic(a.Err(a.ExpectedWriter, v.Str()))
 	}
