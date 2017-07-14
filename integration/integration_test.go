@@ -1,11 +1,11 @@
-package builtins_test
+package integration_test
 
 import (
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
 	"github.com/kode4food/sputter/assert"
-	_ "github.com/kode4food/sputter/builtins"
+	_ "github.com/kode4food/sputter/core"
 	e "github.com/kode4food/sputter/evaluator"
 )
 

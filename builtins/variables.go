@@ -2,7 +2,6 @@ package builtins
 
 import (
 	a "github.com/kode4food/sputter/api"
-	d "github.com/kode4food/sputter/docstring"
 )
 
 // ExpectedBindings is raised if a binding vector isn't an even number
@@ -42,19 +41,6 @@ func let(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	registerAnnotated(
-		a.NewFunction(def).WithMetadata(a.Properties{
-			a.MetaName:    a.Name("def"),
-			a.MetaDoc:     d.Get("def"),
-			a.MetaSpecial: a.True,
-		}),
-	)
-
-	registerAnnotated(
-		a.NewFunction(let).WithMetadata(a.Properties{
-			a.MetaName:    a.Name("let"),
-			a.MetaDoc:     d.Get("let"),
-			a.MetaSpecial: a.True,
-		}),
-	)
+	RegisterBuiltIn("def", def)
+	RegisterBuiltIn("let", let)
 }

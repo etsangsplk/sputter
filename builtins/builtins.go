@@ -2,12 +2,27 @@ package builtins
 
 import (
 	a "github.com/kode4food/sputter/api"
-	d "github.com/kode4food/sputter/docstring"
 	e "github.com/kode4food/sputter/evaluator"
 )
 
-// Namespace is a special Namespace for built-in identifiers
-var Namespace = a.GetNamespace(a.BuiltInDomain)
+var (
+	// Namespace is a special Namespace for built-in identifiers
+	Namespace = a.GetNamespace(a.BuiltInDomain)
+
+	builtInFuncs = map[a.Name]a.SequenceProcessor{}
+)
+
+func RegisterBuiltIn(n a.Name, proc a.SequenceProcessor) {
+	builtInFuncs[n] = proc
+}
+
+// GetBuiltIn Returns a registered built-in function
+func GetBuiltIn(n a.Name) (a.SequenceProcessor, bool) {
+	if v, ok := builtInFuncs[n]; ok {
+		return v, true
+	}
+	return nil, false
+}
 
 func isBuiltInDomain(s a.Symbol) bool {
 	return s.Domain() == a.BuiltInDomain
@@ -22,9 +37,31 @@ func isBuiltInCall(n a.Name, v a.Value) (a.List, bool) {
 	return nil, false
 }
 
-func registerAnnotated(v a.Annotated) {
-	n, _ := v.Metadata().Get(a.MetaName)
-	Namespace.Put(n.(a.Name), v.(a.Value))
+func defBuiltIn(c a.Context, args a.Sequence) a.Value {
+	a.AssertMinimumArity(args, 1)
+	n := a.AssertUnqualified(args.First()).Name()
+	if f, ok := builtInFuncs[n]; ok {
+		var md a.Object = toProperties(a.ToAssociative(args.Rest()))
+		if s, ok := md.Get(a.MetaName); ok {
+			n = a.AssertUnqualified(s).Name()
+			md = md.Child(a.Properties{
+				a.MetaName: n,
+			})
+		}
+		md = loadDocumentation(md)
+
+		var r a.Function
+		if a.IsTrue(md, a.MetaMacro) {
+			r = a.NewMacro(f)
+		} else {
+			r = a.NewFunction(f)
+		}
+
+		r = r.WithMetadata(md).(a.Function)
+		a.GetContextNamespace(c).Put(n, r)
+		return r
+	}
+	panic(a.Err(a.KeyNotFound, n))
 }
 
 func do(c a.Context, args a.Sequence) a.Value {
@@ -45,25 +82,13 @@ func eval(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	registerAnnotated(
-		a.NewFunction(do).WithMetadata(a.Properties{
-			a.MetaName:    a.Name("do"),
-			a.MetaDoc:     d.Get("do"),
+	Namespace.Put("def-builtin",
+		a.NewFunction(defBuiltIn).WithMetadata(a.Properties{
 			a.MetaSpecial: a.True,
-		}),
+		}).(a.Function),
 	)
 
-	registerAnnotated(
-		a.NewFunction(read).WithMetadata(a.Properties{
-			a.MetaName: a.Name("read"),
-			a.MetaDoc:  d.Get("read"),
-		}),
-	)
-
-	registerAnnotated(
-		a.NewFunction(eval).WithMetadata(a.Properties{
-			a.MetaName: a.Name("eval"),
-			a.MetaDoc:  d.Get("eval"),
-		}),
-	)
+	RegisterBuiltIn("do", do)
+	RegisterBuiltIn("read", read)
+	RegisterBuiltIn("eval", eval)
 }

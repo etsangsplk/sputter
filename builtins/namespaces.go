@@ -1,9 +1,6 @@
 package builtins
 
-import (
-	a "github.com/kode4food/sputter/api"
-	d "github.com/kode4food/sputter/docstring"
-)
+import a "github.com/kode4food/sputter/api"
 
 func withNamespace(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
@@ -23,19 +20,6 @@ func getNamespace(_ a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	registerAnnotated(
-		a.NewFunction(withNamespace).WithMetadata(a.Properties{
-			a.MetaName:    a.Name("with-ns"),
-			a.MetaDoc:     d.Get("with-ns"),
-			a.MetaSpecial: a.True,
-		}),
-	)
-
-	registerAnnotated(
-		a.NewFunction(getNamespace).WithMetadata(a.Properties{
-			a.MetaName:    a.Name("ns"),
-			a.MetaDoc:     d.Get("ns"),
-			a.MetaSpecial: a.True,
-		}),
-	)
+	RegisterBuiltIn("with-ns", withNamespace)
+	RegisterBuiltIn("ns", getNamespace)
 }

@@ -1,20 +1,20 @@
 ;;;; sputter core: concurrency
 
-(defmacro async
-  {:doc-asset "async"}
+(defmacro go
+  {:doc-asset "go"}
   [& forms]
   (list 'sputter:make-closure
     (vector)
-    (cons 'sputter:do-async forms)))
+    (cons 'sputter:make-go forms)))
 
 (defmacro generate
   {:doc-asset "generate"}
   [& forms]
   (list 'sputter:let
-    (vector 'sputter/ch (list 'sputter:channel)
+    (vector 'sputter/ch (list 'sputter:chan)
             'sputter/cl (list :close 'sputter/ch)
             'emit (list :emit 'sputter/ch))
-    (list 'sputter:async
+    (list 'sputter:go
       (list 'sputter:let (vector 'x (cons 'sputter:do forms))
         (list 'sputter/cl)
         'x))
@@ -24,5 +24,5 @@
   {:doc-asset "future"}
   [& forms]
   `(let [promise# (promise)]
-    (async (promise# (do ~@forms)))
+    (go (promise# (do ~@forms)))
     promise#))

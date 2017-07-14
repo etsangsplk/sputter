@@ -153,10 +153,13 @@ func defineFunction(closure a.Context, d *functionDefinition) a.Function {
 	ex := a.MacroExpandAll(closure, d.body).(a.Sequence)
 	db := a.NewBlock(ex)
 
-	return a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
+	var res a.Function
+	res = a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
 		l := ap(c, args)
+		l.Put("recur", res)
 		return a.Eval(l, db)
 	}).WithMetadata(d.meta).(a.Function)
+	return res
 }
 
 func lambda(c a.Context, args a.Sequence) a.Value {
@@ -191,22 +194,7 @@ func isApplicable(v a.Value) bool {
 }
 
 func init() {
-	registerAnnotated(
-		a.NewFunction(lambda).WithMetadata(a.Properties{
-			a.MetaName:    a.Name("lambda"),
-			a.MetaDoc:     d.Get("fn"),
-			a.MetaSpecial: a.True,
-		}),
-	)
-
-	registerAnnotated(
-		a.NewFunction(apply).WithMetadata(a.Properties{
-			a.MetaName: a.Name("apply"),
-			a.MetaDoc:  d.Get("apply"),
-		}),
-	)
-
-	registerSequencePredicate(isApplicable, a.Properties{
-		a.MetaName: a.Name("apply?"),
-	})
+	RegisterBuiltIn("lambda", lambda)
+	RegisterBuiltIn("apply", apply)
+	RegisterSequencePredicate("apply?", isApplicable)
 }

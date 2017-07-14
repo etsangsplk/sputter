@@ -1,9 +1,6 @@
 package builtins
 
-import (
-	a "github.com/kode4food/sputter/api"
-	d "github.com/kode4food/sputter/docstring"
-)
+import a "github.com/kode4food/sputter/api"
 
 func list(_ a.Context, args a.Sequence) a.Value {
 	return a.ToList(args)
@@ -17,15 +14,6 @@ func isList(v a.Value) bool {
 }
 
 func init() {
-	registerAnnotated(
-		a.NewFunction(list).WithMetadata(a.Properties{
-			a.MetaName: a.Name("list"),
-			a.MetaDoc:  d.Get("list"),
-		}),
-	)
-
-	registerSequencePredicate(isList, a.Properties{
-		a.MetaName: a.Name("list?"),
-		a.MetaDoc:  d.Get("is-list"),
-	})
+	RegisterBuiltIn("list", list)
+	RegisterSequencePredicate("list?", isList)
 }

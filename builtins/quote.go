@@ -6,7 +6,6 @@ import (
 	"sync/atomic"
 
 	a "github.com/kode4food/sputter/api"
-	d "github.com/kode4food/sputter/docstring"
 )
 
 const (
@@ -163,17 +162,6 @@ func syntaxquote(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	registerAnnotated(
-		a.NewMacro(quote).WithMetadata(a.Properties{
-			a.MetaName:    a.Name("quote"),
-			a.MetaDoc:     d.Get("quote"),
-			a.MetaSpecial: a.True,
-		}),
-	)
-
-	registerAnnotated(
-		a.NewMacro(syntaxquote).WithMetadata(a.Properties{
-			a.MetaName: a.Name("syntax-quote"),
-		}),
-	)
+	RegisterBuiltIn("quote", quote)
+	RegisterBuiltIn("syntax-quote", syntaxquote)
 }

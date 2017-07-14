@@ -1,9 +1,6 @@
 package builtins
 
-import (
-	a "github.com/kode4food/sputter/api"
-	d "github.com/kode4food/sputter/docstring"
-)
+import a "github.com/kode4food/sputter/api"
 
 func defineMacro(closure a.Context, d *functionDefinition) a.Function {
 	ap := makeArgProcessor(closure, d.args)
@@ -11,8 +8,7 @@ func defineMacro(closure a.Context, d *functionDefinition) a.Function {
 	db := a.NewBlock(ex)
 
 	return a.NewMacro(func(c a.Context, args a.Sequence) a.Value {
-		l := ap(c, args)
-		return a.Eval(l, db)
+		return a.Eval(ap(c, args), db)
 	}).WithMetadata(d.meta).(a.Function)
 }
 
@@ -41,32 +37,8 @@ func macroexpandAll(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	registerAnnotated(
-		a.NewFunction(defmacro).WithMetadata(a.Properties{
-			a.MetaName:    a.Name("defmacro"),
-			a.MetaDoc:     d.Get("defmacro"),
-			a.MetaSpecial: a.True,
-		}),
-	)
-
-	registerAnnotated(
-		a.NewFunction(macroexpand1).WithMetadata(a.Properties{
-			a.MetaName:    a.Name("macroexpand1"),
-			a.MetaSpecial: a.True,
-		}),
-	)
-
-	registerAnnotated(
-		a.NewFunction(macroexpand).WithMetadata(a.Properties{
-			a.MetaName:    a.Name("macroexpand"),
-			a.MetaSpecial: a.True,
-		}),
-	)
-
-	registerAnnotated(
-		a.NewFunction(macroexpandAll).WithMetadata(a.Properties{
-			a.MetaName:    a.Name("macroexpand-all"),
-			a.MetaSpecial: a.True,
-		}),
-	)
+	RegisterBuiltIn("defmacro", defmacro)
+	RegisterBuiltIn("macroexpand1", macroexpand1)
+	RegisterBuiltIn("macroexpand", macroexpand)
+	RegisterBuiltIn("macroexpand-all", macroexpandAll)
 }

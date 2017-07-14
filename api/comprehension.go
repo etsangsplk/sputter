@@ -16,13 +16,13 @@ func Map(s Sequence, mapper ValueMapper) Sequence {
 	var res LazyResolver
 	e := s
 
-	res = func() (Value, bool, LazyResolver) {
+	res = func() (bool, Value, Sequence) {
 		if e.IsSequence() {
 			r := mapper(e.First())
 			e = e.Rest()
-			return r, true, res
+			return true, r, NewLazySequence(res)
 		}
-		return Nil, false, nil
+		return false, Nil, EmptyList
 	}
 	return NewLazySequence(res)
 }
@@ -32,15 +32,15 @@ func Filter(s Sequence, filter ValueFilter) Sequence {
 	var res LazyResolver
 	e := s
 
-	res = func() (Value, bool, LazyResolver) {
+	res = func() (bool, Value, Sequence) {
 		for e.IsSequence() {
 			v := e.First()
 			e = e.Rest()
 			if filter(v) {
-				return v, true, res
+				return true, v, NewLazySequence(res)
 			}
 		}
-		return Nil, false, nil
+		return false, Nil, EmptyList
 	}
 	return NewLazySequence(res)
 }
@@ -50,17 +50,17 @@ func Concat(s Sequence) Sequence {
 	var res LazyResolver
 	e := s
 
-	res = func() (Value, bool, LazyResolver) {
+	res = func() (bool, Value, Sequence) {
 		for e.IsSequence() {
 			v := AssertSequence(e.First())
 			e = e.Rest()
 			if v.IsSequence() {
 				r := v.First()
 				e = e.Prepend(v.Rest())
-				return r, true, res
+				return true, r, NewLazySequence(res)
 			}
 		}
-		return Nil, false, nil
+		return false, Nil, EmptyList
 	}
 	return NewLazySequence(res)
 }
@@ -70,14 +70,14 @@ func Take(s Sequence, count int) Sequence {
 	var res LazyResolver
 	i, e := 0, s
 
-	res = func() (Value, bool, LazyResolver) {
+	res = func() (bool, Value, Sequence) {
 		if e.IsSequence() && i < count {
 			r := e.First()
 			e = e.Rest()
 			i++
-			return r, true, res
+			return true, r, NewLazySequence(res)
 		}
-		return Nil, false, nil
+		return false, Nil, EmptyList
 	}
 	return NewLazySequence(res)
 }
@@ -87,20 +87,20 @@ func Drop(s Sequence, count int) Sequence {
 	var first, rest LazyResolver
 	e := s
 
-	first = func() (Value, bool, LazyResolver) {
+	first = func() (bool, Value, Sequence) {
 		for i := 0; i < count && e.IsSequence(); i++ {
 			e = e.Rest()
 		}
 		return rest()
 	}
 
-	rest = func() (Value, bool, LazyResolver) {
+	rest = func() (bool, Value, Sequence) {
 		if e.IsSequence() {
 			r := e.First()
 			e = e.Rest()
-			return r, true, rest
+			return true, r, NewLazySequence(rest)
 		}
-		return Nil, false, nil
+		return false, Nil, EmptyList
 	}
 
 	return NewLazySequence(first)

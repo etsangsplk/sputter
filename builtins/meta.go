@@ -2,7 +2,6 @@ package builtins
 
 import (
 	a "github.com/kode4food/sputter/api"
-	d "github.com/kode4food/sputter/docstring"
 )
 
 func toProperties(args a.MappedSequence) a.Properties {
@@ -45,22 +44,7 @@ func isAnnotated(v a.Value) bool {
 }
 
 func init() {
-	registerAnnotated(
-		a.NewFunction(withMeta).WithMetadata(a.Properties{
-			a.MetaName: a.Name("with-meta"),
-			a.MetaDoc:  d.Get("with-meta"),
-		}),
-	)
-
-	registerAnnotated(
-		a.NewFunction(meta).WithMetadata(a.Properties{
-			a.MetaName: a.Name("meta"),
-			a.MetaDoc:  d.Get("meta"),
-		}),
-	)
-
-	registerSequencePredicate(isAnnotated, a.Properties{
-		a.MetaName: a.Name("meta?"),
-		a.MetaDoc:  d.Get("has-meta"),
-	})
+	RegisterBuiltIn("with-meta", withMeta)
+	RegisterBuiltIn("meta", meta)
+	RegisterSequencePredicate("meta?", isAnnotated)
 }

@@ -105,16 +105,6 @@ func doClosure(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	registerAnnotated(
-		a.NewMacro(makeClosure).WithMetadata(a.Properties{
-			a.MetaName: a.Name("make-closure"),
-		}),
-	)
-
-	registerAnnotated(
-		a.NewMacro(doClosure).WithMetadata(a.Properties{
-			a.MetaName:    a.Name("closure"),
-			a.MetaSpecial: a.True,
-		}),
-	)
+	RegisterBuiltIn("make-closure", makeClosure)
+	RegisterBuiltIn("closure", doClosure)
 }

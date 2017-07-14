@@ -1,4 +1,4 @@
-package builtins_test
+package integration_test
 
 import (
 	"bytes"

@@ -111,63 +111,14 @@ func init() {
 	Namespace.Put("inf", a.PosInfinity)
 	Namespace.Put("-inf", a.NegInfinity)
 
-	registerAnnotated(
-		a.NewFunction(add).WithMetadata(a.Properties{
-			a.MetaName: a.Name("+"),
-		}),
-	)
-
-	registerAnnotated(
-		a.NewFunction(sub).WithMetadata(a.Properties{
-			a.MetaName: a.Name("-"),
-		}),
-	)
-
-	registerAnnotated(
-		a.NewFunction(mul).WithMetadata(a.Properties{
-			a.MetaName: a.Name("*"),
-		}),
-	)
-
-	registerAnnotated(
-		a.NewFunction(div).WithMetadata(a.Properties{
-			a.MetaName: a.Name("/"),
-		}),
-	)
-
-	registerAnnotated(
-		a.NewFunction(eq).WithMetadata(a.Properties{
-			a.MetaName: a.Name("="),
-		}),
-	)
-
-	registerAnnotated(
-		a.NewFunction(neq).WithMetadata(a.Properties{
-			a.MetaName: a.Name("!="),
-		}),
-	)
-
-	registerAnnotated(
-		a.NewFunction(gt).WithMetadata(a.Properties{
-			a.MetaName: a.Name(">"),
-		}),
-	)
-
-	registerAnnotated(
-		a.NewFunction(gte).WithMetadata(a.Properties{
-			a.MetaName: a.Name(">="),
-		}),
-	)
-
-	registerAnnotated(
-		a.NewFunction(lt).WithMetadata(a.Properties{
-			a.MetaName: a.Name("<"),
-		}),
-	)
-
-	registerAnnotated(
-		a.NewFunction(lte).WithMetadata(a.Properties{
-			a.MetaName: a.Name("<="),
-		}),
-	)
+	RegisterBuiltIn("+", add)
+	RegisterBuiltIn("-", sub)
+	RegisterBuiltIn("*", mul)
+	RegisterBuiltIn("/", div)
+	RegisterBuiltIn("=", eq)
+	RegisterBuiltIn("!=", neq)
+	RegisterBuiltIn(">", gt)
+	RegisterBuiltIn(">=", gte)
+	RegisterBuiltIn("<", lt)
+	RegisterBuiltIn("<=", lte)
 }

@@ -65,12 +65,12 @@ func Scan(src a.Str) a.Sequence {
 	var resolver a.LazyResolver
 	s := string(src)
 
-	resolver = func() (a.Value, bool, a.LazyResolver) {
+	resolver = func() (bool, a.Value, a.Sequence) {
 		if t, rs := matchToken(s); t.Type != endOfFile {
 			s = rs
-			return t, true, resolver
+			return true, t, a.NewLazySequence(resolver)
 		}
-		return nil, false, nil
+		return false, a.Nil, a.EmptyList
 	}
 
 	l := a.NewLazySequence(resolver)

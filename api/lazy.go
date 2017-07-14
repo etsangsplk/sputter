@@ -2,7 +2,7 @@ package api
 
 type (
 	// LazyResolver is used to resolve the elements of a lazy Sequence
-	LazyResolver func() (Value, bool, LazyResolver)
+	LazyResolver func() (bool, Value, Sequence)
 
 	lazySequence struct {
 		once     Do
@@ -26,18 +26,8 @@ func NewLazySequence(r LazyResolver) Sequence {
 
 func (l *lazySequence) resolve() *lazySequence {
 	l.once(func() {
-		v, ok, r := l.resolver()
-		l.isSeq = ok
-		l.result = v
+		l.isSeq, l.result, l.rest = l.resolver()
 		l.resolver = nil
-		if ok {
-			l.rest = &lazySequence{
-				once:     Once(),
-				resolver: r,
-				result:   Nil,
-				rest:     EmptyList,
-			}
-		}
 	})
 	return l
 }
@@ -69,4 +59,18 @@ func (l *lazySequence) Type() Name {
 
 func (l *lazySequence) Str() Str {
 	return MakeDumpStr(l)
+}
+
+// MakeLazyResolver converts an Applicable into a LazyResolver
+func MakeLazyResolver(c Context, f Applicable) LazyResolver {
+	return func() (bool, Value, Sequence) {
+		r := f.Apply(c, EmptyList)
+		if s, ok := r.(Sequence); ok && s.IsSequence() {
+			return true, s.First(), s.Rest()
+		}
+		if r == Nil {
+			return false, Nil, EmptyList
+		}
+		panic(Err(ExpectedSequence, r))
+	}
 }

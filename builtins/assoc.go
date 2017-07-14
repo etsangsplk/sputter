@@ -1,9 +1,6 @@
 package builtins
 
-import (
-	a "github.com/kode4food/sputter/api"
-	d "github.com/kode4food/sputter/docstring"
-)
+import a "github.com/kode4food/sputter/api"
 
 func assoc(_ a.Context, args a.Sequence) a.Value {
 	return a.ToAssociative(args)
@@ -24,20 +21,7 @@ func isMapped(v a.Value) bool {
 }
 
 func init() {
-	registerAnnotated(
-		a.NewFunction(assoc).WithMetadata(a.Properties{
-			a.MetaName: a.Name("assoc"),
-			a.MetaDoc:  d.Get("assoc"),
-		}),
-	)
-
-	registerSequencePredicate(isAssociative, a.Properties{
-		a.MetaName: a.Name("assoc?"),
-		a.MetaDoc:  d.Get("is-assoc"),
-	})
-
-	registerSequencePredicate(isMapped, a.Properties{
-		a.MetaName: a.Name("mapped?"),
-		a.MetaDoc:  d.Get("is-mapped"),
-	})
+	RegisterBuiltIn("assoc", assoc)
+	RegisterSequencePredicate("assoc?", isAssociative)
+	RegisterSequencePredicate("mapped?", isMapped)
 }

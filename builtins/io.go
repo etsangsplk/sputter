@@ -78,9 +78,8 @@ func getWriter(c a.Context, n a.Name) a.Writer {
 				}
 			}
 		}
-		panic(a.Err(a.ExpectedWriter, v.Str()))
 	}
-	panic(a.Err(a.UnknownSymbol, n))
+	panic(a.Err(a.ExpectedWriter, n))
 }
 
 func raw(e a.Writer, v a.Value) {
@@ -138,27 +137,8 @@ func init() {
 	Namespace.Put(stdoutName, makeWriter(os.Stdout, a.StrOutput))
 	Namespace.Put(stderrName, makeWriter(os.Stderr, a.StrOutput))
 
-	registerAnnotated(
-		a.NewFunction(pr).WithMetadata(a.Properties{
-			a.MetaName: a.Name("pr"),
-		}),
-	)
-
-	registerAnnotated(
-		a.NewFunction(prn).WithMetadata(a.Properties{
-			a.MetaName: a.Name("prn"),
-		}),
-	)
-
-	registerAnnotated(
-		a.NewFunction(_print).WithMetadata(a.Properties{
-			a.MetaName: a.Name("print"),
-		}),
-	)
-
-	registerAnnotated(
-		a.NewFunction(_println).WithMetadata(a.Properties{
-			a.MetaName: a.Name("println"),
-		}),
-	)
+	RegisterBuiltIn("pr", pr)
+	RegisterBuiltIn("prn", prn)
+	RegisterBuiltIn("print", _print)
+	RegisterBuiltIn("println", _println)
 }

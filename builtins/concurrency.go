@@ -1,9 +1,6 @@
 package builtins
 
-import (
-	a "github.com/kode4food/sputter/api"
-	d "github.com/kode4food/sputter/docstring"
-)
+import a "github.com/kode4food/sputter/api"
 
 var (
 	// MetaChannel is the key used to identify a Channel
@@ -20,7 +17,7 @@ var channelPrototype = a.Properties{
 	MetaChannel: a.True,
 }
 
-func channel(_ a.Context, args a.Sequence) a.Value {
+func _chan(_ a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 0)
 	e, s := a.NewChannel()
 
@@ -54,29 +51,8 @@ func doAsync(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	registerAnnotated(
-		a.NewFunction(channel).WithMetadata(a.Properties{
-			a.MetaName: a.Name("channel"),
-			a.MetaDoc:  d.Get("channel"),
-		}),
-	)
-
-	registerAnnotated(
-		a.NewFunction(promise).WithMetadata(a.Properties{
-			a.MetaName: a.Name("promise"),
-			a.MetaDoc:  d.Get("promise"),
-		}),
-	)
-
-	registerAnnotated(
-		a.NewFunction(doAsync).WithMetadata(a.Properties{
-			a.MetaName:    a.Name("do-async"),
-			a.MetaSpecial: a.True,
-		}),
-	)
-
-	registerSequencePredicate(isPromise, a.Properties{
-		a.MetaName: a.Name("promise?"),
-		a.MetaDoc:  d.Get("is-promise"),
-	})
+	RegisterBuiltIn("chan", _chan)
+	RegisterBuiltIn("promise", promise)
+	RegisterBuiltIn("make-go", doAsync)
+	RegisterSequencePredicate("promise?", isPromise)
 }

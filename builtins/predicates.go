@@ -1,51 +1,41 @@
 package builtins
 
-import (
-	a "github.com/kode4food/sputter/api"
-	d "github.com/kode4food/sputter/docstring"
-)
+import a "github.com/kode4food/sputter/api"
 
-func registerPredicate(f a.Function) {
-	registerAnnotated(f)
-
-	registerAnnotated(
-		a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
-			if f.Apply(c, args) == a.True {
-				return a.False
-			}
-			return a.True
-		}).WithMetadata(a.Properties{
-			a.MetaName: a.Name("!" + f.Name()),
-		}),
-	)
+// RegisterPredicate registers a simple predicate
+func RegisterPredicate(n a.Name, f a.SequenceProcessor) {
+	not := a.Name("!" + n)
+	RegisterBuiltIn(n, f)
+	RegisterBuiltIn(not, func(c a.Context, args a.Sequence) a.Value {
+		if f(c, args) == a.True {
+			return a.False
+		}
+		return a.True
+	})
 }
 
-func registerSequencePredicate(f a.ValueFilter, md a.Object) {
-	registerAnnotated(
-		a.NewFunction(func(_ a.Context, args a.Sequence) a.Value {
-			a.AssertMinimumArity(args, 1)
-			for i := args; i.IsSequence(); i = i.Rest() {
-				if !f(i.First()) {
-					return a.False
-				}
+// RegisterSequencePredicate registers a set-based predicate
+func RegisterSequencePredicate(n a.Name, f a.ValueFilter) {
+	not := a.Name("!" + n)
+	RegisterBuiltIn(n, func(_ a.Context, args a.Sequence) a.Value {
+		a.AssertMinimumArity(args, 1)
+		for i := args; i.IsSequence(); i = i.Rest() {
+			if !f(i.First()) {
+				return a.False
 			}
-			return a.True
-		}).WithMetadata(md),
-	)
+		}
+		return a.True
+	})
 
-	registerAnnotated(
-		a.NewFunction(func(_ a.Context, args a.Sequence) a.Value {
-			a.AssertMinimumArity(args, 1)
-			for i := args; i.IsSequence(); i = i.Rest() {
-				if f(i.First()) {
-					return a.False
-				}
+	RegisterBuiltIn(not, func(_ a.Context, args a.Sequence) a.Value {
+		a.AssertMinimumArity(args, 1)
+		for i := args; i.IsSequence(); i = i.Rest() {
+			if f(i.First()) {
+				return a.False
 			}
-			return a.True
-		}).WithMetadata(md.Child(a.Properties{
-			a.MetaName: a.Name("!" + md.GetValue(a.MetaName).(a.Name)),
-		})),
-	)
+		}
+		return a.True
+	})
 }
 
 func identical(_ a.Context, args a.Sequence) a.Value {
@@ -63,16 +53,15 @@ func isNil(v a.Value) bool {
 	return v == a.Nil
 }
 
-func init() {
-	registerPredicate(
-		a.NewFunction(identical).WithMetadata(a.Properties{
-			a.MetaName: a.Name("eq"),
-			a.MetaDoc:  d.Get("eq"),
-		}).(a.Function),
-	)
+func isKeyword(v a.Value) bool {
+	if _, ok := v.(a.Keyword); ok {
+		return true
+	}
+	return false
+}
 
-	registerSequencePredicate(isNil, a.Properties{
-		a.MetaName: a.Name("nil?"),
-		a.MetaDoc:  d.Get("is-nil"),
-	})
+func init() {
+	RegisterPredicate("eq", identical)
+	RegisterSequencePredicate("nil?", isNil)
+	RegisterSequencePredicate("keyword?", isKeyword)
 }
