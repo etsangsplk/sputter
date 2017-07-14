@@ -10,10 +10,11 @@ before_install:
 
 install:
   - go get github.com/Masterminds/glide
+  - go get github.com/kode4food/go-snapshot
   - go get github.com/jteeuwen/go-bindata/...
 
 script:
   - $GOPATH/bin/glide install
-  - $GOPATH/bin/go-bindata -o docstring/assets.go -pkg="docstring" -prefix="docstring/" docstring/*.md
+  - $GOPATH/bin/go-snapshot -pkg assets -out assets/assets.go docstring/*.md core/*.lisp -prefix="docstring/" docstring/*.md
   - go test $($GOPATH/bin/glide novendor)
-  - $GOPATH/bin/goveralls -service=travis-ci -ignore=docstring/assets.go
+  - $GOPATH/bin/goveralls -service=travis-ci -ignore=assets/assets.go
