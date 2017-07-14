@@ -12,11 +12,12 @@ var (
 	builtInFuncs = map[a.Name]a.SequenceProcessor{}
 )
 
+// RegisterBuiltIn adds a built-in SequenceProcessor by Name
 func RegisterBuiltIn(n a.Name, proc a.SequenceProcessor) {
 	builtInFuncs[n] = proc
 }
 
-// GetBuiltIn Returns a registered built-in function
+// GetBuiltIn returns a registered built-in function
 func GetBuiltIn(n a.Name) (a.SequenceProcessor, bool) {
 	if v, ok := builtInFuncs[n]; ok {
 		return v, true
