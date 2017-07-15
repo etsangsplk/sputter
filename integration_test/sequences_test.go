@@ -1,4 +1,4 @@
-package integration_test
+package integration_test_test
 
 import (
 	"testing"
@@ -15,6 +15,7 @@ func TestToAssoc(t *testing.T) {
 
 func TestToVector(t *testing.T) {
 	testCode(t, `(vector? (to-vector (list 1 2 3)))`, a.True)
+	testCode(t, `(len? [1 2 3 4])`, a.True)
 }
 
 func TestToList(t *testing.T) {

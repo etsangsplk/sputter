@@ -25,19 +25,6 @@ func GetBuiltIn(n a.Name) (a.SequenceProcessor, bool) {
 	return nil, false
 }
 
-func isBuiltInDomain(s a.Symbol) bool {
-	return s.Domain() == a.BuiltInDomain
-}
-
-func isBuiltInCall(n a.Name, v a.Value) (a.List, bool) {
-	if l, ok := v.(a.List); ok && l.Count() > 0 {
-		if s, ok := l.First().(a.Symbol); ok {
-			return l, isBuiltInDomain(s) && s.Name() == n
-		}
-	}
-	return nil, false
-}
-
 func defBuiltIn(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
 	n := a.AssertUnqualified(args.First()).Name()
@@ -51,22 +38,24 @@ func defBuiltIn(c a.Context, args a.Sequence) a.Value {
 		}
 		md = loadDocumentation(md)
 
-		var r a.Function
-		if a.IsTrue(md, a.MetaMacro) {
-			r = a.NewMacro(f)
-		} else {
-			r = a.NewFunction(f)
-		}
-
-		r = r.WithMetadata(md).(a.Function)
+		r := a.NewFunction(f).WithMetadata(md).(a.Value)
 		a.GetContextNamespace(c).Put(n, r)
 		return r
 	}
 	panic(a.Err(a.KeyNotFound, n))
 }
 
-func do(c a.Context, args a.Sequence) a.Value {
-	return a.EvalBlock(c, args)
+func isBuiltInDomain(s a.Symbol) bool {
+	return s.Domain() == a.BuiltInDomain
+}
+
+func isBuiltInCall(n a.Name, v a.Value) (a.List, bool) {
+	if l, ok := v.(a.List); ok && l.Count() > 0 {
+		if s, ok := l.First().(a.Symbol); ok {
+			return l, isBuiltInDomain(s) && s.Name() == n
+		}
+	}
+	return nil, false
 }
 
 func read(c a.Context, args a.Sequence) a.Value {
@@ -89,7 +78,7 @@ func init() {
 		}).(a.Function),
 	)
 
-	RegisterBuiltIn("do", do)
+	RegisterBuiltIn("do", a.EvalBlock)
 	RegisterBuiltIn("read", read)
 	RegisterBuiltIn("eval", eval)
 }

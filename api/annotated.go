@@ -10,9 +10,6 @@ var (
 	// MetaType is the Metadata key for a Value's Type
 	MetaType = NewKeyword("type")
 
-	// MetaMeta is the Metadata key for a Value's Metadata
-	MetaMeta = NewKeyword("meta")
-
 	// MetaDoc is the Metadata key for Documentation Strings
 	MetaDoc = NewKeyword("doc")
 

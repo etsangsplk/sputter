@@ -29,10 +29,18 @@ type (
 	}
 )
 
-var functionMetadata = Properties{
-	MetaName: Name("<anon>"),
-	MetaType: Name("function"),
-}
+var (
+	// MetaMacro identifies a Function as being a Macro
+	MetaMacro = NewKeyword("macro")
+
+	// MetaSpecial identifies a Macro as being a special form
+	MetaSpecial = NewKeyword("special-form")
+
+	functionMetadata = Properties{
+		MetaName: Name("<anon>"),
+		MetaType: Name("function"),
+	}
+)
 
 // NewFunction instantiates a new Function
 func NewFunction(e SequenceProcessor) Function {
@@ -93,6 +101,23 @@ func countUpTo(args Sequence, c int) int {
 		r++
 	}
 	return r
+}
+
+// IsMacro tests an Applicable as being marked a Macro and is a special form
+func IsMacro(a Applicable) (bool, bool) {
+	if an, ok := a.(Annotated); ok {
+		md := an.Metadata()
+		return IsTrue(md, MetaMacro), IsTrue(md, MetaSpecial)
+	}
+	return false, false
+}
+
+// IsSpecialForm tests an Applicable as being marked a special form
+func IsSpecialForm(a Applicable) bool {
+	if an, ok := a.(Annotated); ok {
+		return IsTrue(an.Metadata(), MetaSpecial)
+	}
+	return false
 }
 
 // AssertArity explodes if the arg count doesn't match provided arity

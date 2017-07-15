@@ -2,14 +2,19 @@ package builtins
 
 import a "github.com/kode4food/sputter/api"
 
+var macroMetadata = a.Properties{
+	a.MetaMacro: a.True,
+}
+
 func defineMacro(closure a.Context, d *functionDefinition) a.Function {
 	ap := makeArgProcessor(closure, d.args)
+	md := d.meta.Child(macroMetadata)
 	ex := a.MacroExpandAll(closure, d.body).(a.Sequence)
 	db := a.NewBlock(ex)
 
-	return a.NewMacro(func(c a.Context, args a.Sequence) a.Value {
+	return a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
 		return a.Eval(ap(c, args), db)
-	}).WithMetadata(d.meta).(a.Function)
+	}).WithMetadata(md).(a.Function)
 }
 
 func defmacro(c a.Context, args a.Sequence) a.Value {

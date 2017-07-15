@@ -5,13 +5,8 @@ import (
 	"io"
 )
 
-const (
-	// ExpectedWriter is thrown when a Value is not a Writer
-	ExpectedWriter = "value is not a writer: %s"
-
-	// ExpectedReader is thrown when a Value is not a Reader
-	ExpectedReader = "value is not a reader: %s"
-)
+// ExpectedWriter is thrown when a Value is not a Writer
+const ExpectedWriter = "value is not a writer: %s"
 
 type (
 	// Reader is used to retrieve Values from a File

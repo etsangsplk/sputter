@@ -16,5 +16,5 @@ func _if(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	RegisterBuiltIn("if", _if) // special
+	RegisterBuiltIn("if", _if)
 }

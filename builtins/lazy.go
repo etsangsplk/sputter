@@ -114,7 +114,7 @@ func makeTerminal(n a.Name, e a.Value, bl a.Sequence) forProc {
 }
 
 func init() {
-	RegisterBuiltIn("make-lazy-seq", makeLazySequence) // special
+	RegisterBuiltIn("make-lazy-seq", makeLazySequence)
 	RegisterBuiltIn("concat", concat)
 	RegisterBuiltIn("filter", filter)
 	RegisterBuiltIn("map", _map)
@@ -122,5 +122,5 @@ func init() {
 	RegisterBuiltIn("take", take)
 	RegisterBuiltIn("drop", drop)
 	RegisterBuiltIn("make-range", makeRange)
-	RegisterBuiltIn("for-each", forEach) // special
+	RegisterBuiltIn("for-each", forEach)
 }

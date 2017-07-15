@@ -5,25 +5,25 @@ import (
 
 	a "github.com/kode4food/sputter/api"
 	"github.com/kode4food/sputter/assert"
-	b "github.com/kode4food/sputter/builtins"
 	e "github.com/kode4food/sputter/evaluator"
 )
-
-func getBuiltIn(n a.Name) a.SequenceProcessor {
-	if r, ok := b.GetBuiltIn(n); ok {
-		return r
-	}
-	panic(a.Err("Built in not found: ", n))
-}
 
 func TestAssoc(t *testing.T) {
 	as := assert.New(t)
 	c := e.NewEvalContext()
 
 	assoc := getBuiltIn("assoc")
-	a1 := assoc(c, a.NewVector(a.NewKeyword("hello"), a.Str("foo")))
+	a1 := assoc(c, args(kw("hello"), s("foo")))
 	m1 := a.AssertMappedSequence(a1)
-	v1, ok := m1.Get(a.NewKeyword("hello"))
+	v1, ok := m1.Get(kw("hello"))
 	as.True(ok)
 	as.String("foo", v1)
+
+	isAssoc := getBuiltIn("assoc?")
+	as.True(isAssoc(c, args(a1)))
+	as.False(isAssoc(c, args(f(99))))
+
+	isMapped := getBuiltIn("mapped?")
+	as.True(isMapped(c, args(a1)))
+	as.False(isMapped(c, args(f(99))))
 }

@@ -1,4 +1,4 @@
-package integration_test
+package integration_test_test
 
 import (
 	"testing"
@@ -25,6 +25,11 @@ func TestVector(t *testing.T) {
 	testCode(t, `(!vector? (vector 1 2 3))`, a.False)
 	testCode(t, `(!vector? [])`, a.False)
 	testCode(t, `(!vector? 99)`, a.True)
+
+	testCode(t, `(len? [1 2 3])`, a.True)
+	testCode(t, `(len? 99)`, a.False)
+	testCode(t, `(indexed? [1 2 3])`, a.True)
+	testCode(t, `(indexed? 99)`, a.False)
 
 	a.GetNamespace(a.UserDomain).Delete("x")
 	testCode(t, `
