@@ -18,6 +18,22 @@ func TestGenerate(t *testing.T) {
 	`, f(1199))
 }
 
+func TestPromise(t *testing.T) {
+	ns := a.GetNamespace(a.UserDomain)
+	ns.Delete("p1")
+	ns.Delete("p2")
+
+	testCode(t, `
+		(def p1 (promise))
+		(promise? p1)
+	`, a.True)
+
+	testCode(t, `
+		(def p2 (promise "hello"))
+		(p2)
+	`, s("hello"))
+}
+
 func TestFuture(t *testing.T) {
 	a.GetNamespace(a.UserDomain).Delete("p")
 
