@@ -20,20 +20,20 @@
 (def-builtin macroexpand1    :special-form true)
 (def-builtin macroexpand     :special-form true)
 (def-builtin macroexpand-all :special-form true)
-(def-builtin quote           :macro true :special-form true)
+(def-builtin quote           :doc-asset "quote" :macro true :special-form true)
 (def-builtin syntax-quote    :macro true)
 
 ;; namespaces
 
-(def-builtin with-ns :special-form true)
-(def-builtin ns      :special-form true)
+(def-builtin with-ns :doc-asset "with-ns" :special-form true)
+(def-builtin ns      :doc-asset "ns" :special-form true)
 
 ;; basic predicates
 
-(def-builtin eq)
-(def-builtin !eq)
-(def-builtin nil?)
-(def-builtin !nil?)
+(def-builtin eq    :doc-asset "eq")
+(def-builtin !eq   :doc-asset "eq")
+(def-builtin nil?  :doc-asset "is-nil")
+(def-builtin !nil? :doc-asset "is-nil")
 (def-builtin keyword?)
 (def-builtin !keyword?)
 
