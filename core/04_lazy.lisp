@@ -34,7 +34,3 @@
   [seq-exprs & body]
   `(generate
      (for-each ~seq-exprs (emit (do ~@body)))))
-
-; (defmacro for
-;   [seq-exprs & body]
-;   )

@@ -64,6 +64,18 @@ func TestTakeDrop(t *testing.T) {
 	`, f(4))
 }
 
+func TestLazySeq(t *testing.T) {
+	testCode(t, `
+		(reduce
+			(lambda [x y] (+ x y))
+			(lazy-seq (cons 1 (lazy-seq [2, 3]))))
+	`, f(6))
+
+	testCode(t, `
+		(len (to-vector (lazy-seq nil)))
+	`, f(0))
+}
+
 func TestForEachLoop(t *testing.T) {
 	testCode(t, `
 		(let [ch (chan) emit (:emit ch) close (:close ch) seq (:seq ch)]

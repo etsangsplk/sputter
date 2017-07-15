@@ -27,5 +27,10 @@ func TestPredicates(t *testing.T) {
 	testCode(t, `(nil? '(1 2 3))`, a.False)
 	testCode(t, `(nil? () nil "hello")`, a.False)
 
+	testCode(t, `(keyword? :hello)`, a.True)
+	testCode(t, `(!keyword? :hello)`, a.False)
+	testCode(t, `(keyword? 99)`, a.False)
+	testCode(t, `(!keyword? 99)`, a.True)
+
 	testBadCode(t, `(nil?)`, a.Err(a.BadMinimumArity, 1, 0))
 }
