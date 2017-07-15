@@ -1,5 +1,5 @@
 *(help)*       Display this help message
-*(doc form)*   Display documentation. Example: `(doc async)`
+*(doc form)*   Display documentation. Example: `(doc go)`
 *(use ns)*     Change current namespace. Example: `(use foo)`
 *(cls)*        Clear the screen
 *(quit)*       Quit the REPL
