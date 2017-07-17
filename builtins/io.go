@@ -8,11 +8,13 @@ import (
 )
 
 const (
-	stdinName  = a.Name("*stdin*")
-	stdoutName = a.Name("*stdout*")
-	stderrName = a.Name("*stderr*")
-	space      = a.Str(" ")
-	newLine    = a.Str("\n")
+	newlineName = a.Name("*newline*")
+	spaceName   = a.Name("*space*")
+	stdinName   = a.Name("*stdin*")
+	stdoutName  = a.Name("*stdout*")
+	stderrName  = a.Name("*stderr*")
+	newLine     = a.Str("\n")
+	space       = a.Str(" ")
 )
 
 type outputFunc func(a.Writer, a.Value)
@@ -69,76 +71,10 @@ func bindCloser(c a.Closer) a.Function {
 	})
 }
 
-func getWriter(c a.Context, n a.Name) a.Writer {
-	if v, ok := c.Get(n); ok {
-		if o, ok := v.(a.Object); ok {
-			if p, ok := o.Get(MetaWriter); ok {
-				if w, ok := p.(a.Writer); ok {
-					return w
-				}
-			}
-		}
-	}
-	panic(a.Err(a.ExpectedWriter, n))
-}
-
-func raw(e a.Writer, v a.Value) {
-	e.Write(v)
-}
-
-func pretty(e a.Writer, v a.Value) {
-	if s, ok := v.(a.Str); ok {
-		e.Write(s.Str())
-	} else {
-		e.Write(v)
-	}
-}
-
-func out(c a.Context, args a.Sequence, o outputFunc) a.Writer {
-	e := getWriter(c, stdoutName)
-	if args.IsSequence() {
-		o(e, args.First())
-	}
-	for i := args.Rest(); i.IsSequence(); i = i.Rest() {
-		e.Write(space)
-		o(e, i.First())
-	}
-	return e
-}
-
-func outn(c a.Context, args a.Sequence, o outputFunc) a.Writer {
-	e := out(c, args, o)
-	e.Write(newLine)
-	return e
-}
-
-func pr(c a.Context, args a.Sequence) a.Value {
-	out(c, args, pretty)
-	return a.Nil
-}
-
-func prn(c a.Context, args a.Sequence) a.Value {
-	outn(c, args, pretty)
-	return a.Nil
-}
-
-func _print(c a.Context, args a.Sequence) a.Value {
-	out(c, args, raw)
-	return a.Nil
-}
-
-func _println(c a.Context, args a.Sequence) a.Value {
-	outn(c, args, raw)
-	return a.Nil
-}
-
 func init() {
+	Namespace.Put(newlineName, newLine)
+	Namespace.Put(spaceName, space)
 	Namespace.Put(stdinName, makeReader(os.Stdin, a.LineInput))
 	Namespace.Put(stdoutName, makeWriter(os.Stdout, a.StrOutput))
 	Namespace.Put(stderrName, makeWriter(os.Stderr, a.StrOutput))
-
-	RegisterBuiltIn("pr", pr)
-	RegisterBuiltIn("prn", prn)
-	RegisterBuiltIn("print", _print)
-	RegisterBuiltIn("println", _println)
 }

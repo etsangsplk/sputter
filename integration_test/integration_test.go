@@ -21,6 +21,10 @@ func runCode(src string) a.Value {
 	return e.EvalStr(e.NewEvalContext(), a.Str(src))
 }
 
+func runCodeWithContext(c a.Context, src string) a.Value {
+	return e.EvalStr(c, a.Str(src))
+}
+
 func testCode(t *testing.T, src string, expect a.Value) {
 	as := assert.New(t)
 	as.Equal(expect, runCode(src))

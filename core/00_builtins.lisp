@@ -42,6 +42,7 @@
 (def-builtin str   :doc-asset "str")
 (def-builtin str?  :doc-asset "is-str")
 (def-builtin !str? :doc-asset "is-str")
+(def-builtin str!)
 
 ;; sequences
 
@@ -122,10 +123,3 @@
 (def-builtin take          :doc-asset "take")
 (def-builtin drop          :doc-asset "drop")
 (def-builtin make-range)
-
-;; io
-
-(def-builtin pr      :doc-asset "pr")
-(def-builtin prn     :doc-asset "prn")
-(def-builtin print   :doc-asset "print")
-(def-builtin println :doc-asset "println")

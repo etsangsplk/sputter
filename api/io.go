@@ -5,9 +5,6 @@ import (
 	"io"
 )
 
-// ExpectedWriter is thrown when a Value is not a Writer
-const ExpectedWriter = "value is not a writer: %s"
-
 type (
 	// Reader is used to retrieve Values from a File
 	Reader interface {
