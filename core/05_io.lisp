@@ -8,18 +8,18 @@
   (let [s (pr-map-with-nil str! forms)]
     (if (seq? s) (. sputter:*stdout* :write (first s)))
     (for-each [e (rest s)]
-      (. sputter:*stdout* :write sputter:*space* e))))
+      (. sputter:*stdout* :write *space* e))))
 
 (defn prn [& forms]
   (apply pr forms)
-  (. sputter:*stdout* :write sputter:*newline*))
+  (. sputter:*stdout* :write *newline*))
 
 (defn print [& forms]
   (let [s (pr-map-with-nil str forms)]
     (if (seq? s) (. sputter:*stdout* :write (first s)))
     (for-each [e (rest s)]
-      (. sputter:*stdout* :write sputter:*space* e))))
+      (. sputter:*stdout* :write *space* e))))
 
 (defn println [& forms]
   (apply print forms)
-  (. sputter:*stdout* :write sputter:*newline*))
+  (. sputter:*stdout* :write *newline*))

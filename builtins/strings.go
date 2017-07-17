@@ -1,8 +1,6 @@
 package builtins
 
 import (
-	"bytes"
-
 	a "github.com/kode4food/sputter/api"
 )
 
@@ -10,17 +8,9 @@ func str(_ a.Context, args a.Sequence) a.Value {
 	return a.ToStr(args)
 }
 
-func escapedString(_ a.Context, args a.Sequence) a.Value {
-	var buf bytes.Buffer
-	if args.IsSequence() {
-		buf.WriteString(string(args.First().Str()))
-	}
-	for i := args.Rest(); i.IsSequence(); i = i.Rest() {
-		v := i.First()
-		buf.WriteString(" ")
-		buf.WriteString(string(v.Str()))
-	}
-	return a.Str(buf.String())
+func escapeString(_ a.Context, args a.Sequence) a.Value {
+	a.AssertArity(args, 1)
+	return args.First().Str()
 }
 
 func isStr(v a.Value) bool {
@@ -32,6 +22,6 @@ func isStr(v a.Value) bool {
 
 func init() {
 	RegisterBuiltIn("str", str)
-	RegisterBuiltIn("str!", escapedString)
+	RegisterBuiltIn("str!", escapeString)
 	RegisterSequencePredicate("str?", isStr)
 }

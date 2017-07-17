@@ -19,3 +19,9 @@ func TestStr(t *testing.T) {
 	  (str? "hello" 99)
 	`, a.False)
 }
+
+func TestEscape(t *testing.T) {
+	testCode(t, `
+		(str! "hello
+you")`, s("\"hello\nyou\""))
+}
