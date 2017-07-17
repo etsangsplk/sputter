@@ -1,8 +1,6 @@
 package builtins
 
-import (
-	a "github.com/kode4food/sputter/api"
-)
+import a "github.com/kode4food/sputter/api"
 
 func toProperties(args a.MappedSequence) a.Properties {
 	r := make(a.Properties)
@@ -26,8 +24,10 @@ func fromMetadata(m a.Object) a.Value {
 func withMeta(_ a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 2)
 	o := a.AssertAnnotated(args.First())
-	m := a.AssertMappedSequence(args.Rest().First())
-	return o.WithMetadata(toProperties(m)).(a.Value)
+	if m, ok := args.Rest().First().(a.MappedSequence); ok {
+		return o.WithMetadata(toProperties(m)).(a.Value)
+	}
+	panic(a.Err(a.ExpectedSequence, o))
 }
 
 func meta(_ a.Context, args a.Sequence) a.Value {

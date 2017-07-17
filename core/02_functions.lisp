@@ -19,6 +19,4 @@
 
 (defmacro .
   [target method & args]
-  (cond
-    (keyword? method)  `((~method ~target) ~@args)
-    :else              `((~target ~method) ~@args)))
+  `((get ~target ~method) ~@args))

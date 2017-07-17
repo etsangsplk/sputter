@@ -52,7 +52,7 @@ func TestEmptyVector(t *testing.T) {
 
 type testEvaluable struct{}
 
-func (t *testEvaluable) Eval(c a.Context) a.Value {
+func (t *testEvaluable) Eval(_ a.Context) a.Value {
 	return s("are")
 }
 

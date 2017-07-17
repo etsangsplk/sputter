@@ -33,10 +33,10 @@ func TestAssertSequence(t *testing.T) {
 
 func TestAssertIndexed(t *testing.T) {
 	as := assert.New(t)
-	a.AssertIndexedSequence(a.NewList(s("hello")))
+	a.AssertIndexed(a.NewList(s("hello")))
 
 	defer as.ExpectError(a.Err(a.ExpectedIndexed, f(99)))
-	a.AssertIndexedSequence(f(99))
+	a.AssertIndexed(f(99))
 }
 
 func TestAssertConjoiner(t *testing.T) {

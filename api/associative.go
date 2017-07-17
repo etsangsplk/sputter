@@ -7,10 +7,10 @@ const (
 	ExpectedPair = "expected two element vectors when prepending"
 
 	// ExpectedMapped is thrown if the Value is not a Mapped item
-	ExpectedMapped = "expected a mapped sequence: %s"
+	ExpectedMapped = "expected a mapped value: %s"
 
 	// KeyNotFound is thrown if a Key is not found in a Mapped item
-	KeyNotFound = "key not found in mapped sequence: %s"
+	KeyNotFound = "key not found: %s"
 )
 
 type (
@@ -117,4 +117,25 @@ func (a associative) Str() Str {
 	}
 	b.WriteString("}")
 	return Str(b.String())
+}
+
+// MappedApply provides 'get' behavior for Mapped Values
+func MappedApply(s Mapped, args Sequence) Value {
+	i := AssertArityRange(args, 1, 2)
+	key := args.First()
+	if r, ok := s.Get(key); ok {
+		return r
+	}
+	if i == 2 {
+		return args.Rest().First()
+	}
+	panic(Err(KeyNotFound, key))
+}
+
+// AssertMapped will cast Value to a Mapped or explode violently
+func AssertMapped(v Value) Mapped {
+	if r, ok := v.(Mapped); ok {
+		return r
+	}
+	panic(Err(ExpectedMapped, v))
 }

@@ -44,7 +44,7 @@ func isPromise(v a.Value) bool {
 	return false
 }
 
-func doAsync(c a.Context, args a.Sequence) a.Value {
+func makeGo(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
 	go a.EvalBlock(a.ChildContext(c), args)
 	return a.Nil
@@ -53,6 +53,6 @@ func doAsync(c a.Context, args a.Sequence) a.Value {
 func init() {
 	RegisterBuiltIn("chan", _chan)
 	RegisterBuiltIn("promise", promise)
-	RegisterBuiltIn("make-go", doAsync)
+	RegisterBuiltIn("make-go", makeGo)
 	RegisterSequencePredicate("promise?", isPromise)
 }

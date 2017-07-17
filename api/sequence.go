@@ -13,13 +13,13 @@ const (
 	ExpectedSequence = "value is not a sequence: %s"
 
 	// ExpectedIndexed is thrown when a Value is not Indexed
-	ExpectedIndexed = "value is not an indexed sequence: %s"
+	ExpectedIndexed = "expected an indexed value: %s"
 
 	// ExpectedConjoiner is thrown when a Value is not a Conjoiner
 	ExpectedConjoiner = "value can not be conjoined: %s"
 
 	// IndexNotFound is thrown if an index is not found in a sequence
-	IndexNotFound = "index not found in sequence: %s"
+	IndexNotFound = "index not found: %s"
 )
 
 type (
@@ -107,20 +107,12 @@ func AssertSequence(v Value) Sequence {
 	panic(Err(ExpectedSequence, v))
 }
 
-// AssertIndexedSequence will cast a Value into an Indexed or explode violently
-func AssertIndexedSequence(v Value) IndexedSequence {
-	if r, ok := v.(IndexedSequence); ok {
+// AssertIndexed will cast a Value into an Indexed or explode violently
+func AssertIndexed(v Value) Indexed {
+	if r, ok := v.(Indexed); ok {
 		return r
 	}
 	panic(Err(ExpectedIndexed, v))
-}
-
-// AssertMappedSequence will cast Value to a Mapped or explode violently
-func AssertMappedSequence(v Value) MappedSequence {
-	if r, ok := v.(MappedSequence); ok {
-		return r
-	}
-	panic(Err(ExpectedMapped, v))
 }
 
 // AssertConjoiner will cast a Value into a Conjoiner or explode violently

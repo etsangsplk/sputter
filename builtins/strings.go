@@ -1,16 +1,13 @@
 package builtins
 
-import (
-	a "github.com/kode4food/sputter/api"
-)
+import a "github.com/kode4food/sputter/api"
 
 func str(_ a.Context, args a.Sequence) a.Value {
 	return a.ToStr(args)
 }
 
-func escapeString(_ a.Context, args a.Sequence) a.Value {
-	a.AssertArity(args, 1)
-	return args.First().Str()
+func readerString(_ a.Context, args a.Sequence) a.Value {
+	return a.ToReaderStr(args)
 }
 
 func isStr(v a.Value) bool {
@@ -22,6 +19,6 @@ func isStr(v a.Value) bool {
 
 func init() {
 	RegisterBuiltIn("str", str)
-	RegisterBuiltIn("str!", escapeString)
+	RegisterBuiltIn("str!", readerString)
 	RegisterSequencePredicate("str?", isStr)
 }

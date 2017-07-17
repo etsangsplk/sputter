@@ -20,8 +20,7 @@ func TestStr(t *testing.T) {
 	`, a.False)
 }
 
-func TestEscape(t *testing.T) {
-	testCode(t, `
-		(str! "hello
-you")`, s("\"hello\nyou\""))
+func TestReadableStr(t *testing.T) {
+	testCode(t, "(str! \"hello\nyou\")", s("\"hello\nyou\""))
+	testCode(t, `(str! "hello" "you")`, s(`"hello" "you"`))
 }

@@ -63,8 +63,14 @@ func _len(_ a.Context, args a.Sequence) a.Value {
 
 func nth(_ a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
-	s := a.AssertIndexedSequence(args.First())
+	s := a.AssertIndexed(args.First())
 	return a.IndexedApply(s, args.Rest())
+}
+
+func get(_ a.Context, args a.Sequence) a.Value {
+	a.AssertMinimumArity(args, 1)
+	s := a.AssertMapped(args.First())
+	return a.MappedApply(s, args.Rest())
 }
 
 func init() {
@@ -78,4 +84,5 @@ func init() {
 	RegisterBuiltIn("conj", conj)
 	RegisterBuiltIn("len", _len)
 	RegisterBuiltIn("nth", nth)
+	RegisterBuiltIn("get", get)
 }

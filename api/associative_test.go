@@ -153,8 +153,8 @@ func TestKeywordMiss(t *testing.T) {
 func TestAssertMapped(t *testing.T) {
 	as := assert.New(t)
 	m1 := getTestMap()
-	a.AssertMappedSequence(m1)
+	a.AssertMapped(m1)
 
 	defer as.ExpectError(a.Err(a.ExpectedMapped, f(99)))
-	a.AssertMappedSequence(f(99))
+	a.AssertMapped(f(99))
 }

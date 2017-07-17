@@ -26,7 +26,7 @@
 ;; namespaces
 
 (def-builtin with-ns :doc-asset "with-ns" :special-form true)
-(def-builtin ns      :doc-asset "ns" :special-form true)
+(def-builtin ns      :doc-asset "ns"      :special-form true)
 
 ;; basic predicates
 
@@ -40,9 +40,9 @@
 ;; strings
 
 (def-builtin str   :doc-asset "str")
+(def-builtin str!  :doc-asset "str")
 (def-builtin str?  :doc-asset "is-str")
 (def-builtin !str? :doc-asset "is-str")
-(def-builtin str!)
 
 ;; sequences
 
@@ -52,6 +52,7 @@
 (def-builtin conj  :doc-asset "conj")
 (def-builtin len   :doc-asset "len")
 (def-builtin nth   :doc-asset "nth")
+(def-builtin get   :doc-asset "get")
 
 ;; predicates
 
@@ -98,7 +99,7 @@
 ;; functions
 
 (def-builtin closure      :doc-asset "closure" :macro true :special-form true)
-(def-builtin lambda       :doc-asset "lambda" :special-form true)
+(def-builtin lambda       :doc-asset "lambda"  :special-form true)
 (def-builtin apply        :doc-asset "apply")
 (def-builtin make-closure :macro true)
 (def-builtin apply?)

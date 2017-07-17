@@ -110,3 +110,19 @@ func ToStr(s Sequence) Str {
 	}
 	return Str(buf.String())
 }
+
+// ToReaderStr takes a sequence and converts it to a readable Str
+func ToReaderStr(s Sequence) Str {
+	if st, ok := s.(Str); ok {
+		return st.Str()
+	}
+	var buf bytes.Buffer
+	if s.IsSequence() {
+		buf.WriteString(string(s.First().Str()))
+	}
+	for i := s.Rest(); i.IsSequence(); i = i.Rest() {
+		buf.WriteString(" ")
+		buf.WriteString(string(i.First().Str()))
+	}
+	return Str(buf.String())
+}
