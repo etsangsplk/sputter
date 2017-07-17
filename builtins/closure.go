@@ -1,14 +1,10 @@
 package builtins
 
-import (
-	a "github.com/kode4food/sputter/api"
-	"regexp"
-)
+import a "github.com/kode4food/sputter/api"
 
 var (
-	closureSym        = a.NewBuiltInSymbol("closure")
-	ignoredNamesRegex = regexp.MustCompile("^[*].*[*]$")
-	emptyNames        = a.Names{}
+	closureSym = a.NewBuiltInSymbol("closure")
+	emptyNames = a.Names{}
 )
 
 func assertUnqualifiedNames(s a.Sequence) a.Names {
@@ -59,9 +55,6 @@ func visitValue(v a.Value) a.Names {
 		return n
 	}
 	if s, ok := v.(a.Symbol); ok && s.Domain() == a.LocalDomain {
-		if ignoredNamesRegex.MatchString(string(s.Name())) {
-			return emptyNames
-		}
 		return a.Names{s.Name()}
 	}
 	return emptyNames
