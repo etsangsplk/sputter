@@ -116,24 +116,3 @@ func Reduce(s Sequence, reduce ValueReducer) Value {
 	}
 	return r
 }
-
-// MakeValueFilter converts an Applicable into a ValueFilter
-func MakeValueFilter(c Context, f Applicable) ValueFilter {
-	return func(v Value) bool {
-		return Truthy(f.Apply(c, NewVector(v)))
-	}
-}
-
-// MakeValueMapper converts an Applicable into a ValueMapper
-func MakeValueMapper(c Context, f Applicable) ValueMapper {
-	return func(v Value) Value {
-		return f.Apply(c, NewVector(v))
-	}
-}
-
-// MakeValueReducer converts an Applicable into a ValueReducer
-func MakeValueReducer(c Context, f Applicable) ValueReducer {
-	return func(l, r Value) Value {
-		return f.Apply(c, NewVector(l, r))
-	}
-}

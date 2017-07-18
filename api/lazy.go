@@ -60,17 +60,3 @@ func (l *lazySequence) Type() Name {
 func (l *lazySequence) Str() Str {
 	return MakeDumpStr(l)
 }
-
-// MakeLazyResolver converts an Applicable into a LazyResolver
-func MakeLazyResolver(c Context, f Applicable) LazyResolver {
-	return func() (bool, Value, Sequence) {
-		r := f.Apply(c, EmptyList)
-		if s, ok := r.(Sequence); ok && s.IsSequence() {
-			return true, s.First(), s.Rest()
-		}
-		if r == Nil {
-			return false, Nil, EmptyList
-		}
-		panic(Err(ExpectedSequence, r))
-	}
-}

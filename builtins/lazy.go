@@ -1,8 +1,37 @@
 package builtins
 
-import (
-	a "github.com/kode4food/sputter/api"
-)
+import a "github.com/kode4food/sputter/api"
+
+func makeLazyResolver(c a.Context, f a.Applicable) a.LazyResolver {
+	return func() (bool, a.Value, a.Sequence) {
+		r := f.Apply(c, a.EmptyList)
+		if s, ok := r.(a.Sequence); ok && s.IsSequence() {
+			return true, s.First(), s.Rest()
+		}
+		if r == a.Nil {
+			return false, a.Nil, a.EmptyList
+		}
+		panic(a.Err(a.ExpectedSequence, r))
+	}
+}
+
+func makeValueFilter(c a.Context, f a.Applicable) a.ValueFilter {
+	return func(v a.Value) bool {
+		return a.Truthy(f.Apply(c, a.NewVector(v)))
+	}
+}
+
+func makeValueMapper(c a.Context, f a.Applicable) a.ValueMapper {
+	return func(v a.Value) a.Value {
+		return f.Apply(c, a.NewVector(v))
+	}
+}
+
+func makeValueReducer(c a.Context, f a.Applicable) a.ValueReducer {
+	return func(l, r a.Value) a.Value {
+		return f.Apply(c, a.NewVector(l, r))
+	}
+}
 
 func makeLazySequence(c a.Context, args a.Sequence) a.Value {
 	db := a.NewBlock(args)
@@ -11,7 +40,7 @@ func makeLazySequence(c a.Context, args a.Sequence) a.Value {
 		return a.Eval(c, db)
 	})
 
-	return a.NewLazySequence(a.MakeLazyResolver(c, f))
+	return a.NewLazySequence(makeLazyResolver(c, f))
 }
 
 func concat(_ a.Context, args a.Sequence) a.Value {
@@ -25,21 +54,21 @@ func filter(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 	f := a.AssertApplicable(args.First())
 	s := a.Concat(args.Rest())
-	return a.Filter(s, a.MakeValueFilter(c, f))
+	return a.Filter(s, makeValueFilter(c, f))
 }
 
 func _map(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 	f := a.AssertApplicable(args.First())
 	s := a.Concat(args.Rest())
-	return a.Map(s, a.MakeValueMapper(c, f))
+	return a.Map(s, makeValueMapper(c, f))
 }
 
 func reduce(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 	f := a.AssertApplicable(args.First())
 	s := a.Concat(args.Rest())
-	return a.Reduce(s, a.MakeValueReducer(c, f))
+	return a.Reduce(s, makeValueReducer(c, f))
 }
 
 func take(_ a.Context, args a.Sequence) a.Value {

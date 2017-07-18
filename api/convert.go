@@ -114,7 +114,7 @@ func ToStr(s Sequence) Str {
 // ToReaderStr takes a sequence and converts it to a readable Str
 func ToReaderStr(s Sequence) Str {
 	if st, ok := s.(Str); ok {
-		return st.Str()
+		return st
 	}
 	var buf bytes.Buffer
 	if s.IsSequence() {
