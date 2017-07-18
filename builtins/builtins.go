@@ -28,14 +28,8 @@ func GetBuiltIn(n a.Name) (a.SequenceProcessor, bool) {
 func defBuiltIn(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
 	n := a.AssertUnqualified(args.First()).Name()
-	if f, ok := builtInFuncs[n]; ok {
+	if f, ok := GetBuiltIn(n); ok {
 		var md a.Object = toProperties(a.ToAssociative(args.Rest()))
-		if s, ok := md.Get(a.MetaName); ok {
-			n = a.AssertUnqualified(s).Name()
-			md = md.Child(a.Properties{
-				a.MetaName: n,
-			})
-		}
 		md = loadDocumentation(md)
 
 		r := a.NewFunction(f).WithMetadata(md).(a.Value)

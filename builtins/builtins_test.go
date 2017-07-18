@@ -60,3 +60,22 @@ func TestReadEval(t *testing.T) {
 	as.True(ok)
 	as.Number(3, v3)
 }
+
+func TestMissingBuiltIn(t *testing.T) {
+	as := assert.New(t)
+
+	v, ok := b.GetBuiltIn("boom")
+	as.Nil(v)
+	as.False(ok)
+}
+
+func TestExplodingBuiltInCall(t *testing.T) {
+	as := assert.New(t)
+	read := getBuiltIn("read")
+	eval := getBuiltIn("eval")
+
+	defer as.ExpectError(a.Err(a.KeyNotFound, a.Name("boom")))
+	c := e.NewEvalContext()
+	r := read(c, args(s("(def-builtin boom)")))
+	eval(c, args(r))
+}
