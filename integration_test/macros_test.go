@@ -41,4 +41,8 @@ func TestMacroExpand(t *testing.T) {
 
 		(macroexpand (foo2 1 2 3))
 	`, s("hello123"))
+
+	testCode(t, `
+		(macroexpand-all (foo2 (foo1 1 2 3) 4 5))
+	`, s("hello(foo1 1 2 3)45"))
 }
