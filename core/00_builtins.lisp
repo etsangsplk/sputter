@@ -124,3 +124,8 @@
 (def-builtin take          :doc-asset "take")
 (def-builtin drop          :doc-asset "drop")
 (def-builtin make-range)
+
+;; panic and recover
+
+(def-builtin make-recover :special-form true)
+(def-builtin panic)

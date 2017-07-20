@@ -88,7 +88,8 @@ func isClosure(v a.Value) (a.Names, bool) {
 	return emptyNames, false
 }
 
-func doClosure(c a.Context, args a.Sequence) a.Value {
+func closure(c a.Context, args a.Sequence) a.Value {
+	a.AssertArity(args, 2)
 	in := a.AssertVector(args.First())
 	vars := make(a.Variables, in.Count())
 	for i := in.(a.Sequence); i.IsSequence(); i = i.Rest() {
@@ -106,5 +107,5 @@ func doClosure(c a.Context, args a.Sequence) a.Value {
 
 func init() {
 	RegisterBuiltIn("make-closure", makeClosure)
-	RegisterBuiltIn("closure", doClosure)
+	RegisterBuiltIn("closure", closure)
 }

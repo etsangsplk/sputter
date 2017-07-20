@@ -79,10 +79,10 @@ type (
 
 var (
 	// True represents the boolean value of True
-	True = Bool(true)
+	True Bool = true
 
 	// False represents the boolean value of false
-	False = Bool(false)
+	False Bool = false
 
 	// Nil is a value that represents the absence of a Value
 	Nil = &nilValue{}

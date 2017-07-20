@@ -51,14 +51,17 @@ var (
 	nothing = &sentinel{}
 
 	farewells = []string{
-		"Adiós!",
+		"¡Adiós!",
 		"Au revoir!",
-		"Auf Wiedersehen",
-		"B'bye!",
-		"Bye!",
 		"Bye for now!",
 		"Ciao!",
-		"Have a wonderful day!",
+		"Tchau!",
+		"Tschüss!",
+		"Hoşçakal!",
+		"Αντίο!",
+		"До свидания!",
+		"अलविदा!",
+		"안녕!",
 		"再见!",
 		"じゃあね",
 	}

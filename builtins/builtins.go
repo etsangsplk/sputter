@@ -2,7 +2,6 @@ package builtins
 
 import (
 	a "github.com/kode4food/sputter/api"
-	e "github.com/kode4food/sputter/evaluator"
 )
 
 var (
@@ -52,27 +51,10 @@ func isBuiltInCall(n a.Name, v a.Value) (a.List, bool) {
 	return nil, false
 }
 
-func read(c a.Context, args a.Sequence) a.Value {
-	a.AssertArity(args, 1)
-	v := args.First()
-	s := a.AssertSequence(v)
-	return e.ReadStr(c, a.ToStr(s))
-}
-
-func eval(c a.Context, args a.Sequence) a.Value {
-	a.AssertArity(args, 1)
-	v := args.First()
-	return a.Eval(c, v)
-}
-
 func init() {
 	Namespace.Put("def-builtin",
 		a.NewFunction(defBuiltIn).WithMetadata(a.Properties{
 			a.MetaSpecial: a.True,
 		}).(a.Function),
 	)
-
-	RegisterBuiltIn("do", a.EvalBlock)
-	RegisterBuiltIn("read", read)
-	RegisterBuiltIn("eval", eval)
 }
