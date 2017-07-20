@@ -63,7 +63,7 @@ func TestSymbolInterning(t *testing.T) {
 func TestUnknownSymbol(t *testing.T) {
 	as := assert.New(t)
 
-	defer as.ExpectError(a.Err(a.UnknownSymbol, "howdy"))
+	defer as.ExpectError(a.ErrStr(a.UnknownSymbol, "howdy"))
 	c := a.NewContext()
 	sym := a.NewLocalSymbol("howdy")
 	a.Eval(c, sym)
@@ -92,7 +92,7 @@ func TestSymbolParsing(t *testing.T) {
 
 func TestAssertSymbol(t *testing.T) {
 	as := assert.New(t)
-	defer as.ExpectError(a.Err(a.ExpectedSymbol, "37"))
+	defer as.ExpectError(a.ErrStr(a.ExpectedSymbol, "37"))
 	a.AssertUnqualified(f(37))
 }
 
@@ -100,6 +100,6 @@ func TestAssertUnqualified(t *testing.T) {
 	as := assert.New(t)
 	a.AssertUnqualified(a.NewLocalSymbol("hello"))
 
-	defer as.ExpectError(a.Err(a.ExpectedUnqualified, "bar:hello"))
+	defer as.ExpectError(a.ErrStr(a.ExpectedUnqualified, "bar:hello"))
 	a.AssertUnqualified(a.NewQualifiedSymbol("hello", "bar"))
 }

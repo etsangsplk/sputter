@@ -30,15 +30,15 @@ type (
 )
 
 var (
-	// MetaMacro identifies a Function as being a Macro
-	MetaMacro = NewKeyword("macro")
+	// MacroKey identifies a Function as being a Macro
+	MacroKey = NewKeyword("macro")
 
-	// MetaSpecial identifies a Macro as being a special form
-	MetaSpecial = NewKeyword("special-form")
+	// SpecialKey identifies a Macro as being a special form
+	SpecialKey = NewKeyword("special-form")
 
 	functionMetadata = Properties{
-		MetaName: Name("<anon>"),
-		MetaType: Name("function"),
+		NameKey: Name("<anon>"),
+		TypeKey: Name("function"),
 	}
 )
 
@@ -66,17 +66,17 @@ func (f *function) WithMetadata(md Object) Annotated {
 }
 
 func (f *function) Name() Name {
-	n, _ := f.Metadata().Get(MetaName)
+	n, _ := f.Metadata().Get(NameKey)
 	return n.(Name)
 }
 
 func (f *function) Documentation() Str {
-	d, _ := f.Metadata().Get(MetaDoc)
+	d, _ := f.Metadata().Get(DocKey)
 	return d.(Str)
 }
 
 func (f *function) Type() Name {
-	if v, ok := f.meta.Get(MetaType); ok {
+	if v, ok := f.meta.Get(TypeKey); ok {
 		if n, ok := v.(Name); ok {
 			return n
 		}
@@ -107,7 +107,7 @@ func countUpTo(args Sequence, c int) int {
 func IsMacro(a Applicable) (bool, bool) {
 	if an, ok := a.(Annotated); ok {
 		md := an.Metadata()
-		return IsTrue(md, MetaMacro), IsTrue(md, MetaSpecial)
+		return IsTrue(md, MacroKey), IsTrue(md, SpecialKey)
 	}
 	return false, false
 }
@@ -115,7 +115,7 @@ func IsMacro(a Applicable) (bool, bool) {
 // IsSpecialForm tests an Applicable as being marked a special form
 func IsSpecialForm(a Applicable) bool {
 	if an, ok := a.(Annotated); ok {
-		return IsTrue(an.Metadata(), MetaSpecial)
+		return IsTrue(an.Metadata(), SpecialKey)
 	}
 	return false
 }
@@ -124,7 +124,7 @@ func IsSpecialForm(a Applicable) bool {
 func AssertArity(args Sequence, arity int) int {
 	c := countUpTo(args, arity+1)
 	if c != arity {
-		panic(Err(BadArity, arity, c))
+		panic(ErrStr(BadArity, arity, c))
 	}
 	return c
 }
@@ -133,7 +133,7 @@ func AssertArity(args Sequence, arity int) int {
 func AssertMinimumArity(args Sequence, arity int) int {
 	c := countUpTo(args, arity)
 	if c < arity {
-		panic(Err(BadMinimumArity, arity, c))
+		panic(ErrStr(BadMinimumArity, arity, c))
 	}
 	return c
 }
@@ -142,7 +142,7 @@ func AssertMinimumArity(args Sequence, arity int) int {
 func AssertArityRange(args Sequence, min int, max int) int {
 	c := countUpTo(args, max+1)
 	if c < min || c > max {
-		panic(Err(BadArityRange, min, max, c))
+		panic(ErrStr(BadArityRange, min, max, c))
 	}
 	return c
 }

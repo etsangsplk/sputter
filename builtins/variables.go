@@ -26,7 +26,7 @@ func let(c a.Context, args a.Sequence) a.Value {
 	b := a.AssertVector(args.First())
 	bc := b.Count()
 	if bc%2 != 0 {
-		panic(ExpectedBindings)
+		panic(a.ErrStr(ExpectedBindings))
 	}
 
 	for i := 0; i < bc; i++ {

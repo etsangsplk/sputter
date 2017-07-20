@@ -71,7 +71,7 @@ func IndexedApply(s Indexed, args Sequence) Value {
 	if i == 2 {
 		return args.Rest().First()
 	}
-	panic(Err(IndexNotFound, strconv.Itoa(idx)))
+	panic(ErrStr(IndexNotFound, strconv.Itoa(idx)))
 }
 
 // MakeSequenceStr converts a Sequence to a Str
@@ -96,7 +96,7 @@ func Count(v Value) int {
 	if c, ok := v.(CountedSequence); ok {
 		return c.Count()
 	}
-	panic(Err(ExpectedCounted, v))
+	panic(ErrStr(ExpectedCounted, v))
 }
 
 // AssertSequence will cast a Value into a Sequence or explode violently
@@ -104,7 +104,7 @@ func AssertSequence(v Value) Sequence {
 	if r, ok := v.(Sequence); ok {
 		return r
 	}
-	panic(Err(ExpectedSequence, v))
+	panic(ErrStr(ExpectedSequence, v))
 }
 
 // AssertIndexed will cast a Value into an Indexed or explode violently
@@ -112,7 +112,7 @@ func AssertIndexed(v Value) Indexed {
 	if r, ok := v.(Indexed); ok {
 		return r
 	}
-	panic(Err(ExpectedIndexed, v))
+	panic(ErrStr(ExpectedIndexed, v))
 }
 
 // AssertConjoiner will cast a Value into a Conjoiner or explode violently
@@ -120,5 +120,5 @@ func AssertConjoiner(v Value) Conjoiner {
 	if r, ok := v.(Conjoiner); ok {
 		return r
 	}
-	panic(Err(ExpectedConjoiner, v))
+	panic(ErrStr(ExpectedConjoiner, v))
 }

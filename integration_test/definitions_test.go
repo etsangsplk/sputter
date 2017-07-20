@@ -34,8 +34,8 @@ func TestFunction(t *testing.T) {
 }
 
 func TestBadFunction(t *testing.T) {
-	symErr := a.Err(a.ExpectedSymbol, "99")
-	vecErr := a.Err(a.ExpectedVector, "99")
+	symErr := a.ErrStr(a.ExpectedSymbol, "99")
+	vecErr := a.ErrStr(a.ExpectedVector, "99")
 	testBadCode(t, `(defn blah [name 99 bad] (name))`, symErr)
 	testBadCode(t, `(defn blah 99 (name))`, vecErr)
 	testBadCode(t, `(defn 99 [x y] (+ x y))`, symErr)
@@ -44,10 +44,10 @@ func TestBadFunction(t *testing.T) {
 func TestBadFunctionArity(t *testing.T) {
 	a.GetNamespace(a.UserDomain).Delete("identity")
 
-	testBadCode(t, `(defn blah)`, a.Err(a.BadMinimumArity, 2, 1))
+	testBadCode(t, `(defn blah)`, a.ErrStr(a.BadMinimumArity, 2, 1))
 
 	testBadCode(t, `
 		(defn identity [value] value)
 		(identity)
-	`, a.Err(a.BadArity, 1, 0))
+	`, a.ErrStr(a.BadArity, 1, 0))
 }

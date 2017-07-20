@@ -32,5 +32,5 @@ func TestPredicates(t *testing.T) {
 	testCode(t, `(keyword? 99)`, a.False)
 	testCode(t, `(!keyword? 99)`, a.True)
 
-	testBadCode(t, `(nil?)`, a.Err(a.BadMinimumArity, 1, 0))
+	testBadCode(t, `(nil?)`, a.ErrStr(a.BadMinimumArity, 1, 0))
 }

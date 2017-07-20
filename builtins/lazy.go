@@ -11,7 +11,7 @@ func makeLazyResolver(c a.Context, f a.Applicable) a.LazyResolver {
 		if r == a.Nil {
 			return false, a.Nil, a.EmptyList
 		}
-		panic(a.Err(a.ExpectedSequence, r))
+		panic(a.ErrStr(a.ExpectedSequence, r))
 	}
 }
 
@@ -99,7 +99,7 @@ func forEach(c a.Context, args a.Sequence) a.Value {
 	b := a.AssertVector(args.First())
 	bc := b.Count()
 	if bc%2 != 0 {
-		panic(ExpectedBindings)
+		panic(a.ErrStr(ExpectedBindings))
 	}
 
 	var proc forProc

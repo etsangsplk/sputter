@@ -26,16 +26,19 @@
   (apply print forms)
   (. sputter:*stdout* :write *newline*))
 
-(defmacro with-open [bindings & body]
-  (cond
-    (!vector? bindings)
-      (println "not a vector") ; really explode
+(defn paired-vector?
+  {:private true}
+  [val]
+  (and (vector? val) (= (% (len val) 2) 0)))
 
+(defmacro with-open [bindings & body]
+  (assert-args
+    (paired-vector? bindings) "with-open bindings must be a paired vector")
+  (cond
     (= (len bindings) 0)
       `(sputter:do ~@body)
-
     (>= (len bindings) 2)
-      `(let [~(bindings 0) ~(bindings 1)]
-        ~`(with-open [~@(rest (rest bindings))] ~@body)
-        (let [close# (get ~(bindings 0) :close nil)]
-          (when (apply? close#) (close#))))))
+      `(let [~(bindings 0) ~(bindings 1), cl# (get ~(bindings 0) :close nil)
+             res# (sputter:with-open [~@(rest (rest bindings))] ~@body)]
+        (when (apply? cl#) (cl#))
+        res#)))

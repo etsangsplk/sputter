@@ -10,7 +10,7 @@ import (
 var helloThere = a.NewFunction(func(_ a.Context, _ a.Sequence) a.Value {
 	return s("there")
 }).WithMetadata(a.NewObject(a.Properties{
-	a.MetaName: a.Name("hello"),
+	a.NameKey: a.Name("hello"),
 })).(a.Function)
 
 func TestSimpleList(t *testing.T) {
@@ -98,7 +98,7 @@ func TestListEval(t *testing.T) {
 	as.Equal(a.EmptyList, a.Eval(c, a.EmptyList))
 }
 
-func testBrokenEval(t *testing.T, val a.Value, err string) {
+func testBrokenEval(t *testing.T, val a.Value, err a.Object) {
 	as := assert.New(t)
 
 	defer as.ExpectError(err)
@@ -107,12 +107,12 @@ func testBrokenEval(t *testing.T, val a.Value, err string) {
 }
 
 func TestNonFunction(t *testing.T) {
-	err1 := a.Err(a.UnknownSymbol, "unknown")
+	err1 := a.ErrStr(a.UnknownSymbol, "unknown")
 	sym := a.NewLocalSymbol("unknown")
 	seq := a.NewList(sym, s("foo"))
 	testBrokenEval(t, seq.(a.List), err1)
 
-	err2 := a.Err(a.ExpectedApplicable, f(99))
+	err2 := a.ErrStr(a.ExpectedApplicable, f(99))
 	testBrokenEval(t, a.NewList(f(99)), err2)
 }
 
@@ -121,7 +121,7 @@ func TestListExplosion(t *testing.T) {
 
 	seq := a.NewList(s("foo"))
 	idx := f(3)
-	err := a.Err(a.IndexNotFound, idx)
+	err := a.ErrStr(a.IndexNotFound, idx)
 
 	v := seq.Apply(a.NewContext(), a.NewVector(idx, s("default")))
 	as.String("default", v)

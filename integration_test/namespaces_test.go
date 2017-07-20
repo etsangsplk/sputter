@@ -34,5 +34,5 @@ func TestNamespaces(t *testing.T) {
 
 	testBadCode(t, `
 		(ns foo:bar)
-	`, a.Err(a.ExpectedUnqualified, "foo:bar"))
+	`, a.ErrStr(a.ExpectedUnqualified, "foo:bar"))
 }

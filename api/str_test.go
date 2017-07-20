@@ -70,7 +70,7 @@ func TestStr(t *testing.T) {
 	as.String("再", s6.First())
 	as.String("见!", s6.Rest())
 
-	defer as.ExpectError(a.Err(a.ExpectedStr, f(99)))
+	defer as.ExpectError(a.ErrStr(a.ExpectedStr, f(99)))
 	a.AssertStr(f(99))
 }
 

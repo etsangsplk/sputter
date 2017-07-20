@@ -14,25 +14,25 @@ func TestFunction(t *testing.T) {
 	f1 := a.NewFunction(func(_ a.Context, _ a.Sequence) a.Value {
 		return s("hello")
 	}).WithMetadata(a.Properties{
-		a.MetaName: a.Name("test-function"),
-		a.MetaDoc:  s("this is a test"),
+		a.NameKey: a.Name("test-function"),
+		a.DocKey:  s("this is a test"),
 	}).(a.Function)
 
 	as.True(f1.IsFunction())
 
 	f2 := a.NewFunction(nil)
 	f3 := f1.WithMetadata(a.Properties{
-		a.MetaDoc: s("modified"),
+		a.DocKey: s("modified"),
 	})
 
 	as.NotNil(f1.Metadata())
 	as.NotNil(f2.Metadata())
 	as.NotIdentical(f1.Metadata(), f3.Metadata())
 
-	v, _ := f1.Metadata().Get(a.MetaDoc)
+	v, _ := f1.Metadata().Get(a.DocKey)
 	as.String("this is a test", v)
 
-	v, _ = f3.Metadata().Get(a.MetaDoc)
+	v, _ = f3.Metadata().Get(a.DocKey)
 	as.String("modified", v)
 
 	as.Contains(":name test-function", f1)
@@ -42,7 +42,7 @@ func TestFunction(t *testing.T) {
 	as.String("hello", f1.Apply(c, a.EmptyList))
 
 	f4 := a.NewFunction(nil).WithMetadata(a.Properties{
-		a.MetaType: f(99),
+		a.TypeKey: f(99),
 	}).(a.Function)
 
 	as.String("function", f4.Type())
@@ -54,8 +54,8 @@ func TestMacro(t *testing.T) {
 	foo := a.NewKeyword("foo")
 
 	m1 := a.NewFunction(nil).WithMetadata(a.Properties{
-		a.MetaMacro: a.True,
-		a.MetaName:  a.Name("orig"),
+		a.MacroKey: a.True,
+		a.NameKey:  a.Name("orig"),
 	}).(a.Function)
 
 	ok, _ := a.IsMacro(m1)
@@ -73,21 +73,21 @@ func TestMacro(t *testing.T) {
 	as.False(ok)
 
 	m2 := m1.WithMetadata(a.Properties{
-		foo:        s("bar"),
-		a.MetaName: a.Name("changed"),
+		foo:       s("bar"),
+		a.NameKey: a.Name("changed"),
 	}).(a.Function)
 
-	v, _ := m1.Metadata().Get(a.MetaMacro)
+	v, _ := m1.Metadata().Get(a.MacroKey)
 	as.True(v)
-	v, _ = m2.Metadata().Get(a.MetaMacro)
+	v, _ = m2.Metadata().Get(a.MacroKey)
 	as.True(v)
 
 	as.Contains(":type function", m1)
 
-	v, _ = m1.Metadata().Get(a.MetaName)
+	v, _ = m1.Metadata().Get(a.NameKey)
 	as.String("orig", v)
 
-	v, _ = m2.Metadata().Get(a.MetaName)
+	v, _ = m2.Metadata().Get(a.NameKey)
 	as.String("changed", v)
 
 	v, _ = m2.Metadata().Get(foo)
@@ -124,7 +124,7 @@ func TestBadArity(t *testing.T) {
 	as := assert.New(t)
 	v := a.NewVector(f(1), f(2), f(3))
 
-	defer as.ExpectError(a.Err(a.BadArity, 4, 3))
+	defer as.ExpectError(a.ErrStr(a.BadArity, 4, 3))
 	a.AssertArity(v, 4)
 }
 
@@ -132,7 +132,7 @@ func TestMinimumArity(t *testing.T) {
 	as := assert.New(t)
 	v := a.NewVector(f(1), f(2), f(3))
 
-	defer as.ExpectError(a.Err(a.BadMinimumArity, 4, 3))
+	defer as.ExpectError(a.ErrStr(a.BadMinimumArity, 4, 3))
 	a.AssertMinimumArity(v, 4)
 }
 
@@ -140,6 +140,6 @@ func TestArityRange(t *testing.T) {
 	as := assert.New(t)
 	v := a.NewVector(f(1), f(2), f(3))
 
-	defer as.ExpectError(fmt.Sprintf(a.BadArityRange, 4, 7, 3))
+	defer as.ExpectError(a.ErrStr(fmt.Sprintf(a.BadArityRange, 4, 7, 3)))
 	a.AssertArityRange(v, 4, 7)
 }

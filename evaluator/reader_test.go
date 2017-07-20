@@ -151,7 +151,7 @@ func TestEvaluable(t *testing.T) {
 		v := a.Eval(c, arg)
 		return s("Hello, " + string(v.(a.Str)) + "!")
 	}).WithMetadata(a.Properties{
-		a.MetaName: a.Name("hello"),
+		a.NameKey: a.Name("hello"),
 	}).(a.Function)
 
 	c := e.NewEvalContext()
@@ -172,7 +172,7 @@ func TestBuiltIns(t *testing.T) {
 	ns.Put("hello", a.NewFunction(func(_ a.Context, _ a.Sequence) a.Value {
 		return s("there")
 	}).WithMetadata(a.Properties{
-		a.MetaName: a.Name("hello"),
+		a.NameKey: a.Name("hello"),
 	}).(a.Function))
 
 	l := e.Scan(`(hello)`)
@@ -181,16 +181,10 @@ func TestBuiltIns(t *testing.T) {
 	as.String("there", a.Eval(c, tr))
 }
 
-func testReaderError(t *testing.T, src string, err string) {
+func testReaderError(t *testing.T, src string, err a.Object) {
 	as := assert.New(t)
 
-	defer func() {
-		if rec := recover(); rec != nil {
-			as.String(err, rec)
-			return
-		}
-		as.Fail("coder doesn't error out like it should")
-	}()
+	defer as.ExpectError(err)
 
 	c := a.NewContext()
 	l := e.Scan(s(src))
@@ -199,17 +193,17 @@ func testReaderError(t *testing.T, src string, err string) {
 }
 
 func TestReaderErrors(t *testing.T) {
-	testReaderError(t, "(99 100 ", e.ListNotClosed)
-	testReaderError(t, "[99 100 ", e.VectorNotClosed)
-	testReaderError(t, "{:key 99", e.MapNotClosed)
+	testReaderError(t, "(99 100 ", a.ErrStr(e.ListNotClosed))
+	testReaderError(t, "[99 100 ", a.ErrStr(e.VectorNotClosed))
+	testReaderError(t, "{:key 99", a.ErrStr(e.MapNotClosed))
 
-	testReaderError(t, "99 100)", e.UnmatchedListEnd)
-	testReaderError(t, "99 100]", e.UnmatchedVectorEnd)
-	testReaderError(t, "99}", e.UnmatchedMapEnd)
-	testReaderError(t, "{99}", e.MapNotPaired)
+	testReaderError(t, "99 100)", a.ErrStr(e.UnmatchedListEnd))
+	testReaderError(t, "99 100]", a.ErrStr(e.UnmatchedVectorEnd))
+	testReaderError(t, "99}", a.ErrStr(e.UnmatchedMapEnd))
+	testReaderError(t, "{99}", a.ErrStr(e.MapNotPaired))
 
-	testReaderError(t, "(", e.ListNotClosed)
-	testReaderError(t, "'", a.Err(e.PrefixedNotPaired, "sputter:quote"))
-	testReaderError(t, "~@", a.Err(e.PrefixedNotPaired, "sputter:unquote-splicing"))
-	testReaderError(t, "~", a.Err(e.PrefixedNotPaired, "sputter:unquote"))
+	testReaderError(t, "(", a.ErrStr(e.ListNotClosed))
+	testReaderError(t, "'", a.ErrStr(e.PrefixedNotPaired, "sputter:quote"))
+	testReaderError(t, "~@", a.ErrStr(e.PrefixedNotPaired, "sputter:unquote-splicing"))
+	testReaderError(t, "~", a.ErrStr(e.PrefixedNotPaired, "sputter:unquote"))
 }

@@ -99,7 +99,7 @@ func (c *context) Put(n Name, v Value) {
 	c.Lock()
 	defer c.Unlock()
 	if _, ok := c.vars[n]; ok {
-		panic(Err(AlreadyBound, n))
+		panic(ErrStr(AlreadyBound, n))
 	}
 	c.vars[n] = v
 }

@@ -44,9 +44,9 @@ func (k *keyword) Get(v Value) Value {
 		if r, ok := g.Get(k); ok {
 			return r
 		}
-		panic(Err(KeyNotFound, k))
+		panic(ErrStr(KeyNotFound, k))
 	}
-	panic(Err(ExpectedGetter, v))
+	panic(ErrStr(ExpectedGetter, v))
 }
 
 func (k *keyword) Str() Str {

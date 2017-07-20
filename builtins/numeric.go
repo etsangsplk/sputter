@@ -68,6 +68,13 @@ func div(_ a.Context, args a.Sequence) a.Value {
 	})
 }
 
+func mod(_ a.Context, args a.Sequence) a.Value {
+	f, r := fetchFirstNumber(args)
+	return reduceNum(r, f, func(p a.Number, n a.Number) a.Number {
+		return p.Mod(n)
+	})
+}
+
 func eq(c a.Context, args a.Sequence) a.Value {
 	return compare(c, args, func(p a.Number, n a.Number) bool {
 		return p.Cmp(n) == a.EqualTo
@@ -115,6 +122,7 @@ func init() {
 	RegisterBuiltIn("-", sub)
 	RegisterBuiltIn("*", mul)
 	RegisterBuiltIn("/", div)
+	RegisterBuiltIn("%", mod)
 	RegisterBuiltIn("=", eq)
 	RegisterBuiltIn("!=", neq)
 	RegisterBuiltIn(">", gt)

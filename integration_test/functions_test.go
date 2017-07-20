@@ -19,10 +19,10 @@ func TestLambda(t *testing.T) {
 }
 
 func TestBadLambda(t *testing.T) {
-	err := a.Err(a.ExpectedVector, "99")
+	err := a.ErrStr(a.ExpectedVector, "99")
 	testBadCode(t, `(lambda 99 "hello")`, err)
 
-	err = a.Err(a.ExpectedUnqualified, "foo:bar")
+	err = a.ErrStr(a.ExpectedUnqualified, "foo:bar")
 	testBadCode(t, `(lambda foo:bar [] "hello")`, err)
 }
 
@@ -34,7 +34,7 @@ func TestApply(t *testing.T) {
 			[1 2 3])
 	`, f(6))
 
-	appErr := a.Err(a.ExpectedApplicable, "32")
+	appErr := a.ErrStr(a.ExpectedApplicable, "32")
 	testBadCode(t, `(apply 32 [1 2 3])`, appErr)
 }
 
@@ -49,13 +49,13 @@ func TestRestFunctions(t *testing.T) {
 
 	testBadCode(t, `
 		(lambda [x y &] "explode")
-	`, a.Err(builtins.InvalidRestArgument, "[&]"))
+	`, a.ErrStr(builtins.InvalidRestArgument, "[&]"))
 
 	testBadCode(t, `
 		(lambda [x y & z g] "explode")
-	`, a.Err(builtins.InvalidRestArgument, "[& z g]"))
+	`, a.ErrStr(builtins.InvalidRestArgument, "[& z g]"))
 
 	testBadCode(t, `
 		(lambda [x y & & z] "explode")
-	`, a.Err(builtins.InvalidRestArgument, "[& & z]"))
+	`, a.ErrStr(builtins.InvalidRestArgument, "[& & z]"))
 }

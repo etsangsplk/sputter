@@ -60,7 +60,7 @@ func (a associative) Apply(_ Context, args Sequence) Value {
 	if r, ok := a.Get(k); ok {
 		return r
 	}
-	panic(Err(KeyNotFound, k))
+	panic(ErrStr(KeyNotFound, k))
 }
 
 func (a associative) Eval(c Context) Value {
@@ -88,7 +88,7 @@ func (a associative) Prepend(v Value) Sequence {
 		AssertArity(mp, 2)
 		return append(associative{mp}, a...)
 	}
-	panic(ExpectedPair)
+	panic(ErrStr(ExpectedPair))
 }
 
 func (a associative) Conjoin(v Value) Sequence {
@@ -129,7 +129,7 @@ func MappedApply(s Mapped, args Sequence) Value {
 	if i == 2 {
 		return args.Rest().First()
 	}
-	panic(Err(KeyNotFound, key))
+	panic(ErrStr(KeyNotFound, key))
 }
 
 // AssertMapped will cast Value to a Mapped or explode violently
@@ -137,5 +137,5 @@ func AssertMapped(v Value) Mapped {
 	if r, ok := v.(Mapped); ok {
 		return r
 	}
-	panic(Err(ExpectedMapped, v))
+	panic(ErrStr(ExpectedMapped, v))
 }

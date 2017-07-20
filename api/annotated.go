@@ -4,20 +4,20 @@ package api
 const ExpectedAnnotated = "value does not support annotation: %s"
 
 var (
-	// MetaName is the Metadata key for a Value's Name
-	MetaName = NewKeyword("name")
+	// NameKey is the Metadata key for a Value's Name
+	NameKey = NewKeyword("name")
 
-	// MetaType is the Metadata key for a Value's Type
-	MetaType = NewKeyword("type")
+	// TypeKey is the Metadata key for a Value's Type
+	TypeKey = NewKeyword("type")
 
-	// MetaDoc is the Metadata key for Documentation Strings
-	MetaDoc = NewKeyword("doc")
+	// DocKey is the Metadata key for Documentation Strings
+	DocKey = NewKeyword("doc")
 
-	// MetaArgs is the Metadata key for a Function's arguments
-	MetaArgs = NewKeyword("args")
+	// ArgsKey is the Metadata key for a Function's arguments
+	ArgsKey = NewKeyword("args")
 
-	// MetaInstance is the Metadata key for a Value's instance ID
-	MetaInstance = NewKeyword("instance")
+	// InstanceKey is the Metadata key for a Value's instance ID
+	InstanceKey = NewKeyword("instance")
 )
 
 type (
@@ -41,5 +41,5 @@ func AssertAnnotated(v Value) Annotated {
 	if a, ok := v.(Annotated); ok {
 		return a
 	}
-	panic(Err(ExpectedAnnotated, v))
+	panic(ErrStr(ExpectedAnnotated, v))
 }

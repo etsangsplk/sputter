@@ -47,6 +47,6 @@ func TestAssertNamespace(t *testing.T) {
 	as := assert.New(t)
 	a.AssertNamespace(a.GetNamespace("hello"))
 
-	defer as.ExpectError(a.Err(a.ExpectedNamespace, s("hello")))
+	defer as.ExpectError(a.ErrStr(a.ExpectedNamespace, s("hello")))
 	a.AssertNamespace(s("hello"))
 }

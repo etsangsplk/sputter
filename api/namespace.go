@@ -104,7 +104,7 @@ func AssertNamespace(v Value) Namespace {
 	if r, ok := v.(Namespace); ok {
 		return r
 	}
-	panic(Err(ExpectedNamespace, v))
+	panic(ErrStr(ExpectedNamespace, v))
 }
 
 func init() {

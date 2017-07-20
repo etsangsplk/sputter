@@ -16,5 +16,5 @@ func TestIf(t *testing.T) {
 }
 
 func TestBadIfArity(t *testing.T) {
-	testBadCode(t, `(if)`, a.Err(a.BadArityRange, 2, 3, 0))
+	testBadCode(t, `(if)`, a.ErrStr(a.BadArityRange, 2, 3, 0))
 }

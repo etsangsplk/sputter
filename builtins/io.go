@@ -30,7 +30,7 @@ var (
 	MetaClose = a.NewKeyword("close")
 
 	writerPrototype = a.Properties{
-		a.MetaType: a.Name("writer"),
+		a.TypeKey: a.Name("writer"),
 	}
 )
 

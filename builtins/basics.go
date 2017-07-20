@@ -6,7 +6,8 @@ import (
 )
 
 func _panic(_ a.Context, args a.Sequence) a.Value {
-	panic(a.ToAssociative(args))
+	p := toProperties(a.ToAssociative(args))
+	panic(a.Err(p))
 }
 
 func makeRecover(c a.Context, args a.Sequence) (res a.Value) {

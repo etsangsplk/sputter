@@ -1,5 +1,10 @@
 ;;;; sputter core: branching
 
+(defmacro !
+  {:doc "logically inverts the truthiness of the provided value"}
+  [val]
+  `(if ~val false true))
+
 (defmacro when
   {:doc-asset "when"}
   [test & body]
@@ -14,35 +19,27 @@
   {:doc-asset "cond"}
   [& clauses]
   (when (seq? clauses)
-    (if (= 1 (len clauses))
+    (if (= (len clauses) 1)
       (clauses 0)
-      (list 'sputter:if
-        (clauses 0) (clauses 1)
-        (cons 'sputter:cond (rest (rest clauses)))))))
+      `(if ~(clauses 0) ~(clauses 1)
+        (sputter:cond ~@(rest (rest clauses)))))))
 
 (defmacro and
   {:doc-asset "and"}
   [& clauses]
   (cond
-    (= 0 (len clauses)) true
-    (= 1 (len clauses)) (clauses 0)
+    (!seq? clauses)     true
+    (= (len clauses) 1) (clauses 0)
     :else
-      (list 'sputter:let
-        (vector 'sputter/and (clauses 0))
-        (list 'sputter:if
-          'sputter/and
-          (cons 'sputter:and (rest clauses))
-          'sputter/and))))
+      `(let [and# ~(clauses 0)]
+        (if and# (sputter:and ~@(rest clauses)) and#))))
 
 (defmacro or
   {:doc-asset "or"}
   [& clauses]
   (cond
-    (= 0 (len clauses)) true
-    (= 1 (len clauses)) (clauses 0)
+    (!seq? clauses)     nil
+    (= (len clauses) 1) (clauses 0)
     :else
-      (list 'sputter:let
-        (vector 'sputter/or (clauses 0))
-        (list 'sputter:if
-          'sputter/or 'sputter/or
-          (cons 'sputter:or (rest clauses))))))
+      `(let [or# ~(clauses 0)]
+        (if or# or# (sputter:or ~@(rest clauses))))))

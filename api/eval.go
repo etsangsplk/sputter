@@ -72,5 +72,5 @@ func AssertApplicable(v Value) Applicable {
 	if r, ok := v.(Applicable); ok {
 		return r
 	}
-	panic(Err(ExpectedApplicable, v))
+	panic(ErrStr(ExpectedApplicable, v))
 }

@@ -47,7 +47,7 @@ func parseRestArg(s a.Sequence) a.Name {
 			return n
 		}
 	}
-	panic(a.Err(InvalidRestArgument, s))
+	panic(a.ErrStr(InvalidRestArgument, s))
 }
 
 func makeRestArgProcessor(cl a.Context, an []a.Name, rn a.Name) argProcessor {
@@ -85,7 +85,7 @@ func optionalMetadata(c a.Context, args a.Sequence) (a.Object, a.Sequence) {
 	r := args
 	var md a.Object
 	if s, ok := r.First().(a.Str); ok {
-		md = a.Properties{a.MetaDoc: s}
+		md = a.Properties{a.DocKey: s}
 		r = r.Rest()
 	} else {
 		md = emptyMetadata
@@ -105,7 +105,7 @@ func optionalName(args a.Sequence) (a.Name, a.Sequence) {
 		if s.Domain() == a.LocalDomain {
 			return s.Name(), args.Rest()
 		}
-		panic(a.Err(a.ExpectedUnqualified, s.Qualified()))
+		panic(a.ErrStr(a.ExpectedUnqualified, s.Qualified()))
 	}
 	return defaultName, args
 }
@@ -127,7 +127,7 @@ func loadDocumentation(md a.Object) a.Object {
 	}
 
 	return md.Child(a.Properties{
-		a.MetaDoc: d.Get(s),
+		a.DocKey: d.Get(s),
 	})
 }
 
@@ -142,8 +142,8 @@ func getFunctionDefinition(c a.Context, args a.Sequence) *functionDefinition {
 		args: an,
 		body: r.Rest(),
 		meta: md.Child(a.Properties{
-			a.MetaName: fn,
-			a.MetaArgs: an,
+			a.NameKey: fn,
+			a.ArgsKey: an,
 		}),
 	}
 }
@@ -173,8 +173,8 @@ func lambda(c a.Context, args a.Sequence) a.Value {
 		args: an,
 		body: r.Rest(),
 		meta: md.Child(a.Properties{
-			a.MetaName: fn,
-			a.MetaArgs: an,
+			a.NameKey: fn,
+			a.ArgsKey: an,
 		}),
 	})
 }

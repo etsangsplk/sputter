@@ -73,7 +73,7 @@ func getConvertIn(t reflect.Type) inMapper {
 		return c
 	}
 	return func(_ a.Value) reflect.Value {
-		panic(a.Err(BadConversionType, t))
+		panic(a.ErrStr(BadConversionType, t))
 	}
 }
 
@@ -85,7 +85,7 @@ func getConvertOut(t reflect.Type) outMapper {
 		return c
 	}
 	return func(_ reflect.Value) a.Value {
-		panic(a.Err(BadConversionType, t))
+		panic(a.ErrStr(BadConversionType, t))
 	}
 }
 

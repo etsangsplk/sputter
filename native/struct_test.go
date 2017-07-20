@@ -71,6 +71,6 @@ func TestBadStructReflect(t *testing.T) {
 	as.True(ok)
 	as.String("hello", r1)
 
-	defer as.ExpectError(a.Err(r.BadConversionType, "[]int"))
+	defer as.ExpectError(a.ErrStr(r.BadConversionType, "[]int"))
 	n1.Get(a.Name("a"))
 }

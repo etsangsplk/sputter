@@ -13,7 +13,7 @@ func getBuiltIn(n a.Name) a.SequenceProcessor {
 	if r, ok := b.GetBuiltIn(n); ok {
 		return r
 	}
-	panic(a.Err("Built in not found: ", n))
+	panic(a.ErrStr("Built in not found: ", n))
 }
 
 func f(n float64) a.Number {
@@ -53,7 +53,7 @@ func TestExplodingBuiltInCall(t *testing.T) {
 	read := getBuiltIn("read")
 	eval := getBuiltIn("eval")
 
-	defer as.ExpectError(a.Err(a.KeyNotFound, a.Name("boom")))
+	defer as.ExpectError(a.ErrStr(a.KeyNotFound, a.Name("boom")))
 	c := e.NewEvalContext()
 	r := read(c, args(s("(def-builtin boom)")))
 	eval(c, args(r))

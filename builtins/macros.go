@@ -3,7 +3,7 @@ package builtins
 import a "github.com/kode4food/sputter/api"
 
 var macroMetadata = a.Properties{
-	a.MetaMacro: a.True,
+	a.MacroKey: a.True,
 }
 
 func defineMacro(closure a.Context, d *functionDefinition) a.Function {

@@ -27,11 +27,11 @@ func TestAssoc(t *testing.T) {
 		(x :name)
 	`, s("bob"))
 
-	testBadCode(t, `(assoc :too "few" :args)`, a.ExpectedPair)
+	testBadCode(t, `(assoc :too "few" :args)`, a.ErrStr(a.ExpectedPair))
 
 	testBadCode(t, `
 		(apply assoc (concat '(:name "Sputter") '(:age)))
-	`, a.ExpectedPair)
+	`, a.ErrStr(a.ExpectedPair))
 }
 
 func TestMapped(t *testing.T) {

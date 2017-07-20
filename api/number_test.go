@@ -16,7 +16,7 @@ func TestParseNumber(t *testing.T) {
 	as.Equal(n1, n2)
 	as.Equal(n2, n3)
 
-	defer as.ExpectError(a.Err(a.ExpectedNumber, s(`'splosion!`)))
+	defer as.ExpectError(a.ErrStr(a.ExpectedNumber, s(`'splosion!`)))
 	a.ParseNumber("'splosion!")
 }
 
@@ -112,7 +112,7 @@ func TestAssertNumber(t *testing.T) {
 	as := assert.New(t)
 	a.AssertNumber(f(99))
 
-	defer as.ExpectError(a.Err(a.ExpectedNumber, s("not a number")))
+	defer as.ExpectError(a.ErrStr(a.ExpectedNumber, s("not a number")))
 	a.AssertNumber(s("not a number"))
 }
 
@@ -120,6 +120,6 @@ func TestAssertInteger(t *testing.T) {
 	as := assert.New(t)
 	a.AssertInteger(f(99))
 
-	defer as.ExpectError(a.Err(a.ExpectedInteger, f(99.5)))
+	defer as.ExpectError(a.ErrStr(a.ExpectedInteger, f(99.5)))
 	a.AssertInteger(f(99.5))
 }

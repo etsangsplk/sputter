@@ -14,7 +14,7 @@ func TestTheStringTests(t *testing.T) {
 	as.String("hello", a.Str("hello"))
 	as.String(":hello", a.NewKeyword("hello"))
 
-	defer as.ExpectError(a.Err(assert.InvalidTestExpression, 10))
+	defer as.ExpectError(a.ErrStr(assert.InvalidTestExpression, 10))
 	as.String("10", 10)
 }
 
@@ -30,7 +30,7 @@ func TestTheFloatTests(t *testing.T) {
 	as.Compare(a.GreaterThan, a.NewFloat(10.5), a.NewFloat(10.0))
 	as.Compare(a.LessThan, a.NewFloat(10.0), a.NewFloat(10.5))
 
-	defer as.ExpectError(a.Err(assert.InvalidTestExpression, "10"))
+	defer as.ExpectError(a.ErrStr(assert.InvalidTestExpression, "10"))
 	as.Number(10, "10")
 }
 

@@ -27,7 +27,7 @@ func withMeta(_ a.Context, args a.Sequence) a.Value {
 	if m, ok := args.Rest().First().(a.MappedSequence); ok {
 		return o.WithMetadata(toProperties(m)).(a.Value)
 	}
-	panic(a.Err(a.ExpectedSequence, o))
+	panic(a.ErrStr(a.ExpectedSequence, o))
 }
 
 func meta(_ a.Context, args a.Sequence) a.Value {

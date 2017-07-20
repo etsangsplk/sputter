@@ -25,6 +25,6 @@ func TestClosure(t *testing.T) {
 	c.Put("name", s("Bob"))
 	args := r1.(a.List).Rest()
 
-	defer as.ExpectError(a.Err(a.UnknownSymbol, a.Name("ignore")))
+	defer as.ExpectError(a.ErrStr(a.UnknownSymbol, a.Name("ignore")))
 	closure(c, args)
 }

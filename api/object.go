@@ -25,7 +25,7 @@ type (
 )
 
 var objectPrototype = Properties{
-	MetaType: Name("object"),
+	TypeKey: Name("object"),
 }
 
 // NewObject instantiates a new UDP Object with Variables
@@ -46,7 +46,7 @@ func (p Properties) GetValue(k Value) Value {
 	if v, ok := p.Get(k); ok {
 		return v
 	}
-	panic(Err(ValueNotFound, k))
+	panic(ErrStr(ValueNotFound, k))
 }
 
 // Child instantiates a new UDP child Object with Properties
@@ -95,7 +95,7 @@ func (o *object) GetValue(k Value) Value {
 	if v, ok := o.Get(k); ok {
 		return v
 	}
-	panic(Err(ValueNotFound, k))
+	panic(ErrStr(ValueNotFound, k))
 }
 
 // Child instantiates a new UDP child Object with Properties

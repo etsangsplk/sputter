@@ -26,7 +26,7 @@ func TestNestedNumber(t *testing.T) {
 }
 
 func TestNonNumber(t *testing.T) {
-	helloErr := a.Err(a.ExpectedNumber, `"hello"`)
+	helloErr := a.ErrStr(a.ExpectedNumber, `"hello"`)
 	testBadCode(t, `(+ 99 "hello")`, helloErr)
 	testBadCode(t, `(+ "hello")`, helloErr)
 }
@@ -62,7 +62,7 @@ func TestCompare(t *testing.T) {
 }
 
 func TestBadCompare(t *testing.T) {
-	helloErr := a.Err(a.ExpectedNumber, `"hello"`)
+	helloErr := a.ErrStr(a.ExpectedNumber, `"hello"`)
 	testBadCode(t, `(< 99 "hello")`, helloErr)
 	testBadCode(t, `(< "hello" "there")`, helloErr)
 }

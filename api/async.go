@@ -261,7 +261,7 @@ func (p *promise) checkNewValue(v Value) Value {
 	if v == p.val {
 		return p.val
 	}
-	panic(ExpectedUndelivered)
+	panic(ErrStr(ExpectedUndelivered))
 }
 
 func (p *promise) Deliver(v Value) Value {

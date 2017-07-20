@@ -85,16 +85,18 @@
 
 ;; numeric
 
-(def-builtin +)
-(def-builtin -)
-(def-builtin *)
-(def-builtin /)
-(def-builtin =)
-(def-builtin !=)
-(def-builtin >)
-(def-builtin >=)
-(def-builtin <)
-(def-builtin <=)
+(def-builtin +  :doc "adds a set of numbers")
+(def-builtin -  :doc "subtracts a set of numbers")
+(def-builtin *  :doc "multiplies a set of numbers")
+(def-builtin /  :doc "divides a set of numbers")
+(def-builtin %  :doc "produces the remainder for a divided set of numbers")
+
+(def-builtin =  :doc "checks a set of numbers for equality")
+(def-builtin != :doc "checks a set of numbers for inequality")
+(def-builtin >  :doc "checks that a set of numbers increases in value")
+(def-builtin >= :doc "checks that a set of numbers doesn't decrease in value")
+(def-builtin <  :doc "checks that a set of numbers decreases in value")
+(def-builtin <= :doc "checks that a set of numbers doesn't increase in value")
 
 ;; functions
 

@@ -63,7 +63,7 @@ func TestAssocConvertError(t *testing.T) {
 	as := assert.New(t)
 
 	v1 := a.NewVector(a.NewKeyword("boom"))
-	defer as.ExpectError(a.ExpectedPair)
+	defer as.ExpectError(a.ErrStr(a.ExpectedPair))
 	a.ToAssociative(v1)
 }
 
@@ -71,7 +71,7 @@ func TestUncountedAssocConvertError(t *testing.T) {
 	as := assert.New(t)
 
 	v1 := a.Map(a.NewVector(a.NewKeyword("boom")), identity)
-	defer as.ExpectError(a.ExpectedPair)
+	defer as.ExpectError(a.ErrStr(a.ExpectedPair))
 	a.ToAssociative(v1)
 }
 

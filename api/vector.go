@@ -100,5 +100,5 @@ func AssertVector(v Value) Vector {
 	if r, ok := v.(Vector); ok {
 		return r
 	}
-	panic(Err(ExpectedVector, v))
+	panic(ErrStr(ExpectedVector, v))
 }

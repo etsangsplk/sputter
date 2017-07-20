@@ -119,13 +119,13 @@ func (s Str) Str() Str {
 func MakeDumpStr(v Value) Str {
 	m := NewObject(Properties{})
 	if n, ok := v.(Named); ok {
-		m = m.Child(Properties{MetaName: n.Name()})
+		m = m.Child(Properties{NameKey: n.Name()})
 	}
 	if t, ok := v.(Typed); ok {
-		m = m.Child(Properties{MetaType: t.Type()})
+		m = m.Child(Properties{TypeKey: t.Type()})
 	}
 	p := Str(fmt.Sprintf("%p", &v))
-	m = m.Child(Properties{MetaInstance: p})
+	m = m.Child(Properties{InstanceKey: p})
 	return m.Str()
 }
 
@@ -134,5 +134,5 @@ func AssertStr(v Value) Str {
 	if s, ok := v.(Str); ok {
 		return s
 	}
-	panic(Err(ExpectedStr, v))
+	panic(ErrStr(ExpectedStr, v))
 }

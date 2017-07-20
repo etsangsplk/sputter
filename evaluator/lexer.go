@@ -90,7 +90,7 @@ func matchToken(src string) (*Token, string) {
 	}
 	// Shouldn't happen because of the patterns that are defined,
 	// but is here as a safety net
-	panic(UnmatchedState)
+	panic(a.ErrStr(UnmatchedState))
 }
 
 // Str converts this Value into a Str

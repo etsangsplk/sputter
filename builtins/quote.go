@@ -100,7 +100,7 @@ func (sc *syntaxContext) quoteSequence(s a.Sequence) a.Value {
 	if as, ok := s.(a.Associative); ok {
 		return sc.quoteAssociative(as)
 	}
-	panic(a.Err(UnsupportedSyntaxQuote, s))
+	panic(a.ErrStr(UnsupportedSyntaxQuote, s))
 }
 
 func (sc *syntaxContext) quoteAssociative(as a.Associative) a.Value {

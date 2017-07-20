@@ -99,11 +99,11 @@ func (r *reader) value(t *Token) a.Value {
 	case Identifier:
 		return readIdentifier(t)
 	case ListEnd:
-		panic(UnmatchedListEnd)
+		panic(a.ErrStr(UnmatchedListEnd))
 	case VectorEnd:
-		panic(UnmatchedVectorEnd)
+		panic(a.ErrStr(UnmatchedVectorEnd))
 	case MapEnd:
-		panic(UnmatchedMapEnd)
+		panic(a.ErrStr(UnmatchedMapEnd))
 	default:
 		return t.Value
 	}
@@ -113,7 +113,7 @@ func (r *reader) prefixed(s a.Symbol) a.Value {
 	if v, ok := r.nextValue(); ok {
 		return a.NewList(s, v)
 	}
-	panic(a.Err(PrefixedNotPaired, s))
+	panic(a.ErrStr(PrefixedNotPaired, s))
 }
 
 func (r *reader) list() a.Value {
@@ -135,7 +135,7 @@ func (r *reader) list() a.Value {
 		if t, ok := r.nextToken(); ok {
 			return handle(t)
 		}
-		panic(ListNotClosed)
+		panic(a.ErrStr(ListNotClosed))
 	}
 
 	return rest()
@@ -154,7 +154,7 @@ func (r *reader) vector() a.Value {
 				res = append(res, e)
 			}
 		} else {
-			panic(VectorNotClosed)
+			panic(a.ErrStr(VectorNotClosed))
 		}
 	}
 }
@@ -170,7 +170,7 @@ func (r *reader) associative() a.Value {
 				if idx%2 == 0 {
 					return a.NewAssociative(res...)
 				}
-				panic(MapNotPaired)
+				panic(a.ErrStr(MapNotPaired))
 			default:
 				e := r.value(t)
 				if idx%2 == 0 {
@@ -182,7 +182,7 @@ func (r *reader) associative() a.Value {
 				}
 			}
 		} else {
-			panic(MapNotClosed)
+			panic(a.ErrStr(MapNotClosed))
 		}
 	}
 }

@@ -3,22 +3,15 @@
 (defmacro go
   {:doc-asset "go"}
   [& forms]
-  (list 'sputter:make-closure
-    (vector)
+  (list 'sputter:make-closure []
     (cons 'sputter:make-go forms)))
 
 (defmacro generate
   {:doc-asset "generate"}
   [& forms]
-  (list 'sputter:let
-    (vector 'sputter/ch (list 'sputter:chan)
-            'sputter/cl (list :close 'sputter/ch)
-            'emit (list :emit 'sputter/ch))
-    (list 'sputter:go
-      (list 'sputter:let (vector 'x (cons 'sputter:do forms))
-        (list 'sputter/cl)
-        'x))
-    (list :seq 'sputter/ch)))
+  `(let [ch# (chan) cl# (:close ch#) emit (:emit ch#)]
+    (go (let [x (do ~@forms)] (cl#) x))
+    (:seq ch#)))
 
 (defmacro future
   {:doc-asset "future"}

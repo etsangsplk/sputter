@@ -95,7 +95,7 @@ func (l *list) Eval(c Context) Value {
 		}
 		return a.Apply(c, l.evalArgs(c, l.rest))
 	}
-	panic(Err(ExpectedApplicable, t))
+	panic(ErrStr(ExpectedApplicable, t))
 }
 
 func (l *list) evalArgs(c Context, args *list) Vector {

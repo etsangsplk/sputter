@@ -35,7 +35,7 @@ func defBuiltIn(c a.Context, args a.Sequence) a.Value {
 		a.GetContextNamespace(c).Put(n, r)
 		return r
 	}
-	panic(a.Err(a.KeyNotFound, n))
+	panic(a.ErrStr(a.KeyNotFound, n))
 }
 
 func isBuiltInDomain(s a.Symbol) bool {
@@ -54,7 +54,7 @@ func isBuiltInCall(n a.Name, v a.Value) (a.List, bool) {
 func init() {
 	Namespace.Put("def-builtin",
 		a.NewFunction(defBuiltIn).WithMetadata(a.Properties{
-			a.MetaSpecial: a.True,
+			a.SpecialKey: a.True,
 		}).(a.Function),
 	)
 }

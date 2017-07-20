@@ -73,7 +73,7 @@ func (n *wrapped) Get(key a.Value) (a.Value, bool) {
 }
 
 func (n *wrapped) Type() a.Name {
-	t, _ := n.meta.Get(a.MetaType)
+	t, _ := n.meta.Get(a.TypeKey)
 	return t.(a.Name)
 }
 
@@ -86,7 +86,7 @@ func getTypeInfo(t reflect.Type) *typeInfo {
 	return types.Get(tn, func() u.Any {
 		return &typeInfo{
 			name:    tn,
-			meta:    a.Properties{a.MetaType: tn},
+			meta:    a.Properties{a.TypeKey: tn},
 			getters: makePropertyGetters(t),
 		}
 	}).(*typeInfo)

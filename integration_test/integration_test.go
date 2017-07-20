@@ -26,17 +26,10 @@ func testCode(t *testing.T, src string, expect a.Value) {
 	as.Equal(expect, runCode(src))
 }
 
-func testBadCode(t *testing.T, src string, err string) {
+func testBadCode(t *testing.T, src string, err a.Object) {
 	as := assert.New(t)
 
-	defer func() {
-		if rec := recover(); rec != nil {
-			as.String(err, rec)
-			return
-		}
-		as.Fail("bad code should panic")
-	}()
-
+	defer as.ExpectError(err)
 	runCode(src)
 }
 

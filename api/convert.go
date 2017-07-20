@@ -58,7 +58,7 @@ func ToAssociative(s Sequence) Associative {
 	if c, ok := s.(Counted); ok {
 		l := c.Count()
 		if l%2 != 0 {
-			panic(ExpectedPair)
+			panic(ErrStr(ExpectedPair))
 		}
 		ml := l / 2
 		r := make([]Vector, ml)
@@ -86,7 +86,7 @@ func uncountedToAssociative(s Sequence) Associative {
 			v := i.First()
 			r = append(r, NewVector(k, v))
 		} else {
-			panic(ExpectedPair)
+			panic(ErrStr(ExpectedPair))
 		}
 	}
 	return associative(r)

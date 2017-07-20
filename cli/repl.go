@@ -158,12 +158,12 @@ func (r *REPL) nsSpace() string {
 
 func (r *REPL) evalBuffer() (completed bool) {
 	defer func() {
-		if rec := recover(); rec != nil {
-			if isRecoverable(rec.(string)) {
+		if err := toError(recover()); err != nil {
+			if isRecoverable(err) {
 				completed = false
 				return
 			}
-			r.outputError(rec)
+			r.outputError(err)
 			completed = true
 		}
 	}()
@@ -187,8 +187,9 @@ func (r *REPL) outputResult(v any) {
 	fmt.Println(res)
 }
 
-func (r *REPL) outputError(err any) {
-	res := fmt.Sprintf(bad, r.nsSpace(), r.idx, err)
+func (r *REPL) outputError(err a.Object) {
+	msg := err.GetValue(a.MessageKey)
+	res := fmt.Sprintf(bad, r.nsSpace(), r.idx, msg)
 	fmt.Println(res)
 }
 
@@ -269,10 +270,21 @@ func isEmptyString(s string) bool {
 	return len(strings.TrimSpace(s)) == 0
 }
 
-func isRecoverable(err string) bool {
-	return err == e.ListNotClosed ||
-		err == e.VectorNotClosed ||
-		err == e.MapNotClosed
+func toError(v interface{}) a.Object {
+	if v == nil {
+		return nil
+	}
+	if a.IsErr(v) {
+		return v.(a.Object)
+	}
+	panic(fmt.Sprintf("non-standard error: %s", v))
+}
+
+func isRecoverable(err a.Object) bool {
+	msg := err.GetValue(a.MessageKey).(a.Str)
+	return msg == e.ListNotClosed ||
+		msg == e.VectorNotClosed ||
+		msg == e.MapNotClosed
 }
 
 func use(c a.Context, args a.Sequence) a.Value {
@@ -336,15 +348,15 @@ func doc(c a.Context, args a.Sequence) a.Value {
 	if v, ok := c.Get(sym.Name()); ok {
 		if an, ok := v.(a.Annotated); ok {
 			md := an.Metadata()
-			if doc, ok := md.GetValue(a.MetaDoc).(a.Str); ok {
+			if doc, ok := md.GetValue(a.DocKey).(a.Str); ok {
 				f := formatForREPL(string(doc))
 				fmt.Println(f)
 				return nothing
 			}
 		}
-		panic(a.Err("symbol is not documented: %s", sym))
+		panic(a.ErrStr("symbol is not documented: %s", sym))
 	}
-	panic(a.Err("could not resolve symbol: %s", sym))
+	panic(a.ErrStr("could not resolve symbol: %s", sym))
 }
 
 func getBuiltInsNamespace() a.Namespace {
@@ -361,51 +373,51 @@ func registerBuiltIn(v a.Annotated) {
 	ns.Delete(replBuiltIns)
 	ns.Put(replBuiltIns, bi)
 
-	n := v.Metadata().GetValue(a.MetaName).(a.Name)
+	n := v.Metadata().GetValue(a.NameKey).(a.Name)
 	ns.Put(n, v.(a.Value))
 }
 
 func registerBuiltIns() {
 	registerBuiltIn(
 		a.NewFunction(use).WithMetadata(a.Properties{
-			a.MetaName:    a.Name("use"),
-			a.MetaDoc:     d.Get("repl-use"),
-			a.MetaSpecial: a.True,
+			a.NameKey:    a.Name("use"),
+			a.DocKey:     d.Get("repl-use"),
+			a.SpecialKey: a.True,
 		}),
 	)
 
 	registerBuiltIn(
 		a.NewFunction(shutdown).WithMetadata(a.Properties{
-			a.MetaName: a.Name("quit"),
-			a.MetaDoc:  d.Get("repl-quit"),
+			a.NameKey: a.Name("quit"),
+			a.DocKey:  d.Get("repl-quit"),
 		}),
 	)
 
 	registerBuiltIn(
 		a.NewFunction(debugInfo).WithMetadata(a.Properties{
-			a.MetaName: a.Name("debug-info"),
+			a.NameKey: a.Name("debug-info"),
 		}),
 	)
 
 	registerBuiltIn(
 		a.NewFunction(cls).WithMetadata(a.Properties{
-			a.MetaName: a.Name("cls"),
-			a.MetaDoc:  d.Get("repl-cls"),
+			a.NameKey: a.Name("cls"),
+			a.DocKey:  d.Get("repl-cls"),
 		}),
 	)
 
 	registerBuiltIn(
 		a.NewFunction(help).WithMetadata(a.Properties{
-			a.MetaName: a.Name("help"),
-			a.MetaDoc:  d.Get("repl-help"),
+			a.NameKey: a.Name("help"),
+			a.DocKey:  d.Get("repl-help"),
 		}),
 	)
 
 	registerBuiltIn(
 		a.NewFunction(doc).WithMetadata(a.Properties{
-			a.MetaName:    a.Name("doc"),
-			a.MetaDoc:     d.Get("repl-doc"),
-			a.MetaSpecial: a.True,
+			a.NameKey:    a.Name("doc"),
+			a.DocKey:     d.Get("repl-doc"),
+			a.SpecialKey: a.True,
 		}),
 	)
 }

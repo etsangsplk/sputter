@@ -13,7 +13,7 @@ var helloName = a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
 	v := a.Eval(c, n)
 	return s("Hello, " + string(v.(a.Str)) + "!")
 }).WithMetadata(a.Properties{
-	a.MetaName: a.Name("hello"),
+	a.NameKey: a.Name("hello"),
 }).(a.Function)
 
 func TestEvaluate(t *testing.T) {
@@ -59,6 +59,6 @@ func TestAssertApplicable(t *testing.T) {
 	as := assert.New(t)
 	a.AssertApplicable(a.NewFunction(nil))
 
-	defer as.ExpectError(a.Err(a.ExpectedApplicable, f(99)))
+	defer as.ExpectError(a.ErrStr(a.ExpectedApplicable, f(99)))
 	a.AssertApplicable(f(99))
 }

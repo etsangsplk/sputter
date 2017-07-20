@@ -144,5 +144,5 @@ func AssertBool(v Value) Bool {
 	if b, ok := v.(Bool); ok {
 		return b
 	}
-	panic(Err(ExpectedBool, v))
+	panic(ErrStr(ExpectedBool, v))
 }

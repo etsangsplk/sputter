@@ -107,7 +107,7 @@ func (s *symbol) Eval(c Context) Value {
 	if r, ok := s.Resolve(c); ok {
 		return r
 	}
-	panic(Err(UnknownSymbol, s.Qualified()))
+	panic(ErrStr(UnknownSymbol, s.Qualified()))
 }
 
 func (s *symbol) Str() Str {
@@ -121,7 +121,7 @@ func AssertUnqualified(v Value) Symbol {
 		if r.Domain() == LocalDomain {
 			return r
 		}
-		panic(Err(ExpectedUnqualified, r.Qualified()))
+		panic(ErrStr(ExpectedUnqualified, r.Qualified()))
 	}
-	panic(Err(ExpectedSymbol, v))
+	panic(ErrStr(ExpectedSymbol, v))
 }

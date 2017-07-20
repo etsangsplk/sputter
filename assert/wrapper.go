@@ -43,7 +43,7 @@ func (w *Wrapper) String(expect string, expr Any) {
 		w.as.Equal(expect, string(s.Str()))
 		return
 	}
-	panic(a.Err(InvalidTestExpression, expr))
+	panic(a.ErrStr(InvalidTestExpression, expr))
 }
 
 // Number tests a Value for numeric equality
@@ -60,7 +60,7 @@ func (w *Wrapper) Number(expect float64, expr Any) {
 		w.as.Equal(a.EqualTo, a.NewFloat(expect).Cmp(n))
 		return
 	}
-	panic(a.Err(InvalidTestExpression, expr))
+	panic(a.ErrStr(InvalidTestExpression, expr))
 }
 
 // Equal tests a Value for some kind of equality. Performs checks to do so
@@ -167,10 +167,14 @@ func (w *Wrapper) Compare(c a.Comparison, l a.Number, r a.Number) {
 }
 
 // ExpectError is used with a defer to make sure an error was triggered
-func (w *Wrapper) ExpectError(err string) {
+func (w *Wrapper) ExpectError(err a.Object) {
 	if rec := recover(); rec != nil {
-		w.String(err, rec)
-		return
+		if a.IsErr(rec) {
+			errStr := string(err.GetValue(a.MessageKey).Str())
+			recStr := rec.(a.Object).GetValue(a.MessageKey).Str()
+			w.String(errStr, recStr)
+			return
+		}
 	}
 	w.Fail("error not raised")
 }

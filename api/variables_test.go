@@ -24,7 +24,7 @@ func TestBool(t *testing.T) {
 	as.False(a.False.Apply(c, a.NewVector(a.True, a.False, a.True)))
 	as.True(a.AssertBool(a.True))
 
-	defer as.ExpectError(a.Err(a.ExpectedBool, s("not bool")))
+	defer as.ExpectError(a.ErrStr(a.ExpectedBool, s("not bool")))
 	a.AssertBool(s("not bool"))
 }
 

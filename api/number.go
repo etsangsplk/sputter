@@ -24,6 +24,7 @@ type (
 		Sub(r Number) Number
 		Mul(r Number) Number
 		Div(r Number) Number
+		Mod(r Number) Number
 		Float64() (float64, bool)
 	}
 
@@ -52,7 +53,7 @@ func NewFloat(f float64) Number {
 	if res, err := new(apd.Decimal).SetFloat64(f); err == nil {
 		return (*dec)(res)
 	}
-	panic(Err(ExpectedNumber, fmt.Sprintf("%f", f)))
+	panic(ErrStr(ExpectedNumber, fmt.Sprintf("%f", f)))
 }
 
 // NewRatio generates a new Number from a ratio
@@ -69,7 +70,7 @@ func ParseNumber(s Str) Number {
 	if r, ok := new(big.Rat).SetString(ns); ok {
 		return (*rat)(r)
 	}
-	panic(Err(ExpectedNumber, s))
+	panic(ErrStr(ExpectedNumber, s))
 }
 
 func (r *rat) toDecimal() *apd.Decimal {
@@ -78,7 +79,7 @@ func (r *rat) toDecimal() *apd.Decimal {
 	if res, err := new(apd.Decimal).SetFloat64(rf); err == nil {
 		return res
 	}
-	panic(Err(ExpectedNumber, rr.String()))
+	panic(ErrStr(ExpectedNumber, rr.String()))
 }
 
 func (d *dec) Cmp(n Number) Comparison {
@@ -180,6 +181,23 @@ func (r *rat) Div(n Number) Number {
 	return (*dec)(res)
 }
 
+func (d *dec) Mod(n Number) Number {
+	res := new(apd.Decimal)
+	if dn, ok := n.(*dec); ok {
+		ctx.Rem(res, (*apd.Decimal)(d), (*apd.Decimal)(dn))
+		return (*dec)(res)
+	}
+	rn, _ := n.(*rat)
+	ctx.Rem(res, (*apd.Decimal)(d), rn.toDecimal())
+	return (*dec)(res)
+}
+
+func (r *rat) Mod(n Number) Number {
+	res := new(apd.Decimal)
+	ctx.Rem(res, r.toDecimal(), (*apd.Decimal)(n.(*dec)))
+	return (*dec)(res)
+}
+
 // Float64 converts the value to a native float64
 func (d *dec) Float64() (float64, bool) {
 	v, err := (*apd.Decimal)(d).Float64()
@@ -204,7 +222,7 @@ func AssertNumber(v Value) Number {
 	if r, ok := v.(Number); ok {
 		return r
 	}
-	panic(Err(ExpectedNumber, v))
+	panic(ErrStr(ExpectedNumber, v))
 }
 
 // AssertInteger will cast a Value into an Integer or explode violently
@@ -215,5 +233,5 @@ func AssertInteger(v Value) int {
 	if f-float64(i) == 0 {
 		return i
 	}
-	panic(Err(ExpectedInteger, n))
+	panic(ErrStr(ExpectedInteger, n))
 }

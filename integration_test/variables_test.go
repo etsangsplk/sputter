@@ -34,9 +34,9 @@ func TestLetBindings(t *testing.T) {
 
 	testBadCode(t, `
 		(let 99 "hello")
-	`, a.Err(a.ExpectedVector, "99"))
+	`, a.ErrStr(a.ExpectedVector, "99"))
 
 	testBadCode(t, `
 		(let [a blah b] "hello")
-	`, b.ExpectedBindings)
+	`, a.ErrStr(b.ExpectedBindings))
 }
