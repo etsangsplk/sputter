@@ -56,7 +56,7 @@ func (n *wrapped) Metadata() a.Object {
 }
 
 // WithMetadata copies the wrapped with new Metadata
-func (n *wrapped) WithMetadata(md a.Object) a.Annotated {
+func (n *wrapped) WithMetadata(md a.Object) a.AnnotatedValue {
 	return &wrapped{
 		value:    n.value,
 		typeInfo: n.typeInfo,

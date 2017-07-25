@@ -24,7 +24,13 @@ type (
 	// Annotated is implemented if a Value is Annotated with Metadata
 	Annotated interface {
 		Metadata() Object
-		WithMetadata(md Object) Annotated
+		WithMetadata(md Object) AnnotatedValue
+	}
+
+	// AnnotatedValue is returned by the WithMetadata call
+	AnnotatedValue interface {
+		Annotated
+		Value
 	}
 )
 

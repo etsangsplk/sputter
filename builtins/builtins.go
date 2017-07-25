@@ -31,7 +31,7 @@ func defBuiltIn(c a.Context, args a.Sequence) a.Value {
 		var md a.Object = toProperties(a.ToAssociative(args.Rest()))
 		md = loadDocumentation(md)
 
-		r := a.NewFunction(f).WithMetadata(md).(a.Value)
+		r := a.NewFunction(f).WithMetadata(md)
 		a.GetContextNamespace(c).Put(n, r)
 		return r
 	}
@@ -55,6 +55,6 @@ func init() {
 	Namespace.Put("def-builtin",
 		a.NewFunction(defBuiltIn).WithMetadata(a.Properties{
 			a.SpecialKey: a.True,
-		}).(a.Function),
+		}),
 	)
 }

@@ -115,6 +115,24 @@ func TestAssociativeIterate(t *testing.T) {
 	}
 }
 
+func TestAssociativeApply(t *testing.T) {
+	as := assert.New(t)
+	m1 := getTestMap()
+
+	c := a.NewContext()
+	nameKey := a.NewKeyword("name")
+	args := a.NewList(nameKey)
+	as.String("Sputter", m1.Apply(c, args))
+
+	missKey := a.NewKeyword("miss")
+	args = a.NewList(missKey, s("you missed"))
+	as.String("you missed", m1.Apply(c, args))
+
+	defer as.ExpectError(a.ErrStr(a.KeyNotFound, missKey))
+	args = a.NewList(missKey)
+	m1.Apply(c, args)
+}
+
 func TestAssociativeLookup(t *testing.T) {
 	as := assert.New(t)
 	m1 := getTestMap()

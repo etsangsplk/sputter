@@ -1,6 +1,6 @@
 ;;;; sputter core: branching
 
-(defmacro !
+(defmacro not
   {:doc "logically inverts the truthiness of the provided value"}
   [val]
   `(if ~val false true))
@@ -20,9 +20,10 @@
   [& clauses]
   (when (seq? clauses)
     (if (= (len clauses) 1)
-      (clauses 0)
-      `(if ~(clauses 0) ~(clauses 1)
-        (sputter:cond ~@(rest (rest clauses)))))))
+        (clauses 0)
+        `(if ~(clauses 0)
+             ~(clauses 1)
+             (sputter:cond ~@(rest (rest clauses)))))))
 
 (defmacro and
   {:doc-asset "and"}

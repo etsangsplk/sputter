@@ -3,8 +3,9 @@
 (defn pr-map-with-nil
   {:private true}
   [func seq]
-  (map (lambda [val]
-    (if (nil? val) val (func val))) seq))
+  (map
+    (fn [val] (if (nil? val) val (func val)))
+    seq))
 
 (defn pr [& forms]
   (let [s (pr-map-with-nil str! forms)]
@@ -38,7 +39,8 @@
     (= (len bindings) 0)
       `(sputter:do ~@body)
     (>= (len bindings) 2)
-      `(let [~(bindings 0) ~(bindings 1), cl# (get ~(bindings 0) :close nil)
+      `(let [~(bindings 0) ~(bindings 1),
+             cl# (get ~(bindings 0) :close nil),
              res# (sputter:with-open [~@(rest (rest bindings))] ~@body)]
         (when (apply? cl#) (cl#))
         res#)))

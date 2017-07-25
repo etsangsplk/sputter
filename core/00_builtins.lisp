@@ -22,6 +22,8 @@
 (def-builtin macroexpand-all :special-form true)
 (def-builtin quote           :doc-asset "quote" :macro true :special-form true)
 (def-builtin syntax-quote    :macro true)
+(def-builtin macro?)
+(def-builtin !macro?)
 
 ;; namespaces
 
@@ -106,6 +108,8 @@
 (def-builtin make-closure :macro true)
 (def-builtin apply?)
 (def-builtin !apply?)
+(def-builtin special-form?)
+(def-builtin !special-form?)
 
 ;; concurrency
 

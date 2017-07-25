@@ -363,18 +363,18 @@ func getBuiltInsNamespace() a.Namespace {
 	return a.GetNamespace(a.BuiltInDomain)
 }
 
-func registerBuiltIn(v a.Annotated) {
+func registerBuiltIn(v a.AnnotatedValue) {
 	ns := getBuiltInsNamespace()
 	if _, ok := ns.Get(replBuiltIns); !ok {
 		ns.Put(replBuiltIns, a.NewVector())
 	}
 	vec, _ := ns.Get(replBuiltIns)
-	bi := vec.(a.Vector).Conjoin(v.(a.Value))
+	bi := vec.(a.Vector).Conjoin(v)
 	ns.Delete(replBuiltIns)
 	ns.Put(replBuiltIns, bi)
 
 	n := v.Metadata().GetValue(a.NameKey).(a.Name)
-	ns.Put(n, v.(a.Value))
+	ns.Put(n, v)
 }
 
 func registerBuiltIns() {

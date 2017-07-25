@@ -20,6 +20,9 @@ func TestMetadata(t *testing.T) {
 		s("hello"): s("there"),
 	})
 
+	as.True(a.IsTrue(v1, s("foo")))
+	as.False(a.IsTrue(v2, s("foo")))
+
 	s1 := v1.Str()
 	as.Contains(`"foo" true`, s1)
 	as.Contains(`"bar" false`, s1)

@@ -55,12 +55,7 @@ func (a associative) Get(key Value) (Value, bool) {
 }
 
 func (a associative) Apply(_ Context, args Sequence) Value {
-	AssertArity(args, 1)
-	k := args.First()
-	if r, ok := a.Get(k); ok {
-		return r
-	}
-	panic(ErrStr(KeyNotFound, k))
+	return MappedApply(a, args)
 }
 
 func (a associative) Eval(c Context) Value {

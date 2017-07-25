@@ -25,9 +25,9 @@ func withMeta(_ a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 2)
 	o := a.AssertAnnotated(args.First())
 	if m, ok := args.Rest().First().(a.MappedSequence); ok {
-		return o.WithMetadata(toProperties(m)).(a.Value)
+		return o.WithMetadata(toProperties(m))
 	}
-	panic(a.ErrStr(a.ExpectedSequence, o))
+	panic(a.ErrStr(a.ExpectedMapped, o))
 }
 
 func meta(_ a.Context, args a.Sequence) a.Value {

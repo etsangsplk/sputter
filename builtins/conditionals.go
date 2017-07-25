@@ -4,13 +4,11 @@ import a "github.com/kode4food/sputter/api"
 
 func _if(c a.Context, args a.Sequence) a.Value {
 	i := a.AssertArityRange(args, 2, 3)
-	cond := a.Eval(c, args.First())
-	rest := args.Rest()
-	if a.Truthy(cond) {
-		return a.Eval(c, rest.First())
+	if a.Truthy(a.Eval(c, args.First())) {
+		return a.Eval(c, args.Rest().First())
 	}
 	if i == 3 {
-		return a.Eval(c, rest.Rest().First())
+		return a.Eval(c, args.Rest().Rest().First())
 	}
 	return a.Nil
 }

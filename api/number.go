@@ -120,7 +120,6 @@ func (r *rat) Add(n Number) Number {
 	return (*dec)(res)
 }
 
-// Sub will subtract two Numbers
 func (d *dec) Sub(n Number) Number {
 	res := new(apd.Decimal)
 	if dn, ok := n.(*dec); ok {
@@ -198,7 +197,6 @@ func (r *rat) Mod(n Number) Number {
 	return (*dec)(res)
 }
 
-// Float64 converts the value to a native float64
 func (d *dec) Float64() (float64, bool) {
 	v, err := (*apd.Decimal)(d).Float64()
 	return v, err == nil
@@ -208,7 +206,6 @@ func (r *rat) Float64() (float64, bool) {
 	return (*big.Rat)(r).Float64()
 }
 
-// Str converts this Value into a Str
 func (d *dec) Str() Str {
 	return Str((*apd.Decimal)(d).ToStandard())
 }

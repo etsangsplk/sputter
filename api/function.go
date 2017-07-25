@@ -30,6 +30,15 @@ type (
 )
 
 var (
+	// DefaultFunctionName is the default name for anonymous functions
+	DefaultFunctionName = Name("<lambda>")
+
+	// DefaultFunctionType is the default type for functions
+	DefaultFunctionType = Name("function")
+
+	// Undocumented is the default documentation for a function
+	Undocumented = Str("this function is not documented")
+
 	// MacroKey identifies a Function as being a Macro
 	MacroKey = NewKeyword("macro")
 
@@ -37,8 +46,11 @@ var (
 	SpecialKey = NewKeyword("special-form")
 
 	functionMetadata = Properties{
-		NameKey: Name("<anon>"),
-		TypeKey: Name("function"),
+		NameKey:    DefaultFunctionName,
+		TypeKey:    DefaultFunctionType,
+		DocKey:     Undocumented,
+		MacroKey:   False,
+		SpecialKey: False,
 	}
 )
 
@@ -58,7 +70,7 @@ func (f *function) Metadata() Object {
 	return f.meta
 }
 
-func (f *function) WithMetadata(md Object) Annotated {
+func (f *function) WithMetadata(md Object) AnnotatedValue {
 	return &function{
 		exec: f.exec,
 		meta: f.meta.Child(md.Flatten()),
@@ -66,8 +78,12 @@ func (f *function) WithMetadata(md Object) Annotated {
 }
 
 func (f *function) Name() Name {
-	n, _ := f.Metadata().Get(NameKey)
-	return n.(Name)
+	if v, ok := f.meta.Get(NameKey); ok {
+		if n, ok := v.(Name); ok {
+			return n
+		}
+	}
+	return DefaultFunctionName
 }
 
 func (f *function) Documentation() Str {
@@ -81,7 +97,7 @@ func (f *function) Type() Name {
 			return n
 		}
 	}
-	return "function"
+	return DefaultFunctionType
 }
 
 func (f *function) Apply(c Context, args Sequence) Value {

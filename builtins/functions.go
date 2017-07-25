@@ -10,8 +10,8 @@ const InvalidRestArgument = "rest-argument not well-formed: %s"
 
 type (
 	functionDefinition struct {
+		name a.Name
 		args a.Vector
-		rest bool
 		body a.Sequence
 		meta a.Object
 	}
@@ -21,7 +21,6 @@ type (
 
 var (
 	emptyMetadata = a.Properties{}
-	defaultName   = a.Name("<lambda>")
 	restMarker    = a.Name("&")
 	metaDocAsset  = a.NewKeyword("doc-asset")
 )
@@ -81,7 +80,7 @@ func makeFixedArgProcessor(cl a.Context, an []a.Name) argProcessor {
 	}
 }
 
-func optionalMetadata(c a.Context, args a.Sequence) (a.Object, a.Sequence) {
+func optionalMetadata(args a.Sequence) (a.Object, a.Sequence) {
 	r := args
 	var md a.Object
 	if s, ok := r.First().(a.Str); ok {
@@ -92,8 +91,7 @@ func optionalMetadata(c a.Context, args a.Sequence) (a.Object, a.Sequence) {
 	}
 
 	if m, ok := r.First().(a.MappedSequence); ok {
-		em := a.Eval(c, m).(a.MappedSequence)
-		md = md.Child(toProperties(em))
+		md = md.Child(toProperties(m))
 		r = r.Rest()
 	}
 	return md, r
@@ -107,7 +105,7 @@ func optionalName(args a.Sequence) (a.Name, a.Sequence) {
 		}
 		panic(a.ErrStr(a.ExpectedUnqualified, s.Qualified()))
 	}
-	return defaultName, args
+	return a.DefaultFunctionName, args
 }
 
 func loadDocumentation(md a.Object) a.Object {
@@ -131,52 +129,51 @@ func loadDocumentation(md a.Object) a.Object {
 	})
 }
 
-func getFunctionDefinition(c a.Context, args a.Sequence) *functionDefinition {
+func parseNamedFunction(args a.Sequence) *functionDefinition {
 	a.AssertMinimumArity(args, 3)
 	fn := a.AssertUnqualified(args.First()).Name()
-	md, r := optionalMetadata(c, args.Rest())
+	return parseFunctionRest(fn, args.Rest())
+}
+
+func parseFunction(args a.Sequence) *functionDefinition {
+	a.AssertMinimumArity(args, 2)
+	fn, r := optionalName(args)
+	return parseFunctionRest(fn, r)
+}
+
+func parseFunctionRest(fn a.Name, r a.Sequence) *functionDefinition {
+	md, r := optionalMetadata(r)
 	md = loadDocumentation(md)
+
 	an := a.AssertVector(r.First())
+	md = md.Child(a.Properties{
+		a.NameKey: fn,
+		a.ArgsKey: an,
+	})
 
 	return &functionDefinition{
+		name: fn,
 		args: an,
 		body: r.Rest(),
-		meta: md.Child(a.Properties{
-			a.NameKey: fn,
-			a.ArgsKey: an,
-		}),
+		meta: md,
 	}
 }
 
-func defineFunction(closure a.Context, d *functionDefinition) a.Function {
-	ap := makeArgProcessor(closure, d.args)
-	ex := a.MacroExpandAll(closure, d.body).(a.Sequence)
+func makeFunction(c a.Context, d *functionDefinition) a.Function {
+	ap := makeArgProcessor(c, d.args)
+	ex := a.MacroExpandAll(c, d.body).(a.Sequence)
 	db := a.NewBlock(ex)
 
 	var res a.Function
 	res = a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
-		l := ap(c, args)
-		l.Put("recur", res)
-		return a.Eval(l, db)
+		return a.Eval(ap(c, args), db)
 	}).WithMetadata(d.meta).(a.Function)
 	return res
 }
 
 func lambda(c a.Context, args a.Sequence) a.Value {
-	a.AssertMinimumArity(args, 2)
-	fn, r := optionalName(args)
-	md, r := optionalMetadata(c, r)
-	md = loadDocumentation(md)
-	an := a.AssertVector(r.First())
-
-	return defineFunction(c, &functionDefinition{
-		args: an,
-		body: r.Rest(),
-		meta: md.Child(a.Properties{
-			a.NameKey: fn,
-			a.ArgsKey: an,
-		}),
-	})
+	d := parseFunction(args)
+	return makeFunction(c, d)
 }
 
 func apply(c a.Context, args a.Sequence) a.Value {

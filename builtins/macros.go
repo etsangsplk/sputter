@@ -6,22 +6,12 @@ var macroMetadata = a.Properties{
 	a.MacroKey: a.True,
 }
 
-func defineMacro(closure a.Context, d *functionDefinition) a.Function {
-	ap := makeArgProcessor(closure, d.args)
-	md := d.meta.Child(macroMetadata)
-	ex := a.MacroExpandAll(closure, d.body).(a.Sequence)
-	db := a.NewBlock(ex)
-
-	return a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
-		return a.Eval(ap(c, args), db)
-	}).WithMetadata(md).(a.Function)
-}
-
 func defmacro(c a.Context, args a.Sequence) a.Value {
-	fd := getFunctionDefinition(c, args)
-	m := defineMacro(c, fd)
-	a.GetContextNamespace(c).Put(m.Name(), m)
-	return m
+	d := parseNamedFunction(args)
+	n := a.NewLocalSymbol(d.name)
+	f := makeFunction(c, d)
+	r := f.WithMetadata(macroMetadata)
+	return def(c, a.NewVector(n, r))
 }
 
 func macroexpand1(c a.Context, args a.Sequence) a.Value {
@@ -41,9 +31,27 @@ func macroexpandAll(c a.Context, args a.Sequence) a.Value {
 	return a.MacroExpandAll(c, args.First())
 }
 
+func isMacro(v a.Value) bool {
+	if ap, ok := v.(a.Applicable); ok {
+		m, _ := a.IsMacro(ap)
+		return m
+	}
+	return false
+}
+
+func isSpecialForm(v a.Value) bool {
+	if ap, ok := v.(a.Applicable); ok {
+		return a.IsSpecialForm(ap)
+	}
+	return false
+}
+
 func init() {
 	RegisterBuiltIn("defmacro", defmacro)
 	RegisterBuiltIn("macroexpand1", macroexpand1)
 	RegisterBuiltIn("macroexpand", macroexpand)
 	RegisterBuiltIn("macroexpand-all", macroexpandAll)
+
+	RegisterSequencePredicate("macro?", isMacro)
+	RegisterSequencePredicate("special-form?", isSpecialForm)
 }

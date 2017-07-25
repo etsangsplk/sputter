@@ -18,8 +18,13 @@ func init() {
 
 	defer func() {
 		if rec := recover(); rec != nil {
-			fmt.Fprintf(os.Stderr, "\nBootstrap Error\n\n")
-			fmt.Fprintf(os.Stderr, "  %s: %s\n\n", filename, rec)
+			fmt.Fprint(os.Stderr, "\nBootstrap Error\n\n")
+			if a.IsErr(rec) {
+				msg := rec.(a.Object).GetValue(a.MessageKey)
+				fmt.Fprintf(os.Stderr, "  %s: %s\n\n", filename, msg)
+			} else {
+				fmt.Fprintf(os.Stderr, "  %s: %s\n\n", filename, rec)
+			}
 			os.Exit(-1)
 		}
 	}()
