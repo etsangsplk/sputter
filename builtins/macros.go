@@ -7,9 +7,9 @@ var macroMetadata = a.Properties{
 }
 
 func defmacro(c a.Context, args a.Sequence) a.Value {
-	d := parseNamedFunction(args)
-	n := a.NewLocalSymbol(d.name)
-	f := makeFunction(c, d)
+	fd := parseNamedFunction(args)
+	n := a.NewLocalSymbol(fd.name)
+	f := makeFunction(c, fd)
 	r := f.WithMetadata(macroMetadata)
 	return def(c, a.NewVector(n, r))
 }
@@ -35,13 +35,6 @@ func isMacro(v a.Value) bool {
 	if ap, ok := v.(a.Applicable); ok {
 		m, _ := a.IsMacro(ap)
 		return m
-	}
-	return false
-}
-
-func isSpecialForm(v a.Value) bool {
-	if ap, ok := v.(a.Applicable); ok {
-		return a.IsSpecialForm(ap)
 	}
 	return false
 }

@@ -5,6 +5,7 @@ import (
 
 	a "github.com/kode4food/sputter/api"
 	"github.com/kode4food/sputter/assert"
+	"github.com/kode4food/sputter/builtins"
 )
 
 func TestFunction(t *testing.T) {
@@ -36,9 +37,13 @@ func TestFunction(t *testing.T) {
 func TestBadFunction(t *testing.T) {
 	symErr := a.ErrStr(a.ExpectedSymbol, "99")
 	vecErr := a.ErrStr(a.ExpectedVector, "99")
+	listErr := a.ErrStr(a.ExpectedList, "99")
+
 	testBadCode(t, `(defn blah [name 99 bad] (name))`, symErr)
-	testBadCode(t, `(defn blah 99 (name))`, vecErr)
+	testBadCode(t, `(defn blah 99 (name))`, listErr)
 	testBadCode(t, `(defn 99 [x y] (+ x y))`, symErr)
+	testBadCode(t, `(defn blah (99 "hello"))`, vecErr)
+	testBadCode(t, `(defn blah ([x] "hello") 99)`, listErr)
 }
 
 func TestBadFunctionArity(t *testing.T) {
@@ -49,5 +54,5 @@ func TestBadFunctionArity(t *testing.T) {
 	testBadCode(t, `
 		(defn identity [value] value)
 		(identity)
-	`, a.ErrStr(a.BadArity, 1, 0))
+	`, a.ErrStr(builtins.ExpectedArguments, args(local("value"))))
 }

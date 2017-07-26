@@ -45,7 +45,12 @@ func evalBuffer(src []byte) a.Value {
 
 func exitWithError() {
 	if rec := recover(); rec != nil {
-		fmt.Println(rec)
+		if a.IsErr(rec) {
+			msg := rec.(a.Object).GetValue(a.MessageKey)
+			fmt.Println(msg)
+		} else {
+			fmt.Println(rec)
+		}
 		os.Exit(-2)
 	}
 }

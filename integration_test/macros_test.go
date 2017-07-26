@@ -6,6 +6,11 @@ import (
 	a "github.com/kode4food/sputter/api"
 )
 
+func TestMacro(t *testing.T) {
+	testCode(t, `(macro? cond)`, a.True)
+	testCode(t, `(macro? if)`, a.False)
+}
+
 func TestMacroReplace(t *testing.T) {
 	a.GetNamespace(a.UserDomain).Delete("foo")
 

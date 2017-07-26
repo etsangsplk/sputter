@@ -1,22 +1,40 @@
 package builtins
 
 import (
+	"strings"
+
 	a "github.com/kode4food/sputter/api"
 	d "github.com/kode4food/sputter/docstring"
 )
 
-// InvalidRestArgument is thrown if you include more than one rest argument
-const InvalidRestArgument = "rest-argument not well-formed: %s"
+const (
+	// InvalidRestArgument is thrown if you include more than one rest argument
+	InvalidRestArgument = "rest-argument not well-formed: %s"
+
+	// ExpectedArguments is thrown if argument patterns don't match
+	ExpectedArguments = "expected arguments of the form: %s"
+)
 
 type (
-	functionDefinition struct {
-		name a.Name
+	argProcessor func(a.Context, a.Sequence) (a.Context, bool)
+
+	functionSignature struct {
 		args a.Vector
 		body a.Sequence
+	}
+
+	functionSignatures []*functionSignature
+
+	functionDefinition struct {
+		name a.Name
+		sigs functionSignatures
 		meta a.Object
 	}
 
-	argProcessor func(a.Context, a.Sequence) a.Context
+	argProcessorMatch struct {
+		args argProcessor
+		body a.Block
+	}
 )
 
 var (
@@ -50,10 +68,12 @@ func parseRestArg(s a.Sequence) a.Name {
 }
 
 func makeRestArgProcessor(cl a.Context, an []a.Name, rn a.Name) argProcessor {
-	ac := len(an)
+	ac := a.MakeMinimumArityChecker(len(an))
 
-	return func(_ a.Context, args a.Sequence) a.Context {
-		a.AssertMinimumArity(args, ac)
+	return func(_ a.Context, args a.Sequence) (a.Context, bool) {
+		if _, ok := ac(args); !ok {
+			return nil, false
+		}
 		l := a.ChildContext(cl)
 		i := args
 		for _, n := range an {
@@ -61,22 +81,24 @@ func makeRestArgProcessor(cl a.Context, an []a.Name, rn a.Name) argProcessor {
 			i = i.Rest()
 		}
 		l.Put(rn, a.ToList(i))
-		return l
+		return l, true
 	}
 }
 
 func makeFixedArgProcessor(cl a.Context, an []a.Name) argProcessor {
-	ac := len(an)
+	ac := a.MakeArityChecker(len(an))
 
-	return func(_ a.Context, args a.Sequence) a.Context {
-		a.AssertArity(args, ac)
+	return func(_ a.Context, args a.Sequence) (a.Context, bool) {
+		if _, ok := ac(args); !ok {
+			return nil, false
+		}
 		l := a.ChildContext(cl)
 		i := args
 		for _, n := range an {
 			l.Put(n, i.First())
 			i = i.Rest()
 		}
-		return l
+		return l, true
 	}
 }
 
@@ -145,35 +167,89 @@ func parseFunctionRest(fn a.Name, r a.Sequence) *functionDefinition {
 	md, r := optionalMetadata(r)
 	md = loadDocumentation(md)
 
-	an := a.AssertVector(r.First())
+	sigs := parseFunctionSignatures(r)
 	md = md.Child(a.Properties{
 		a.NameKey: fn,
-		a.ArgsKey: an,
 	})
 
 	return &functionDefinition{
 		name: fn,
-		args: an,
-		body: r.Rest(),
+		sigs: sigs,
 		meta: md,
 	}
 }
 
-func makeFunction(c a.Context, d *functionDefinition) a.Function {
-	ap := makeArgProcessor(c, d.args)
-	ex := a.MacroExpandAll(c, d.body).(a.Sequence)
-	db := a.NewBlock(ex)
-
-	var res a.Function
-	res = a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
-		return a.Eval(ap(c, args), db)
-	}).WithMetadata(d.meta).(a.Function)
+func parseFunctionSignatures(r a.Sequence) functionSignatures {
+	if args, ok := r.First().(a.Vector); ok {
+		return functionSignatures{
+			{args: args, body: r.Rest()},
+		}
+	}
+	res := functionSignatures{}
+	for i := r; i.IsSequence(); i = i.Rest() {
+		l := a.AssertList(i.First())
+		res = append(res, &functionSignature{
+			args: a.AssertVector(l.First()),
+			body: l.Rest(),
+		})
+	}
 	return res
 }
 
+func makeFunction(c a.Context, d *functionDefinition) a.Function {
+	var res a.Function
+
+	if len(d.sigs) > 1 {
+		res = makeMultiFunction(c, d.sigs)
+	} else {
+		res = makeSingleFunction(c, d.sigs[0])
+	}
+	return res.WithMetadata(d.meta).(a.Function)
+}
+
+func makeSingleFunction(c a.Context, s *functionSignature) a.Function {
+	ap := makeArgProcessor(c, s.args)
+	ex := a.MacroExpandAll(c, s.body).(a.Sequence)
+	db := a.NewBlock(ex)
+
+	return a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
+		if l, ok := ap(c, args); ok {
+			return a.Eval(l, db)
+		}
+		panic(a.ErrStr(ExpectedArguments, s.args))
+	})
+}
+
+func makeMultiFunction(c a.Context, sigs functionSignatures) a.Function {
+	ls := len(sigs)
+	procMap := make([]argProcessorMatch, ls)
+	args := make([]string, ls)
+
+	for i, s := range sigs {
+		ex := a.MacroExpandAll(c, s.body).(a.Sequence)
+		procMap[i] = argProcessorMatch{
+			args: makeArgProcessor(c, s.args),
+			body: a.NewBlock(ex),
+		}
+		args[i] = string(s.args.Str())
+	}
+
+	argPatterns := strings.Join(args, " or ")
+
+	return a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
+		for _, m := range procMap {
+			if l, ok := m.args(c, args); ok {
+				return a.Eval(l, m.body)
+			}
+		}
+		
+		panic(a.ErrStr(ExpectedArguments, argPatterns))
+	})
+}
+
 func lambda(c a.Context, args a.Sequence) a.Value {
-	d := parseFunction(args)
-	return makeFunction(c, d)
+	fd := parseFunction(args)
+	return makeFunction(c, fd)
 }
 
 func apply(c a.Context, args a.Sequence) a.Value {
@@ -190,8 +266,16 @@ func isApplicable(v a.Value) bool {
 	return false
 }
 
+func isSpecialForm(v a.Value) bool {
+	if ap, ok := v.(a.Applicable); ok {
+		return a.IsSpecialForm(ap)
+	}
+	return false
+}
+
 func init() {
 	RegisterBuiltIn("lambda", lambda)
 	RegisterBuiltIn("apply", apply)
 	RegisterSequencePredicate("apply?", isApplicable)
+	RegisterSequencePredicate("special-form?", isSpecialForm)
 }

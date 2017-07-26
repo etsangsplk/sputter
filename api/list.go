@@ -1,5 +1,8 @@
 package api
 
+// ExpectedList is thrown when a value is not a List
+const ExpectedList = "value is not a list: %s"
+
 // List contains a node to a singly-linked List
 type List interface {
 	Conjoiner
@@ -110,6 +113,14 @@ func (l *list) evalArgs(c Context, args *list) Vector {
 
 func (l *list) Str() Str {
 	return MakeSequenceStr(l)
+}
+
+// AssertList will cast a Value into a List or explode violently
+func AssertList(v Value) Sequence {
+	if r, ok := v.(List); ok {
+		return r
+	}
+	panic(ErrStr(ExpectedList, v))
 }
 
 func init() {

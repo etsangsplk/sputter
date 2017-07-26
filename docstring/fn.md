@@ -1,4 +1,4 @@
-# (fn name? meta? [name**] form+) creates an anonymous function
+# (fn name? meta? [args] form+) creates an anonymous function
 Will create an anonymous function that may be passed around in a first-class manner.
 
 ## An Example
@@ -12,4 +12,4 @@ Will create an anonymous function that may be passed around in a first-class man
 
 This example will return the vector _[2 4 6 8 10 12]_.
 
-Anonymous functions produce a closure that copies the variables that have been referenced from the surrounding scope. Alternatively, one can create a function that remains completely attached to its local scope by using `lambda` instead of `fn`, though this can lead to memory leaks.
+Anonymous functions produce a closure that copies the variables that have been referenced from the surrounding scope.

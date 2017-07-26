@@ -17,6 +17,18 @@ func f(f float64) a.Number {
 	return a.NewFloat(f)
 }
 
+func v(e ...a.Value) a.Vector {
+	return a.NewVector(e...)
+}
+
+func args(e ...a.Value) a.Vector {
+	return v(e...)
+}
+
+func local(n a.Name) a.Symbol {
+	return a.NewLocalSymbol(n)
+}
+
 func runCode(src string) a.Value {
 	return e.EvalStr(e.NewEvalContext(), a.Str(src))
 }

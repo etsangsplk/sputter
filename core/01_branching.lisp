@@ -17,30 +17,25 @@
 
 (defmacro cond
   {:doc-asset "cond"}
-  [& clauses]
-  (when (seq? clauses)
-    (if (= (len clauses) 1)
-        (clauses 0)
-        `(if ~(clauses 0)
-             ~(clauses 1)
-             (sputter:cond ~@(rest (rest clauses)))))))
+  ([] nil)
+  ([clause] clause)
+  ([& clauses] 
+    `(if ~(clauses 0)
+         ~(clauses 1)
+         (sputter:cond ~@(rest (rest clauses))))))
 
 (defmacro and
   {:doc-asset "and"}
-  [& clauses]
-  (cond
-    (!seq? clauses)     true
-    (= (len clauses) 1) (clauses 0)
-    :else
-      `(let [and# ~(clauses 0)]
-        (if and# (sputter:and ~@(rest clauses)) and#))))
+  ([] true)
+  ([clause] clause)
+  ([& clauses]
+    `(let [and# ~(clauses 0)]
+      (if and# (sputter:and ~@(rest clauses)) and#))))
 
 (defmacro or
   {:doc-asset "or"}
-  [& clauses]
-  (cond
-    (!seq? clauses)     nil
-    (= (len clauses) 1) (clauses 0)
-    :else
-      `(let [or# ~(clauses 0)]
-        (if or# or# (sputter:or ~@(rest clauses))))))
+  ([] nil)
+  ([clause] clause)
+  ([& clauses]
+    `(let [or# ~(clauses 0)]
+       (if or# or# (sputter:or ~@(rest clauses))))))

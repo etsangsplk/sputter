@@ -19,7 +19,7 @@ func TestLambda(t *testing.T) {
 }
 
 func TestBadLambda(t *testing.T) {
-	err := a.ErrStr(a.ExpectedVector, "99")
+	err := a.ErrStr(a.ExpectedList, "99")
 	testBadCode(t, `(lambda 99 "hello")`, err)
 
 	err = a.ErrStr(a.ExpectedUnqualified, "foo:bar")

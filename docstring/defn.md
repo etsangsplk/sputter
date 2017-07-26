@@ -1,4 +1,4 @@
-# (defn name meta? [name**] form+) assigns a namespace function
+# (defn name meta? [args] form+) assigns a namespace function
 Will declare a function in the current namespace, which is 'user' by default.
 
 ## An Example

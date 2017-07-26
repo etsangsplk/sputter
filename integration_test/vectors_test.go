@@ -16,6 +16,9 @@ func TestVector(t *testing.T) {
 	r2 := runCode(`(apply vector (concat '(1) '((- 5 3)) '((+ 1 2))))`)
 	as.String("[1 (- 5 3) (+ 1 2)]", r2)
 
+	testCode(t, `(conj [1 2 3] 4)`, s("[1 2 3 4]"))
+	testCode(t, `(vector? (conj [1 2 3] 4))`, a.True)
+
 	testCode(t, `(vector? [1 2 3])`, a.True)
 	testCode(t, `(vector? (vector 1 2 3))`, a.True)
 	testCode(t, `(vector? [])`, a.True)

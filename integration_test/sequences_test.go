@@ -7,6 +7,12 @@ import (
 	_ "github.com/kode4food/sputter/core"
 )
 
+func TestSequences(t *testing.T) {
+	testCode(t, `(seq? [1 2 3])`, a.True)
+	testCode(t, `(seq? ())`, a.False)
+	testCode(t, `(seq? 99)`, a.False)
+}
+
 func TestToAssoc(t *testing.T) {
 	testCode(t, `(assoc? (to-assoc [:name "Sputter" :age 45]))`, a.True)
 	testCode(t, `(assoc? (to-assoc '(:name "Sputter" :age 45)))`, a.True)

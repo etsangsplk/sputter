@@ -22,6 +22,7 @@ func TestMetadata(t *testing.T) {
 
 	as.True(a.IsTrue(v1, s("foo")))
 	as.False(a.IsTrue(v2, s("foo")))
+	as.False(a.IsTrue(v2, s("missing")))
 
 	s1 := v1.Str()
 	as.Contains(`"foo" true`, s1)

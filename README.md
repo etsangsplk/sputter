@@ -39,11 +39,11 @@ I just started this thing and it's still pretty fragile, but
 that will change rapidly. The current built-in forms are:
 
   * Branching: `if`, `cond`, `do`, `when`, `when-not`, `and`, `or`
-  * Numeric: `+`, `-`, `*`, `/`, `!=`, `=`, `<`, `<=`, `>`, `>=`
+  * Numeric: `+`, `-`, `*`, `/`, `!=`, `=`, `<`, `<=`, `>`, `>=`, `inf`, `-inf`
   * Variables: `def`, `let`, `ns`, `with-ns`, `quote`
   * Functions: `defn`, `fn`, `lambda`, `apply`, `defmacro`
   * Predicates: `eq`, `nil?`
-  * Sequences: `cons`, `conj`, `first`, `rest`, `seq?`
+  * Sequences: `cons`, `conj`, `first`, `rest`, `seq?`, `range`
   * Lists: `list`, `list?`, `to-list`
   * Vectors: `vector`, `vector?`, `to-vector`
   * Associative Arrays: `assoc`, `assoc?`, `to-assoc`
@@ -55,7 +55,7 @@ that will change rapidly. The current built-in forms are:
   * Concurrency: `async`, `generate`, `channel`, `future`, `promise`, `promise?`
   * Strings: `str`, `str?`
   * I/O: `print`, `println`, `pr`, `prn`
-  * Operating System: `*env*`, `*args*`
+  * Operating System: `*env*`, `*args*`, `*stdout*`, `*stderr*`, `*stdin*`
 
 Documentation for most of these forms may be viewed in the
 REPL using the `doc` function.

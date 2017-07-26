@@ -1,16 +1,12 @@
 ;;;; sputter core: functions
 
 (defmacro assert-args
-  [& clauses]
-  (cond
-    (!seq? clauses)
-      nil
-    (= (len clauses) 1)
-      (panic :message "assert-args clauses must be paired")
-    (>= (len clauses) 2)
-      `(cond
-        ~(clauses 0) (sputter:assert-args ~@(rest (rest clauses)))
-        :else        (panic :message ~(clauses 1)))))
+  ([] nil)
+  ([clause] (panic :message "assert-args clauses must be paired"))
+  ([& clauses]
+    `(cond
+      ~(clauses 0) (sputter:assert-args ~@(rest (rest clauses)))
+      :else        (panic :message ~(clauses 1)))))
 
 (defmacro fn
   {:doc-asset "fn"}
