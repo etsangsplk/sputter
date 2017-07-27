@@ -7,6 +7,18 @@ import (
 	"github.com/kode4food/sputter/builtins"
 )
 
+func TestFunctionPredicates(t *testing.T) {
+	testCode(t, `(apply? if)`, a.True)
+	testCode(t, `(!apply? if)`, a.False)
+	testCode(t, `(apply? 99)`, a.False)
+	testCode(t, `(!apply? 99)`, a.True)
+
+	testCode(t, `(special-form? if)`, a.True)
+	testCode(t, `(!special-form? if)`, a.False)
+	testCode(t, `(special-form? eq)`, a.False)
+	testCode(t, `(!special-form? eq)`, a.True)
+}
+
 func TestLambda(t *testing.T) {
 	a.GetNamespace(a.UserDomain).Delete("call")
 

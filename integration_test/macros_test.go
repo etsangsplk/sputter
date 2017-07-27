@@ -6,9 +6,11 @@ import (
 	a "github.com/kode4food/sputter/api"
 )
 
-func TestMacro(t *testing.T) {
+func TestMacroPredicates(t *testing.T) {
 	testCode(t, `(macro? cond)`, a.True)
+	testCode(t, `(!macro? cond)`, a.False)
 	testCode(t, `(macro? if)`, a.False)
+	testCode(t, `(!macro? if)`, a.True)
 }
 
 func TestMacroReplace(t *testing.T) {
