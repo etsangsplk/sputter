@@ -17,4 +17,4 @@ script:
   - $GOPATH/bin/glide install
   - $GOPATH/bin/go-snapshot -pkg assets -out assets/assets.go docstring/*.md core/*.lisp -prefix="docstring/" docstring/*.md
   - go test $($GOPATH/bin/glide novendor)
-  - $GOPATH/bin/goveralls -service=travis-ci -ignore=assets/assets.go,cli/*.go
+  - $GOPATH/bin/goveralls -service=travis-ci -ignore=main.go,core/*.go,cli/*.go,assets/assets.go
