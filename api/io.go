@@ -93,11 +93,7 @@ func strToBytes(s Str) []byte {
 
 // StrOutput is the standard string-based output function
 func StrOutput(w *bufio.Writer, v Value) {
-	if s, ok := v.(Str); ok {
-		w.Write(strToBytes(s))
-		return
-	}
-	w.Write(strToBytes(v.Str()))
+	w.Write(strToBytes(MakeStr(v)))
 }
 
 // LineInput is the standard single line input function

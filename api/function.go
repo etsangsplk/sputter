@@ -39,9 +39,6 @@ var (
 	// DefaultFunctionType is the default type for functions
 	DefaultFunctionType = Name("function")
 
-	// Undocumented is the default documentation for a function
-	Undocumented = Str("this function is not documented")
-
 	// MacroKey identifies a Function as being a Macro
 	MacroKey = NewKeyword("macro")
 
@@ -51,7 +48,6 @@ var (
 	functionMetadata = Properties{
 		NameKey:    DefaultFunctionName,
 		TypeKey:    DefaultFunctionType,
-		DocKey:     Undocumented,
 		MacroKey:   False,
 		SpecialKey: False,
 	}
@@ -90,8 +86,7 @@ func (f *function) Name() Name {
 }
 
 func (f *function) Documentation() Str {
-	d, _ := f.Metadata().Get(DocKey)
-	return d.(Str)
+	return GetDocumentation(f)
 }
 
 func (f *function) Type() Name {

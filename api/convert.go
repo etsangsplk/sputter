@@ -102,11 +102,8 @@ func ToStr(s Sequence) Str {
 		v := i.First()
 		if v == Nil {
 			continue
-		} else if s, ok := v.(Str); ok {
-			buf.WriteString(string(s))
-		} else {
-			buf.WriteString(string(v.Str()))
 		}
+		buf.WriteString(string(MakeStr(v)))
 	}
 	return Str(buf.String())
 }

@@ -4,7 +4,6 @@ import (
 	"strings"
 
 	a "github.com/kode4food/sputter/api"
-	d "github.com/kode4food/sputter/docstring"
 )
 
 const (
@@ -40,7 +39,6 @@ type (
 var (
 	emptyMetadata = a.Properties{}
 	restMarker    = a.Name("&")
-	metaDocAsset  = a.NewKeyword("doc-asset")
 )
 
 func makeArgProcessor(cl a.Context, s a.Sequence) argProcessor {
@@ -130,27 +128,6 @@ func optionalName(args a.Sequence) (a.Name, a.Sequence) {
 	return a.DefaultFunctionName, args
 }
 
-func loadDocumentation(md a.Object) a.Object {
-	v, ok := md.Get(metaDocAsset)
-	if !ok {
-		return md
-	}
-
-	fn, ok := v.(a.Str)
-	if !ok || !fn.IsSequence() {
-		return md
-	}
-
-	s := string(fn)
-	if !d.Exists(s) {
-		return md
-	}
-
-	return md.Child(a.Properties{
-		a.DocKey: d.Get(s),
-	})
-}
-
 func parseNamedFunction(args a.Sequence) *functionDefinition {
 	a.AssertMinimumArity(args, 3)
 	fn := a.AssertUnqualified(args.First()).Name()
@@ -165,8 +142,6 @@ func parseFunction(args a.Sequence) *functionDefinition {
 
 func parseFunctionRest(fn a.Name, r a.Sequence) *functionDefinition {
 	md, r := optionalMetadata(r)
-	md = loadDocumentation(md)
-
 	sigs := parseFunctionSignatures(r)
 	md = md.Child(a.Properties{
 		a.NameKey: fn,
@@ -242,7 +217,7 @@ func makeMultiFunction(c a.Context, sigs functionSignatures) a.Function {
 				return a.Eval(l, m.body)
 			}
 		}
-		
+
 		panic(a.ErrStr(ExpectedArguments, argPatterns))
 	})
 }

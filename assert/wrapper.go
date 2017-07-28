@@ -35,12 +35,8 @@ func (w *Wrapper) String(expect string, expr Any) {
 		w.as.Equal(expect, s)
 		return
 	}
-	if s, ok := expr.(a.Str); ok {
-		w.as.Equal(expect, string(s))
-		return
-	}
-	if s, ok := expr.(a.Value); ok {
-		w.as.Equal(expect, string(s.Str()))
+	if v, ok := expr.(a.Value); ok {
+		w.as.Equal(expect, string(a.MakeStr(v)))
 		return
 	}
 	panic(a.ErrStr(InvalidTestExpression, expr))
@@ -108,23 +104,13 @@ func (w *Wrapper) Falsey(expr a.Value) {
 
 // Contains check if the expected string is in the provided Value
 func (w *Wrapper) Contains(expect string, expr a.Value) {
-	var val string
-	if s, ok := expr.(a.Str); ok {
-		val = string(s)
-	} else {
-		val = string(expr.Str())
-	}
+	val := string(a.MakeStr(expr))
 	w.as.True(strings.Contains(val, expect))
 }
 
 // NotContains checks if the expected string is not in the provided Value
 func (w *Wrapper) NotContains(expect string, expr a.Value) {
-	var val string
-	if s, ok := expr.(a.Str); ok {
-		val = string(s)
-	} else {
-		val = string(s.Str())
-	}
+	val := string(a.MakeStr(expr))
 	w.as.False(strings.Contains(val, expect))
 }
 
@@ -170,8 +156,8 @@ func (w *Wrapper) Compare(c a.Comparison, l a.Number, r a.Number) {
 func (w *Wrapper) ExpectError(err a.Object) {
 	if rec := recover(); rec != nil {
 		if a.IsErr(rec) {
-			errStr := string(err.GetValue(a.MessageKey).Str())
-			recStr := rec.(a.Object).GetValue(a.MessageKey).Str()
+			errStr := string(err.MustGet(a.MessageKey).Str())
+			recStr := rec.(a.Object).MustGet(a.MessageKey).Str()
 			w.String(errStr, recStr)
 			return
 		}

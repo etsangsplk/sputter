@@ -188,7 +188,7 @@ func (r *REPL) outputResult(v any) {
 }
 
 func (r *REPL) outputError(err a.Object) {
-	msg := err.GetValue(a.MessageKey)
+	msg := err.MustGet(a.MessageKey)
 	res := fmt.Sprintf(bad, r.nsSpace(), r.idx, msg)
 	fmt.Println(res)
 }
@@ -281,7 +281,7 @@ func toError(v interface{}) a.Object {
 }
 
 func isRecoverable(err a.Object) bool {
-	msg := err.GetValue(a.MessageKey).(a.Str)
+	msg := err.MustGet(a.MessageKey).(a.Str)
 	return msg == e.ListNotClosed ||
 		msg == e.VectorNotClosed ||
 		msg == e.MapNotClosed
@@ -346,13 +346,11 @@ func doc(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
 	sym := a.AssertUnqualified(args.First())
 	if v, ok := c.Get(sym.Name()); ok {
-		if an, ok := v.(a.Annotated); ok {
-			md := an.Metadata()
-			if doc, ok := md.GetValue(a.DocKey).(a.Str); ok {
-				f := formatForREPL(string(doc))
-				fmt.Println(f)
-				return nothing
-			}
+		if d, ok := v.(a.Documented); ok {
+			doc := d.Documentation()
+			f := formatForREPL(string(doc))
+			fmt.Println(f)
+			return nothing
 		}
 		panic(a.ErrStr("symbol is not documented: %s", sym))
 	}
@@ -373,23 +371,23 @@ func registerBuiltIn(v a.AnnotatedValue) {
 	ns.Delete(replBuiltIns)
 	ns.Put(replBuiltIns, bi)
 
-	n := v.Metadata().GetValue(a.NameKey).(a.Name)
+	n := v.Metadata().MustGet(a.NameKey).(a.Name)
 	ns.Put(n, v)
 }
 
 func registerBuiltIns() {
 	registerBuiltIn(
 		a.NewFunction(use).WithMetadata(a.Properties{
-			a.NameKey:    a.Name("use"),
-			a.DocKey:     d.Get("repl-use"),
-			a.SpecialKey: a.True,
+			a.NameKey:     a.Name("use"),
+			a.DocAssetKey: a.Str("repl-use"),
+			a.SpecialKey:  a.True,
 		}),
 	)
 
 	registerBuiltIn(
 		a.NewFunction(shutdown).WithMetadata(a.Properties{
-			a.NameKey: a.Name("quit"),
-			a.DocKey:  d.Get("repl-quit"),
+			a.NameKey:     a.Name("quit"),
+			a.DocAssetKey: a.Str("repl-quit"),
 		}),
 	)
 
@@ -401,23 +399,23 @@ func registerBuiltIns() {
 
 	registerBuiltIn(
 		a.NewFunction(cls).WithMetadata(a.Properties{
-			a.NameKey: a.Name("cls"),
-			a.DocKey:  d.Get("repl-cls"),
+			a.NameKey:     a.Name("cls"),
+			a.DocAssetKey: a.Str("repl-cls"),
 		}),
 	)
 
 	registerBuiltIn(
 		a.NewFunction(help).WithMetadata(a.Properties{
-			a.NameKey: a.Name("help"),
-			a.DocKey:  d.Get("repl-help"),
+			a.NameKey:     a.Name("help"),
+			a.DocAssetKey: a.Str("repl-help"),
 		}),
 	)
 
 	registerBuiltIn(
 		a.NewFunction(doc).WithMetadata(a.Properties{
-			a.NameKey:    a.Name("doc"),
-			a.DocKey:     d.Get("repl-doc"),
-			a.SpecialKey: a.True,
+			a.NameKey:     a.Name("doc"),
+			a.DocAssetKey: a.Str("repl-doc"),
+			a.SpecialKey:  a.True,
 		}),
 	)
 }

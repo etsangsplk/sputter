@@ -1,13 +1,10 @@
 package docstring
 
-import (
-	a "github.com/kode4food/sputter/api"
-	"github.com/kode4food/sputter/assets"
-)
+import "github.com/kode4food/sputter/assets"
 
 // Get resolves documentation using assets produced by go-bindata
-func Get(n string) a.Str {
-	return a.Str(assets.MustGet(filename(n)))
+func Get(n string) string {
+	return string(assets.MustGet(filename(n)))
 }
 
 // Exists returns whether or not a specific docstring exists

@@ -29,8 +29,6 @@ func defBuiltIn(c a.Context, args a.Sequence) a.Value {
 	n := a.AssertUnqualified(args.First()).Name()
 	if f, ok := GetBuiltIn(n); ok {
 		var md a.Object = toProperties(a.ToAssociative(args.Rest()))
-		md = loadDocumentation(md)
-
 		r := a.NewFunction(f).WithMetadata(md)
 		a.GetContextNamespace(c).Put(n, r)
 		return r

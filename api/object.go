@@ -10,7 +10,7 @@ type (
 	Object interface {
 		Value
 		Mapped
-		GetValue(Value) Value
+		MustGet(Value) Value
 		Child(Properties) Object
 		Flatten() Properties
 	}
@@ -41,8 +41,8 @@ func (p Properties) Get(k Value) (Value, bool) {
 	return Nil, false
 }
 
-// GetValue retrieves a Value from an Object or explodes
-func (p Properties) GetValue(k Value) Value {
+// MustGet retrieves a Value from an Object or explodes
+func (p Properties) MustGet(k Value) Value {
 	if v, ok := p.Get(k); ok {
 		return v
 	}
@@ -91,7 +91,7 @@ func (o *object) Get(k Value) (Value, bool) {
 	return o.parent.Get(k)
 }
 
-func (o *object) GetValue(k Value) Value {
+func (o *object) MustGet(k Value) Value {
 	if v, ok := o.Get(k); ok {
 		return v
 	}
