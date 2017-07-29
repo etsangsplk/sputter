@@ -115,14 +115,6 @@ func (s Str) Str() Str {
 	return Str(`"` + r + `"`)
 }
 
-// MakeStr converts a Value to a Str if it's not already one
-func MakeStr(v Value) Str {
-	if s, ok := v.(Str); ok {
-		return s
-	}
-	return v.Str()
-}
-
 // MakeDumpStr takes a Value and attempts to spit out a bunch of info
 func MakeDumpStr(v Value) Str {
 	m := NewObject(Properties{})

@@ -3,7 +3,7 @@ package builtins
 import a "github.com/kode4food/sputter/api"
 
 func assoc(_ a.Context, args a.Sequence) a.Value {
-	return a.ToAssociative(args)
+	return a.SequenceToAssociative(args)
 }
 
 func isAssociative(v a.Value) bool {

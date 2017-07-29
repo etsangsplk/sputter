@@ -59,3 +59,18 @@ func TestAnnotated(t *testing.T) {
 	defer as.ExpectError(a.ErrStr(a.ExpectedAnnotated, f(99)))
 	a.AssertAnnotated(f(99))
 }
+
+func TestGetDocumentation(t *testing.T) {
+	as := assert.New(t)
+
+	f1 := a.NewFunction(nil).WithMetadata(a.Properties{
+		a.DocKey: a.Str("hello there"),
+	})
+
+	f2 := a.NewFunction(nil).WithMetadata(a.Properties{
+		a.DocAssetKey: a.Str("if"),
+	})
+
+	as.String("hello there", a.GetDocumentation(f1))
+	as.Contains("## An Example", a.GetDocumentation(f2))
+}

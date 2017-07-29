@@ -6,7 +6,7 @@ import (
 )
 
 func _panic(_ a.Context, args a.Sequence) a.Value {
-	p := toProperties(a.ToAssociative(args))
+	p := toProperties(a.SequenceToAssociative(args))
 	panic(a.Err(p))
 }
 
@@ -25,7 +25,7 @@ func read(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
 	v := args.First()
 	s := a.AssertSequence(v)
-	return e.ReadStr(c, a.ToStr(s))
+	return e.ReadStr(c, a.SequenceToStr(s))
 }
 
 func eval(c a.Context, args a.Sequence) a.Value {

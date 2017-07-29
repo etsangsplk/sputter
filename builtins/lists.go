@@ -3,7 +3,7 @@ package builtins
 import a "github.com/kode4food/sputter/api"
 
 func list(_ a.Context, args a.Sequence) a.Value {
-	return a.ToList(args)
+	return a.SequenceToList(args)
 }
 
 func isList(v a.Value) bool {

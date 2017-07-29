@@ -28,7 +28,7 @@ func defBuiltIn(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
 	n := a.AssertUnqualified(args.First()).Name()
 	if f, ok := GetBuiltIn(n); ok {
-		var md a.Object = toProperties(a.ToAssociative(args.Rest()))
+		var md a.Object = toProperties(a.SequenceToAssociative(args.Rest()))
 		r := a.NewFunction(f).WithMetadata(md)
 		a.GetContextNamespace(c).Put(n, r)
 		return r

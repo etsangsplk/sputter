@@ -2,8 +2,8 @@ package api
 
 import "bytes"
 
-// ToList takes any sequence and converts it to a List
-func ToList(s Sequence) List {
+// SequenceToList takes any sequence and converts it to a List
+func SequenceToList(s Sequence) List {
 	if l, ok := s.(List); ok {
 		return l
 	}
@@ -22,8 +22,8 @@ func uncountedToList(s Sequence) List {
 	return NewList(uncountedToArray(s)...)
 }
 
-// ToVector takes any sequence and converts it to a Vector
-func ToVector(s Sequence) Vector {
+// SequenceToVector takes any sequence and converts it to a Vector
+func SequenceToVector(s Sequence) Vector {
 	if v, ok := s.(Vector); ok {
 		return v
 	}
@@ -50,8 +50,8 @@ func uncountedToArray(s Sequence) []Value {
 	return r
 }
 
-// ToAssociative takes any sequence and converts it to an associative
-func ToAssociative(s Sequence) Associative {
+// SequenceToAssociative takes any sequence and converts it to an associative
+func SequenceToAssociative(s Sequence) Associative {
 	if a, ok := s.(Associative); ok {
 		return a
 	}
@@ -92,8 +92,16 @@ func uncountedToAssociative(s Sequence) Associative {
 	return associative(r)
 }
 
-// ToStr takes any sequence and attempts to convert it to a Str
-func ToStr(s Sequence) Str {
+// MakeStr converts a Value to a Str if it's not already one
+func MakeStr(v Value) Str {
+	if s, ok := v.(Str); ok {
+		return s
+	}
+	return v.Str()
+}
+
+// SequenceToStr takes any sequence and attempts to convert it to a Str
+func SequenceToStr(s Sequence) Str {
 	if st, ok := s.(Str); ok {
 		return st
 	}
@@ -104,22 +112,6 @@ func ToStr(s Sequence) Str {
 			continue
 		}
 		buf.WriteString(string(MakeStr(v)))
-	}
-	return Str(buf.String())
-}
-
-// ToReaderStr takes a sequence and converts it to a readable Str
-func ToReaderStr(s Sequence) Str {
-	if st, ok := s.(Str); ok {
-		return st
-	}
-	var buf bytes.Buffer
-	if s.IsSequence() {
-		buf.WriteString(string(s.First().Str()))
-	}
-	for i := s.Rest(); i.IsSequence(); i = i.Rest() {
-		buf.WriteString(" ")
-		buf.WriteString(string(i.First().Str()))
 	}
 	return Str(buf.String())
 }

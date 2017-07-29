@@ -5,7 +5,7 @@ import (
 )
 
 func vector(_ a.Context, args a.Sequence) a.Value {
-	return a.ToVector(args)
+	return a.SequenceToVector(args)
 }
 
 func isVector(v a.Value) bool {

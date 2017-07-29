@@ -117,13 +117,13 @@ func makeFormObject(l List, a Applicable) List {
 		return &specialForm{
 			List: l,
 			fn:   a,
-			args: ToVector(l.Rest()),
+			args: SequenceToVector(l.Rest()),
 		}
 	}
 	return &evaluatingForm{
 		List: l,
 		fn:   a,
-		args: ToVector(l.Rest()),
+		args: SequenceToVector(l.Rest()),
 	}
 }
 

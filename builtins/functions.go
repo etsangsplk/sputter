@@ -78,7 +78,7 @@ func makeRestArgProcessor(cl a.Context, an []a.Name, rn a.Name) argProcessor {
 			l.Put(n, i.First())
 			i = i.Rest()
 		}
-		l.Put(rn, a.ToList(i))
+		l.Put(rn, a.SequenceToList(i))
 		return l, true
 	}
 }
