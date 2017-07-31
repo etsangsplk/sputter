@@ -114,6 +114,27 @@ func lte(c a.Context, args a.Sequence) a.Value {
 	})
 }
 
+func isPosInfinity(v a.Value) bool {
+	if n, ok := v.(a.Number); ok {
+		return a.PosInfinity.Cmp(n) == a.EqualTo
+	}
+	return false
+}
+
+func isNegInfinity(v a.Value) bool {
+	if n, ok := v.(a.Number); ok {
+		return a.NegInfinity.Cmp(n) == a.EqualTo
+	}
+	return false
+}
+
+func isNaN(v a.Value) bool {
+	if n, ok := v.(a.Number); ok {
+		return n.IsNaN()
+	}
+	return true
+}
+
 func init() {
 	Namespace.Put("inf", a.PosInfinity)
 	Namespace.Put("-inf", a.NegInfinity)
@@ -129,4 +150,8 @@ func init() {
 	RegisterBuiltIn(">=", gte)
 	RegisterBuiltIn("<", lt)
 	RegisterBuiltIn("<=", lte)
+
+	RegisterSequencePredicate("inf?", isPosInfinity)
+	RegisterSequencePredicate("-inf?", isNegInfinity)
+	RegisterSequencePredicate("nan?", isNaN)
 }

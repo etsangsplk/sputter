@@ -100,6 +100,13 @@
 (def-builtin <  :doc "checks that a set of numbers decreases in value")
 (def-builtin <= :doc "checks that a set of numbers doesn't increase in value")
 
+(def-builtin inf?   :doc "checks a number for positive infinity")
+(def-builtin !inf?  :doc "checks a number for positive infinity")
+(def-builtin -inf?  :doc "checks a number for negative infinity")
+(def-builtin !-inf? :doc "checks a number for negative infinity")
+(def-builtin nan?   :doc "checks that a value is not a number")
+(def-builtin !nan?  :doc "checks that a value is not a number")
+
 ;; functions
 
 (def-builtin closure      :doc-asset "closure" :macro true :special-form true)

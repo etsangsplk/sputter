@@ -25,6 +25,7 @@ type (
 		Mul(r Number) Number
 		Div(r Number) Number
 		Mod(r Number) Number
+		IsNaN() bool
 		Float64() (float64, bool)
 	}
 
@@ -195,6 +196,14 @@ func (r *rat) Mod(n Number) Number {
 	res := new(apd.Decimal)
 	ctx.Rem(res, r.toDecimal(), (*apd.Decimal)(n.(*dec)))
 	return (*dec)(res)
+}
+
+func (d *dec) IsNaN() bool {
+	return d.Form == apd.NaN || d.Form == apd.NaNSignaling
+}
+
+func (r *rat) IsNaN() bool {
+	return false
 }
 
 func (d *dec) Float64() (float64, bool) {
