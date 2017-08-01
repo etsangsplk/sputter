@@ -40,8 +40,10 @@ that will change rapidly. The current built-in forms are:
 
   * Branching: `if`, `cond`, `do`, `when`, `when-not`, `and`, `or`
   * Numeric: `+`, `-`, `*`, `/`, `!=`, `=`, `<`, `<=`, `>`, `>=`, `inf`, `-inf`
-  * Variables: `def`, `let`, `ns`, `with-ns`, `quote`
-  * Functions: `defn`, `fn`, `lambda`, `apply`, `defmacro`
+  * Numeric Predicates: `inf?`, `nan?`
+  * Variables: `def`, `let`, `ns`, `with-ns`, `quote`, `keyword?`
+  * Functions: `defn`, `fn`, `lambda`, `apply`, `apply?`, `special-form?`
+  * Macros: `defmacro`, `macro?`
   * Predicates: `eq`, `nil?`
   * Sequences: `cons`, `conj`, `first`, `rest`, `seq?`, `range`
   * Lists: `list`, `list?`, `to-list`
@@ -49,11 +51,11 @@ that will change rapidly. The current built-in forms are:
   * Associative Arrays: `assoc`, `assoc?`, `to-assoc`
   * Counted Sequences: `len`, `len?`
   * Indexed Sequences: `nth`, `indexed?`
-  * Mapped Sequences: `mapped?`
+  * Mapped Sequences: `mapped?`, `get`
   * Comprehensions: `concat`, `map`, `filter`, `reduce`, `take`, `drop`
   * Metadata: `meta`, `meta?`, `with-meta`
-  * Concurrency: `async`, `generate`, `channel`, `future`, `promise`, `promise?`
-  * Strings: `str`, `str?`
+  * Concurrency: `go`, `chan`, `generate`, `future`, `promise`, `promise?`
+  * Strings: `str`, `str!`, `str?`
   * I/O: `print`, `println`, `pr`, `prn`
   * Operating System: `*env*`, `*args*`, `*stdout*`, `*stderr*`, `*stdin*`
 
