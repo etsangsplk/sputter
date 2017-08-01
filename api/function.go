@@ -14,7 +14,8 @@ type (
 		IsFunction() bool
 	}
 
-	baseFunction struct {
+	// BaseFunction provides common behavior for different Function types
+	BaseFunction struct {
 		meta Object
 	}
 
@@ -25,12 +26,12 @@ type (
 
 	// ReflectedFunction is the base structure for reflected Functions
 	ReflectedFunction struct {
-		baseFunction
+		BaseFunction
 		concrete reflect.Type
 	}
 
 	execFunction struct {
-		baseFunction
+		BaseFunction
 		exec SequenceProcessor
 	}
 )
@@ -65,7 +66,7 @@ func NewReflectedFunction(f HasReflectedFunction) Function {
 // NewExecFunction creates a Function instance from a SequenceProcessor
 func NewExecFunction(e SequenceProcessor) Function {
 	return &execFunction{
-		baseFunction: baseFunction{
+		BaseFunction: BaseFunction{
 			meta: functionMetadata,
 		},
 		exec: e,
@@ -77,7 +78,7 @@ func newReflectedFunctionWithMeta(t reflect.Type, md Object) Function {
 	v := reflect.Indirect(ptr)
 	f := reflect.Indirect(v).FieldByName("ReflectedFunction")
 	f.Set(reflect.ValueOf(ReflectedFunction{
-		baseFunction: baseFunction{
+		BaseFunction: BaseFunction{
 			meta: md,
 		},
 		concrete: t,
@@ -85,15 +86,18 @@ func newReflectedFunctionWithMeta(t reflect.Type, md Object) Function {
 	return ptr.Interface().(Function)
 }
 
-func (f *baseFunction) IsFunction() bool {
+// IsFunction identifies this Value as a Function
+func (f *BaseFunction) IsFunction() bool {
 	return true
 }
 
-func (f *baseFunction) Metadata() Object {
+// Metadata returns the Function's metadata Object
+func (f *BaseFunction) Metadata() Object {
 	return f.meta
 }
 
-func (f *baseFunction) Name() Name {
+// Name inspects the Function's metadata to determine its Name
+func (f *BaseFunction) Name() Name {
 	if v, ok := f.Metadata().Get(NameKey); ok {
 		if n, ok := v.(Name); ok {
 			return n
@@ -102,11 +106,13 @@ func (f *baseFunction) Name() Name {
 	return DefaultFunctionName
 }
 
-func (f *baseFunction) Documentation() Str {
+// Documentation returns the Function's documentation
+func (f *BaseFunction) Documentation() Str {
 	return GetDocumentation(f.Metadata())
 }
 
-func (f *baseFunction) Type() Name {
+// Type inspects the Function's metadata to determine its Type
+func (f *BaseFunction) Type() Name {
 	if v, ok := f.Metadata().Get(TypeKey); ok {
 		if n, ok := v.(Name); ok {
 			return n
@@ -115,7 +121,8 @@ func (f *baseFunction) Type() Name {
 	return DefaultFunctionType
 }
 
-func (f *baseFunction) Str() Str {
+// Str converts this Value to a Str
+func (f *BaseFunction) Str() Str {
 	return MakeDumpStr(f)
 }
 
@@ -132,7 +139,7 @@ func (f *ReflectedFunction) WithMetadata(md Object) AnnotatedValue {
 
 func (f *execFunction) WithMetadata(md Object) AnnotatedValue {
 	return &execFunction{
-		baseFunction: baseFunction{
+		BaseFunction: BaseFunction{
 			meta: f.meta.Child(md.Flatten()),
 		},
 		exec: f.exec,
