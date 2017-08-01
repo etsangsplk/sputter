@@ -86,7 +86,7 @@ func (fi funcInfo) makeVoidFuncMapper() outMapper {
 
 	return func(v reflect.Value) a.Value {
 		fn := fi.fn(v)
-		return a.NewFunction(func(_ a.Context, args a.Sequence) a.Value {
+		return a.NewExecFunction(func(_ a.Context, args a.Sequence) a.Value {
 			fin := prepareArgs(args)
 			fn.Call(fin)
 			return a.Nil
@@ -100,7 +100,7 @@ func (fi funcInfo) makeSingularFuncMapper() outMapper {
 
 	return func(v reflect.Value) a.Value {
 		fn := fi.fn(v)
-		return a.NewFunction(func(_ a.Context, args a.Sequence) a.Value {
+		return a.NewExecFunction(func(_ a.Context, args a.Sequence) a.Value {
 			fin := prepareArgs(args)
 			r := fn.Call(fin)
 			return out[0](r[0])
@@ -115,7 +115,7 @@ func (fi funcInfo) makePluralFuncMapper() outMapper {
 
 	return func(v reflect.Value) a.Value {
 		fn := fi.fn(v)
-		return a.NewFunction(func(_ a.Context, args a.Sequence) a.Value {
+		return a.NewExecFunction(func(_ a.Context, args a.Sequence) a.Value {
 			fin := prepareArgs(args)
 			r := fn.Call(fin)
 			fout := make([]a.Value, olen)

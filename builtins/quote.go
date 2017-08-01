@@ -15,10 +15,15 @@ const (
 	genSymTemplate = "x-%s-gensym-%d"
 )
 
-type syntaxContext struct {
-	context a.Context
-	genSyms map[string]a.Symbol
-}
+type (
+	quoteFunction       struct{ a.ReflectedFunction }
+	syntaxQuoteFunction struct{ a.ReflectedFunction }
+
+	syntaxContext struct {
+		context a.Context
+		genSyms map[string]a.Symbol
+	}
+)
 
 var (
 	quoteSym  = a.NewBuiltInSymbol("quote")
@@ -147,12 +152,12 @@ func isUnquoteSplicing(v a.Value) (a.Value, bool) {
 	return isWrapperCall("unquote-splicing", v)
 }
 
-func quote(_ a.Context, args a.Sequence) a.Value {
+func (f *quoteFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
 	return args.First()
 }
 
-func syntaxquote(c a.Context, args a.Sequence) a.Value {
+func (f *syntaxQuoteFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
 	sc := &syntaxContext{
 		context: c,
@@ -162,6 +167,9 @@ func syntaxquote(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	RegisterBuiltIn("quote", quote)
-	RegisterBuiltIn("syntax-quote", syntaxquote)
+	var quote *quoteFunction
+	var syntaxQuote *syntaxQuoteFunction
+
+	RegisterBaseFunction("quote", quote)
+	RegisterBaseFunction("syntax-quote", syntaxQuote)
 }

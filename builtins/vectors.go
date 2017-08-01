@@ -1,10 +1,10 @@
 package builtins
 
-import (
-	a "github.com/kode4food/sputter/api"
-)
+import a "github.com/kode4food/sputter/api"
 
-func vector(_ a.Context, args a.Sequence) a.Value {
+type vectorFunction struct{ a.ReflectedFunction }
+
+func (f *vectorFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	return a.SequenceToVector(args)
 }
 
@@ -16,6 +16,9 @@ func isVector(v a.Value) bool {
 }
 
 func init() {
-	RegisterBuiltIn("vector", vector)
+	var vector *vectorFunction
+
+	RegisterBaseFunction("vector", vector)
+
 	RegisterSequencePredicate("vector?", isVector)
 }

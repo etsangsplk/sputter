@@ -63,7 +63,7 @@ func (t *testEvaluable) Str() a.Str {
 func TestVectorEval(t *testing.T) {
 	as := assert.New(t)
 
-	v := a.NewVector(s("hello"), s("how"), &testEvaluable{}, s("you?"))
+	v := a.NewVector(s("hello"), s("how"), new(testEvaluable), s("you?"))
 	as.True(v.IsVector())
 
 	c := a.NewContext()

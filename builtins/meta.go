@@ -2,6 +2,11 @@ package builtins
 
 import a "github.com/kode4food/sputter/api"
 
+type (
+	withMetaFunction struct{ a.ReflectedFunction }
+	getMetaFunction  struct{ a.ReflectedFunction }
+)
+
 func toProperties(args a.MappedSequence) a.Properties {
 	r := make(a.Properties)
 	for i := args.(a.Sequence); i.IsSequence(); i = i.Rest() {
@@ -21,7 +26,7 @@ func fromMetadata(m a.Object) a.Value {
 	return a.NewAssociative(r...)
 }
 
-func withMeta(_ a.Context, args a.Sequence) a.Value {
+func (f *withMetaFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 2)
 	o := a.AssertAnnotated(args.First())
 	if m, ok := args.Rest().First().(a.MappedSequence); ok {
@@ -30,7 +35,7 @@ func withMeta(_ a.Context, args a.Sequence) a.Value {
 	panic(a.ErrStr(a.ExpectedMapped, o))
 }
 
-func meta(_ a.Context, args a.Sequence) a.Value {
+func (f *getMetaFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
 	o := a.AssertAnnotated(args.First())
 	return fromMetadata(o.Metadata())
@@ -44,7 +49,11 @@ func isAnnotated(v a.Value) bool {
 }
 
 func init() {
-	RegisterBuiltIn("with-meta", withMeta)
-	RegisterBuiltIn("meta", meta)
+	var withMeta *withMetaFunction
+	var getMeta *getMetaFunction
+
+	RegisterBaseFunction("with-meta", withMeta)
+	RegisterBaseFunction("meta", getMeta)
+
 	RegisterSequencePredicate("meta?", isAnnotated)
 }

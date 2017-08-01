@@ -5,11 +5,16 @@ import (
 	a "github.com/kode4food/sputter/api"
 )
 
-func str(_ a.Context, args a.Sequence) a.Value {
+type (
+	strFunction       struct{ a.ReflectedFunction }
+	readerStrFunction struct{ a.ReflectedFunction }
+)
+
+func (f *strFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	return a.SequenceToStr(args)
 }
 
-func readerString(_ a.Context, args a.Sequence) a.Value {
+func (f *readerStrFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	var buf bytes.Buffer
 	if args.IsSequence() {
 		buf.WriteString(string(args.First().Str()))
@@ -29,7 +34,11 @@ func isStr(v a.Value) bool {
 }
 
 func init() {
-	RegisterBuiltIn("str", str)
-	RegisterBuiltIn("str!", readerString)
+	var str *strFunction
+	var readerStr *readerStrFunction
+
+	RegisterBaseFunction("str", str)
+	RegisterBaseFunction("str!", readerStr)
+
 	RegisterSequencePredicate("str?", isStr)
 }

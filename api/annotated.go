@@ -35,7 +35,7 @@ type (
 		WithMetadata(md Object) AnnotatedValue
 	}
 
-	// AnnotatedValue is returned by the WithMetadata call
+	// AnnotatedValue is returned by the Child call
 	AnnotatedValue interface {
 		Annotated
 		Value
@@ -51,8 +51,7 @@ func IsTrue(o Object, key Value) bool {
 }
 
 // GetDocumentation retrieves the doc or doc-asset for an Annotated Value
-func GetDocumentation(a Annotated) Str {
-	md := a.Metadata()
+func GetDocumentation(md Object) Str {
 	if v, ok := md.Get(DocKey); ok {
 		return MakeStr(v)
 	}

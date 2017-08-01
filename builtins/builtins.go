@@ -1,25 +1,28 @@
 package builtins
 
-import (
-	a "github.com/kode4food/sputter/api"
-)
+import a "github.com/kode4food/sputter/api"
 
 var (
 	// Namespace is a special Namespace for built-in identifiers
 	Namespace = a.GetNamespace(a.BuiltInDomain)
 
-	builtInFuncs = map[a.Name]a.SequenceProcessor{}
+	builtInFuncs = map[a.Name]a.Function{}
 )
 
-// RegisterBuiltIn adds a built-in SequenceProcessor by Name
-func RegisterBuiltIn(n a.Name, proc a.SequenceProcessor) {
-	builtInFuncs[n] = proc
+// RegisterFunction registers a built-in Function by Name
+func RegisterFunction(n a.Name, f a.Function) {
+	builtInFuncs[n] = f
+}
+
+// RegisterBaseFunction registers a Base-derived Function by Name
+func RegisterBaseFunction(n a.Name, f a.HasReflectedFunction) {
+	builtInFuncs[n] = a.NewReflectedFunction(f)
 }
 
 // GetBuiltIn returns a registered built-in function
-func GetBuiltIn(n a.Name) (a.SequenceProcessor, bool) {
-	if v, ok := builtInFuncs[n]; ok {
-		return v, true
+func GetBuiltIn(n a.Name) (a.Function, bool) {
+	if f, ok := builtInFuncs[n]; ok {
+		return f, true
 	}
 	return nil, false
 }
@@ -29,7 +32,7 @@ func defBuiltIn(c a.Context, args a.Sequence) a.Value {
 	n := a.AssertUnqualified(args.First()).Name()
 	if f, ok := GetBuiltIn(n); ok {
 		var md a.Object = toProperties(a.SequenceToAssociative(args.Rest()))
-		r := a.NewFunction(f).WithMetadata(md)
+		r := f.WithMetadata(md)
 		a.GetContextNamespace(c).Put(n, r)
 		return r
 	}
@@ -51,7 +54,7 @@ func isBuiltInCall(n a.Name, v a.Value) (a.List, bool) {
 
 func init() {
 	Namespace.Put("def-builtin",
-		a.NewFunction(defBuiltIn).WithMetadata(a.Properties{
+		a.NewExecFunction(defBuiltIn).WithMetadata(a.Properties{
 			a.SpecialKey: a.True,
 		}),
 	)

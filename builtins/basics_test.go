@@ -13,7 +13,7 @@ func TestDo(t *testing.T) {
 	c := e.NewEvalContext()
 
 	do := getBuiltIn("do")
-	r1 := do(c, args(f(1), f(2), f(3)))
+	r1 := do.Apply(c, args(f(1), f(2), f(3)))
 	as.Number(3, r1)
 }
 
@@ -24,8 +24,8 @@ func TestReadEval(t *testing.T) {
 	read := getBuiltIn("read")
 	eval := getBuiltIn("eval")
 
-	r1 := read(c, args(s("[1 2 3]")))
-	e1 := eval(c, args(r1))
+	r1 := read.Apply(c, args(s("[1 2 3]")))
+	e1 := eval.Apply(c, args(r1))
 	v1 := a.AssertVector(e1)
 
 	v2, ok := v1.ElementAt(0)

@@ -23,7 +23,7 @@ const (
 )
 
 type (
-	// SequenceProcessor is the standard signature for a function that is
+	// SequenceProcessor is the standard signature for a ReflectedFunction that is
 	// capable of transforming or validating a Sequence
 	SequenceProcessor func(Context, Sequence) Value
 

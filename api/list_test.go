@@ -7,7 +7,7 @@ import (
 	"github.com/kode4food/sputter/assert"
 )
 
-var helloThere = a.NewFunction(func(_ a.Context, _ a.Sequence) a.Value {
+var helloThere = a.NewExecFunction(func(_ a.Context, _ a.Sequence) a.Value {
 	return s("there")
 }).WithMetadata(a.NewObject(a.Properties{
 	a.NameKey: a.Name("hello"),

@@ -23,7 +23,7 @@ type (
 		Str() Str
 	}
 
-	// ValueProcessor is the standard function interface for a func that
+	// ValueProcessor is the standard ReflectedFunction interface for a func that
 	// processes a Value against a Context (example: Emit)
 	ValueProcessor func(Context, Value) Value
 
@@ -85,7 +85,7 @@ var (
 	False Bool = false
 
 	// Nil is a value that represents the absence of a Value
-	Nil = &nilValue{}
+	Nil = new(nilValue)
 )
 
 // Name makes Name Named
@@ -104,6 +104,14 @@ func (b Bool) Apply(_ Context, args Sequence) Value {
 		if i.First() != b {
 			return False
 		}
+	}
+	return True
+}
+
+// Not inverts the Bool's value
+func (b Bool) Not() Bool {
+	if b == True {
+		return False
 	}
 	return True
 }

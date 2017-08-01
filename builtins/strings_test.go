@@ -12,6 +12,6 @@ func TestReaderStr(t *testing.T) {
 
 	readerString := getBuiltIn("str!")
 	v1 := a.NewVector(a.NewKeyword("boom"), a.Str("hello"))
-	s1 := readerString(a.NewContext(), v1)
+	s1 := readerString.Apply(a.NewContext(), v1)
 	as.String(":boom \"hello\"", s1)
 }

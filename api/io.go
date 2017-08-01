@@ -39,7 +39,7 @@ type (
 	}
 )
 
-// NewReader wraps a Go Reader, coupling it with an input function
+// NewReader wraps a Go Reader, coupling it with an input ReflectedFunction
 func NewReader(r io.Reader, i InputFunc) Reader {
 	var resolver LazyResolver
 	br := bufio.NewReader(r)
@@ -54,7 +54,7 @@ func NewReader(r io.Reader, i InputFunc) Reader {
 	return NewLazySequence(resolver)
 }
 
-// NewWriter wraps a Go Writer, coupling it with an output function
+// NewWriter wraps a Go Writer, coupling it with an output ReflectedFunction
 func NewWriter(w io.Writer, o OutputFunc) Writer {
 	wrapped := &wrappedWriter{
 		writer: bufio.NewWriter(w),
@@ -91,12 +91,12 @@ func strToBytes(s Str) []byte {
 	return []byte(string(s))
 }
 
-// StrOutput is the standard string-based output function
+// StrOutput is the standard string-based output ReflectedFunction
 func StrOutput(w *bufio.Writer, v Value) {
 	w.Write(strToBytes(MakeStr(v)))
 }
 
-// LineInput is the standard single line input function
+// LineInput is the standard single line input ReflectedFunction
 func LineInput(r *bufio.Reader) (Value, bool) {
 	l, err := r.ReadBytes('\n')
 	if err == nil {
@@ -108,7 +108,7 @@ func LineInput(r *bufio.Reader) (Value, bool) {
 	return Nil, false
 }
 
-// RuneInput is the standard single rune input function
+// RuneInput is the standard single rune input ReflectedFunction
 func RuneInput(r *bufio.Reader) (Value, bool) {
 	if c, _, err := r.ReadRune(); err == nil {
 		return Str(string(c)), true

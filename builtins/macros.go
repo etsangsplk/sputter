@@ -6,27 +6,34 @@ var macroMetadata = a.Properties{
 	a.MacroKey: a.True,
 }
 
-func defmacro(c a.Context, args a.Sequence) a.Value {
+type (
+	defMacroFunction  struct{ a.ReflectedFunction }
+	expand1Function   struct{ a.ReflectedFunction }
+	expandFunction    struct{ a.ReflectedFunction }
+	expandAllFunction struct{ a.ReflectedFunction }
+)
+
+func (f *defMacroFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	fd := parseNamedFunction(args)
 	n := a.NewLocalSymbol(fd.name)
-	f := makeFunction(c, fd)
-	r := f.WithMetadata(macroMetadata)
-	return def(c, a.NewVector(n, r))
+	fn := makeFunction(c, fd)
+	r := fn.WithMetadata(macroMetadata)
+	return new(defFunction).Apply(c, a.NewVector(n, r))
 }
 
-func macroexpand1(c a.Context, args a.Sequence) a.Value {
+func (f *expand1Function) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
 	r, _ := a.MacroExpand1(c, args.First())
 	return r
 }
 
-func macroexpand(c a.Context, args a.Sequence) a.Value {
+func (f *expandFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
 	r, _ := a.MacroExpand(c, args.First())
 	return r
 }
 
-func macroexpandAll(c a.Context, args a.Sequence) a.Value {
+func (f *expandAllFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
 	return a.MacroExpandAll(c, args.First())
 }
@@ -40,10 +47,15 @@ func isMacro(v a.Value) bool {
 }
 
 func init() {
-	RegisterBuiltIn("defmacro", defmacro)
-	RegisterBuiltIn("macroexpand1", macroexpand1)
-	RegisterBuiltIn("macroexpand", macroexpand)
-	RegisterBuiltIn("macroexpand-all", macroexpandAll)
+	var defMacro *defMacroFunction
+	var macroExpand1 *expand1Function
+	var macroExpand *expandFunction
+	var macroExpandAll *expandAllFunction
+
+	RegisterBaseFunction("defmacro", defMacro)
+	RegisterBaseFunction("macroexpand1", macroExpand1)
+	RegisterBaseFunction("macroexpand", macroExpand)
+	RegisterBaseFunction("macroexpand-all", macroExpandAll)
 
 	RegisterSequencePredicate("macro?", isMacro)
 	RegisterSequencePredicate("special-form?", isSpecialForm)

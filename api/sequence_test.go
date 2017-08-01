@@ -17,7 +17,7 @@ func (n *noCountSequence) Str() a.Str                   { return s("()") }
 
 func TestNonCountableSequence(t *testing.T) {
 	as := assert.New(t)
-	nc := &noCountSequence{}
+	nc := new(noCountSequence)
 
 	defer as.ExpectError(a.ErrStr(a.ExpectedCounted, "()"))
 	a.Count(nc)

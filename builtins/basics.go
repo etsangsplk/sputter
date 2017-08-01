@@ -5,12 +5,20 @@ import (
 	e "github.com/kode4food/sputter/evaluator"
 )
 
-func _panic(_ a.Context, args a.Sequence) a.Value {
+type (
+	panicFunction   struct{ a.ReflectedFunction }
+	recoverFunction struct{ a.ReflectedFunction }
+	doFunction      struct{ a.ReflectedFunction }
+	readFunction    struct{ a.ReflectedFunction }
+	evalFunction    struct{ a.ReflectedFunction }
+)
+
+func (f *panicFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	p := toProperties(a.SequenceToAssociative(args))
 	panic(a.Err(p))
 }
 
-func makeRecover(c a.Context, args a.Sequence) (res a.Value) {
+func (f *recoverFunction) Apply(c a.Context, args a.Sequence) (res a.Value) {
 	a.AssertArity(args, 2)
 
 	defer func() {
@@ -21,23 +29,37 @@ func makeRecover(c a.Context, args a.Sequence) (res a.Value) {
 	return a.Eval(c, args.First())
 }
 
-func read(c a.Context, args a.Sequence) a.Value {
+func (f *doFunction) Apply(c a.Context, args a.Sequence) a.Value {
+	var r a.Value = a.Nil
+	for i := args; i.IsSequence(); i = i.Rest() {
+		r = a.Eval(c, i.First())
+	}
+	return r
+}
+
+func (f *readFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
 	v := args.First()
 	s := a.AssertSequence(v)
 	return e.ReadStr(c, a.SequenceToStr(s))
 }
 
-func eval(c a.Context, args a.Sequence) a.Value {
+func (f *evalFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
 	v := args.First()
 	return a.Eval(c, v)
 }
 
 func init() {
-	RegisterBuiltIn("panic", _panic)
-	RegisterBuiltIn("make-recover", makeRecover)
-	RegisterBuiltIn("do", a.EvalBlock)
-	RegisterBuiltIn("read", read)
-	RegisterBuiltIn("eval", eval)
+	var _panic *panicFunction
+	var _recover *recoverFunction
+	var do *doFunction
+	var read *readFunction
+	var eval *evalFunction
+
+	RegisterBaseFunction("panic", _panic)
+	RegisterBaseFunction("make-recover", _recover)
+	RegisterBaseFunction("do", do)
+	RegisterBaseFunction("read", read)
+	RegisterBaseFunction("eval", eval)
 }

@@ -2,6 +2,12 @@ package builtins
 
 import a "github.com/kode4food/sputter/api"
 
+type (
+	chanFunction    struct{ a.ReflectedFunction }
+	promiseFunction struct{ a.ReflectedFunction }
+	goFunction      struct{ a.ReflectedFunction }
+)
+
 var (
 	// MetaChannel is the key used to identify a Channel
 	MetaChannel = a.NewKeyword("channel")
@@ -17,7 +23,7 @@ var channelPrototype = a.Properties{
 	MetaChannel: a.True,
 }
 
-func _chan(_ a.Context, args a.Sequence) a.Value {
+func (f *chanFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 0)
 	e, s := a.NewChannel()
 
@@ -28,7 +34,7 @@ func _chan(_ a.Context, args a.Sequence) a.Value {
 	})
 }
 
-func promise(_ a.Context, args a.Sequence) a.Value {
+func (f *promiseFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	if a.AssertArityRange(args, 0, 1) == 1 {
 		p := a.NewPromise()
 		p.Deliver(args.First())
@@ -44,15 +50,20 @@ func isPromise(v a.Value) bool {
 	return false
 }
 
-func makeGo(c a.Context, args a.Sequence) a.Value {
+func (f *goFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
 	go a.EvalBlock(a.ChildContext(c), args)
 	return a.Nil
 }
 
 func init() {
-	RegisterBuiltIn("chan", _chan)
-	RegisterBuiltIn("promise", promise)
-	RegisterBuiltIn("make-go", makeGo)
+	var _chan *chanFunction
+	var promise *promiseFunction
+	var _go *goFunction
+
+	RegisterBaseFunction("chan", _chan)
+	RegisterBaseFunction("promise", promise)
+	RegisterBaseFunction("make-go", _go)
+
 	RegisterSequencePredicate("promise?", isPromise)
 }

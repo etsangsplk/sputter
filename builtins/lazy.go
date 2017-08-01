@@ -2,6 +2,18 @@ package builtins
 
 import a "github.com/kode4food/sputter/api"
 
+type (
+	lazySequenceFunction struct{ a.ReflectedFunction }
+	concatFunction       struct{ a.ReflectedFunction }
+	filterFunction       struct{ a.ReflectedFunction }
+	mapFunction          struct{ a.ReflectedFunction }
+	reduceFunction       struct{ a.ReflectedFunction }
+	takeFunction         struct{ a.ReflectedFunction }
+	dropFunction         struct{ a.ReflectedFunction }
+	rangeFunction        struct{ a.ReflectedFunction }
+	forEachFunction      struct{ a.ReflectedFunction }
+)
+
 func makeLazyResolver(c a.Context, f a.Applicable) a.LazyResolver {
 	return func() (bool, a.Value, a.Sequence) {
 		r := f.Apply(c, a.EmptyList)
@@ -33,59 +45,59 @@ func makeValueReducer(c a.Context, f a.Applicable) a.ValueReducer {
 	}
 }
 
-func makeLazySequence(c a.Context, args a.Sequence) a.Value {
+func (f *lazySequenceFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	db := a.NewBlock(args)
 
-	f := a.NewFunction(func(c a.Context, _ a.Sequence) a.Value {
+	fn := a.NewExecFunction(func(c a.Context, _ a.Sequence) a.Value {
 		return a.Eval(c, db)
 	})
 
-	return a.NewLazySequence(makeLazyResolver(c, f))
+	return a.NewLazySequence(makeLazyResolver(c, fn))
 }
 
-func concat(_ a.Context, args a.Sequence) a.Value {
+func (f *concatFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	if a.AssertMinimumArity(args, 1) == 1 {
 		return a.AssertSequence(args.First())
 	}
 	return a.Concat(args)
 }
 
-func filter(c a.Context, args a.Sequence) a.Value {
+func (f *filterFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
-	f := a.AssertApplicable(args.First())
+	fn := a.AssertApplicable(args.First())
 	s := a.Concat(args.Rest())
-	return a.Filter(s, makeValueFilter(c, f))
+	return a.Filter(s, makeValueFilter(c, fn))
 }
 
-func _map(c a.Context, args a.Sequence) a.Value {
+func (f *mapFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
-	f := a.AssertApplicable(args.First())
+	fn := a.AssertApplicable(args.First())
 	s := a.Concat(args.Rest())
-	return a.Map(s, makeValueMapper(c, f))
+	return a.Map(s, makeValueMapper(c, fn))
 }
 
-func reduce(c a.Context, args a.Sequence) a.Value {
+func (f *reduceFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
-	f := a.AssertApplicable(args.First())
+	fn := a.AssertApplicable(args.First())
 	s := a.Concat(args.Rest())
-	return a.Reduce(s, makeValueReducer(c, f))
+	return a.Reduce(s, makeValueReducer(c, fn))
 }
 
-func take(_ a.Context, args a.Sequence) a.Value {
+func (f *takeFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 	n := a.AssertInteger(args.First())
 	s := a.Concat(args.Rest())
 	return a.Take(s, n)
 }
 
-func drop(_ a.Context, args a.Sequence) a.Value {
+func (f *dropFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 	n := a.AssertInteger(args.First())
 	s := a.Concat(args.Rest())
 	return a.Drop(s, n)
 }
 
-func makeRange(_ a.Context, args a.Sequence) a.Value {
+func (f *rangeFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 3)
 	low := a.AssertNumber(args.First())
 	high := a.AssertNumber(args.Rest().First())
@@ -93,7 +105,7 @@ func makeRange(_ a.Context, args a.Sequence) a.Value {
 	return a.NewRange(low, high, step)
 }
 
-func forEach(c a.Context, args a.Sequence) a.Value {
+func (f *forEachFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 
 	b := a.AssertVector(args.First())
@@ -143,13 +155,23 @@ func makeTerminal(n a.Name, e a.Value, bl a.Sequence) forProc {
 }
 
 func init() {
-	RegisterBuiltIn("make-lazy-seq", makeLazySequence)
-	RegisterBuiltIn("concat", concat)
-	RegisterBuiltIn("filter", filter)
-	RegisterBuiltIn("map", _map)
-	RegisterBuiltIn("reduce", reduce)
-	RegisterBuiltIn("take", take)
-	RegisterBuiltIn("drop", drop)
-	RegisterBuiltIn("make-range", makeRange)
-	RegisterBuiltIn("for-each", forEach)
+	var lazySequence *lazySequenceFunction
+	var concat *concatFunction
+	var filter *filterFunction
+	var _map *mapFunction
+	var reduce *reduceFunction
+	var take *takeFunction
+	var drop *dropFunction
+	var _range *rangeFunction
+	var forEach *forEachFunction
+
+	RegisterBaseFunction("make-lazy-seq", lazySequence)
+	RegisterBaseFunction("concat", concat)
+	RegisterBaseFunction("filter", filter)
+	RegisterBaseFunction("map", _map)
+	RegisterBaseFunction("reduce", reduce)
+	RegisterBaseFunction("take", take)
+	RegisterBaseFunction("drop", drop)
+	RegisterBaseFunction("make-range", _range)
+	RegisterBaseFunction("for-each", forEach)
 }

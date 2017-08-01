@@ -2,7 +2,9 @@ package builtins
 
 import a "github.com/kode4food/sputter/api"
 
-func _if(c a.Context, args a.Sequence) a.Value {
+type ifFunction struct{ a.ReflectedFunction }
+
+func (f *ifFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	i := a.AssertArityRange(args, 2, 3)
 	if a.Truthy(a.Eval(c, args.First())) {
 		return a.Eval(c, args.Rest().First())
@@ -14,5 +16,7 @@ func _if(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	RegisterBuiltIn("if", _if)
+	var _if *ifFunction
+
+	RegisterBaseFunction("if", _if)
 }

@@ -1,13 +1,16 @@
 package builtins
 
-import (
-	a "github.com/kode4food/sputter/api"
-)
+import a "github.com/kode4food/sputter/api"
 
 // ExpectedBindings is raised if a binding vector isn't an even number
 const ExpectedBindings = "expected bindings in the form: name value"
 
-func def(c a.Context, args a.Sequence) a.Value {
+type (
+	defFunction struct{ a.ReflectedFunction }
+	letFunction struct{ a.ReflectedFunction }
+)
+
+func (f *defFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 	ns := a.GetContextNamespace(c)
 
@@ -19,7 +22,7 @@ func def(c a.Context, args a.Sequence) a.Value {
 	return s
 }
 
-func let(c a.Context, args a.Sequence) a.Value {
+func (f *letFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 	l := a.ChildContext(c)
 
@@ -41,6 +44,9 @@ func let(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	RegisterBuiltIn("def", def)
-	RegisterBuiltIn("let", let)
+	var def *defFunction
+	var let *letFunction
+
+	RegisterBaseFunction("def", def)
+	RegisterBaseFunction("let", let)
 }

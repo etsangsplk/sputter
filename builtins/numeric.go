@@ -5,6 +5,18 @@ import a "github.com/kode4food/sputter/api"
 type (
 	reduceFunc  func(prev a.Number, next a.Number) a.Number
 	compareFunc func(prev a.Number, next a.Number) bool
+
+	addFunction struct{ a.ReflectedFunction }
+	subFunction struct{ a.ReflectedFunction }
+	mulFunction struct{ a.ReflectedFunction }
+	divFunction struct{ a.ReflectedFunction }
+	modFunction struct{ a.ReflectedFunction }
+	eqFunction  struct{ a.ReflectedFunction }
+	neqFunction struct{ a.ReflectedFunction }
+	gtFunction  struct{ a.ReflectedFunction }
+	gteFunction struct{ a.ReflectedFunction }
+	ltFunction  struct{ a.ReflectedFunction }
+	lteFunction struct{ a.ReflectedFunction }
 )
 
 func reduceNum(s a.Sequence, v a.Number, f reduceFunc) a.Value {
@@ -22,7 +34,7 @@ func fetchFirstNumber(args a.Sequence) (a.Number, a.Sequence) {
 	return nv, args.Rest()
 }
 
-func compare(_ a.Context, s a.Sequence, f compareFunc) a.Value {
+func compare(_ a.Context, s a.Sequence, f compareFunc) a.Bool {
 	cur, r := fetchFirstNumber(s)
 	for i := r; i.IsSequence(); i = i.Rest() {
 		v := a.AssertNumber(i.First())
@@ -34,80 +46,79 @@ func compare(_ a.Context, s a.Sequence, f compareFunc) a.Value {
 	return a.True
 }
 
-func add(_ a.Context, args a.Sequence) a.Value {
+func (f *addFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	if !args.IsSequence() {
 		return a.Zero
 	}
-	f, r := fetchFirstNumber(args)
-	return reduceNum(r, f, func(p a.Number, n a.Number) a.Number {
+	v, r := fetchFirstNumber(args)
+	return reduceNum(r, v, func(p a.Number, n a.Number) a.Number {
 		return p.Add(n)
 	})
 }
 
-func sub(_ a.Context, args a.Sequence) a.Value {
-	f, r := fetchFirstNumber(args)
-	return reduceNum(r, f, func(p a.Number, n a.Number) a.Number {
+func (f *subFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+	v, r := fetchFirstNumber(args)
+	return reduceNum(r, v, func(p a.Number, n a.Number) a.Number {
 		return p.Sub(n)
 	})
 }
 
-func mul(_ a.Context, args a.Sequence) a.Value {
+func (f *mulFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	if !args.IsSequence() {
 		return a.One
 	}
-	f, r := fetchFirstNumber(args)
-	return reduceNum(r, f, func(p a.Number, n a.Number) a.Number {
+	v, r := fetchFirstNumber(args)
+	return reduceNum(r, v, func(p a.Number, n a.Number) a.Number {
 		return p.Mul(n)
 	})
 }
 
-func div(_ a.Context, args a.Sequence) a.Value {
-	f, r := fetchFirstNumber(args)
-	return reduceNum(r, f, func(p a.Number, n a.Number) a.Number {
+func (f *divFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+	v, r := fetchFirstNumber(args)
+	return reduceNum(r, v, func(p a.Number, n a.Number) a.Number {
 		return p.Div(n)
 	})
 }
 
-func mod(_ a.Context, args a.Sequence) a.Value {
-	f, r := fetchFirstNumber(args)
-	return reduceNum(r, f, func(p a.Number, n a.Number) a.Number {
+func (f *modFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+	v, r := fetchFirstNumber(args)
+	return reduceNum(r, v, func(p a.Number, n a.Number) a.Number {
 		return p.Mod(n)
 	})
 }
 
-func eq(c a.Context, args a.Sequence) a.Value {
+func (f *eqFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	return compare(c, args, func(p a.Number, n a.Number) bool {
 		return p.Cmp(n) == a.EqualTo
 	})
 }
 
-func neq(c a.Context, args a.Sequence) a.Value {
-	if eq(c, args) == a.True {
-		return a.False
-	}
-	return a.True
+func (f *neqFunction) Apply(c a.Context, args a.Sequence) a.Value {
+	return compare(c, args, func(p a.Number, n a.Number) bool {
+		return p.Cmp(n) == a.EqualTo
+	}).Not()
 }
 
-func gt(c a.Context, args a.Sequence) a.Value {
+func (f *gtFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	return compare(c, args, func(p a.Number, n a.Number) bool {
 		return p.Cmp(n) == a.GreaterThan
 	})
 }
 
-func gte(c a.Context, args a.Sequence) a.Value {
+func (f *gteFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	return compare(c, args, func(p a.Number, n a.Number) bool {
 		r := p.Cmp(n)
 		return r == a.EqualTo || r == a.GreaterThan
 	})
 }
 
-func lt(c a.Context, args a.Sequence) a.Value {
+func (f *ltFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	return compare(c, args, func(p a.Number, n a.Number) bool {
 		return p.Cmp(n) == a.LessThan
 	})
 }
 
-func lte(c a.Context, args a.Sequence) a.Value {
+func (f *lteFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	return compare(c, args, func(p a.Number, n a.Number) bool {
 		r := p.Cmp(n)
 		return r == a.EqualTo || r == a.LessThan
@@ -136,20 +147,32 @@ func isNaN(v a.Value) bool {
 }
 
 func init() {
+	var add *addFunction
+	var sub *subFunction
+	var mul *mulFunction
+	var div *divFunction
+	var mod *modFunction
+	var eq *eqFunction
+	var neq *neqFunction
+	var gt *gtFunction
+	var gte *gteFunction
+	var lt *ltFunction
+	var lte *lteFunction
+
 	Namespace.Put("inf", a.PosInfinity)
 	Namespace.Put("-inf", a.NegInfinity)
 
-	RegisterBuiltIn("+", add)
-	RegisterBuiltIn("-", sub)
-	RegisterBuiltIn("*", mul)
-	RegisterBuiltIn("/", div)
-	RegisterBuiltIn("%", mod)
-	RegisterBuiltIn("=", eq)
-	RegisterBuiltIn("!=", neq)
-	RegisterBuiltIn(">", gt)
-	RegisterBuiltIn(">=", gte)
-	RegisterBuiltIn("<", lt)
-	RegisterBuiltIn("<=", lte)
+	RegisterBaseFunction("+", add)
+	RegisterBaseFunction("-", sub)
+	RegisterBaseFunction("*", mul)
+	RegisterBaseFunction("/", div)
+	RegisterBaseFunction("%", mod)
+	RegisterBaseFunction("=", eq)
+	RegisterBaseFunction("!=", neq)
+	RegisterBaseFunction(">", gt)
+	RegisterBaseFunction(">=", gte)
+	RegisterBaseFunction("<", lt)
+	RegisterBaseFunction("<=", lte)
 
 	RegisterSequencePredicate("inf?", isPosInfinity)
 	RegisterSequencePredicate("-inf?", isNegInfinity)

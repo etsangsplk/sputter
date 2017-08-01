@@ -48,7 +48,7 @@ type (
 var (
 	anyChar = regexp.MustCompile(".")
 
-	nothing = &sentinel{}
+	nothing = new(sentinel)
 
 	farewells = []string{
 		"¡Adiós!",
@@ -72,7 +72,7 @@ var (
 
 // NewREPL instantiates a new REPL instance
 func NewREPL() *REPL {
-	repl := &REPL{}
+	repl := new(REPL)
 
 	rl, err := readline.NewEx(&readline.Config{
 		HistoryFile: getHistoryFile(),
@@ -377,7 +377,7 @@ func registerBuiltIn(v a.AnnotatedValue) {
 
 func registerBuiltIns() {
 	registerBuiltIn(
-		a.NewFunction(use).WithMetadata(a.Properties{
+		a.NewExecFunction(use).WithMetadata(a.Properties{
 			a.NameKey:     a.Name("use"),
 			a.DocAssetKey: a.Str("repl-use"),
 			a.SpecialKey:  a.True,
@@ -385,34 +385,34 @@ func registerBuiltIns() {
 	)
 
 	registerBuiltIn(
-		a.NewFunction(shutdown).WithMetadata(a.Properties{
+		a.NewExecFunction(shutdown).WithMetadata(a.Properties{
 			a.NameKey:     a.Name("quit"),
 			a.DocAssetKey: a.Str("repl-quit"),
 		}),
 	)
 
 	registerBuiltIn(
-		a.NewFunction(debugInfo).WithMetadata(a.Properties{
+		a.NewExecFunction(debugInfo).WithMetadata(a.Properties{
 			a.NameKey: a.Name("debug-info"),
 		}),
 	)
 
 	registerBuiltIn(
-		a.NewFunction(cls).WithMetadata(a.Properties{
+		a.NewExecFunction(cls).WithMetadata(a.Properties{
 			a.NameKey:     a.Name("cls"),
 			a.DocAssetKey: a.Str("repl-cls"),
 		}),
 	)
 
 	registerBuiltIn(
-		a.NewFunction(help).WithMetadata(a.Properties{
+		a.NewExecFunction(help).WithMetadata(a.Properties{
 			a.NameKey:     a.Name("help"),
 			a.DocAssetKey: a.Str("repl-help"),
 		}),
 	)
 
 	registerBuiltIn(
-		a.NewFunction(doc).WithMetadata(a.Properties{
+		a.NewExecFunction(doc).WithMetadata(a.Properties{
 			a.NameKey:     a.Name("doc"),
 			a.DocAssetKey: a.Str("repl-doc"),
 			a.SpecialKey:  a.True,

@@ -2,6 +2,11 @@ package builtins
 
 import a "github.com/kode4food/sputter/api"
 
+type (
+	makeClosureFunction struct{ a.ReflectedFunction }
+	closureFunction     struct{ a.ReflectedFunction }
+)
+
 var (
 	closureSym = a.NewBuiltInSymbol("closure")
 	emptyNames = a.Names{}
@@ -72,7 +77,7 @@ func visitSequence(s a.Sequence) a.Names {
 	return r
 }
 
-func makeClosure(c a.Context, args a.Sequence) a.Value {
+func (f *makeClosureFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
 	ex := assertUnqualifiedNames(a.AssertVector(args.First()))
 	cb := a.MacroExpandAll(c, args.Rest())
@@ -88,7 +93,7 @@ func isClosure(v a.Value) (a.Names, bool) {
 	return emptyNames, false
 }
 
-func closure(c a.Context, args a.Sequence) a.Value {
+func (f *closureFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 2)
 	in := a.AssertVector(args.First())
 	vars := make(a.Variables, in.Count())
@@ -106,6 +111,9 @@ func closure(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	RegisterBuiltIn("make-closure", makeClosure)
-	RegisterBuiltIn("closure", closure)
+	var makeClosure *makeClosureFunction
+	var closure *closureFunction
+
+	RegisterBaseFunction("make-closure", makeClosure)
+	RegisterBaseFunction("closure", closure)
 }

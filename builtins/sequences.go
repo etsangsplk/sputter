@@ -2,7 +2,17 @@ package builtins
 
 import a "github.com/kode4food/sputter/api"
 
-type forProc func(a.Context)
+type (
+	firstFunction struct{ a.ReflectedFunction }
+	restFunction  struct{ a.ReflectedFunction }
+	consFunction  struct{ a.ReflectedFunction }
+	conjFunction  struct{ a.ReflectedFunction }
+	lenFunction   struct{ a.ReflectedFunction }
+	nthFunction   struct{ a.ReflectedFunction }
+	getFunction   struct{ a.ReflectedFunction }
+
+	forProc func(a.Context)
+)
 
 func isSequence(v a.Value) bool {
 	if s, ok := v.(a.Sequence); ok {
@@ -30,22 +40,22 @@ func fetchSequence(args a.Sequence) a.Sequence {
 	return a.AssertSequence(args.First())
 }
 
-func first(_ a.Context, args a.Sequence) a.Value {
+func (f *firstFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	return fetchSequence(args).First()
 }
 
-func rest(_ a.Context, args a.Sequence) a.Value {
+func (f *restFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	return fetchSequence(args).Rest()
 }
 
-func cons(_ a.Context, args a.Sequence) a.Value {
+func (f *consFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 2)
-	f := args.First()
+	h := args.First()
 	r := args.Rest().First()
-	return a.AssertSequence(r).Prepend(f)
+	return a.AssertSequence(r).Prepend(h)
 }
 
-func conj(_ a.Context, args a.Sequence) a.Value {
+func (f *conjFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 	s := a.AssertConjoiner(args.First())
 	for i := args.Rest(); i.IsSequence(); i = i.Rest() {
@@ -55,34 +65,42 @@ func conj(_ a.Context, args a.Sequence) a.Value {
 	return s
 }
 
-func _len(_ a.Context, args a.Sequence) a.Value {
+func (f *lenFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	s := fetchSequence(args)
 	l := a.Count(s)
 	return a.NewFloat(float64(l))
 }
 
-func nth(_ a.Context, args a.Sequence) a.Value {
+func (f *nthFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
 	s := a.AssertIndexed(args.First())
 	return a.IndexedApply(s, args.Rest())
 }
 
-func get(_ a.Context, args a.Sequence) a.Value {
+func (f *getFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
 	s := a.AssertMapped(args.First())
 	return a.MappedApply(s, args.Rest())
 }
 
 func init() {
+	var first *firstFunction
+	var rest *restFunction
+	var cons *consFunction
+	var conj *conjFunction
+	var _len *lenFunction
+	var nth *nthFunction
+	var get *getFunction
+
+	RegisterBaseFunction("first", first)
+	RegisterBaseFunction("rest", rest)
+	RegisterBaseFunction("cons", cons)
+	RegisterBaseFunction("conj", conj)
+	RegisterBaseFunction("len", _len)
+	RegisterBaseFunction("nth", nth)
+	RegisterBaseFunction("get", get)
+
 	RegisterSequencePredicate("seq?", isSequence)
 	RegisterSequencePredicate("len?", isCounted)
 	RegisterSequencePredicate("indexed?", isIndexed)
-
-	RegisterBuiltIn("first", first)
-	RegisterBuiltIn("rest", rest)
-	RegisterBuiltIn("cons", cons)
-	RegisterBuiltIn("conj", conj)
-	RegisterBuiltIn("len", _len)
-	RegisterBuiltIn("nth", nth)
-	RegisterBuiltIn("get", get)
 }

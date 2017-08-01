@@ -9,7 +9,7 @@ import (
 	e "github.com/kode4food/sputter/evaluator"
 )
 
-func getBuiltIn(n a.Name) a.SequenceProcessor {
+func getBuiltIn(n a.Name) a.Function {
 	if r, ok := b.GetBuiltIn(n); ok {
 		return r
 	}
@@ -55,6 +55,6 @@ func TestExplodingBuiltInCall(t *testing.T) {
 
 	defer as.ExpectError(a.ErrStr(a.KeyNotFound, a.Name("boom")))
 	c := e.NewEvalContext()
-	r := read(c, args(s("(def-builtin boom)")))
-	eval(c, args(r))
+	r := read.Apply(c, args(s("(def-builtin boom)")))
+	eval.Apply(c, args(r))
 }

@@ -15,6 +15,9 @@ const (
 )
 
 type (
+	lambdaFunction struct{ a.ReflectedFunction }
+	applyFunction  struct{ a.ReflectedFunction }
+
 	argProcessor func(a.Context, a.Sequence) (a.Context, bool)
 
 	functionSignature struct {
@@ -187,7 +190,7 @@ func makeSingleFunction(c a.Context, s *functionSignature) a.Function {
 	ex := a.MacroExpandAll(c, s.body).(a.Sequence)
 	db := a.NewBlock(ex)
 
-	return a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
+	return a.NewExecFunction(func(c a.Context, args a.Sequence) a.Value {
 		if l, ok := ap(c, args); ok {
 			return a.Eval(l, db)
 		}
@@ -211,7 +214,7 @@ func makeMultiFunction(c a.Context, sigs functionSignatures) a.Function {
 
 	argPatterns := strings.Join(args, " or ")
 
-	return a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
+	return a.NewExecFunction(func(c a.Context, args a.Sequence) a.Value {
 		for _, m := range procMap {
 			if l, ok := m.args(c, args); ok {
 				return a.Eval(l, m.body)
@@ -222,16 +225,16 @@ func makeMultiFunction(c a.Context, sigs functionSignatures) a.Function {
 	})
 }
 
-func lambda(c a.Context, args a.Sequence) a.Value {
+func (f *lambdaFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	fd := parseFunction(args)
 	return makeFunction(c, fd)
 }
 
-func apply(c a.Context, args a.Sequence) a.Value {
+func (f *applyFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 2)
-	f := a.AssertApplicable(args.First())
+	fn := a.AssertApplicable(args.First())
 	s := a.AssertSequence(args.Rest().First())
-	return f.Apply(c, s)
+	return fn.Apply(c, s)
 }
 
 func isApplicable(v a.Value) bool {
@@ -249,8 +252,12 @@ func isSpecialForm(v a.Value) bool {
 }
 
 func init() {
-	RegisterBuiltIn("lambda", lambda)
-	RegisterBuiltIn("apply", apply)
+	var lambda *lambdaFunction
+	var apply *applyFunction
+
+	RegisterBaseFunction("lambda", lambda)
+	RegisterBaseFunction("apply", apply)
+
 	RegisterSequencePredicate("apply?", isApplicable)
 	RegisterSequencePredicate("special-form?", isSpecialForm)
 }

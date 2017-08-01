@@ -13,7 +13,7 @@ func TestClosure(t *testing.T) {
 	makeClosure := getBuiltIn("make-closure")
 
 	c := e.NewEvalContext()
-	r1 := makeClosure(c, args(
+	r1 := makeClosure.Apply(c, args(
 		v(local("ignore")),
 		v(s("hello"), local("name"), local("ignore")),
 	))
@@ -26,5 +26,5 @@ func TestClosure(t *testing.T) {
 	args := r1.(a.List).Rest()
 
 	defer as.ExpectError(a.ErrStr(a.UnknownSymbol, a.Name("ignore")))
-	closure(c, args)
+	closure.Apply(c, args)
 }

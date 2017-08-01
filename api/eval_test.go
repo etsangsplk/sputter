@@ -7,7 +7,7 @@ import (
 	"github.com/kode4food/sputter/assert"
 )
 
-var helloName = a.NewFunction(func(c a.Context, args a.Sequence) a.Value {
+var helloName = a.NewExecFunction(func(c a.Context, args a.Sequence) a.Value {
 	i := a.Iterate(args)
 	n, _ := i.Next()
 	v := a.Eval(c, n)
@@ -57,7 +57,7 @@ func TestEvaluateBlock(t *testing.T) {
 
 func TestAssertApplicable(t *testing.T) {
 	as := assert.New(t)
-	a.AssertApplicable(a.NewFunction(nil))
+	a.AssertApplicable(a.NewExecFunction(nil))
 
 	defer as.ExpectError(a.ErrStr(a.ExpectedApplicable, f(99)))
 	a.AssertApplicable(f(99))

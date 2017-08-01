@@ -24,7 +24,7 @@ type (
 
 // NewStack creates a new Stack instance
 func NewStack() Stack {
-	return &stack{}
+	return new(stack)
 }
 
 // Push a Value onto the Stack
