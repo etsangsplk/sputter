@@ -20,6 +20,7 @@ type (
 	// Block evaluates a Sequence as a Block, returning the last expression
 	Block interface {
 		Sequence
+		Evaluable
 		IsBlock() bool
 	}
 
@@ -37,17 +38,11 @@ func Eval(c Context, v Value) Value {
 	return ex
 }
 
-// EvalBlock expands and evaluates a Sequence as a Block
-func EvalBlock(c Context, s Sequence) Value {
-	var r Value = Nil
-	for i := s; i.IsSequence(); i = i.Rest() {
-		r = Eval(c, i.First())
+// MakeBlock casts a Sequence into a Block for evaluation
+func MakeBlock(s Sequence) Block {
+	if b, ok := s.(Block); ok {
+		return b
 	}
-	return r
-}
-
-// NewBlock casts a Sequence into a Block for evaluation
-func NewBlock(s Sequence) Block {
 	return &block{Sequence: s}
 }
 
@@ -56,7 +51,11 @@ func (b *block) IsBlock() bool {
 }
 
 func (b *block) Eval(c Context) Value {
-	return EvalBlock(c, b)
+	var r Value = Nil
+	for i := b.Sequence; i.IsSequence(); i = i.Rest() {
+		r = Eval(c, i.First())
+	}
+	return r
 }
 
 func (b *block) Str() Str {

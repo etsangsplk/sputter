@@ -15,8 +15,8 @@ const (
 )
 
 type (
-	lambdaFunction struct{ a.ReflectedFunction }
-	applyFunction  struct{ a.ReflectedFunction }
+	lambdaFunction struct{ BaseBuiltIn }
+	applyFunction  struct{ BaseBuiltIn }
 
 	argProcessor func(a.Context, a.Sequence) (a.Context, bool)
 
@@ -37,12 +37,82 @@ type (
 		args argProcessor
 		body a.Block
 	}
+
+	singleFunction struct {
+		a.BaseFunction
+		args         string
+		argProcessor argProcessor
+		body         a.Block
+	}
+
+	multiFunction struct {
+		a.BaseFunction
+		args     string
+		matchers []argProcessorMatch
+	}
+
+	blockFunction struct {
+		a.BaseFunction
+		body a.Block
+	}
 )
 
 var (
 	emptyMetadata = a.Properties{}
 	restMarker    = a.Name("&")
 )
+
+func (f *singleFunction) Apply(c a.Context, args a.Sequence) a.Value {
+	if l, ok := f.argProcessor(c, args); ok {
+		return f.body.Eval(l)
+	}
+	panic(a.ErrStr(ExpectedArguments, f.args))
+}
+
+func (f *singleFunction) WithMetadata(md a.Object) a.AnnotatedValue {
+	return &singleFunction{
+		BaseFunction: a.NewBaseFunction(f.Metadata().Child(md.Flatten())),
+		args:         f.args,
+		argProcessor: f.argProcessor,
+		body:         f.body,
+	}
+}
+
+func (f *multiFunction) Apply(c a.Context, args a.Sequence) a.Value {
+	for _, m := range f.matchers {
+		if l, ok := m.args(c, args); ok {
+			return m.body.Eval(l)
+		}
+	}
+	panic(a.ErrStr(ExpectedArguments, f.args))
+}
+
+func (f *multiFunction) WithMetadata(md a.Object) a.AnnotatedValue {
+	return &multiFunction{
+		BaseFunction: a.NewBaseFunction(f.Metadata().Child(md.Flatten())),
+		args:         f.args,
+		matchers:     f.matchers,
+	}
+}
+
+// NewBlockFunction creates a new simple Function based on a Block
+func NewBlockFunction(args a.Sequence) a.Function {
+	return &blockFunction{
+		BaseFunction: a.DefaultBaseFunction,
+		body:         a.MakeBlock(args),
+	}
+}
+
+func (f *blockFunction) Apply(c a.Context, _ a.Sequence) a.Value {
+	return f.body.Eval(c)
+}
+
+func (f *blockFunction) WithMetadata(md a.Object) a.AnnotatedValue {
+	return &blockFunction{
+		BaseFunction: a.NewBaseFunction(f.Metadata().Child(md.Flatten())),
+		body:         f.body,
+	}
+}
 
 func makeArgProcessor(cl a.Context, s a.Sequence) argProcessor {
 	an := []a.Name{}
@@ -186,43 +256,35 @@ func makeFunction(c a.Context, d *functionDefinition) a.Function {
 }
 
 func makeSingleFunction(c a.Context, s *functionSignature) a.Function {
-	ap := makeArgProcessor(c, s.args)
 	ex := a.MacroExpandAll(c, s.body).(a.Sequence)
-	db := a.NewBlock(ex)
 
-	return a.NewExecFunction(func(c a.Context, args a.Sequence) a.Value {
-		if l, ok := ap(c, args); ok {
-			return a.Eval(l, db)
-		}
-		panic(a.ErrStr(ExpectedArguments, s.args))
-	})
+	return &singleFunction{
+		BaseFunction: a.DefaultBaseFunction,
+		argProcessor: makeArgProcessor(c, s.args),
+		args:         string(s.args.Str()),
+		body:         a.MakeBlock(ex),
+	}
 }
 
 func makeMultiFunction(c a.Context, sigs functionSignatures) a.Function {
 	ls := len(sigs)
-	procMap := make([]argProcessorMatch, ls)
+	matchers := make([]argProcessorMatch, ls)
 	args := make([]string, ls)
 
 	for i, s := range sigs {
 		ex := a.MacroExpandAll(c, s.body).(a.Sequence)
-		procMap[i] = argProcessorMatch{
+		matchers[i] = argProcessorMatch{
 			args: makeArgProcessor(c, s.args),
-			body: a.NewBlock(ex),
+			body: a.MakeBlock(ex),
 		}
 		args[i] = string(s.args.Str())
 	}
 
-	argPatterns := strings.Join(args, " or ")
-
-	return a.NewExecFunction(func(c a.Context, args a.Sequence) a.Value {
-		for _, m := range procMap {
-			if l, ok := m.args(c, args); ok {
-				return a.Eval(l, m.body)
-			}
-		}
-
-		panic(a.ErrStr(ExpectedArguments, argPatterns))
-	})
+	return &multiFunction{
+		BaseFunction: a.DefaultBaseFunction,
+		args:         strings.Join(args, " or "),
+		matchers:     matchers,
+	}
 }
 
 func (f *lambdaFunction) Apply(c a.Context, args a.Sequence) a.Value {
@@ -255,8 +317,8 @@ func init() {
 	var lambda *lambdaFunction
 	var apply *applyFunction
 
-	RegisterBaseFunction("lambda", lambda)
-	RegisterBaseFunction("apply", apply)
+	RegisterBuiltIn("lambda", lambda)
+	RegisterBuiltIn("apply", apply)
 
 	RegisterSequencePredicate("apply?", isApplicable)
 	RegisterSequencePredicate("special-form?", isSpecialForm)

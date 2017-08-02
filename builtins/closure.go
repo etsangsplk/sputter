@@ -3,8 +3,8 @@ package builtins
 import a "github.com/kode4food/sputter/api"
 
 type (
-	makeClosureFunction struct{ a.ReflectedFunction }
-	closureFunction     struct{ a.ReflectedFunction }
+	makeClosureFunction struct{ BaseBuiltIn }
+	closureFunction     struct{ BaseBuiltIn }
 )
 
 var (
@@ -104,16 +104,17 @@ func (f *closureFunction) Apply(c a.Context, args a.Sequence) a.Value {
 		}
 	}
 
-	cb := a.AssertSequence(args.Rest().First())
+	s := a.AssertSequence(args.Rest().First())
+	bl := a.MakeBlock(s)
 	ns := a.GetContextNamespace(c)
 	l := a.ChildContextVars(ns, vars)
-	return a.EvalBlock(l, cb)
+	return bl.Eval(l)
 }
 
 func init() {
 	var makeClosure *makeClosureFunction
 	var closure *closureFunction
 
-	RegisterBaseFunction("make-closure", makeClosure)
-	RegisterBaseFunction("closure", closure)
+	RegisterBuiltIn("make-closure", makeClosure)
+	RegisterBuiltIn("closure", closure)
 }

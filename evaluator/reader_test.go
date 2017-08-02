@@ -145,7 +145,7 @@ func testCodeWithContext(
 func TestEvaluable(t *testing.T) {
 	as := assert.New(t)
 
-	hello := a.NewExecFunction(func(c a.Context, args a.Sequence) a.Value {
+	hello := a.MakeExecFunction(func(c a.Context, args a.Sequence) a.Value {
 		i := a.Iterate(args)
 		arg, _ := i.Next()
 		v := a.Eval(c, arg)
@@ -169,7 +169,7 @@ func TestBuiltIns(t *testing.T) {
 	ns := a.GetContextNamespace(b)
 	ns.Delete("hello")
 
-	ns.Put("hello", a.NewExecFunction(func(_ a.Context, _ a.Sequence) a.Value {
+	ns.Put("hello", a.MakeExecFunction(func(_ a.Context, _ a.Sequence) a.Value {
 		return s("there")
 	}).WithMetadata(a.Properties{
 		a.NameKey: a.Name("hello"),

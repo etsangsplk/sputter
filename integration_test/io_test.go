@@ -12,7 +12,7 @@ import (
 const stdoutName = "*stdout*"
 
 func bindWrite(w a.Writer) a.Function {
-	return a.NewExecFunction(func(_ a.Context, args a.Sequence) a.Value {
+	return a.MakeExecFunction(func(_ a.Context, args a.Sequence) a.Value {
 		for i := args; i.IsSequence(); i = i.Rest() {
 			w.Write(i.First())
 		}

@@ -6,17 +6,17 @@ type (
 	reduceFunc  func(prev a.Number, next a.Number) a.Number
 	compareFunc func(prev a.Number, next a.Number) bool
 
-	addFunction struct{ a.ReflectedFunction }
-	subFunction struct{ a.ReflectedFunction }
-	mulFunction struct{ a.ReflectedFunction }
-	divFunction struct{ a.ReflectedFunction }
-	modFunction struct{ a.ReflectedFunction }
-	eqFunction  struct{ a.ReflectedFunction }
-	neqFunction struct{ a.ReflectedFunction }
-	gtFunction  struct{ a.ReflectedFunction }
-	gteFunction struct{ a.ReflectedFunction }
-	ltFunction  struct{ a.ReflectedFunction }
-	lteFunction struct{ a.ReflectedFunction }
+	addFunction struct{ BaseBuiltIn }
+	subFunction struct{ BaseBuiltIn }
+	mulFunction struct{ BaseBuiltIn }
+	divFunction struct{ BaseBuiltIn }
+	modFunction struct{ BaseBuiltIn }
+	eqFunction  struct{ BaseBuiltIn }
+	neqFunction struct{ BaseBuiltIn }
+	gtFunction  struct{ BaseBuiltIn }
+	gteFunction struct{ BaseBuiltIn }
+	ltFunction  struct{ BaseBuiltIn }
+	lteFunction struct{ BaseBuiltIn }
 )
 
 func reduceNum(s a.Sequence, v a.Number, f reduceFunc) a.Value {
@@ -162,17 +162,17 @@ func init() {
 	Namespace.Put("inf", a.PosInfinity)
 	Namespace.Put("-inf", a.NegInfinity)
 
-	RegisterBaseFunction("+", add)
-	RegisterBaseFunction("-", sub)
-	RegisterBaseFunction("*", mul)
-	RegisterBaseFunction("/", div)
-	RegisterBaseFunction("%", mod)
-	RegisterBaseFunction("=", eq)
-	RegisterBaseFunction("!=", neq)
-	RegisterBaseFunction(">", gt)
-	RegisterBaseFunction(">=", gte)
-	RegisterBaseFunction("<", lt)
-	RegisterBaseFunction("<=", lte)
+	RegisterBuiltIn("+", add)
+	RegisterBuiltIn("-", sub)
+	RegisterBuiltIn("*", mul)
+	RegisterBuiltIn("/", div)
+	RegisterBuiltIn("%", mod)
+	RegisterBuiltIn("=", eq)
+	RegisterBuiltIn("!=", neq)
+	RegisterBuiltIn(">", gt)
+	RegisterBuiltIn(">=", gte)
+	RegisterBuiltIn("<", lt)
+	RegisterBuiltIn("<=", lte)
 
 	RegisterSequencePredicate("inf?", isPosInfinity)
 	RegisterSequencePredicate("-inf?", isNegInfinity)

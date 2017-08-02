@@ -53,7 +53,7 @@ func TestMetadata(t *testing.T) {
 func TestAnnotated(t *testing.T) {
 	as := assert.New(t)
 
-	fn := a.NewExecFunction(nil)
+	fn := a.MakeExecFunction(nil)
 	as.Identical(fn, a.AssertAnnotated(fn))
 
 	defer as.ExpectError(a.ErrStr(a.ExpectedAnnotated, f(99)))
@@ -63,11 +63,11 @@ func TestAnnotated(t *testing.T) {
 func TestGetDocumentation(t *testing.T) {
 	as := assert.New(t)
 
-	f1 := a.NewExecFunction(nil).WithMetadata(a.Properties{
+	f1 := a.MakeExecFunction(nil).WithMetadata(a.Properties{
 		a.DocKey: a.Str("hello there"),
 	})
 
-	f2 := a.NewExecFunction(nil).WithMetadata(a.Properties{
+	f2 := a.MakeExecFunction(nil).WithMetadata(a.Properties{
 		a.DocAssetKey: a.Str("if"),
 	})
 

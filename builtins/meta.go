@@ -3,8 +3,8 @@ package builtins
 import a "github.com/kode4food/sputter/api"
 
 type (
-	withMetaFunction struct{ a.ReflectedFunction }
-	getMetaFunction  struct{ a.ReflectedFunction }
+	withMetaFunction struct{ BaseBuiltIn }
+	getMetaFunction  struct{ BaseBuiltIn }
 )
 
 func toProperties(args a.MappedSequence) a.Properties {
@@ -52,8 +52,8 @@ func init() {
 	var withMeta *withMetaFunction
 	var getMeta *getMetaFunction
 
-	RegisterBaseFunction("with-meta", withMeta)
-	RegisterBaseFunction("meta", getMeta)
+	RegisterBuiltIn("with-meta", withMeta)
+	RegisterBuiltIn("meta", getMeta)
 
 	RegisterSequencePredicate("meta?", isAnnotated)
 }

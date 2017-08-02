@@ -10,7 +10,7 @@ import (
 )
 
 func getBuiltIn(n a.Name) a.Function {
-	if r, ok := b.GetBuiltIn(n); ok {
+	if r, ok := b.GetFunction(n); ok {
 		return r
 	}
 	panic(a.ErrStr("Built in not found: ", n))
@@ -43,7 +43,7 @@ func local(n a.Name) a.Symbol {
 func TestMissingBuiltIn(t *testing.T) {
 	as := assert.New(t)
 
-	v, ok := b.GetBuiltIn("boom")
+	v, ok := b.GetFunction("boom")
 	as.Nil(v)
 	as.False(ok)
 }

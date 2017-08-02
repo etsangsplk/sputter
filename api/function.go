@@ -1,7 +1,5 @@
 package api
 
-import "reflect"
-
 type (
 	// Function is a Value that can be invoked
 	Function interface {
@@ -17,17 +15,6 @@ type (
 	// BaseFunction provides common behavior for different Function types
 	BaseFunction struct {
 		meta Object
-	}
-
-	// HasReflectedFunction marks a Value as being based on reflection
-	HasReflectedFunction interface {
-		IsReflectedFunction() bool
-	}
-
-	// ReflectedFunction is the base structure for reflected Functions
-	ReflectedFunction struct {
-		BaseFunction
-		concrete reflect.Type
 	}
 
 	execFunction struct {
@@ -55,35 +42,24 @@ var (
 		MacroKey:   False,
 		SpecialKey: False,
 	}
+
+	// DefaultBaseFunction provides the default BaseFunction data
+	DefaultBaseFunction = NewBaseFunction(functionMetadata)
 )
 
-// NewReflectedFunction uses reflection to instantiate a Base-derived Function
-func NewReflectedFunction(f HasReflectedFunction) Function {
-	t := reflect.ValueOf(f).Type().Elem()
-	return newReflectedFunctionWithMeta(t, functionMetadata)
-}
-
-// NewExecFunction creates a Function instance from a SequenceProcessor
-func NewExecFunction(e SequenceProcessor) Function {
-	return &execFunction{
-		BaseFunction: BaseFunction{
-			meta: functionMetadata,
-		},
-		exec: e,
+// NewBaseFunction instantiates a new BaseFunction with metadata
+func NewBaseFunction(md Object) BaseFunction {
+	return BaseFunction{
+		meta: md,
 	}
 }
 
-func newReflectedFunctionWithMeta(t reflect.Type, md Object) Function {
-	ptr := reflect.New(t)
-	v := reflect.Indirect(ptr)
-	f := reflect.Indirect(v).FieldByName("ReflectedFunction")
-	f.Set(reflect.ValueOf(ReflectedFunction{
-		BaseFunction: BaseFunction{
-			meta: md,
-		},
-		concrete: t,
-	}))
-	return ptr.Interface().(Function)
+// MakeExecFunction creates a Function instance from a SequenceProcessor
+func MakeExecFunction(e SequenceProcessor) Function {
+	return &execFunction{
+		BaseFunction: DefaultBaseFunction,
+		exec:         e,
+	}
 }
 
 // IsFunction identifies this Value as a Function
@@ -126,23 +102,10 @@ func (f *BaseFunction) Str() Str {
 	return MakeDumpStr(f)
 }
 
-// IsReflectedFunction returns whether or not this Function is reflected
-func (f *ReflectedFunction) IsReflectedFunction() bool {
-	return true
-}
-
-// WithMetadata creates a copy of this Function with additional Metadata
-func (f *ReflectedFunction) WithMetadata(md Object) AnnotatedValue {
-	childMeta := f.Metadata().Child(md.Flatten())
-	return newReflectedFunctionWithMeta(f.concrete, childMeta)
-}
-
 func (f *execFunction) WithMetadata(md Object) AnnotatedValue {
 	return &execFunction{
-		BaseFunction: BaseFunction{
-			meta: f.meta.Child(md.Flatten()),
-		},
-		exec: f.exec,
+		BaseFunction: NewBaseFunction(f.meta.Child(md.Flatten())),
+		exec:         f.exec,
 	}
 }
 

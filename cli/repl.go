@@ -377,7 +377,7 @@ func registerBuiltIn(v a.AnnotatedValue) {
 
 func registerBuiltIns() {
 	registerBuiltIn(
-		a.NewExecFunction(use).WithMetadata(a.Properties{
+		a.MakeExecFunction(use).WithMetadata(a.Properties{
 			a.NameKey:     a.Name("use"),
 			a.DocAssetKey: a.Str("repl-use"),
 			a.SpecialKey:  a.True,
@@ -385,34 +385,34 @@ func registerBuiltIns() {
 	)
 
 	registerBuiltIn(
-		a.NewExecFunction(shutdown).WithMetadata(a.Properties{
+		a.MakeExecFunction(shutdown).WithMetadata(a.Properties{
 			a.NameKey:     a.Name("quit"),
 			a.DocAssetKey: a.Str("repl-quit"),
 		}),
 	)
 
 	registerBuiltIn(
-		a.NewExecFunction(debugInfo).WithMetadata(a.Properties{
+		a.MakeExecFunction(debugInfo).WithMetadata(a.Properties{
 			a.NameKey: a.Name("debug-info"),
 		}),
 	)
 
 	registerBuiltIn(
-		a.NewExecFunction(cls).WithMetadata(a.Properties{
+		a.MakeExecFunction(cls).WithMetadata(a.Properties{
 			a.NameKey:     a.Name("cls"),
 			a.DocAssetKey: a.Str("repl-cls"),
 		}),
 	)
 
 	registerBuiltIn(
-		a.NewExecFunction(help).WithMetadata(a.Properties{
+		a.MakeExecFunction(help).WithMetadata(a.Properties{
 			a.NameKey:     a.Name("help"),
 			a.DocAssetKey: a.Str("repl-help"),
 		}),
 	)
 
 	registerBuiltIn(
-		a.NewExecFunction(doc).WithMetadata(a.Properties{
+		a.MakeExecFunction(doc).WithMetadata(a.Properties{
 			a.NameKey:     a.Name("doc"),
 			a.DocAssetKey: a.Str("repl-doc"),
 			a.SpecialKey:  a.True,

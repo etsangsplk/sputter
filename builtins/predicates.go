@@ -7,7 +7,7 @@ var PredicateKey = a.NewKeyword("predicate")
 
 // NewPredicate creates a new Predicate instance
 func NewPredicate(f a.SequenceProcessor) a.Function {
-	return a.NewExecFunction(f).WithMetadata(a.Properties{
+	return a.MakeExecFunction(f).WithMetadata(a.Properties{
 		PredicateKey: a.True,
 	}).(a.Function)
 }

@@ -3,13 +3,13 @@ package builtins
 import a "github.com/kode4food/sputter/api"
 
 type (
-	firstFunction struct{ a.ReflectedFunction }
-	restFunction  struct{ a.ReflectedFunction }
-	consFunction  struct{ a.ReflectedFunction }
-	conjFunction  struct{ a.ReflectedFunction }
-	lenFunction   struct{ a.ReflectedFunction }
-	nthFunction   struct{ a.ReflectedFunction }
-	getFunction   struct{ a.ReflectedFunction }
+	firstFunction struct{ BaseBuiltIn }
+	restFunction  struct{ BaseBuiltIn }
+	consFunction  struct{ BaseBuiltIn }
+	conjFunction  struct{ BaseBuiltIn }
+	lenFunction   struct{ BaseBuiltIn }
+	nthFunction   struct{ BaseBuiltIn }
+	getFunction   struct{ BaseBuiltIn }
 
 	forProc func(a.Context)
 )
@@ -92,13 +92,13 @@ func init() {
 	var nth *nthFunction
 	var get *getFunction
 
-	RegisterBaseFunction("first", first)
-	RegisterBaseFunction("rest", rest)
-	RegisterBaseFunction("cons", cons)
-	RegisterBaseFunction("conj", conj)
-	RegisterBaseFunction("len", _len)
-	RegisterBaseFunction("nth", nth)
-	RegisterBaseFunction("get", get)
+	RegisterBuiltIn("first", first)
+	RegisterBuiltIn("rest", rest)
+	RegisterBuiltIn("cons", cons)
+	RegisterBuiltIn("conj", conj)
+	RegisterBuiltIn("len", _len)
+	RegisterBuiltIn("nth", nth)
+	RegisterBuiltIn("get", get)
 
 	RegisterSequencePredicate("seq?", isSequence)
 	RegisterSequencePredicate("len?", isCounted)

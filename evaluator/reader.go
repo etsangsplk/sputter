@@ -63,7 +63,7 @@ func Read(context a.Context, lexer a.Sequence) a.Sequence {
 	for f, ok := ri.nextValue(); ok; f, ok = ri.nextValue() {
 		r = r.Conjoin(f).(a.Vector)
 	}
-	return a.NewBlock(r)
+	return a.MakeBlock(r)
 }
 
 func (r *reader) nextToken() (*Token, bool) {

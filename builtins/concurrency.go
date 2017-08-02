@@ -3,9 +3,9 @@ package builtins
 import a "github.com/kode4food/sputter/api"
 
 type (
-	chanFunction    struct{ a.ReflectedFunction }
-	promiseFunction struct{ a.ReflectedFunction }
-	goFunction      struct{ a.ReflectedFunction }
+	chanFunction    struct{ BaseBuiltIn }
+	promiseFunction struct{ BaseBuiltIn }
+	goFunction      struct{ BaseBuiltIn }
 )
 
 var (
@@ -52,7 +52,7 @@ func isPromise(v a.Value) bool {
 
 func (f *goFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
-	go a.EvalBlock(a.ChildContext(c), args)
+	go a.MakeBlock(args).Eval(a.ChildContext(c))
 	return a.Nil
 }
 
@@ -61,9 +61,9 @@ func init() {
 	var promise *promiseFunction
 	var _go *goFunction
 
-	RegisterBaseFunction("chan", _chan)
-	RegisterBaseFunction("promise", promise)
-	RegisterBaseFunction("make-go", _go)
+	RegisterBuiltIn("chan", _chan)
+	RegisterBuiltIn("promise", promise)
+	RegisterBuiltIn("make-go", _go)
 
 	RegisterSequencePredicate("promise?", isPromise)
 }

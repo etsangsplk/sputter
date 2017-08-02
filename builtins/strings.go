@@ -6,8 +6,8 @@ import (
 )
 
 type (
-	strFunction       struct{ a.ReflectedFunction }
-	readerStrFunction struct{ a.ReflectedFunction }
+	strFunction       struct{ BaseBuiltIn }
+	readerStrFunction struct{ BaseBuiltIn }
 )
 
 func (f *strFunction) Apply(_ a.Context, args a.Sequence) a.Value {
@@ -37,8 +37,8 @@ func init() {
 	var str *strFunction
 	var readerStr *readerStrFunction
 
-	RegisterBaseFunction("str", str)
-	RegisterBaseFunction("str!", readerStr)
+	RegisterBuiltIn("str", str)
+	RegisterBuiltIn("str!", readerStr)
 
 	RegisterSequencePredicate("str?", isStr)
 }

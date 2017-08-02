@@ -6,8 +6,8 @@ import a "github.com/kode4food/sputter/api"
 const ExpectedBindings = "expected bindings in the form: name value"
 
 type (
-	defFunction struct{ a.ReflectedFunction }
-	letFunction struct{ a.ReflectedFunction }
+	defFunction struct{ BaseBuiltIn }
+	letFunction struct{ BaseBuiltIn }
 )
 
 func (f *defFunction) Apply(c a.Context, args a.Sequence) a.Value {
@@ -40,13 +40,13 @@ func (f *letFunction) Apply(c a.Context, args a.Sequence) a.Value {
 		l.Put(n, a.Eval(l, v))
 	}
 
-	return a.EvalBlock(l, args.Rest())
+	return a.MakeBlock(args.Rest()).Eval(l)
 }
 
 func init() {
 	var def *defFunction
 	var let *letFunction
 
-	RegisterBaseFunction("def", def)
-	RegisterBaseFunction("let", let)
+	RegisterBuiltIn("def", def)
+	RegisterBuiltIn("let", let)
 }

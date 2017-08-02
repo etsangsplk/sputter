@@ -7,10 +7,10 @@ var macroMetadata = a.Properties{
 }
 
 type (
-	defMacroFunction  struct{ a.ReflectedFunction }
-	expand1Function   struct{ a.ReflectedFunction }
-	expandFunction    struct{ a.ReflectedFunction }
-	expandAllFunction struct{ a.ReflectedFunction }
+	defMacroFunction  struct{ BaseBuiltIn }
+	expand1Function   struct{ BaseBuiltIn }
+	expandFunction    struct{ BaseBuiltIn }
+	expandAllFunction struct{ BaseBuiltIn }
 )
 
 func (f *defMacroFunction) Apply(c a.Context, args a.Sequence) a.Value {
@@ -52,10 +52,10 @@ func init() {
 	var macroExpand *expandFunction
 	var macroExpandAll *expandAllFunction
 
-	RegisterBaseFunction("defmacro", defMacro)
-	RegisterBaseFunction("macroexpand1", macroExpand1)
-	RegisterBaseFunction("macroexpand", macroExpand)
-	RegisterBaseFunction("macroexpand-all", macroExpandAll)
+	RegisterBuiltIn("defmacro", defMacro)
+	RegisterBuiltIn("macroexpand1", macroExpand1)
+	RegisterBuiltIn("macroexpand", macroExpand)
+	RegisterBuiltIn("macroexpand-all", macroExpandAll)
 
 	RegisterSequencePredicate("macro?", isMacro)
 	RegisterSequencePredicate("special-form?", isSpecialForm)

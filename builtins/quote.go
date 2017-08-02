@@ -16,8 +16,8 @@ const (
 )
 
 type (
-	quoteFunction       struct{ a.ReflectedFunction }
-	syntaxQuoteFunction struct{ a.ReflectedFunction }
+	quoteFunction       struct{ BaseBuiltIn }
+	syntaxQuoteFunction struct{ BaseBuiltIn }
 
 	syntaxContext struct {
 		context a.Context
@@ -170,6 +170,6 @@ func init() {
 	var quote *quoteFunction
 	var syntaxQuote *syntaxQuoteFunction
 
-	RegisterBaseFunction("quote", quote)
-	RegisterBaseFunction("syntax-quote", syntaxQuote)
+	RegisterBuiltIn("quote", quote)
+	RegisterBuiltIn("syntax-quote", syntaxQuote)
 }

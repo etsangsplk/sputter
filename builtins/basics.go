@@ -6,11 +6,11 @@ import (
 )
 
 type (
-	panicFunction   struct{ a.ReflectedFunction }
-	recoverFunction struct{ a.ReflectedFunction }
-	doFunction      struct{ a.ReflectedFunction }
-	readFunction    struct{ a.ReflectedFunction }
-	evalFunction    struct{ a.ReflectedFunction }
+	panicFunction   struct{ BaseBuiltIn }
+	recoverFunction struct{ BaseBuiltIn }
+	doFunction      struct{ BaseBuiltIn }
+	readFunction    struct{ BaseBuiltIn }
+	evalFunction    struct{ BaseBuiltIn }
 )
 
 func (f *panicFunction) Apply(_ a.Context, args a.Sequence) a.Value {
@@ -57,9 +57,9 @@ func init() {
 	var read *readFunction
 	var eval *evalFunction
 
-	RegisterBaseFunction("panic", _panic)
-	RegisterBaseFunction("make-recover", _recover)
-	RegisterBaseFunction("do", do)
-	RegisterBaseFunction("read", read)
-	RegisterBaseFunction("eval", eval)
+	RegisterBuiltIn("panic", _panic)
+	RegisterBuiltIn("make-recover", _recover)
+	RegisterBuiltIn("do", do)
+	RegisterBuiltIn("read", read)
+	RegisterBuiltIn("eval", eval)
 }

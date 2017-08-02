@@ -3,8 +3,8 @@ package builtins
 import a "github.com/kode4food/sputter/api"
 
 type (
-	withNamespaceFunction struct{ a.ReflectedFunction }
-	getNamespaceFunction  struct{ a.ReflectedFunction }
+	withNamespaceFunction struct{ BaseBuiltIn }
+	getNamespaceFunction  struct{ BaseBuiltIn }
 )
 
 func (f *withNamespaceFunction) Apply(c a.Context, args a.Sequence) a.Value {
@@ -15,7 +15,7 @@ func (f *withNamespaceFunction) Apply(c a.Context, args a.Sequence) a.Value {
 
 	sc := a.WithNamespace(a.ChildContext(c), ns)
 	sc.Put(a.ContextDomain, ns)
-	return a.EvalBlock(sc, args.Rest())
+	return a.MakeBlock(args.Rest()).Eval(sc)
 }
 
 func (f *getNamespaceFunction) Apply(_ a.Context, args a.Sequence) a.Value {
@@ -28,6 +28,6 @@ func init() {
 	var withNamespace *withNamespaceFunction
 	var getNamespace *getNamespaceFunction
 
-	RegisterBaseFunction("with-ns", withNamespace)
-	RegisterBaseFunction("ns", getNamespace)
+	RegisterBuiltIn("with-ns", withNamespace)
+	RegisterBuiltIn("ns", getNamespace)
 }

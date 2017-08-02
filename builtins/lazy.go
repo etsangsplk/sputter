@@ -3,15 +3,15 @@ package builtins
 import a "github.com/kode4food/sputter/api"
 
 type (
-	lazySequenceFunction struct{ a.ReflectedFunction }
-	concatFunction       struct{ a.ReflectedFunction }
-	filterFunction       struct{ a.ReflectedFunction }
-	mapFunction          struct{ a.ReflectedFunction }
-	reduceFunction       struct{ a.ReflectedFunction }
-	takeFunction         struct{ a.ReflectedFunction }
-	dropFunction         struct{ a.ReflectedFunction }
-	rangeFunction        struct{ a.ReflectedFunction }
-	forEachFunction      struct{ a.ReflectedFunction }
+	lazySequenceFunction struct{ BaseBuiltIn }
+	concatFunction       struct{ BaseBuiltIn }
+	filterFunction       struct{ BaseBuiltIn }
+	mapFunction          struct{ BaseBuiltIn }
+	reduceFunction       struct{ BaseBuiltIn }
+	takeFunction         struct{ BaseBuiltIn }
+	dropFunction         struct{ BaseBuiltIn }
+	rangeFunction        struct{ BaseBuiltIn }
+	forEachFunction      struct{ BaseBuiltIn }
 )
 
 func makeLazyResolver(c a.Context, f a.Applicable) a.LazyResolver {
@@ -46,12 +46,7 @@ func makeValueReducer(c a.Context, f a.Applicable) a.ValueReducer {
 }
 
 func (f *lazySequenceFunction) Apply(c a.Context, args a.Sequence) a.Value {
-	db := a.NewBlock(args)
-
-	fn := a.NewExecFunction(func(c a.Context, _ a.Sequence) a.Value {
-		return a.Eval(c, db)
-	})
-
+	fn := NewBlockFunction(args)
 	return a.NewLazySequence(makeLazyResolver(c, fn))
 }
 
@@ -143,13 +138,14 @@ func makeIntermediate(n a.Name, e a.Value, next forProc) forProc {
 	}
 }
 
-func makeTerminal(n a.Name, e a.Value, bl a.Sequence) forProc {
+func makeTerminal(n a.Name, e a.Value, s a.Sequence) forProc {
+	bl := a.MakeBlock(s)
 	return func(c a.Context) {
 		s := a.AssertSequence(a.Eval(c, e))
 		for i := s; i.IsSequence(); i = i.Rest() {
 			l := a.ChildContext(c)
 			l.Put(n, i.First())
-			a.EvalBlock(l, bl)
+			bl.Eval(l)
 		}
 	}
 }
@@ -165,13 +161,13 @@ func init() {
 	var _range *rangeFunction
 	var forEach *forEachFunction
 
-	RegisterBaseFunction("make-lazy-seq", lazySequence)
-	RegisterBaseFunction("concat", concat)
-	RegisterBaseFunction("filter", filter)
-	RegisterBaseFunction("map", _map)
-	RegisterBaseFunction("reduce", reduce)
-	RegisterBaseFunction("take", take)
-	RegisterBaseFunction("drop", drop)
-	RegisterBaseFunction("make-range", _range)
-	RegisterBaseFunction("for-each", forEach)
+	RegisterBuiltIn("make-lazy-seq", lazySequence)
+	RegisterBuiltIn("concat", concat)
+	RegisterBuiltIn("filter", filter)
+	RegisterBuiltIn("map", _map)
+	RegisterBuiltIn("reduce", reduce)
+	RegisterBuiltIn("take", take)
+	RegisterBuiltIn("drop", drop)
+	RegisterBuiltIn("make-range", _range)
+	RegisterBuiltIn("for-each", forEach)
 }
