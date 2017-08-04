@@ -2,18 +2,18 @@
 
 (defmacro to-assoc
   {:doc-asset "to-assoc"}
-  [& forms]
-  `(apply assoc (concat ~@forms)))
+  [& seqs]
+  `(apply assoc (concat ~@seqs)))
 
 (defmacro to-list
   {:doc-asset "to-list"}
-  [& forms]
-  `(apply list (concat ~@forms)))
+  [& seqs]
+  `(apply list (concat ~@seqs)))
 
 (defmacro to-vector
   {:doc-asset "to-vector"}
-  [& forms]
-  `(apply vector (concat ~@forms)))
+  [& seqs]
+  `(apply vector (concat ~@seqs)))
 
 (defmacro range
   {:doc-asset "range"}
@@ -23,6 +23,7 @@
   ([min max step] `(sputter:make-range ~min ~max ~step)))
 
 (defmacro lazy-seq
+  {:doc-asset "lazy-seq"}
   [& body]
   (list 'sputter:make-closure []
     (cons 'sputter:make-lazy-seq body)))

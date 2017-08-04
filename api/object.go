@@ -57,13 +57,9 @@ func (p Properties) Child(props Properties) Object {
 	}
 }
 
-// Flatten converts the Properties of an Object graph into a single set
+// Flatten against Properties just returns the Properties (which are flat)
 func (p Properties) Flatten() Properties {
-	r := make(Properties, len(p))
-	for k, v := range p {
-		r[k] = v
-	}
-	return r
+	return p
 }
 
 // Str converts this Value into a Str

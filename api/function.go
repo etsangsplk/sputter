@@ -54,11 +54,18 @@ func NewBaseFunction(md Object) BaseFunction {
 	}
 }
 
-// MakeExecFunction creates a Function instance from a SequenceProcessor
-func MakeExecFunction(e SequenceProcessor) Function {
+// NewExecFunction creates a Function instance from a SequenceProcessor
+func NewExecFunction(e SequenceProcessor) Function {
 	return &execFunction{
 		BaseFunction: DefaultBaseFunction,
 		exec:         e,
+	}
+}
+
+// Extend creates a new BaseFunction by extending its metadata
+func (f *BaseFunction) Extend(md Object) BaseFunction {
+	return BaseFunction{
+		meta: f.meta.Child(md.Flatten()),
 	}
 }
 
@@ -104,7 +111,7 @@ func (f *BaseFunction) Str() Str {
 
 func (f *execFunction) WithMetadata(md Object) AnnotatedValue {
 	return &execFunction{
-		BaseFunction: NewBaseFunction(f.meta.Child(md.Flatten())),
+		BaseFunction: f.Extend(md),
 		exec:         f.exec,
 	}
 }

@@ -71,7 +71,7 @@ func (f *singleFunction) Apply(c a.Context, args a.Sequence) a.Value {
 
 func (f *singleFunction) WithMetadata(md a.Object) a.AnnotatedValue {
 	return &singleFunction{
-		BaseFunction: a.NewBaseFunction(f.Metadata().Child(md.Flatten())),
+		BaseFunction: f.Extend(md),
 		args:         f.args,
 		argProcessor: f.argProcessor,
 		body:         f.body,
@@ -89,7 +89,7 @@ func (f *multiFunction) Apply(c a.Context, args a.Sequence) a.Value {
 
 func (f *multiFunction) WithMetadata(md a.Object) a.AnnotatedValue {
 	return &multiFunction{
-		BaseFunction: a.NewBaseFunction(f.Metadata().Child(md.Flatten())),
+		BaseFunction: f.Extend(md),
 		args:         f.args,
 		matchers:     f.matchers,
 	}
@@ -109,7 +109,7 @@ func (f *blockFunction) Apply(c a.Context, _ a.Sequence) a.Value {
 
 func (f *blockFunction) WithMetadata(md a.Object) a.AnnotatedValue {
 	return &blockFunction{
-		BaseFunction: a.NewBaseFunction(f.Metadata().Child(md.Flatten())),
+		BaseFunction: f.Extend(md),
 		body:         f.body,
 	}
 }

@@ -54,7 +54,7 @@ func makeWriter(w io.Writer, o a.OutputFunc) a.Object {
 }
 
 func bindWriter(w a.Writer) a.Function {
-	return a.MakeExecFunction(func(_ a.Context, args a.Sequence) a.Value {
+	return a.NewExecFunction(func(_ a.Context, args a.Sequence) a.Value {
 		a.AssertMinimumArity(args, 1)
 		for i := args; i.IsSequence(); i = i.Rest() {
 			w.Write(i.First())
@@ -64,7 +64,7 @@ func bindWriter(w a.Writer) a.Function {
 }
 
 func bindCloser(c a.Closer) a.Function {
-	return a.MakeExecFunction(func(_ a.Context, args a.Sequence) a.Value {
+	return a.NewExecFunction(func(_ a.Context, args a.Sequence) a.Value {
 		a.AssertArity(args, 0)
 		c.Close()
 		return a.Nil

@@ -25,11 +25,14 @@ var (
 	Namespace = a.GetNamespace(a.BuiltInDomain)
 
 	builtInFuncs = map[a.Name]a.Function{}
+
+	baseZeroValue BaseBuiltIn
+	baseFieldName = reflect.TypeOf(baseZeroValue).Name()
 )
 
 // MakeBuiltIn uses reflection to instantiate a built-in Function
 func MakeBuiltIn(f BuiltInFunction) a.Function {
-	t := reflect.ValueOf(f).Type().Elem()
+	t := reflect.TypeOf(f).Elem()
 	return newBuiltInWithBase(t, a.DefaultBaseFunction)
 }
 
@@ -40,14 +43,14 @@ func (f *BaseBuiltIn) IsBuiltIn() bool {
 
 // WithMetadata creates a copy of this Function with additional Metadata
 func (f *BaseBuiltIn) WithMetadata(md a.Object) a.AnnotatedValue {
-	b := a.NewBaseFunction(f.Metadata().Child(md.Flatten()))
+	b := f.Extend(md)
 	return newBuiltInWithBase(f.concrete, b)
 }
 
 func newBuiltInWithBase(t reflect.Type, b a.BaseFunction) a.Function {
 	ptr := reflect.New(t)
 	v := reflect.Indirect(ptr)
-	f := reflect.Indirect(v).FieldByName("BaseBuiltIn")
+	f := reflect.Indirect(v).FieldByName(baseFieldName)
 	f.Set(reflect.ValueOf(BaseBuiltIn{
 		BaseFunction: b,
 		concrete:     t,
@@ -100,7 +103,7 @@ func defBuiltIn(c a.Context, args a.Sequence) a.Value {
 
 func init() {
 	Namespace.Put("def-builtin",
-		a.MakeExecFunction(defBuiltIn).WithMetadata(a.Properties{
+		a.NewExecFunction(defBuiltIn).WithMetadata(a.Properties{
 			a.SpecialKey: a.True,
 		}),
 	)

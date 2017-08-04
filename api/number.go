@@ -34,7 +34,11 @@ type (
 )
 
 var (
-	ctx = apd.BaseContext.WithPrecision(53)
+	defCtx = apd.BaseContext
+	addCtx = apd.BaseContext
+	subCtx = apd.BaseContext
+	mulCtx = apd.BaseContext
+	divCtx = apd.BaseContext.WithPrecision(53)
 
 	// Zero is a convenience wrapper for the number 0
 	Zero = NewFloat(0)
@@ -65,7 +69,7 @@ func NewRatio(n int64, d int64) Number {
 // ParseNumber attempts to parse a string into a Number Value
 func ParseNumber(s Str) Number {
 	ns := string(s)
-	if f, _, err := ctx.SetString(new(apd.Decimal), ns); err == nil {
+	if f, _, err := defCtx.SetString(new(apd.Decimal), ns); err == nil {
 		return (*dec)(f)
 	}
 	if r, ok := new(big.Rat).SetString(ns); ok {
@@ -104,11 +108,11 @@ func (r *rat) Cmp(n Number) Comparison {
 func (d *dec) Add(n Number) Number {
 	res := new(apd.Decimal)
 	if dn, ok := n.(*dec); ok {
-		ctx.Add(res, (*apd.Decimal)(d), (*apd.Decimal)(dn))
+		addCtx.Add(res, (*apd.Decimal)(d), (*apd.Decimal)(dn))
 		return (*dec)(res)
 	}
 	rn, _ := n.(*rat)
-	ctx.Add(res, (*apd.Decimal)(d), rn.toDecimal())
+	addCtx.Add(res, (*apd.Decimal)(d), rn.toDecimal())
 	return (*dec)(res)
 }
 
@@ -117,18 +121,18 @@ func (r *rat) Add(n Number) Number {
 		return (*rat)(new(big.Rat).Add((*big.Rat)(r), (*big.Rat)(rn)))
 	}
 	res := new(apd.Decimal)
-	ctx.Add(res, r.toDecimal(), (*apd.Decimal)(n.(*dec)))
+	addCtx.Add(res, r.toDecimal(), (*apd.Decimal)(n.(*dec)))
 	return (*dec)(res)
 }
 
 func (d *dec) Sub(n Number) Number {
 	res := new(apd.Decimal)
 	if dn, ok := n.(*dec); ok {
-		ctx.Sub(res, (*apd.Decimal)(d), (*apd.Decimal)(dn))
+		subCtx.Sub(res, (*apd.Decimal)(d), (*apd.Decimal)(dn))
 		return (*dec)(res)
 	}
 	rn, _ := n.(*rat)
-	ctx.Sub(res, (*apd.Decimal)(d), rn.toDecimal())
+	subCtx.Sub(res, (*apd.Decimal)(d), rn.toDecimal())
 	return (*dec)(res)
 }
 
@@ -137,18 +141,18 @@ func (r *rat) Sub(n Number) Number {
 		return (*rat)(new(big.Rat).Sub((*big.Rat)(r), (*big.Rat)(rn)))
 	}
 	res := new(apd.Decimal)
-	ctx.Sub(res, r.toDecimal(), (*apd.Decimal)(n.(*dec)))
+	subCtx.Sub(res, r.toDecimal(), (*apd.Decimal)(n.(*dec)))
 	return (*dec)(res)
 }
 
 func (d *dec) Mul(n Number) Number {
 	res := new(apd.Decimal)
 	if dn, ok := n.(*dec); ok {
-		ctx.Mul(res, (*apd.Decimal)(d), (*apd.Decimal)(dn))
+		mulCtx.Mul(res, (*apd.Decimal)(d), (*apd.Decimal)(dn))
 		return (*dec)(res)
 	}
 	rn, _ := n.(*rat)
-	ctx.Mul(res, (*apd.Decimal)(d), rn.toDecimal())
+	mulCtx.Mul(res, (*apd.Decimal)(d), rn.toDecimal())
 	return (*dec)(res)
 }
 
@@ -157,18 +161,18 @@ func (r *rat) Mul(n Number) Number {
 		return (*rat)(new(big.Rat).Mul((*big.Rat)(r), (*big.Rat)(rn)))
 	}
 	res := new(apd.Decimal)
-	ctx.Mul(res, r.toDecimal(), (*apd.Decimal)(n.(*dec)))
+	mulCtx.Mul(res, r.toDecimal(), (*apd.Decimal)(n.(*dec)))
 	return (*dec)(res)
 }
 
 func (d *dec) Div(n Number) Number {
 	res := new(apd.Decimal)
 	if dn, ok := n.(*dec); ok {
-		ctx.Quo(res, (*apd.Decimal)(d), (*apd.Decimal)(dn))
+		divCtx.Quo(res, (*apd.Decimal)(d), (*apd.Decimal)(dn))
 		return (*dec)(res)
 	}
 	rn, _ := n.(*rat)
-	ctx.Quo(res, (*apd.Decimal)(d), rn.toDecimal())
+	divCtx.Quo(res, (*apd.Decimal)(d), rn.toDecimal())
 	return (*dec)(res)
 }
 
@@ -177,24 +181,24 @@ func (r *rat) Div(n Number) Number {
 		return (*rat)(new(big.Rat).Quo((*big.Rat)(r), (*big.Rat)(rn)))
 	}
 	res := new(apd.Decimal)
-	ctx.Quo(res, r.toDecimal(), (*apd.Decimal)(n.(*dec)))
+	divCtx.Quo(res, r.toDecimal(), (*apd.Decimal)(n.(*dec)))
 	return (*dec)(res)
 }
 
 func (d *dec) Mod(n Number) Number {
 	res := new(apd.Decimal)
 	if dn, ok := n.(*dec); ok {
-		ctx.Rem(res, (*apd.Decimal)(d), (*apd.Decimal)(dn))
+		divCtx.Rem(res, (*apd.Decimal)(d), (*apd.Decimal)(dn))
 		return (*dec)(res)
 	}
 	rn, _ := n.(*rat)
-	ctx.Rem(res, (*apd.Decimal)(d), rn.toDecimal())
+	divCtx.Rem(res, (*apd.Decimal)(d), rn.toDecimal())
 	return (*dec)(res)
 }
 
 func (r *rat) Mod(n Number) Number {
 	res := new(apd.Decimal)
-	ctx.Rem(res, r.toDecimal(), (*apd.Decimal)(n.(*dec)))
+	divCtx.Rem(res, r.toDecimal(), (*apd.Decimal)(n.(*dec)))
 	return (*dec)(res)
 }
 

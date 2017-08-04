@@ -11,7 +11,7 @@ import (
 func TestFunction(t *testing.T) {
 	as := assert.New(t)
 
-	f1 := a.MakeExecFunction(func(_ a.Context, _ a.Sequence) a.Value {
+	f1 := a.NewExecFunction(func(_ a.Context, _ a.Sequence) a.Value {
 		return s("hello")
 	}).WithMetadata(a.Properties{
 		a.NameKey: a.Name("test-function"),
@@ -20,7 +20,7 @@ func TestFunction(t *testing.T) {
 
 	as.True(f1.IsFunction())
 
-	f2 := a.MakeExecFunction(nil)
+	f2 := a.NewExecFunction(nil)
 	f3 := f1.WithMetadata(a.Properties{
 		a.DocKey: s("modified"),
 	})
@@ -41,7 +41,7 @@ func TestFunction(t *testing.T) {
 	c := a.NewContext()
 	as.String("hello", f1.Apply(c, a.EmptyList))
 
-	f4 := a.MakeExecFunction(nil).WithMetadata(a.Properties{
+	f4 := a.NewExecFunction(nil).WithMetadata(a.Properties{
 		a.TypeKey: f(99),
 	}).(a.Function)
 
@@ -53,7 +53,7 @@ func TestMacro(t *testing.T) {
 
 	foo := a.NewKeyword("foo")
 
-	m1 := a.MakeExecFunction(nil).WithMetadata(a.Properties{
+	m1 := a.NewExecFunction(nil).WithMetadata(a.Properties{
 		a.MacroKey: a.True,
 		a.NameKey:  a.Name("orig"),
 	}).(a.Function)
@@ -61,7 +61,7 @@ func TestMacro(t *testing.T) {
 	ok, _ := a.IsMacro(m1)
 	as.True(ok)
 
-	ok, _ = a.IsMacro(a.MakeExecFunction(nil))
+	ok, _ = a.IsMacro(a.NewExecFunction(nil))
 	as.False(ok)
 
 	k1 := a.NewKeyword("some_keyword")

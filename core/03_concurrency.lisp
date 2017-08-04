@@ -2,20 +2,20 @@
 
 (defmacro go
   {:doc-asset "go"}
-  [& forms]
+  [& body]
   (list 'sputter:make-closure []
-    (cons 'sputter:make-go forms)))
+    (cons 'sputter:make-go body)))
 
 (defmacro generate
   {:doc-asset "generate"}
-  [& forms]
+  [& body]
   `(let [ch# (chan) cl# (:close ch#) emit (:emit ch#)]
-    (go (let [x (do ~@forms)] (cl#) x))
+    (go (let [x (do ~@body)] (cl#) x))
     (:seq ch#)))
 
 (defmacro future
   {:doc-asset "future"}
-  [& forms]
+  [& body]
   `(let [promise# (promise)]
-    (go (promise# (do ~@forms)))
+    (go (promise# (do ~@body)))
     promise#))
