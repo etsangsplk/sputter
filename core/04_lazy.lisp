@@ -33,9 +33,11 @@
   (assert-args
     (vector? bindings)   "binding vector must be supplied"
     (= 2 (len bindings)) "binding vector must contain 2 elements")
-  (let [form (bindings 0) test (bindings 1)]
+  (let [form (bindings 0),
+        test (bindings 1)]
     `(let [temp# ~test]
-      (when temp# (let [~form temp#] ~@body)))))
+      (when temp#
+        (let [~form temp#] ~@body)))))
 
 (defn take-while
   [pred coll]

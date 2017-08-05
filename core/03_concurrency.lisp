@@ -9,9 +9,13 @@
 (defmacro generate
   {:doc-asset "generate"}
   [& body]
-  `(let [ch# (chan) cl# (:close ch#) emit (:emit ch#)]
-    (go (let [x (do ~@body)] (cl#) x))
-    (:seq ch#)))
+  `(let [chan# (chan),
+         close# (:close chan#),
+         emit (:emit chan#)]
+    (go (let [result# (do ~@body)]
+          (close#)
+          result#))
+    (:seq chan#)))
 
 (defmacro future
   {:doc-asset "future"}

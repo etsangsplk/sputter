@@ -103,8 +103,13 @@ func (o *object) Child(props Properties) Object {
 }
 
 func (o *object) Flatten() Properties {
-	r := o.parent.Flatten()
-	for k, v := range o.props {
+	pf := o.parent.Flatten()
+	sf := o.props
+	r := make(Properties, len(pf)+len(sf))
+	for k, v := range pf {
+		r[k] = v
+	}
+	for k, v := range sf {
 		r[k] = v
 	}
 	return r
