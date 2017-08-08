@@ -52,4 +52,4 @@
 (defmacro for
   [seq-exprs & body]
   `(generate
-     (for-each ~seq-exprs (emit (do ~@body)))))
+    (for-each ~seq-exprs (emit (do ~@body)))))

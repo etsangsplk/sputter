@@ -19,7 +19,7 @@
   {:doc-asset "cond"}
   ([] nil)
   ([clause] clause)
-  ([& clauses] 
+  ([& clauses]
     `(if ~(clauses 0)
          ~(clauses 1)
          (sputter:cond ~@(rest (rest clauses))))))
@@ -38,4 +38,4 @@
   ([clause] clause)
   ([& clauses]
     `(let [or# ~(clauses 0)]
-       (if or# or# (sputter:or ~@(rest clauses))))))
+      (if or# or# (sputter:or ~@(rest clauses))))))
