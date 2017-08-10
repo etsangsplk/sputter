@@ -4,64 +4,203 @@ package vm
 
 import a "github.com/kode4food/sputter/api"
 
-const defaultOperandStackSize = 8
+type (
+	// Data represents the data segment of a Module
+	Data []a.Value
 
-type operandStack struct {
-	data []interface{}
-	SP   int
-}
-
-func newOperandStack(size int) *operandStack {
-	return &operandStack{
-		data: make([]interface{}, size),
-		SP:   size,
+	// Instruction represents a decoded VM instruction
+	Instruction struct {
+		OpCode OpCode
+		Args   [3]uint
 	}
-}
 
-func (s *operandStack) push(v interface{}) {
-	s.SP--
-	s.data[s.SP] = v
-}
+	Module struct {
+		LocalsSize   uint
+		StackSize    uint
+		Data         []a.Value
+		Instructions []Instruction
+	}
 
-func (s *operandStack) pop() interface{} {
-	r := s.data[s.SP]
-	s.SP++
-	return r
-}
+	operandStack []interface{}
+)
 
-func (s *operandStack) peek() interface{} {
-	return s.data[s.SP]
-}
+func (m *Module) Apply(c a.Context, args a.Sequence) a.Value {
+	var emptyName a.Name
 
-func Exec(c a.Context, bc []byte) a.Value {
+	// Registers
+	var r1 interface{}
+	var n1 a.Name
+	var a1 a.Applicable
+	var s1 a.Sequence
 	var PC uint
-	var i int
-	var v interface{}
+	var SP uint
 
-	stack := newOperandStack(defaultOperandStackSize)
+	LOCALS := make([]a.Value, m.LocalsSize)
+	LOCALS[0] = args
+
+	STACK := make(operandStack, m.StackSize)
+	SP = m.StackSize - 1
+
+	DATA := m.Data
+	INST := m.Instructions
+
+	push := func(v interface{}) {
+		STACK[SP] = v
+		SP--
+	}
+
+	pop := func() interface{} {
+		SP++
+		return STACK[SP]
+	}
+
+	peek := func() interface{} {
+		return STACK[SP+1]
+	}
 
 start:
-	switch bc[PC] {
+	switch INST[PC].OpCode {
 	case NoOp:
-	case PushFrame:
-		i = stack.pop().(int)
-		v = stack
-		stack = newOperandStack(i)
-		stack.push(v)
-	case PopFrame:
-		stack = stack.pop().(*operandStack)
-	case PushContext:
-		stack.push(c)
-		c = a.ChildContext(c)
-	case PopContext:
-		c = stack.pop().(a.Context)
+		PC++
+		goto start
+
+	case Load:
+		push(LOCALS[INST[PC].Args[0]])
+		PC++
+		goto start
+
+	case Store:
+		LOCALS[INST[PC].Args[0]] = pop().(a.Value)
+		PC++
+		goto start
+
+	case Dup:
+		push(peek())
+		PC++
+		goto start
+
 	case Nil:
-		stack.push(a.Nil)
+		push(a.Nil)
+		PC++
+		goto start
+
+	case EmptyList:
+		push(a.EmptyList)
+		PC++
+		goto start
+
+	case True:
+		push(a.True)
+		PC++
+		goto start
+
+	case False:
+		push(a.False)
+		PC++
+		goto start
+
+	case Zero:
+		push(a.Zero)
+		PC++
+		goto start
+
+	case One:
+		push(a.One)
+		PC++
+		goto start
+
+	case Const:
+		push(DATA[INST[PC].Args[0]])
+		PC++
+		goto start
+
+	case PushContext:
+		push(c)
+		c = a.ChildContext(c)
+		PC++
+		goto start
+
+	case PopContext:
+		c = pop().(a.Context)
+		PC++
+		goto start
+
+	case Def:
+		n1 = a.AssertUnqualified(pop().(a.Value)).Name()
+		a.GetContextNamespace(c).Put(n1, pop().(a.Value))
+		n1 = emptyName // gc
+		PC++
+		goto start
+
+	case Let:
+		n1 = a.AssertUnqualified(pop().(a.Value)).Name()
+		c.Put(n1, pop().(a.Value))
+		n1 = emptyName // gc
+		PC++
+		goto start
+
+	case Eval:
+		push(a.Eval(c, pop().(a.Value)))
+		PC++
+		goto start
+
+	case Apply:
+		a1 = a.AssertApplicable(pop().(a.Value))
+		push(a1.Apply(c, a.AssertSequence(pop().(a.Value))))
+		a1 = nil // gc
+		PC++
+		goto start
+
+	case First:
+		push(a.AssertSequence(pop().(a.Value)).First())
+		PC++
+		goto start
+
+	case Rest:
+		push(a.AssertSequence(pop().(a.Value)).Rest())
+		PC++
+		goto start
+
+	case Prepend:
+		s1 = a.AssertSequence(pop().(a.Value))
+		push(s1.Prepend(pop().(a.Value)))
+		PC++
+		goto start
+
+	case Truthy:
+		r1 = pop()
+		if r1 == a.False || r1 == a.Nil {
+			push(0)
+			r1 = nil // gc
+			PC++
+			goto start
+		}
+		push(1)
+		r1 = nil // gc
+		PC++
+		goto start
+
+	case CondJump:
+		PC = INST[PC].Args[pop().(uint)]
+		goto start
+
+	case Jump:
+		PC = INST[PC].Args[0]
+		goto start
+
 	case Return:
-		return stack.pop().(a.Value)
-	case Halt:
-		panic(stack.pop().(a.Value))
+		return pop().(a.Value)
+
+	case ReturnNil:
+		return a.Nil
+
+	case Panic:
+		panic(pop())
 	}
-	PC++
-	goto start
+
+	panic("how did we get here?")
+}
+
+func (m *Module) Str() a.Str {
+	return a.MakeDumpStr(m)
 }
