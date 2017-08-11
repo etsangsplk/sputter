@@ -85,7 +85,7 @@ var (
 	False Bool = false
 
 	// Nil is a value that represents the absence of a Value
-	Nil = new(nilValue)
+	Nil = &nilValue{}
 )
 
 // Name makes Name Named

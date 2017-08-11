@@ -8,7 +8,9 @@ const (
 	NoOp OpCode = iota
 	Load
 	Store
+	Clear
 	Dup
+	Swap
 	Nil
 	EmptyList
 	True
@@ -16,8 +18,6 @@ const (
 	Zero
 	One
 	Const
-	PushContext
-	PopContext
 	Def
 	Let
 	Eval
@@ -25,7 +25,6 @@ const (
 	First
 	Rest
 	Prepend
-	Truthy
 	CondJump
 	Jump
 	Return

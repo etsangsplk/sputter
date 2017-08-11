@@ -11,7 +11,7 @@ type (
 	// Instruction represents a decoded VM instruction
 	Instruction struct {
 		OpCode OpCode
-		Args   [3]uint
+		Arg0   uint
 	}
 
 	// Module is the basic translation unit for the VM
@@ -23,17 +23,14 @@ type (
 		Instructions []Instruction
 	}
 
-	operandStack []interface{}
+	operandStack []a.Value
 )
 
 // Apply makes Module applicable
 func (m *Module) Apply(c a.Context, args a.Sequence) a.Value {
-	var emptyName a.Name
-
 	// Registers
-	var r1 interface{}
-	var n1 a.Name
-	var a1 a.Applicable
+	var r1 a.Value
+	var u1, u2 uint
 	var s1 a.Sequence
 	var PC uint
 	var SP uint
@@ -47,18 +44,14 @@ func (m *Module) Apply(c a.Context, args a.Sequence) a.Value {
 	DATA := m.Data
 	INST := m.Instructions
 
-	push := func(v interface{}) {
+	push := func(v a.Value) {
 		STACK[SP] = v
 		SP--
 	}
 
-	pop := func() interface{} {
+	pop := func() a.Value {
 		SP++
 		return STACK[SP]
-	}
-
-	peek := func() interface{} {
-		return STACK[SP+1]
 	}
 
 start:
@@ -68,17 +61,33 @@ start:
 		goto start
 
 	case Load:
-		push(LOCALS[INST[PC].Args[0]])
+		push(LOCALS[INST[PC].Arg0])
 		PC++
 		goto start
 
 	case Store:
-		LOCALS[INST[PC].Args[0]] = pop().(a.Value)
+		LOCALS[INST[PC].Arg0] = pop()
+		PC++
+		goto start
+
+	case Clear:
+		LOCALS[INST[PC].Arg0] = a.Nil
 		PC++
 		goto start
 
 	case Dup:
-		push(peek())
+		STACK[SP] = STACK[SP+1]
+		SP--
+		PC++
+		goto start
+
+	case Swap:
+		u1 = SP + 1
+		u2 = SP + 2
+		r1 = STACK[u1]
+		STACK[u1] = STACK[u2]
+		STACK[u2] = r1
+		r1 = nil // gc
 		PC++
 		goto start
 
@@ -113,86 +122,70 @@ start:
 		goto start
 
 	case Const:
-		push(DATA[INST[PC].Args[0]])
-		PC++
-		goto start
-
-	case PushContext:
-		push(c)
-		c = a.ChildContext(c)
-		PC++
-		goto start
-
-	case PopContext:
-		c = pop().(a.Context)
+		push(DATA[INST[PC].Arg0])
 		PC++
 		goto start
 
 	case Def:
-		n1 = a.AssertUnqualified(pop().(a.Value)).Name()
-		a.GetContextNamespace(c).Put(n1, pop().(a.Value))
-		n1 = emptyName // gc
+		r1 = pop()
+		a.GetContextNamespace(c).Put(a.AssertUnqualified(pop()).Name(), r1)
+		r1 = nil // gc
 		PC++
 		goto start
 
 	case Let:
-		n1 = a.AssertUnqualified(pop().(a.Value)).Name()
-		c.Put(n1, pop().(a.Value))
-		n1 = emptyName // gc
+		r1 = pop()
+		c.Put(a.AssertUnqualified(pop()).Name(), r1)
+		r1 = nil // gc
 		PC++
 		goto start
 
 	case Eval:
-		push(a.Eval(c, pop().(a.Value)))
+		push(a.Eval(c, pop()))
 		PC++
 		goto start
 
 	case Apply:
-		a1 = a.AssertApplicable(pop().(a.Value))
-		push(a1.Apply(c, a.AssertSequence(pop().(a.Value))))
-		a1 = nil // gc
+		s1 = a.AssertSequence(pop())
+		push(a.AssertApplicable(pop()).Apply(c, s1))
+		s1 = nil // gc
 		PC++
 		goto start
 
 	case First:
-		push(a.AssertSequence(pop().(a.Value)).First())
+		push(a.AssertSequence(pop()).First())
 		PC++
 		goto start
 
 	case Rest:
-		push(a.AssertSequence(pop().(a.Value)).Rest())
+		push(a.AssertSequence(pop()).Rest())
 		PC++
 		goto start
 
 	case Prepend:
-		s1 = a.AssertSequence(pop().(a.Value))
-		push(s1.Prepend(pop().(a.Value)))
-		PC++
-		goto start
-
-	case Truthy:
 		r1 = pop()
-		if r1 == a.False || r1 == a.Nil {
-			push(0)
-			r1 = nil // gc
-			PC++
-			goto start
-		}
-		push(1)
+		push(a.AssertSequence(pop()).Prepend(r1))
 		r1 = nil // gc
 		PC++
 		goto start
 
 	case CondJump:
-		PC = INST[PC].Args[pop().(uint)]
+		r1 = pop()
+		if r1 == a.False || r1 == a.Nil {
+			r1 = nil // gc
+			PC++
+			goto start
+		}
+		r1 = nil // gc
+		PC = INST[PC].Arg0
 		goto start
 
 	case Jump:
-		PC = INST[PC].Args[0]
+		PC = INST[PC].Arg0
 		goto start
 
 	case Return:
-		return pop().(a.Value)
+		return pop()
 
 	case ReturnNil:
 		return a.Nil
@@ -213,9 +206,4 @@ func (m *Module) WithMetadata(md a.Object) a.AnnotatedValue {
 		Data:         m.Data,
 		Instructions: m.Instructions,
 	}
-}
-
-// Str converts this Value into a Str
-func (m *Module) Str() a.Str {
-	return a.MakeDumpStr(m)
 }

@@ -10,62 +10,160 @@ import (
 
 var (
 	vmTestData = []a.Value{
-		a.Str("The first bit of data"),
-		a.Str("Hello there!"),
+		s("The first bit of data"),
+		s("Hello there!"),
+		a.ErrStr("i blew up!"),
+		a.True,
+		a.False,
 	}
 
-	vmTestArgs = a.NewList(a.Str("first"), a.Str("second"), a.Str("third"))
+	vmTestArgs = a.NewList(s("first"), s("second"), s("third"))
 )
 
-func moduleFromInstructions(inst []vm.Instruction) *vm.Module {
-	return &vm.Module{
-		LocalsSize:   8,
-		StackSize:    8,
+func s(s string) a.Str {
+	return a.Str(s)
+}
+
+func f(f float64) a.Number {
+	return a.NewFloat(f)
+}
+
+func testInstructions(t *testing.T, inst []vm.Instruction, expect a.Value) {
+	as := assert.New(t)
+
+	m := &vm.Module{
+		LocalsSize:   16,
+		StackSize:    32,
 		Data:         vmTestData,
 		Instructions: inst,
 	}
+
+	r := m.Apply(a.NewContext(), vmTestArgs)
+	as.Equal(expect, r)
+}
+
+func testMapped(t *testing.T, o vm.OpCode, expect a.Value) {
+	testInstructions(t, []vm.Instruction{
+		{OpCode: o},
+		{OpCode: vm.Return},
+	}, expect)
+}
+
+func TestMappedOpCodes(t *testing.T) {
+	testMapped(t, vm.Nil, a.Nil)
+	testMapped(t, vm.EmptyList, a.EmptyList)
+	testMapped(t, vm.True, a.True)
+	testMapped(t, vm.False, a.False)
+	testMapped(t, vm.Zero, f(0))
+	testMapped(t, vm.One, f(1))
+}
+
+func TestSwap(t *testing.T) {
+	testInstructions(t, []vm.Instruction{
+		{OpCode: vm.Const, Arg0: 0},
+		{OpCode: vm.Const, Arg0: 1},
+		{OpCode: vm.Swap},
+		{OpCode: vm.Return},
+	}, s("The first bit of data"))
+}
+
+func TestReturnNil(t *testing.T) {
+	testInstructions(t, []vm.Instruction{
+		{OpCode: vm.ReturnNil},
+	}, a.Nil)
 }
 
 func TestReturn(t *testing.T) {
-	as := assert.New(t)
-	m := moduleFromInstructions([]vm.Instruction{
-		{OpCode: vm.Const, Args: [3]uint{1, 0, 0}},
+	testInstructions(t, []vm.Instruction{
+		{OpCode: vm.Const, Arg0: 1},
 		{OpCode: vm.Return},
-	})
-	r := m.Apply(a.NewContext(), a.EmptyList)
-	as.String("Hello there!", r)
+	}, s("Hello there!"))
 }
 
 func TestFirst(t *testing.T) {
-	as := assert.New(t)
-	m := moduleFromInstructions([]vm.Instruction{
-		{OpCode: vm.Load, Args: [3]uint{0, 0, 0}},
+	testInstructions(t, []vm.Instruction{
+		{OpCode: vm.Load, Arg0: 0},
 		{OpCode: vm.First},
 		{OpCode: vm.Return},
-	})
-	r := m.Apply(a.NewContext(), vmTestArgs)
-	as.String("first", r)
+	}, s("first"))
 }
 
 func TestRest(t *testing.T) {
-	as := assert.New(t)
-	m := moduleFromInstructions([]vm.Instruction{
-		{OpCode: vm.Load, Args: [3]uint{0, 0, 0}},
+	testInstructions(t, []vm.Instruction{
+		{OpCode: vm.Load, Arg0: 0},
 		{OpCode: vm.Rest},
 		{OpCode: vm.Return},
-	})
-	r := m.Apply(a.NewContext(), vmTestArgs)
-	as.String(`("second" "third")`, r)
+	}, s(`("second" "third")`))
 }
 
 func TestPrepend(t *testing.T) {
-	as := assert.New(t)
-	m := moduleFromInstructions([]vm.Instruction{
-		{OpCode: vm.Const, Args: [3]uint{1, 0, 0}},
-		{OpCode: vm.Load, Args: [3]uint{0, 0, 0}},
+	testInstructions(t, []vm.Instruction{
+		{OpCode: vm.Load, Arg0: 0},
+		{OpCode: vm.Const, Arg0: 1},
 		{OpCode: vm.Prepend},
 		{OpCode: vm.Return},
-	})
-	r := m.Apply(a.NewContext(), vmTestArgs)
-	as.String(`("Hello there!" "first" "second" "third")`, r)
+	}, s(`("Hello there!" "first" "second" "third")`))
+}
+
+func TestDup(t *testing.T) {
+	testInstructions(t, []vm.Instruction{
+		{OpCode: vm.Load, Arg0: 0},
+		{OpCode: vm.Dup},
+		{OpCode: vm.First},
+		{OpCode: vm.Dup},
+		{OpCode: vm.Store, Arg0: 1},
+		{OpCode: vm.Prepend},
+		{OpCode: vm.Load, Arg0: 1},
+		{OpCode: vm.Prepend},
+		{OpCode: vm.Return},
+	}, s(`("first" "first" "first" "second" "third")`))
+}
+
+func TestClear(t *testing.T) {
+	testInstructions(t, []vm.Instruction{
+		{OpCode: vm.Clear, Arg0: 0},
+		{OpCode: vm.Load, Arg0: 0},
+		{OpCode: vm.Return},
+	}, a.Nil)
+}
+
+func TestJump(t *testing.T) {
+	testInstructions(t, []vm.Instruction{
+		{OpCode: vm.Const, Arg0: 1},
+		{OpCode: vm.Jump, Arg0: 3},
+		{OpCode: vm.Const, Arg0: 0},
+		{OpCode: vm.Return},
+	}, s("Hello there!"))
+}
+
+func TestCondJump(t *testing.T) {
+	testInstructions(t, []vm.Instruction{
+		{OpCode: vm.Const, Arg0: 3},
+		{OpCode: vm.NoOp},
+		{OpCode: vm.CondJump, Arg0: 5},
+		{OpCode: vm.Const, Arg0: 0},
+		{OpCode: vm.Return},
+		{OpCode: vm.Const, Arg0: 1},
+		{OpCode: vm.Return},
+	}, s("Hello there!"))
+
+	testInstructions(t, []vm.Instruction{
+		{OpCode: vm.Const, Arg0: 4},
+		{OpCode: vm.CondJump, Arg0: 4},
+		{OpCode: vm.Const, Arg0: 0},
+		{OpCode: vm.Return},
+		{OpCode: vm.Const, Arg0: 1},
+		{OpCode: vm.Return},
+	}, s("The first bit of data"))
+}
+
+func TestPanic(t *testing.T) {
+	as := assert.New(t)
+
+	defer as.ExpectError(a.ErrStr("i blew up!"))
+
+	testInstructions(t, []vm.Instruction{
+		{OpCode: vm.Const, Arg0: 2},
+		{OpCode: vm.Panic},
+	}, a.Nil)
 }
