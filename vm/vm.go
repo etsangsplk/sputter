@@ -14,7 +14,9 @@ type (
 		Args   [3]uint
 	}
 
+	// Module is the basic translation unit for the VM
 	Module struct {
+		a.BaseFunction
 		LocalsSize   uint
 		StackSize    uint
 		Data         []a.Value
@@ -24,6 +26,7 @@ type (
 	operandStack []interface{}
 )
 
+// Apply makes Module applicable
 func (m *Module) Apply(c a.Context, args a.Sequence) a.Value {
 	var emptyName a.Name
 
@@ -201,6 +204,18 @@ start:
 	panic("how did we get here?")
 }
 
+// WithMetadata creates a copy of this Module with additional Metadata
+func (m *Module) WithMetadata(md a.Object) a.AnnotatedValue {
+	return &Module{
+		BaseFunction: m.Extend(md),
+		LocalsSize:   m.LocalsSize,
+		StackSize:    m.StackSize,
+		Data:         m.Data,
+		Instructions: m.Instructions,
+	}
+}
+
+// Str converts this Value into a Str
 func (m *Module) Str() a.Str {
 	return a.MakeDumpStr(m)
 }
