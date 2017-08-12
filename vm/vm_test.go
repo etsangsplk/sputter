@@ -31,15 +31,22 @@ func f(f float64) a.Number {
 func testInstructions(t *testing.T, inst []vm.Instruction, expect a.Value) {
 	as := assert.New(t)
 
-	m := &vm.Module{
+	m1 := &vm.Module{
+		BaseFunction: a.DefaultBaseFunction,
 		LocalsSize:   16,
 		StackSize:    32,
 		Data:         vmTestData,
 		Instructions: inst,
 	}
 
-	r := m.Apply(a.NewContext(), vmTestArgs)
-	as.Equal(expect, r)
+	r1 := m1.Apply(a.NewContext(), vmTestArgs)
+	as.Equal(expect, r1)
+
+	m2 := m1.WithMetadata(a.Properties{
+		a.NameKey: a.Name("newMetadata"),
+	}).(*vm.Module)
+	r2 := m2.Apply(a.NewContext(), vmTestArgs)
+	as.Equal(expect, r2)
 }
 
 func testMapped(t *testing.T, o vm.OpCode, expect a.Value) {
