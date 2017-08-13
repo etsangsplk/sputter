@@ -14,13 +14,13 @@ type (
 // Map creates a new mapped Sequence
 func Map(s Sequence, mapper ValueMapper) Sequence {
 	var res LazyResolver
-	e := s
+	next := s
 
 	res = func() (Value, Sequence, bool) {
-		if e.IsSequence() {
-			r := mapper(e.First())
-			e = e.Rest()
-			return r, NewLazySequence(res), true
+		if f, r, ok := next.Split(); ok {
+			m := mapper(f)
+			next = r
+			return m, NewLazySequence(res), true
 		}
 		return Nil, EmptyList, false
 	}
@@ -30,11 +30,11 @@ func Map(s Sequence, mapper ValueMapper) Sequence {
 // Filter creates a new filtered Sequence
 func Filter(s Sequence, filter ValueFilter) Sequence {
 	var res LazyResolver
-	e := s
+	next := s
 
 	res = func() (Value, Sequence, bool) {
-		for f, r, ok := e.Split(); ok; f, r, ok = r.Split() {
-			e = r
+		for f, r, ok := next.Split(); ok; f, r, ok = r.Split() {
+			next = r
 			if filter(f) {
 				return f, NewLazySequence(res), true
 			}
@@ -47,14 +47,14 @@ func Filter(s Sequence, filter ValueFilter) Sequence {
 // Concat creates a new sequence based on the content of several Sequences
 func Concat(s Sequence) Sequence {
 	var res LazyResolver
-	e := s
+	next := s
 
 	res = func() (Value, Sequence, bool) {
-		for f, r, ok := e.Split(); ok; f, r, ok = r.Split() {
+		for f, r, ok := next.Split(); ok; f, r, ok = r.Split() {
 			v := AssertSequence(f)
-			e = r
+			next = r
 			if f, r, ok := v.Split(); ok {
-				e = e.Prepend(r)
+				next = next.Prepend(r)
 				return f, NewLazySequence(res), true
 			}
 		}
@@ -66,12 +66,12 @@ func Concat(s Sequence) Sequence {
 // Take creates a Sequence based on the first elements of the source
 func Take(s Sequence, count int) Sequence {
 	var res LazyResolver
-	cur := s
+	next := s
 	idx := 0
 
 	res = func() (Value, Sequence, bool) {
-		if f, r, ok := cur.Split(); ok && idx < count {
-			cur = r
+		if f, r, ok := next.Split(); ok && idx < count {
+			next = r
 			idx++
 			return f, NewLazySequence(res), true
 		}
@@ -83,20 +83,19 @@ func Take(s Sequence, count int) Sequence {
 // Drop creates a Sequence based on dropping the first elements of the source
 func Drop(s Sequence, count int) Sequence {
 	var first, rest LazyResolver
-	e := s
+	next := s
 
 	first = func() (Value, Sequence, bool) {
-		for i := 0; i < count && e.IsSequence(); i++ {
-			e = e.Rest()
+		for i := 0; i < count && next.IsSequence(); i++ {
+			next = next.Rest()
 		}
 		return rest()
 	}
 
 	rest = func() (Value, Sequence, bool) {
-		if e.IsSequence() {
-			r := e.First()
-			e = e.Rest()
-			return r, NewLazySequence(rest), true
+		if f, r, ok := next.Split(); ok {
+			next = r
+			return f, NewLazySequence(rest), true
 		}
 		return Nil, EmptyList, false
 	}

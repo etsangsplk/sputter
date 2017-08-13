@@ -79,8 +79,9 @@ func visitSequence(s a.Sequence) a.Names {
 
 func (*makeClosureFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
-	ex := assertUnqualifiedNames(a.AssertVector(args.First()))
-	cb := a.MacroExpandAll(c, args.Rest())
+	f, r, _ := args.Split()
+	ex := assertUnqualifiedNames(a.AssertVector(f))
+	cb := a.MacroExpandAll(c, r)
 	nm := consolidateNames(visitValue(cb), ex)
 	return a.NewList(closureSym, makeLocalSymbolVector(nm), cb)
 }
@@ -95,7 +96,8 @@ func isClosure(v a.Value) (a.Names, bool) {
 
 func (*closureFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 2)
-	in := a.AssertVector(args.First())
+	f, r, _ := args.Split()
+	in := a.AssertVector(f)
 	vars := make(a.Variables, in.Count())
 	for f, r, ok := in.(a.Sequence).Split(); ok; f, r, ok = r.Split() {
 		n := a.AssertUnqualified(f).Name()
@@ -104,7 +106,7 @@ func (*closureFunction) Apply(c a.Context, args a.Sequence) a.Value {
 		}
 	}
 
-	s := a.AssertSequence(args.Rest().First())
+	s := a.AssertSequence(r.First())
 	bl := a.MakeBlock(s)
 	ns := a.GetContextNamespace(c)
 	l := a.ChildContextVars(ns, vars)

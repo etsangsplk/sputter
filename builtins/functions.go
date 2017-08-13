@@ -127,14 +127,14 @@ func makeArgProcessor(cl a.Context, s a.Sequence) argProcessor {
 	return makeFixedArgProcessor(cl, an)
 }
 
-func parseRestArg(r a.Sequence) a.Name {
-	if r.IsSequence() {
-		n := a.AssertUnqualified(r.First()).Name()
-		if n != restMarker && !r.Rest().IsSequence() {
+func parseRestArg(s a.Sequence) a.Name {
+	if f, r, ok := s.Split(); ok {
+		n := a.AssertUnqualified(f).Name()
+		if n != restMarker && !r.IsSequence() {
 			return n
 		}
 	}
-	panic(a.ErrStr(InvalidRestArgument, r))
+	panic(a.ErrStr(InvalidRestArgument, s))
 }
 
 func makeRestArgProcessor(cl a.Context, an []a.Name, rn a.Name) argProcessor {
@@ -192,10 +192,10 @@ func optionalMetadata(args a.Sequence) (a.Object, a.Sequence) {
 }
 
 func optionalName(args a.Sequence) (a.Name, a.Sequence) {
-	f := args.First()
+	f, r, _ := args.Split()
 	if s, ok := f.(a.Symbol); ok {
 		if s.Domain() == a.LocalDomain {
-			return s.Name(), args.Rest()
+			return s.Name(), r
 		}
 		panic(a.ErrStr(a.ExpectedUnqualified, s.Qualified()))
 	}
@@ -204,8 +204,9 @@ func optionalName(args a.Sequence) (a.Name, a.Sequence) {
 
 func parseNamedFunction(args a.Sequence) *functionDefinition {
 	a.AssertMinimumArity(args, 3)
-	fn := a.AssertUnqualified(args.First()).Name()
-	return parseFunctionRest(fn, args.Rest())
+	f, r, _ := args.Split()
+	fn := a.AssertUnqualified(f).Name()
+	return parseFunctionRest(fn, r)
 }
 
 func parseFunction(args a.Sequence) *functionDefinition {
@@ -229,13 +230,14 @@ func parseFunctionRest(fn a.Name, r a.Sequence) *functionDefinition {
 }
 
 func parseFunctionSignatures(s a.Sequence) functionSignatures {
-	if args, ok := s.First().(a.Vector); ok {
+	f, r, ok := s.Split()
+	if args, ok := f.(a.Vector); ok {
 		return functionSignatures{
-			{args: args, body: s.Rest()},
+			{args: args, body: r},
 		}
 	}
 	res := functionSignatures{}
-	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
+	for ; ok; f, r, ok = r.Split() {
 		lf, lr, _ := a.AssertList(f).Split()
 		res = append(res, &functionSignature{
 			args: a.AssertVector(lf),
@@ -295,8 +297,9 @@ func (*lambdaFunction) Apply(c a.Context, args a.Sequence) a.Value {
 
 func (*applyFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 2)
-	fn := a.AssertApplicable(args.First())
-	s := a.AssertSequence(args.Rest().First())
+	f, r, _ := args.Split()
+	fn := a.AssertApplicable(f)
+	s := a.AssertSequence(r.First())
 	return fn.Apply(c, s)
 }
 
