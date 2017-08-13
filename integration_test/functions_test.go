@@ -61,13 +61,13 @@ func TestRestFunctions(t *testing.T) {
 
 	testBadCode(t, `
 		(lambda [x y &] "explode")
-	`, a.ErrStr(builtins.InvalidRestArgument, "[&]"))
+	`, a.ErrStr(builtins.InvalidRestArgument, "[]"))
 
 	testBadCode(t, `
 		(lambda [x y & z g] "explode")
-	`, a.ErrStr(builtins.InvalidRestArgument, "[& z g]"))
+	`, a.ErrStr(builtins.InvalidRestArgument, "[z g]"))
 
 	testBadCode(t, `
 		(lambda [x y & & z] "explode")
-	`, a.ErrStr(builtins.InvalidRestArgument, "[& & z]"))
+	`, a.ErrStr(builtins.InvalidRestArgument, "[& z]"))
 }

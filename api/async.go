@@ -213,6 +213,11 @@ func (c *channelSequence) Rest() Sequence {
 	return c.resolve().rest
 }
 
+func (c *channelSequence) Split() (Value, Sequence) {
+	r := c.resolve()
+	return r.result.value, r.rest
+}
+
 func (c *channelSequence) Prepend(v Value) Sequence {
 	return &channelSequence{
 		once:   Never(),

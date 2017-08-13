@@ -52,16 +52,20 @@ func (b *block) IsBlock() bool {
 
 func (b *block) Eval(c Context) Value {
 	var r Value = Nil
-	for i := b.Sequence; i.IsSequence(); i = i.Rest() {
-		r = Eval(c, i.First())
+	var t Value
+	for i := b.Sequence; i.IsSequence(); {
+		t, i = i.Split()
+		r = Eval(c, t)
 	}
 	return r
 }
 
 func (b *block) Str() Str {
 	var buf bytes.Buffer
-	for i := b.Sequence; i.IsSequence(); i = i.Rest() {
-		buf.WriteString(string(i.First().Str()))
+	var t Value
+	for i := b.Sequence; i.IsSequence(); {
+		t, i = i.Split()
+		buf.WriteString(string(t.Str()))
 	}
 	return Str(buf.String())
 }

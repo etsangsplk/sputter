@@ -34,6 +34,14 @@ func (s Str) Rest() Sequence {
 	return emptyStr
 }
 
+// Split returns the split form (First and Rest) of the Sequence
+func (s Str) Split() (Value, Sequence) {
+	if r, w := utf8.DecodeRuneInString(string(s)); w > 0 {
+		return Str(r), Str(s[w:])
+	}
+	return Nil, emptyStr
+}
+
 // IsSequence returns true if the Str is not empty
 func (s Str) IsSequence() bool {
 	return len(s) != 0

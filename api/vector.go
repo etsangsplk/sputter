@@ -68,6 +68,16 @@ func (v vector) Rest() Sequence {
 	return emptyVector
 }
 
+func (v vector) Split() (Value, Sequence) {
+	lv := len(v)
+	if lv > 1 {
+		return v[0], Sequence(v[1:])
+	} else if lv == 1 {
+		return v[0], emptyVector
+	}
+	return Nil, emptyVector
+}
+
 func (v vector) Prepend(p Value) Sequence {
 	return append(vector{p}, v...)
 }

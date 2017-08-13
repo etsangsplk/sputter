@@ -130,9 +130,11 @@ func (f *forEachFunction) Apply(c a.Context, args a.Sequence) a.Value {
 func makeIntermediate(n a.Name, e a.Value, next forProc) forProc {
 	return func(c a.Context) {
 		s := a.AssertSequence(a.Eval(c, e))
-		for i := s; i.IsSequence(); i = i.Rest() {
+		var t a.Value
+		for i := s; i.IsSequence(); {
+			t, i = i.Split()
 			l := a.ChildContext(c)
-			l.Put(n, i.First())
+			l.Put(n, t)
 			next(l)
 		}
 	}
@@ -142,9 +144,11 @@ func makeTerminal(n a.Name, e a.Value, s a.Sequence) forProc {
 	bl := a.MakeBlock(s)
 	return func(c a.Context) {
 		s := a.AssertSequence(a.Eval(c, e))
-		for i := s; i.IsSequence(); i = i.Rest() {
+		var t a.Value
+		for i := s; i.IsSequence(); {
+			t, i = i.Split()
 			l := a.ChildContext(c)
-			l.Put(n, i.First())
+			l.Put(n, t)
 			bl.Eval(l)
 		}
 	}

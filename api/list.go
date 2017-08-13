@@ -50,6 +50,10 @@ func (l *list) Rest() Sequence {
 	return l.rest
 }
 
+func (l *list) Split() (Value, Sequence) {
+	return l.first, l.rest
+}
+
 func (l *list) IsSequence() bool {
 	return l != EmptyList
 }

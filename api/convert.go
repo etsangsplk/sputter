@@ -9,8 +9,10 @@ func SequenceToList(s Sequence) List {
 	}
 	if c, ok := s.(Counted); ok {
 		r := make([]Value, c.Count())
-		for i, idx := s, 0; i.IsSequence(); i = i.Rest() {
-			r[idx] = i.First()
+		var t Value
+		for i, idx := s, 0; i.IsSequence(); {
+			t, i = i.Split()
+			r[idx] = t
 			idx++
 		}
 		return NewList(r...)
@@ -29,8 +31,10 @@ func SequenceToVector(s Sequence) Vector {
 	}
 	if c, ok := s.(Counted); ok {
 		r := make([]Value, c.Count())
-		for i, idx := s, 0; i.IsSequence(); i = i.Rest() {
-			r[idx] = i.First()
+		var t Value
+		for i, idx := s, 0; i.IsSequence(); {
+			t, i = i.Split()
+			r[idx] = t
 			idx++
 		}
 		return vector(r)
@@ -44,8 +48,10 @@ func uncountedToVector(s Sequence) Vector {
 
 func uncountedToArray(s Sequence) []Value {
 	r := []Value{}
-	for i := s; i.IsSequence(); i = i.Rest() {
-		r = append(r, i.First())
+	var t Value
+	for i := s; i.IsSequence(); {
+		t, i = i.Split()
+		r = append(r, t)
 	}
 	return r
 }
@@ -63,13 +69,10 @@ func SequenceToAssociative(s Sequence) Associative {
 		ml := l / 2
 		r := make([]Vector, ml)
 		i := s
+		var k, v Value
 		for idx := 0; idx < ml; idx++ {
-			k := i.First()
-			i = i.Rest()
-
-			v := i.First()
-			i = i.Rest()
-
+			k, i = i.Split()
+			v, i = i.Split()
 			r[idx] = NewVector(k, v)
 		}
 		return associative(r)
@@ -79,11 +82,11 @@ func SequenceToAssociative(s Sequence) Associative {
 
 func uncountedToAssociative(s Sequence) Associative {
 	r := []Vector{}
-	for i := s; i.IsSequence(); i = i.Rest() {
-		k := i.First()
-		i = i.Rest()
+	var k, v Value
+	for i := s; i.IsSequence(); {
+		k, i = i.Split()
 		if i.IsSequence() {
-			v := i.First()
+			v, i = i.Split()
 			r = append(r, NewVector(k, v))
 		} else {
 			panic(ErrStr(ExpectedPair))
@@ -106,12 +109,13 @@ func SequenceToStr(s Sequence) Str {
 		return st
 	}
 	var buf bytes.Buffer
-	for i := s; i.IsSequence(); i = i.Rest() {
-		v := i.First()
-		if v == Nil {
+	var t Value
+	for i := s; i.IsSequence(); {
+		t, i = i.Split()
+		if t == Nil {
 			continue
 		}
-		buf.WriteString(string(MakeStr(v)))
+		buf.WriteString(string(MakeStr(t)))
 	}
 	return Str(buf.String())
 }

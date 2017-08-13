@@ -58,9 +58,10 @@ func (f *consFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 func (f *conjFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 	s := a.AssertConjoiner(args.First())
-	for i := args.Rest(); i.IsSequence(); i = i.Rest() {
-		v := i.First()
-		s = s.Conjoin(v).(a.Conjoiner)
+	var t a.Value
+	for i := args.Rest(); i.IsSequence(); {
+		t, i = i.Split()
+		s = s.Conjoin(t).(a.Conjoiner)
 	}
 	return s
 }

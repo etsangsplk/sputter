@@ -116,8 +116,10 @@ func (f *blockFunction) WithMetadata(md a.Object) a.AnnotatedValue {
 
 func makeArgProcessor(cl a.Context, s a.Sequence) argProcessor {
 	an := []a.Name{}
-	for i := s; i.IsSequence(); i = i.Rest() {
-		n := a.AssertUnqualified(i.First()).Name()
+	var t a.Value
+	for i := s; i.IsSequence(); {
+		t, i = i.Split()
+		n := a.AssertUnqualified(t).Name()
 		if n == restMarker {
 			rn := parseRestArg(i)
 			return makeRestArgProcessor(cl, an, rn)
@@ -127,15 +129,14 @@ func makeArgProcessor(cl a.Context, s a.Sequence) argProcessor {
 	return makeFixedArgProcessor(cl, an)
 }
 
-func parseRestArg(s a.Sequence) a.Name {
-	r := s.Rest()
+func parseRestArg(r a.Sequence) a.Name {
 	if r.IsSequence() {
 		n := a.AssertUnqualified(r.First()).Name()
 		if n != restMarker && !r.Rest().IsSequence() {
 			return n
 		}
 	}
-	panic(a.ErrStr(InvalidRestArgument, s))
+	panic(a.ErrStr(InvalidRestArgument, r))
 }
 
 func makeRestArgProcessor(cl a.Context, an []a.Name, rn a.Name) argProcessor {
@@ -147,9 +148,10 @@ func makeRestArgProcessor(cl a.Context, an []a.Name, rn a.Name) argProcessor {
 		}
 		l := a.ChildContext(cl)
 		i := args
+		var t a.Value
 		for _, n := range an {
-			l.Put(n, i.First())
-			i = i.Rest()
+			t, i = i.Split()
+			l.Put(n, t)
 		}
 		l.Put(rn, a.SequenceToList(i))
 		return l, true
@@ -165,9 +167,10 @@ func makeFixedArgProcessor(cl a.Context, an []a.Name) argProcessor {
 		}
 		l := a.ChildContext(cl)
 		i := args
+		var t a.Value
 		for _, n := range an {
-			l.Put(n, i.First())
-			i = i.Rest()
+			t, i = i.Split()
+			l.Put(n, t)
 		}
 		return l, true
 	}
@@ -234,11 +237,13 @@ func parseFunctionSignatures(r a.Sequence) functionSignatures {
 		}
 	}
 	res := functionSignatures{}
-	for i := r; i.IsSequence(); i = i.Rest() {
-		l := a.AssertList(i.First())
+	var t a.Value
+	for i := r; i.IsSequence(); {
+		t, i = i.Split()
+		lf, lr := a.AssertList(t).Split()
 		res = append(res, &functionSignature{
-			args: a.AssertVector(l.First()),
-			body: l.Rest(),
+			args: a.AssertVector(lf),
+			body: lr,
 		})
 	}
 	return res

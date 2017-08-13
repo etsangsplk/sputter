@@ -31,8 +31,10 @@ func (f *recoverFunction) Apply(c a.Context, args a.Sequence) (res a.Value) {
 
 func (f *doFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	var r a.Value = a.Nil
-	for i := args; i.IsSequence(); i = i.Rest() {
-		r = a.Eval(c, i.First())
+	var t a.Value
+	for i := args; i.IsSequence(); {
+		t, i = i.Split()
+		r = a.Eval(c, t)
 	}
 	return r
 }

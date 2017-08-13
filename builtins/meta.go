@@ -9,8 +9,10 @@ type (
 
 func toProperties(args a.MappedSequence) a.Properties {
 	r := make(a.Properties)
-	for i := args.(a.Sequence); i.IsSequence(); i = i.Rest() {
-		p := i.First().(a.Sequence)
+	var t a.Value
+	for i := args.(a.Sequence); i.IsSequence(); {
+		t, i = i.Split()
+		p := t.(a.Sequence)
 		k := p.First()
 		v := p.Rest().First()
 		r[k] = v

@@ -70,8 +70,10 @@ func visitSequence(s a.Sequence) a.Names {
 		return emptyNames
 	}
 	r := a.Names{}
-	for i := s; i.IsSequence(); i = i.Rest() {
-		n := visitValue(i.First())
+	var t a.Value
+	for i := s; i.IsSequence(); {
+		t, i = i.Split()
+		n := visitValue(t)
 		r = append(r, n...)
 	}
 	return r
@@ -97,8 +99,10 @@ func (f *closureFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 2)
 	in := a.AssertVector(args.First())
 	vars := make(a.Variables, in.Count())
-	for i := in.(a.Sequence); i.IsSequence(); i = i.Rest() {
-		n := a.AssertUnqualified(i.First()).Name()
+	var t a.Value
+	for i := in.(a.Sequence); i.IsSequence(); {
+		t, i = i.Split()
+		n := a.AssertUnqualified(t).Name()
 		if v, ok := c.Get(n); ok {
 			vars[n] = v
 		}

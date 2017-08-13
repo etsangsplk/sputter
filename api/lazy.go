@@ -44,6 +44,11 @@ func (l *lazySequence) Rest() Sequence {
 	return l.resolve().rest
 }
 
+func (l *lazySequence) Split() (Value, Sequence) {
+	r := l.resolve()
+	return r.result, r.rest
+}
+
 func (l *lazySequence) Prepend(v Value) Sequence {
 	return &lazySequence{
 		once:   Never(),

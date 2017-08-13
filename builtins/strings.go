@@ -19,9 +19,11 @@ func (f *readerStrFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	if args.IsSequence() {
 		buf.WriteString(string(args.First().Str()))
 	}
-	for i := args.Rest(); i.IsSequence(); i = i.Rest() {
+	var t a.Value
+	for i := args.Rest(); i.IsSequence(); {
+		t, i = i.Split()
 		buf.WriteString(" ")
-		buf.WriteString(string(i.First().Str()))
+		buf.WriteString(string(t.Str()))
 	}
 	return a.Str(buf.String())
 }

@@ -162,6 +162,15 @@ start:
 		PC++
 		goto start
 
+	case Split:
+		r1, s1 = a.AssertSequence(pop()).Split()
+		push(s1)
+		push(r1)
+		r1 = nil // gc
+		s1 = nil // gc
+		PC++
+		goto start
+
 	case Prepend:
 		r1 = pop()
 		push(a.AssertSequence(pop()).Prepend(r1))

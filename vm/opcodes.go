@@ -24,6 +24,7 @@ const (
 	Apply
 	First
 	Rest
+	Split
 	Prepend
 	CondJump
 	Jump

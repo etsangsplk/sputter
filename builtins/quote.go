@@ -110,8 +110,10 @@ func (sc *syntaxContext) quoteSequence(s a.Sequence) a.Value {
 
 func (sc *syntaxContext) quoteAssociative(as a.Associative) a.Value {
 	r := []a.Value{}
-	for i := as.(a.Sequence); i.IsSequence(); i = i.Rest() {
-		p := i.First().(a.Vector)
+	var t a.Value
+	for i := as.(a.Sequence); i.IsSequence(); {
+		t, i = i.Split()
+		p := t.(a.Vector)
 		k, _ := p.ElementAt(0)
 		v, _ := p.ElementAt(1)
 		r = append(r, k)
@@ -122,17 +124,18 @@ func (sc *syntaxContext) quoteAssociative(as a.Associative) a.Value {
 
 func (sc *syntaxContext) quoteElements(s a.Sequence) a.Value {
 	r := []a.Value{}
-	for i := s; i.IsSequence(); i = i.Rest() {
-		v := i.First()
-		if f, ok := isUnquoteSplicing(v); ok {
+	var t a.Value
+	for i := s; i.IsSequence(); {
+		t, i = i.Split()
+		if f, ok := isUnquoteSplicing(t); ok {
 			r = append(r, f)
 			continue
 		}
-		if f, ok := isUnquote(v); ok {
+		if f, ok := isUnquote(t); ok {
 			r = append(r, a.NewList(listSym, f))
 			continue
 		}
-		r = append(r, a.NewList(listSym, sc.quoteValue(v)))
+		r = append(r, a.NewList(listSym, sc.quoteValue(t)))
 	}
 	return a.NewList(r...).Prepend(concatSym)
 }

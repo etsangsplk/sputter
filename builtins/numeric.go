@@ -21,8 +21,10 @@ type (
 
 func reduceNum(s a.Sequence, v a.Number, f reduceFunc) a.Value {
 	r := v
-	for i := s; i.IsSequence(); i = i.Rest() {
-		fv := a.AssertNumber(i.First())
+	var t a.Value
+	for i := s; i.IsSequence(); {
+		t, i = i.Split()
+		fv := a.AssertNumber(t)
 		r = f(r, fv)
 	}
 	return r
@@ -36,8 +38,10 @@ func fetchFirstNumber(args a.Sequence) (a.Number, a.Sequence) {
 
 func compare(_ a.Context, s a.Sequence, f compareFunc) a.Bool {
 	cur, r := fetchFirstNumber(s)
-	for i := r; i.IsSequence(); i = i.Rest() {
-		v := a.AssertNumber(i.First())
+	var t a.Value
+	for i := r; i.IsSequence(); {
+		t, i = i.Split()
+		v := a.AssertNumber(t)
 		if !f(cur, v) {
 			return a.False
 		}

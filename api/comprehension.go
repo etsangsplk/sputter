@@ -111,8 +111,10 @@ func Drop(s Sequence, count int) Sequence {
 func Reduce(s Sequence, reduce ValueReducer) Value {
 	AssertMinimumArity(s, 2)
 	r := s.First()
-	for i := s.Rest(); i.IsSequence(); i = i.Rest() {
-		r = reduce(r, i.First())
+	var t Value
+	for i := s.Rest(); i.IsSequence(); {
+		t, i = i.Split()
+		r = reduce(r, t)
 	}
 	return r
 }

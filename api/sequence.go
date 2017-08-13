@@ -32,6 +32,7 @@ type (
 		Value
 		First() Value
 		Rest() Sequence
+		Split() (Value, Sequence)
 		Prepend(Value) Sequence
 		IsSequence() bool
 	}
@@ -83,9 +84,11 @@ func MakeSequenceStr(s Sequence) Str {
 	var b bytes.Buffer
 	b.WriteString("(")
 	b.WriteString(string(s.First().Str()))
-	for i := s.Rest(); i.IsSequence(); i = i.Rest() {
+	var t Value
+	for i := s.Rest(); i.IsSequence(); {
+		t, i = i.Split()
 		b.WriteString(" ")
-		b.WriteString(string(i.First().Str()))
+		b.WriteString(string(t.Str()))
 	}
 	b.WriteString(")")
 	return Str(b.String())

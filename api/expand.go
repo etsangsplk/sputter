@@ -74,8 +74,10 @@ func expandSequence(c Context, s Sequence) Value {
 
 func expandAssociative(c Context, as Associative) Value {
 	r := []Vector{}
-	for i := as.(Sequence); i.IsSequence(); i = i.Rest() {
-		e := i.First().(Vector)
+	var t Value
+	for i := as.(Sequence); i.IsSequence(); {
+		t, i = i.Split()
+		e := t.(Vector)
 		k, _ := e.ElementAt(0)
 		v, _ := e.ElementAt(1)
 		r = append(r, NewVector(
@@ -88,8 +90,10 @@ func expandAssociative(c Context, as Associative) Value {
 
 func expandElements(c Context, s Sequence) []Value {
 	r := []Value{}
-	for i := s; i.IsSequence(); i = i.Rest() {
-		r = append(r, MacroExpandAll(c, i.First()))
+	var t Value
+	for i := s; i.IsSequence(); {
+		t, i = i.Split()
+		r = append(r, MacroExpandAll(c, t))
 	}
 	return r
 }

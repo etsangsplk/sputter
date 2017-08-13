@@ -78,6 +78,10 @@ func (a associative) Rest() Sequence {
 	return Sequence(a[1:])
 }
 
+func (a associative) Split() (Value, Sequence) {
+	return a[0], Sequence(a[1:])
+}
+
 func (a associative) Prepend(v Value) Sequence {
 	if mp, ok := v.(Vector); ok {
 		AssertArity(mp, 2)

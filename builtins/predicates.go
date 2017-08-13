@@ -30,8 +30,10 @@ func RegisterPredicate(n a.Name, f a.SequenceProcessor) {
 func RegisterSequencePredicate(n a.Name, f a.ValueFilter) {
 	pos := NewPredicate(func(_ a.Context, args a.Sequence) a.Value {
 		a.AssertMinimumArity(args, 1)
-		for i := args; i.IsSequence(); i = i.Rest() {
-			if !f(i.First()) {
+		var t a.Value
+		for i := args; i.IsSequence(); {
+			t, i = i.Split()
+			if !f(t) {
 				return a.False
 			}
 		}
@@ -40,8 +42,10 @@ func RegisterSequencePredicate(n a.Name, f a.ValueFilter) {
 
 	neg := NewPredicate(func(_ a.Context, args a.Sequence) a.Value {
 		a.AssertMinimumArity(args, 1)
-		for i := args; i.IsSequence(); i = i.Rest() {
-			if f(i.First()) {
+		var t a.Value
+		for i := args; i.IsSequence(); {
+			t, i = i.Split()
+			if f(t) {
 				return a.False
 			}
 		}
@@ -55,8 +59,10 @@ func RegisterSequencePredicate(n a.Name, f a.ValueFilter) {
 func identical(_ a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 	l := args.First()
-	for i := args.Rest(); i.IsSequence(); i = i.Rest() {
-		if l != i.First() {
+	var t a.Value
+	for i := args.Rest(); i.IsSequence(); {
+		t, i = i.Split()
+		if l != t {
 			return a.False
 		}
 	}
