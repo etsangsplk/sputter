@@ -27,13 +27,11 @@ func RegisterPredicate(n a.Name, f a.SequenceProcessor) {
 }
 
 // RegisterSequencePredicate registers a set-based predicate
-func RegisterSequencePredicate(n a.Name, f a.ValueFilter) {
+func RegisterSequencePredicate(n a.Name, fn a.ValueFilter) {
 	pos := NewPredicate(func(_ a.Context, args a.Sequence) a.Value {
 		a.AssertMinimumArity(args, 1)
-		var t a.Value
-		for i := args; i.IsSequence(); {
-			t, i = i.Split()
-			if !f(t) {
+		for f, r, ok := args.Split(); ok; f, r, ok = r.Split() {
+			if !fn(f) {
 				return a.False
 			}
 		}
@@ -42,10 +40,8 @@ func RegisterSequencePredicate(n a.Name, f a.ValueFilter) {
 
 	neg := NewPredicate(func(_ a.Context, args a.Sequence) a.Value {
 		a.AssertMinimumArity(args, 1)
-		var t a.Value
-		for i := args; i.IsSequence(); {
-			t, i = i.Split()
-			if f(t) {
+		for f, r, ok := args.Split(); ok; f, r, ok = r.Split() {
+			if fn(f) {
 				return a.False
 			}
 		}
@@ -59,10 +55,8 @@ func RegisterSequencePredicate(n a.Name, f a.ValueFilter) {
 func identical(_ a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 	l := args.First()
-	var t a.Value
-	for i := args.Rest(); i.IsSequence(); {
-		t, i = i.Split()
-		if l != t {
+	for f, r, ok := args.Split(); ok; f, r, ok = r.Split() {
+		if l != f {
 			return a.False
 		}
 	}

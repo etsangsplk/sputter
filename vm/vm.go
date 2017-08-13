@@ -32,6 +32,7 @@ func (m *Module) Apply(c a.Context, args a.Sequence) a.Value {
 	var r1 a.Value
 	var u1, u2 uint
 	var s1 a.Sequence
+	var b1 bool
 	var PC uint
 	var SP uint
 
@@ -163,9 +164,13 @@ start:
 		goto start
 
 	case Split:
-		r1, s1 = a.AssertSequence(pop()).Split()
-		push(s1)
-		push(r1)
+		if r1, s1, b1 = a.AssertSequence(pop()).Split(); b1 {
+			push(a.True)
+			push(s1)
+			push(r1)
+		} else {
+			push(a.False)
+		}
 		r1 = nil // gc
 		s1 = nil // gc
 		PC++

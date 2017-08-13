@@ -35,11 +35,11 @@ func (s Str) Rest() Sequence {
 }
 
 // Split returns the split form (First and Rest) of the Sequence
-func (s Str) Split() (Value, Sequence) {
+func (s Str) Split() (Value, Sequence, bool) {
 	if r, w := utf8.DecodeRuneInString(string(s)); w > 0 {
-		return Str(r), Str(s[w:])
+		return Str(r), Str(s[w:]), true
 	}
-	return Nil, emptyStr
+	return Nil, emptyStr, false
 }
 
 // IsSequence returns true if the Str is not empty

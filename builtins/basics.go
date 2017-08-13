@@ -13,12 +13,12 @@ type (
 	evalFunction    struct{ BaseBuiltIn }
 )
 
-func (f *panicFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+func (*panicFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	p := toProperties(a.SequenceToAssociative(args))
 	panic(a.Err(p))
 }
 
-func (f *recoverFunction) Apply(c a.Context, args a.Sequence) (res a.Value) {
+func (*recoverFunction) Apply(c a.Context, args a.Sequence) (res a.Value) {
 	a.AssertArity(args, 2)
 
 	defer func() {
@@ -29,24 +29,22 @@ func (f *recoverFunction) Apply(c a.Context, args a.Sequence) (res a.Value) {
 	return a.Eval(c, args.First())
 }
 
-func (f *doFunction) Apply(c a.Context, args a.Sequence) a.Value {
-	var r a.Value = a.Nil
-	var t a.Value
-	for i := args; i.IsSequence(); {
-		t, i = i.Split()
-		r = a.Eval(c, t)
+func (*doFunction) Apply(c a.Context, args a.Sequence) a.Value {
+	var res a.Value = a.Nil
+	for f, r, ok := args.Split(); ok; f, r, ok = r.Split() {
+		res = a.Eval(c, f)
 	}
-	return r
+	return res
 }
 
-func (f *readFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (*readFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
 	v := args.First()
 	s := a.AssertSequence(v)
 	return e.ReadStr(c, a.SequenceToStr(s))
 }
 
-func (f *evalFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (*evalFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
 	v := args.First()
 	return a.Eval(c, v)

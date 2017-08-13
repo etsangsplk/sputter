@@ -16,13 +16,13 @@ func Map(s Sequence, mapper ValueMapper) Sequence {
 	var res LazyResolver
 	e := s
 
-	res = func() (bool, Value, Sequence) {
+	res = func() (Value, Sequence, bool) {
 		if e.IsSequence() {
 			r := mapper(e.First())
 			e = e.Rest()
-			return true, r, NewLazySequence(res)
+			return r, NewLazySequence(res), true
 		}
-		return false, Nil, EmptyList
+		return Nil, EmptyList, false
 	}
 	return NewLazySequence(res)
 }
@@ -32,15 +32,14 @@ func Filter(s Sequence, filter ValueFilter) Sequence {
 	var res LazyResolver
 	e := s
 
-	res = func() (bool, Value, Sequence) {
-		for e.IsSequence() {
-			v := e.First()
-			e = e.Rest()
-			if filter(v) {
-				return true, v, NewLazySequence(res)
+	res = func() (Value, Sequence, bool) {
+		for f, r, ok := e.Split(); ok; f, r, ok = r.Split() {
+			e = r
+			if filter(f) {
+				return f, NewLazySequence(res), true
 			}
 		}
-		return false, Nil, EmptyList
+		return Nil, EmptyList, false
 	}
 	return NewLazySequence(res)
 }
@@ -50,17 +49,16 @@ func Concat(s Sequence) Sequence {
 	var res LazyResolver
 	e := s
 
-	res = func() (bool, Value, Sequence) {
-		for e.IsSequence() {
-			v := AssertSequence(e.First())
-			e = e.Rest()
-			if v.IsSequence() {
-				r := v.First()
-				e = e.Prepend(v.Rest())
-				return true, r, NewLazySequence(res)
+	res = func() (Value, Sequence, bool) {
+		for f, r, ok := e.Split(); ok; f, r, ok = r.Split() {
+			v := AssertSequence(f)
+			e = r
+			if f, r, ok := v.Split(); ok {
+				e = e.Prepend(r)
+				return f, NewLazySequence(res), true
 			}
 		}
-		return false, Nil, EmptyList
+		return Nil, EmptyList, false
 	}
 	return NewLazySequence(res)
 }
@@ -68,16 +66,16 @@ func Concat(s Sequence) Sequence {
 // Take creates a Sequence based on the first elements of the source
 func Take(s Sequence, count int) Sequence {
 	var res LazyResolver
-	i, e := 0, s
+	cur := s
+	idx := 0
 
-	res = func() (bool, Value, Sequence) {
-		if e.IsSequence() && i < count {
-			r := e.First()
-			e = e.Rest()
-			i++
-			return true, r, NewLazySequence(res)
+	res = func() (Value, Sequence, bool) {
+		if f, r, ok := cur.Split(); ok && idx < count {
+			cur = r
+			idx++
+			return f, NewLazySequence(res), true
 		}
-		return false, Nil, EmptyList
+		return Nil, EmptyList, false
 	}
 	return NewLazySequence(res)
 }
@@ -87,20 +85,20 @@ func Drop(s Sequence, count int) Sequence {
 	var first, rest LazyResolver
 	e := s
 
-	first = func() (bool, Value, Sequence) {
+	first = func() (Value, Sequence, bool) {
 		for i := 0; i < count && e.IsSequence(); i++ {
 			e = e.Rest()
 		}
 		return rest()
 	}
 
-	rest = func() (bool, Value, Sequence) {
+	rest = func() (Value, Sequence, bool) {
 		if e.IsSequence() {
 			r := e.First()
 			e = e.Rest()
-			return true, r, NewLazySequence(rest)
+			return r, NewLazySequence(rest), true
 		}
-		return false, Nil, EmptyList
+		return Nil, EmptyList, false
 	}
 
 	return NewLazySequence(first)
@@ -110,11 +108,10 @@ func Drop(s Sequence, count int) Sequence {
 // first two elements of that sequence.
 func Reduce(s Sequence, reduce ValueReducer) Value {
 	AssertMinimumArity(s, 2)
-	r := s.First()
-	var t Value
-	for i := s.Rest(); i.IsSequence(); {
-		t, i = i.Split()
-		r = reduce(r, t)
+	f, r, ok := s.Split()
+	res := f
+	for f, r, ok = r.Split(); ok; f, r, ok = r.Split() {
+		res = reduce(res, f)
 	}
-	return r
+	return res
 }

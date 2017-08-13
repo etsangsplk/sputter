@@ -56,10 +56,8 @@ func makeWriter(w io.Writer, o a.OutputFunc) a.Object {
 func bindWriter(w a.Writer) a.Function {
 	return a.NewExecFunction(func(_ a.Context, args a.Sequence) a.Value {
 		a.AssertMinimumArity(args, 1)
-		var t a.Value
-		for i := args; i.IsSequence(); {
-			t, i = i.Split()
-			w.Write(t)
+		for f, r, ok := args.Split(); ok; f, r, ok = r.Split() {
+			w.Write(f)
 		}
 		return a.Nil
 	})

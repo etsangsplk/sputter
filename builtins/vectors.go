@@ -4,7 +4,7 @@ import a "github.com/kode4food/sputter/api"
 
 type vectorFunction struct{ BaseBuiltIn }
 
-func (f *vectorFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+func (*vectorFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	return a.SequenceToVector(args)
 }
 

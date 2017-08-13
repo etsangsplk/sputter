@@ -116,12 +116,10 @@ func (f *blockFunction) WithMetadata(md a.Object) a.AnnotatedValue {
 
 func makeArgProcessor(cl a.Context, s a.Sequence) argProcessor {
 	an := []a.Name{}
-	var t a.Value
-	for i := s; i.IsSequence(); {
-		t, i = i.Split()
-		n := a.AssertUnqualified(t).Name()
+	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
+		n := a.AssertUnqualified(f).Name()
 		if n == restMarker {
-			rn := parseRestArg(i)
+			rn := parseRestArg(r)
 			return makeRestArgProcessor(cl, an, rn)
 		}
 		an = append(an, n)
@@ -150,7 +148,7 @@ func makeRestArgProcessor(cl a.Context, an []a.Name, rn a.Name) argProcessor {
 		i := args
 		var t a.Value
 		for _, n := range an {
-			t, i = i.Split()
+			t, i, _ = i.Split()
 			l.Put(n, t)
 		}
 		l.Put(rn, a.SequenceToList(i))
@@ -169,7 +167,7 @@ func makeFixedArgProcessor(cl a.Context, an []a.Name) argProcessor {
 		i := args
 		var t a.Value
 		for _, n := range an {
-			t, i = i.Split()
+			t, i, _ = i.Split()
 			l.Put(n, t)
 		}
 		return l, true
@@ -230,17 +228,15 @@ func parseFunctionRest(fn a.Name, r a.Sequence) *functionDefinition {
 	}
 }
 
-func parseFunctionSignatures(r a.Sequence) functionSignatures {
-	if args, ok := r.First().(a.Vector); ok {
+func parseFunctionSignatures(s a.Sequence) functionSignatures {
+	if args, ok := s.First().(a.Vector); ok {
 		return functionSignatures{
-			{args: args, body: r.Rest()},
+			{args: args, body: s.Rest()},
 		}
 	}
 	res := functionSignatures{}
-	var t a.Value
-	for i := r; i.IsSequence(); {
-		t, i = i.Split()
-		lf, lr := a.AssertList(t).Split()
+	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
+		lf, lr, _ := a.AssertList(f).Split()
 		res = append(res, &functionSignature{
 			args: a.AssertVector(lf),
 			body: lr,
@@ -292,12 +288,12 @@ func makeMultiFunction(c a.Context, sigs functionSignatures) a.Function {
 	}
 }
 
-func (f *lambdaFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (*lambdaFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	fd := parseFunction(args)
 	return makeFunction(c, fd)
 }
 
-func (f *applyFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (*applyFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 2)
 	fn := a.AssertApplicable(args.First())
 	s := a.AssertSequence(args.Rest().First())

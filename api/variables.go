@@ -100,10 +100,8 @@ func (n Name) Str() Str {
 
 // Apply makes Bool Applicable
 func (b Bool) Apply(_ Context, args Sequence) Value {
-	var t Value
-	for i := args; i.IsSequence(); {
-		t, i = i.Split()
-		if t != b {
+	for f, r, ok := args.Split(); ok; f, r, ok = r.Split() {
+		if f != b {
 			return False
 		}
 	}
@@ -127,10 +125,8 @@ func (b Bool) Str() Str {
 }
 
 func (n *nilValue) Apply(_ Context, args Sequence) Value {
-	var t Value
-	for i := args; i.IsSequence(); {
-		t, i = i.Split()
-		if t != Nil {
+	for f, r, ok := args.Split(); ok; f, r, ok = r.Split() {
+		if f != Nil {
 			return False
 		}
 	}

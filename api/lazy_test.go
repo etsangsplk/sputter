@@ -12,13 +12,13 @@ func TestLazySeq(t *testing.T) {
 	as := assert.New(t)
 
 	i := 0
-	inc = func() (bool, a.Value, a.Sequence) {
+	inc = func() (a.Value, a.Sequence, bool) {
 		if i >= 10 {
-			return false, a.Nil, a.EmptyList
+			return a.Nil, a.EmptyList, false
 		}
 		i++
 		f := a.NewFloat(float64(i))
-		return true, f, a.NewLazySequence(inc)
+		return f, a.NewLazySequence(inc), true
 	}
 
 	l := a.NewLazySequence(inc).Prepend(a.NewFloat(0))

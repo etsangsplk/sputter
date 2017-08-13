@@ -73,29 +73,25 @@ func expandSequence(c Context, s Sequence) Value {
 }
 
 func expandAssociative(c Context, as Associative) Value {
-	r := []Vector{}
-	var t Value
-	for i := as.(Sequence); i.IsSequence(); {
-		t, i = i.Split()
-		e := t.(Vector)
+	res := []Vector{}
+	for f, r, ok := as.(Sequence).Split(); ok; f, r, ok = r.Split() {
+		e := f.(Vector)
 		k, _ := e.ElementAt(0)
 		v, _ := e.ElementAt(1)
-		r = append(r, NewVector(
+		res = append(res, NewVector(
 			MacroExpandAll(c, k),
 			MacroExpandAll(c, v),
 		))
 	}
-	return NewAssociative(r...)
+	return NewAssociative(res...)
 }
 
 func expandElements(c Context, s Sequence) []Value {
-	r := []Value{}
-	var t Value
-	for i := s; i.IsSequence(); {
-		t, i = i.Split()
-		r = append(r, MacroExpandAll(c, t))
+	res := []Value{}
+	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
+		res = append(res, MacroExpandAll(c, f))
 	}
-	return r
+	return res
 }
 
 // MakeForm attempts to convert a List into a directly applying form

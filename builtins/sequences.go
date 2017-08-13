@@ -40,45 +40,44 @@ func fetchSequence(args a.Sequence) a.Sequence {
 	return a.AssertSequence(args.First())
 }
 
-func (f *firstFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+func (*firstFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	return fetchSequence(args).First()
 }
 
-func (f *restFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+func (*restFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	return fetchSequence(args).Rest()
 }
 
-func (f *consFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+func (*consFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 2)
 	h := args.First()
 	r := args.Rest().First()
 	return a.AssertSequence(r).Prepend(h)
 }
 
-func (f *conjFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+func (*conjFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
-	s := a.AssertConjoiner(args.First())
-	var t a.Value
-	for i := args.Rest(); i.IsSequence(); {
-		t, i = i.Split()
-		s = s.Conjoin(t).(a.Conjoiner)
+	f, r, ok := args.Split()
+	s := a.AssertConjoiner(f)
+	for f, r, ok = r.Split(); ok; f, r, ok = r.Split() {
+		s = s.Conjoin(f).(a.Conjoiner)
 	}
 	return s
 }
 
-func (f *lenFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+func (*lenFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	s := fetchSequence(args)
 	l := a.Count(s)
 	return a.NewFloat(float64(l))
 }
 
-func (f *nthFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+func (*nthFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
 	s := a.AssertIndexed(args.First())
 	return a.IndexedApply(s, args.Rest())
 }
 
-func (f *getFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+func (*getFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
 	s := a.AssertMapped(args.First())
 	return a.MappedApply(s, args.Rest())

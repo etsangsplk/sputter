@@ -2,7 +2,7 @@ package api
 
 type (
 	// LazyResolver is used to resolve the elements of a lazy Sequence
-	LazyResolver func() (bool, Value, Sequence)
+	LazyResolver func() (Value, Sequence, bool)
 
 	lazySequence struct {
 		once     Do
@@ -26,7 +26,7 @@ func NewLazySequence(r LazyResolver) Sequence {
 
 func (l *lazySequence) resolve() *lazySequence {
 	l.once(func() {
-		l.isSeq, l.result, l.rest = l.resolver()
+		l.result, l.rest, l.isSeq = l.resolver()
 		l.resolver = nil
 	})
 	return l
@@ -44,9 +44,9 @@ func (l *lazySequence) Rest() Sequence {
 	return l.resolve().rest
 }
 
-func (l *lazySequence) Split() (Value, Sequence) {
+func (l *lazySequence) Split() (Value, Sequence, bool) {
 	r := l.resolve()
-	return r.result, r.rest
+	return r.result, r.rest, l.isSeq
 }
 
 func (l *lazySequence) Prepend(v Value) Sequence {

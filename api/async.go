@@ -213,9 +213,9 @@ func (c *channelSequence) Rest() Sequence {
 	return c.resolve().rest
 }
 
-func (c *channelSequence) Split() (Value, Sequence) {
+func (c *channelSequence) Split() (Value, Sequence, bool) {
 	r := c.resolve()
-	return r.result.value, r.rest
+	return r.result.value, r.rest, r.isSeq
 }
 
 func (c *channelSequence) Prepend(v Value) Sequence {

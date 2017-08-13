@@ -69,17 +69,15 @@ func visitSequence(s a.Sequence) a.Names {
 	if _, ok := s.(a.Str); ok {
 		return emptyNames
 	}
-	r := a.Names{}
-	var t a.Value
-	for i := s; i.IsSequence(); {
-		t, i = i.Split()
-		n := visitValue(t)
-		r = append(r, n...)
+	res := a.Names{}
+	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
+		n := visitValue(f)
+		res = append(res, n...)
 	}
-	return r
+	return res
 }
 
-func (f *makeClosureFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (*makeClosureFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
 	ex := assertUnqualifiedNames(a.AssertVector(args.First()))
 	cb := a.MacroExpandAll(c, args.Rest())
@@ -95,14 +93,12 @@ func isClosure(v a.Value) (a.Names, bool) {
 	return emptyNames, false
 }
 
-func (f *closureFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (*closureFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 2)
 	in := a.AssertVector(args.First())
 	vars := make(a.Variables, in.Count())
-	var t a.Value
-	for i := in.(a.Sequence); i.IsSequence(); {
-		t, i = i.Split()
-		n := a.AssertUnqualified(t).Name()
+	for f, r, ok := in.(a.Sequence).Split(); ok; f, r, ok = r.Split() {
+		n := a.AssertUnqualified(f).Name()
 		if v, ok := c.Get(n); ok {
 			vars[n] = v
 		}

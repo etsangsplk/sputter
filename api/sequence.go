@@ -32,7 +32,7 @@ type (
 		Value
 		First() Value
 		Rest() Sequence
-		Split() (Value, Sequence)
+		Split() (Value, Sequence, bool)
 		Prepend(Value) Sequence
 		IsSequence() bool
 	}
@@ -77,18 +77,17 @@ func IndexedApply(s Indexed, args Sequence) Value {
 
 // MakeSequenceStr converts a Sequence to a Str
 func MakeSequenceStr(s Sequence) Str {
-	if !s.IsSequence() {
+	f, r, ok := s.Split()
+	if !ok {
 		return "()"
 	}
 
 	var b bytes.Buffer
 	b.WriteString("(")
-	b.WriteString(string(s.First().Str()))
-	var t Value
-	for i := s.Rest(); i.IsSequence(); {
-		t, i = i.Split()
+	b.WriteString(string(f.Str()))
+	for f, r, ok = r.Split(); ok; f, r, ok = r.Split() {
 		b.WriteString(" ")
-		b.WriteString(string(t.Str()))
+		b.WriteString(string(f.Str()))
 	}
 	b.WriteString(")")
 	return Str(b.String())

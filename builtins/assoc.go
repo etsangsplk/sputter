@@ -4,7 +4,7 @@ import a "github.com/kode4food/sputter/api"
 
 type assocFunction struct{ BaseBuiltIn }
 
-func (f *assocFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+func (*assocFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	return a.SequenceToAssociative(args)
 }
 

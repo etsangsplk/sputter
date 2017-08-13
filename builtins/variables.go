@@ -10,7 +10,7 @@ type (
 	letFunction struct{ BaseBuiltIn }
 )
 
-func (f *defFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (*defFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 	ns := a.GetContextNamespace(c)
 
@@ -22,7 +22,7 @@ func (f *defFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	return s
 }
 
-func (f *letFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (*letFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 	l := a.ChildContext(c)
 

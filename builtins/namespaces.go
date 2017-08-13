@@ -7,18 +7,19 @@ type (
 	getNamespaceFunction  struct{ BaseBuiltIn }
 )
 
-func (f *withNamespaceFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (*withNamespaceFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 
-	n := a.AssertUnqualified(args.First()).Name()
+	f, r, _ := args.Split()
+	n := a.AssertUnqualified(f).Name()
 	ns := a.GetNamespace(n)
 
 	sc := a.WithNamespace(a.ChildContext(c), ns)
 	sc.Put(a.ContextDomain, ns)
-	return a.MakeBlock(args.Rest()).Eval(sc)
+	return a.MakeBlock(r).Eval(sc)
 }
 
-func (f *getNamespaceFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+func (*getNamespaceFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
 	n := a.AssertUnqualified(args.First()).Name()
 	return a.GetNamespace(n)

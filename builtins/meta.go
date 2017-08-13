@@ -8,16 +8,14 @@ type (
 )
 
 func toProperties(args a.MappedSequence) a.Properties {
-	r := make(a.Properties)
-	var t a.Value
-	for i := args.(a.Sequence); i.IsSequence(); {
-		t, i = i.Split()
-		p := t.(a.Sequence)
+	res := make(a.Properties)
+	for f, r, ok := args.Split(); ok; f, r, ok = r.Split() {
+		p := f.(a.Sequence)
 		k := p.First()
 		v := p.Rest().First()
-		r[k] = v
+		res[k] = v
 	}
-	return r
+	return res
 }
 
 func fromMetadata(m a.Object) a.Value {
@@ -28,7 +26,7 @@ func fromMetadata(m a.Object) a.Value {
 	return a.NewAssociative(r...)
 }
 
-func (f *withMetaFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+func (*withMetaFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 2)
 	o := a.AssertAnnotated(args.First())
 	if m, ok := args.Rest().First().(a.MappedSequence); ok {
@@ -37,7 +35,7 @@ func (f *withMetaFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	panic(a.ErrStr(a.ExpectedMapped, o))
 }
 
-func (f *getMetaFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+func (*getMetaFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
 	o := a.AssertAnnotated(args.First())
 	return fromMetadata(o.Metadata())

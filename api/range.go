@@ -10,13 +10,13 @@ func NewRange(first, last, step Number) Sequence {
 		cmp = GreaterThan
 	}
 
-	inc = func() (bool, Value, Sequence) {
+	inc = func() (Value, Sequence, bool) {
 		if val.Cmp(last) == cmp {
 			r := val
 			val = val.Add(step)
-			return true, r, NewLazySequence(inc)
+			return r, NewLazySequence(inc), true
 		}
-		return false, Nil, EmptyList
+		return Nil, EmptyList, false
 	}
 
 	return NewLazySequence(inc)
