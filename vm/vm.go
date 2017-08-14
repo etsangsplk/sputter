@@ -51,6 +51,7 @@ func (m *Module) Apply(c a.Context, args a.Sequence) a.Value {
 	}
 
 	pop := func() a.Value {
+		// TODO: require a clean way to clear cells to avoid leaking
 		SP++
 		return STACK[SP]
 	}
@@ -160,8 +161,10 @@ start:
 			} else {
 				push(a.False)
 			}
-			s1 = nil // gc
+		} else {
+			push(a.False)
 		}
+		s1 = nil // gc
 		PC++
 		goto start
 
