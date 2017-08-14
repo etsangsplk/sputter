@@ -155,12 +155,8 @@ start:
 		goto start
 
 	case IsSeq:
-		if s1, b1 = pop().(a.Sequence); b1 {
-			if s1.IsSequence() {
-				push(a.True)
-			} else {
-				push(a.False)
-			}
+		if s1, b1 = pop().(a.Sequence); b1 && s1.IsSequence() {
+			push(a.True)
 		} else {
 			push(a.False)
 		}
