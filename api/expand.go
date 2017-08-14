@@ -16,13 +16,14 @@ type (
 
 // MacroExpand1 performs a single macro expansion
 func MacroExpand1(c Context, v Value) (Value, bool) {
-	if l, ok := v.(List); ok && l.IsSequence() {
-		f := l.First()
-		if s, ok := f.(Symbol); ok {
-			if r, ok := s.Resolve(c); ok {
-				if a, ok := r.(Applicable); ok {
-					if ok, sp := IsMacro(a); ok && !sp {
-						return a.Apply(c, l.Rest()), true
+	if l, ok := v.(List); ok {
+		if f, r, ok := l.Split(); ok {
+			if s, ok := f.(Symbol); ok {
+				if sr, ok := s.Resolve(c); ok {
+					if a, ok := sr.(Applicable); ok {
+						if ok, sp := IsMacro(a); ok && !sp {
+							return a.Apply(c, r), true
+						}
 					}
 				}
 			}
@@ -96,15 +97,14 @@ func expandElements(c Context, s Sequence) []Value {
 
 // MakeForm attempts to convert a List into a directly applying form
 func MakeForm(l List) (List, bool) {
-	if !l.IsSequence() {
-		return l, false
-	}
-	if s, ok := l.First().(Symbol); ok {
-		if d := s.Domain(); d != LocalDomain {
-			ns := GetNamespace(d)
-			if g, ok := ns.Get(s.Name()); ok {
-				if ap, ok := g.(Applicable); ok {
-					return makeFormObject(l, ap), true
+	if f, _, ok := l.Split(); ok {
+		if s, ok := f.(Symbol); ok {
+			if d := s.Domain(); d != LocalDomain {
+				ns := GetNamespace(d)
+				if g, ok := ns.Get(s.Name()); ok {
+					if ap, ok := g.(Applicable); ok {
+						return makeFormObject(l, ap), true
+					}
 				}
 			}
 		}

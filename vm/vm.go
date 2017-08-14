@@ -153,6 +153,18 @@ start:
 		PC++
 		goto start
 
+	case IsSeq:
+		if s1, b1 = pop().(a.Sequence); b1 {
+			if s1.IsSequence() {
+				push(a.True)
+			} else {
+				push(a.False)
+			}
+			s1 = nil // gc
+		}
+		PC++
+		goto start
+
 	case First:
 		push(a.AssertSequence(pop()).First())
 		PC++

@@ -22,6 +22,7 @@ const (
 	Let
 	Eval
 	Apply
+	IsSeq
 	First
 	Rest
 	Split
