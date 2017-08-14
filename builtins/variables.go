@@ -10,23 +10,24 @@ type (
 	letFunction struct{ BaseBuiltIn }
 )
 
-func (f *defFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (*defFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 	ns := a.GetContextNamespace(c)
 
-	s := args.First()
-	n := a.AssertUnqualified(s).Name()
-	v := args.Rest().First()
+	f, r, _ := args.Split()
+	n := a.AssertUnqualified(f).Name()
+	v := r.First()
 
 	ns.Put(n, a.Eval(c, v))
-	return s
+	return f
 }
 
-func (f *letFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (*letFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 	l := a.ChildContext(c)
 
-	b := a.AssertVector(args.First())
+	f, r, _ := args.Split()
+	b := a.AssertVector(f)
 	bc := b.Count()
 	if bc%2 != 0 {
 		panic(a.ErrStr(ExpectedBindings))
@@ -40,7 +41,7 @@ func (f *letFunction) Apply(c a.Context, args a.Sequence) a.Value {
 		l.Put(n, a.Eval(l, v))
 	}
 
-	return a.MakeBlock(args.Rest()).Eval(l)
+	return a.MakeBlock(r).Eval(l)
 }
 
 func init() {

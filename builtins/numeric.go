@@ -19,26 +19,27 @@ type (
 	lteFunction struct{ BaseBuiltIn }
 )
 
-func reduceNum(s a.Sequence, v a.Number, f reduceFunc) a.Value {
-	r := v
-	for i := s; i.IsSequence(); i = i.Rest() {
-		fv := a.AssertNumber(i.First())
-		r = f(r, fv)
+func reduceNum(s a.Sequence, v a.Number, fn reduceFunc) a.Value {
+	res := v
+	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
+		fv := a.AssertNumber(f)
+		res = fn(res, fv)
 	}
-	return r
+	return res
 }
 
 func fetchFirstNumber(args a.Sequence) (a.Number, a.Sequence) {
 	a.AssertMinimumArity(args, 1)
-	nv := a.AssertNumber(args.First())
-	return nv, args.Rest()
+	f, r, _ := args.Split()
+	nv := a.AssertNumber(f)
+	return nv, r
 }
 
-func compare(_ a.Context, s a.Sequence, f compareFunc) a.Bool {
-	cur, r := fetchFirstNumber(s)
-	for i := r; i.IsSequence(); i = i.Rest() {
-		v := a.AssertNumber(i.First())
-		if !f(cur, v) {
+func compare(_ a.Context, s a.Sequence, fn compareFunc) a.Bool {
+	cur, rest := fetchFirstNumber(s)
+	for f, r, ok := rest.Split(); ok; f, r, ok = r.Split() {
+		v := a.AssertNumber(f)
+		if !fn(cur, v) {
 			return a.False
 		}
 		cur = v
@@ -46,7 +47,7 @@ func compare(_ a.Context, s a.Sequence, f compareFunc) a.Bool {
 	return a.True
 }
 
-func (f *addFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+func (*addFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	if !args.IsSequence() {
 		return a.Zero
 	}
@@ -56,14 +57,14 @@ func (f *addFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	})
 }
 
-func (f *subFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+func (*subFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	v, r := fetchFirstNumber(args)
 	return reduceNum(r, v, func(p a.Number, n a.Number) a.Number {
 		return p.Sub(n)
 	})
 }
 
-func (f *mulFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+func (*mulFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	if !args.IsSequence() {
 		return a.One
 	}
@@ -73,52 +74,52 @@ func (f *mulFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	})
 }
 
-func (f *divFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+func (*divFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	v, r := fetchFirstNumber(args)
 	return reduceNum(r, v, func(p a.Number, n a.Number) a.Number {
 		return p.Div(n)
 	})
 }
 
-func (f *modFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+func (*modFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	v, r := fetchFirstNumber(args)
 	return reduceNum(r, v, func(p a.Number, n a.Number) a.Number {
 		return p.Mod(n)
 	})
 }
 
-func (f *eqFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (*eqFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	return compare(c, args, func(p a.Number, n a.Number) bool {
 		return p.Cmp(n) == a.EqualTo
 	})
 }
 
-func (f *neqFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (*neqFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	return compare(c, args, func(p a.Number, n a.Number) bool {
 		return p.Cmp(n) == a.EqualTo
 	}).Not()
 }
 
-func (f *gtFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (*gtFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	return compare(c, args, func(p a.Number, n a.Number) bool {
 		return p.Cmp(n) == a.GreaterThan
 	})
 }
 
-func (f *gteFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (*gteFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	return compare(c, args, func(p a.Number, n a.Number) bool {
 		r := p.Cmp(n)
 		return r == a.EqualTo || r == a.GreaterThan
 	})
 }
 
-func (f *ltFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (*ltFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	return compare(c, args, func(p a.Number, n a.Number) bool {
 		return p.Cmp(n) == a.LessThan
 	})
 }
 
-func (f *lteFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (*lteFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	return compare(c, args, func(p a.Number, n a.Number) bool {
 		r := p.Cmp(n)
 		return r == a.EqualTo || r == a.LessThan

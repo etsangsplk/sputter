@@ -116,10 +116,10 @@ func (f *blockFunction) WithMetadata(md a.Object) a.AnnotatedValue {
 
 func makeArgProcessor(cl a.Context, s a.Sequence) argProcessor {
 	an := []a.Name{}
-	for i := s; i.IsSequence(); i = i.Rest() {
-		n := a.AssertUnqualified(i.First()).Name()
+	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
+		n := a.AssertUnqualified(f).Name()
 		if n == restMarker {
-			rn := parseRestArg(i)
+			rn := parseRestArg(r)
 			return makeRestArgProcessor(cl, an, rn)
 		}
 		an = append(an, n)
@@ -128,10 +128,9 @@ func makeArgProcessor(cl a.Context, s a.Sequence) argProcessor {
 }
 
 func parseRestArg(s a.Sequence) a.Name {
-	r := s.Rest()
-	if r.IsSequence() {
-		n := a.AssertUnqualified(r.First()).Name()
-		if n != restMarker && !r.Rest().IsSequence() {
+	if f, r, ok := s.Split(); ok {
+		n := a.AssertUnqualified(f).Name()
+		if n != restMarker && !r.IsSequence() {
 			return n
 		}
 	}
@@ -147,9 +146,10 @@ func makeRestArgProcessor(cl a.Context, an []a.Name, rn a.Name) argProcessor {
 		}
 		l := a.ChildContext(cl)
 		i := args
+		var t a.Value
 		for _, n := range an {
-			l.Put(n, i.First())
-			i = i.Rest()
+			t, i, _ = i.Split()
+			l.Put(n, t)
 		}
 		l.Put(rn, a.SequenceToList(i))
 		return l, true
@@ -165,9 +165,10 @@ func makeFixedArgProcessor(cl a.Context, an []a.Name) argProcessor {
 		}
 		l := a.ChildContext(cl)
 		i := args
+		var t a.Value
 		for _, n := range an {
-			l.Put(n, i.First())
-			i = i.Rest()
+			t, i, _ = i.Split()
+			l.Put(n, t)
 		}
 		return l, true
 	}
@@ -191,10 +192,10 @@ func optionalMetadata(args a.Sequence) (a.Object, a.Sequence) {
 }
 
 func optionalName(args a.Sequence) (a.Name, a.Sequence) {
-	f := args.First()
+	f, r, _ := args.Split()
 	if s, ok := f.(a.Symbol); ok {
 		if s.Domain() == a.LocalDomain {
-			return s.Name(), args.Rest()
+			return s.Name(), r
 		}
 		panic(a.ErrStr(a.ExpectedUnqualified, s.Qualified()))
 	}
@@ -203,8 +204,9 @@ func optionalName(args a.Sequence) (a.Name, a.Sequence) {
 
 func parseNamedFunction(args a.Sequence) *functionDefinition {
 	a.AssertMinimumArity(args, 3)
-	fn := a.AssertUnqualified(args.First()).Name()
-	return parseFunctionRest(fn, args.Rest())
+	f, r, _ := args.Split()
+	fn := a.AssertUnqualified(f).Name()
+	return parseFunctionRest(fn, r)
 }
 
 func parseFunction(args a.Sequence) *functionDefinition {
@@ -227,18 +229,19 @@ func parseFunctionRest(fn a.Name, r a.Sequence) *functionDefinition {
 	}
 }
 
-func parseFunctionSignatures(r a.Sequence) functionSignatures {
-	if args, ok := r.First().(a.Vector); ok {
+func parseFunctionSignatures(s a.Sequence) functionSignatures {
+	f, r, ok := s.Split()
+	if args, ok := f.(a.Vector); ok {
 		return functionSignatures{
-			{args: args, body: r.Rest()},
+			{args: args, body: r},
 		}
 	}
 	res := functionSignatures{}
-	for i := r; i.IsSequence(); i = i.Rest() {
-		l := a.AssertList(i.First())
+	for ; ok; f, r, ok = r.Split() {
+		lf, lr, _ := a.AssertList(f).Split()
 		res = append(res, &functionSignature{
-			args: a.AssertVector(l.First()),
-			body: l.Rest(),
+			args: a.AssertVector(lf),
+			body: lr,
 		})
 	}
 	return res
@@ -287,15 +290,16 @@ func makeMultiFunction(c a.Context, sigs functionSignatures) a.Function {
 	}
 }
 
-func (f *lambdaFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (*lambdaFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	fd := parseFunction(args)
 	return makeFunction(c, fd)
 }
 
-func (f *applyFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (*applyFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 2)
-	fn := a.AssertApplicable(args.First())
-	s := a.AssertSequence(args.Rest().First())
+	f, r, _ := args.Split()
+	fn := a.AssertApplicable(f)
+	s := a.AssertSequence(r.First())
 	return fn.Apply(c, s)
 }
 

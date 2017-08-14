@@ -4,13 +4,14 @@ import a "github.com/kode4food/sputter/api"
 
 type ifFunction struct{ BaseBuiltIn }
 
-func (f *ifFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (*ifFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	i := a.AssertArityRange(args, 2, 3)
-	if a.Truthy(a.Eval(c, args.First())) {
-		return a.Eval(c, args.Rest().First())
+	f, r, _ := args.Split()
+	if a.Truthy(a.Eval(c, f)) {
+		return a.Eval(c, r.First())
 	}
 	if i == 3 {
-		return a.Eval(c, args.Rest().Rest().First())
+		return a.Eval(c, r.Rest().First())
 	}
 	return a.Nil
 }

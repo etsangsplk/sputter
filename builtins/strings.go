@@ -10,20 +10,25 @@ type (
 	readerStrFunction struct{ BaseBuiltIn }
 )
 
-func (f *strFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+var emptyString = a.Str("")
+
+func (*strFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	return a.SequenceToStr(args)
 }
 
-func (f *readerStrFunction) Apply(_ a.Context, args a.Sequence) a.Value {
-	var buf bytes.Buffer
-	if args.IsSequence() {
-		buf.WriteString(string(args.First().Str()))
+func (*readerStrFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+	f, r, ok := args.Split()
+	if !ok {
+		return emptyString
 	}
-	for i := args.Rest(); i.IsSequence(); i = i.Rest() {
-		buf.WriteString(" ")
-		buf.WriteString(string(i.First().Str()))
+
+	var b bytes.Buffer
+	b.WriteString(string(f.Str()))
+	for f, r, ok = r.Split(); ok; f, r, ok = r.Split() {
+		b.WriteString(" ")
+		b.WriteString(string(f.Str()))
 	}
-	return a.Str(buf.String())
+	return a.Str(b.String())
 }
 
 func isStr(v a.Value) bool {

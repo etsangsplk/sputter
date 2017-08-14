@@ -44,11 +44,11 @@ func NewReader(r io.Reader, i InputFunc) Reader {
 	var resolver LazyResolver
 	br := bufio.NewReader(r)
 
-	resolver = func() (bool, Value, Sequence) {
+	resolver = func() (Value, Sequence, bool) {
 		if v, ok := i(br); ok {
-			return ok, v, NewLazySequence(resolver)
+			return v, NewLazySequence(resolver), true
 		}
-		return false, Nil, EmptyList
+		return Nil, EmptyList, false
 	}
 
 	return NewLazySequence(resolver)

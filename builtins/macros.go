@@ -13,7 +13,7 @@ type (
 	expandAllFunction struct{ BaseBuiltIn }
 )
 
-func (f *defMacroFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (*defMacroFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	fd := parseNamedFunction(args)
 	n := a.NewLocalSymbol(fd.name)
 	fn := makeFunction(c, fd)
@@ -21,19 +21,19 @@ func (f *defMacroFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	return new(defFunction).Apply(c, a.NewVector(n, r))
 }
 
-func (f *expand1Function) Apply(c a.Context, args a.Sequence) a.Value {
+func (*expand1Function) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
 	r, _ := a.MacroExpand1(c, args.First())
 	return r
 }
 
-func (f *expandFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (*expandFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
 	r, _ := a.MacroExpand(c, args.First())
 	return r
 }
 
-func (f *expandAllFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (*expandAllFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
 	return a.MacroExpandAll(c, args.First())
 }

@@ -109,32 +109,31 @@ func (sc *syntaxContext) quoteSequence(s a.Sequence) a.Value {
 }
 
 func (sc *syntaxContext) quoteAssociative(as a.Associative) a.Value {
-	r := []a.Value{}
-	for i := as.(a.Sequence); i.IsSequence(); i = i.Rest() {
-		p := i.First().(a.Vector)
+	res := []a.Value{}
+	for f, r, ok := as.Split(); ok; f, r, ok = r.Split() {
+		p := f.(a.Vector)
 		k, _ := p.ElementAt(0)
 		v, _ := p.ElementAt(1)
-		r = append(r, k)
-		r = append(r, v)
+		res = append(res, k)
+		res = append(res, v)
 	}
-	return a.NewList(applySym, assocSym, sc.quoteElements(a.NewVector(r...)))
+	return a.NewList(applySym, assocSym, sc.quoteElements(a.NewVector(res...)))
 }
 
 func (sc *syntaxContext) quoteElements(s a.Sequence) a.Value {
-	r := []a.Value{}
-	for i := s; i.IsSequence(); i = i.Rest() {
-		v := i.First()
-		if f, ok := isUnquoteSplicing(v); ok {
-			r = append(r, f)
+	res := []a.Value{}
+	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
+		if v, ok := isUnquoteSplicing(f); ok {
+			res = append(res, v)
 			continue
 		}
-		if f, ok := isUnquote(v); ok {
-			r = append(r, a.NewList(listSym, f))
+		if v, ok := isUnquote(f); ok {
+			res = append(res, a.NewList(listSym, v))
 			continue
 		}
-		r = append(r, a.NewList(listSym, sc.quoteValue(v)))
+		res = append(res, a.NewList(listSym, sc.quoteValue(f)))
 	}
-	return a.NewList(r...).Prepend(concatSym)
+	return a.NewList(res...).Prepend(concatSym)
 }
 
 func isWrapperCall(n a.Name, v a.Value) (a.Value, bool) {
@@ -152,12 +151,12 @@ func isUnquoteSplicing(v a.Value) (a.Value, bool) {
 	return isWrapperCall("unquote-splicing", v)
 }
 
-func (f *quoteFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+func (*quoteFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
 	return args.First()
 }
 
-func (f *syntaxQuoteFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (*syntaxQuoteFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
 	sc := &syntaxContext{
 		context: c,

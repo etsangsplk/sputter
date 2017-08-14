@@ -16,13 +16,14 @@ type (
 
 // MacroExpand1 performs a single macro expansion
 func MacroExpand1(c Context, v Value) (Value, bool) {
-	if l, ok := v.(List); ok && l.IsSequence() {
-		f := l.First()
-		if s, ok := f.(Symbol); ok {
-			if r, ok := s.Resolve(c); ok {
-				if a, ok := r.(Applicable); ok {
-					if ok, sp := IsMacro(a); ok && !sp {
-						return a.Apply(c, l.Rest()), true
+	if l, ok := v.(List); ok {
+		if f, r, ok := l.Split(); ok {
+			if s, ok := f.(Symbol); ok {
+				if sr, ok := s.Resolve(c); ok {
+					if a, ok := sr.(Applicable); ok {
+						if ok, sp := IsMacro(a); ok && !sp {
+							return a.Apply(c, r), true
+						}
 					}
 				}
 			}
@@ -73,38 +74,37 @@ func expandSequence(c Context, s Sequence) Value {
 }
 
 func expandAssociative(c Context, as Associative) Value {
-	r := []Vector{}
-	for i := as.(Sequence); i.IsSequence(); i = i.Rest() {
-		e := i.First().(Vector)
+	res := []Vector{}
+	for f, r, ok := as.(Sequence).Split(); ok; f, r, ok = r.Split() {
+		e := f.(Vector)
 		k, _ := e.ElementAt(0)
 		v, _ := e.ElementAt(1)
-		r = append(r, NewVector(
+		res = append(res, NewVector(
 			MacroExpandAll(c, k),
 			MacroExpandAll(c, v),
 		))
 	}
-	return NewAssociative(r...)
+	return NewAssociative(res...)
 }
 
 func expandElements(c Context, s Sequence) []Value {
-	r := []Value{}
-	for i := s; i.IsSequence(); i = i.Rest() {
-		r = append(r, MacroExpandAll(c, i.First()))
+	res := []Value{}
+	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
+		res = append(res, MacroExpandAll(c, f))
 	}
-	return r
+	return res
 }
 
 // MakeForm attempts to convert a List into a directly applying form
 func MakeForm(l List) (List, bool) {
-	if !l.IsSequence() {
-		return l, false
-	}
-	if s, ok := l.First().(Symbol); ok {
-		if d := s.Domain(); d != LocalDomain {
-			ns := GetNamespace(d)
-			if g, ok := ns.Get(s.Name()); ok {
-				if ap, ok := g.(Applicable); ok {
-					return makeFormObject(l, ap), true
+	if f, _, ok := l.Split(); ok {
+		if s, ok := f.(Symbol); ok {
+			if d := s.Domain(); d != LocalDomain {
+				ns := GetNamespace(d)
+				if g, ok := ns.Get(s.Name()); ok {
+					if ap, ok := g.(Applicable); ok {
+						return makeFormObject(l, ap), true
+					}
 				}
 			}
 		}

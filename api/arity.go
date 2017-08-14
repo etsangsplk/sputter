@@ -14,15 +14,15 @@ const (
 // ArityChecker is a ReflectedFunction that validates the arity of arguments
 type ArityChecker func(Sequence) (int, bool)
 
-func countUpTo(args Sequence, c int) int {
+func countUpTo(args Sequence, max int) int {
 	if cnt, ok := args.(Counted); ok {
 		return cnt.Count()
 	}
-	r := 0
-	for s := args; r < c && s.IsSequence(); s = s.Rest() {
-		r++
+	c := 0
+	for _, r, ok := args.Split(); ok && c < max; _, r, ok = r.Split() {
+		c++
 	}
-	return r
+	return c
 }
 
 // MakeArityChecker creates a fixed arity checker

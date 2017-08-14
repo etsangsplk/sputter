@@ -27,6 +27,8 @@ type (
 	associative []Vector
 )
 
+var emptyAssociative = associative{}
+
 // NewAssociative instantiates a new Associative
 func NewAssociative(v ...Vector) Associative {
 	return associative(v)
@@ -71,11 +73,24 @@ func (a associative) Eval(c Context) Value {
 }
 
 func (a associative) First() Value {
-	return a[0]
+	if len(a) > 0 {
+		return a[0]
+	}
+	return Nil
 }
 
 func (a associative) Rest() Sequence {
-	return Sequence(a[1:])
+	if len(a) > 1 {
+		return Sequence(a[1:])
+	}
+	return emptyAssociative
+}
+
+func (a associative) Split() (Value, Sequence, bool) {
+	if len(a) > 0 {
+		return a[0], Sequence(a[1:]), true
+	}
+	return Nil, emptyAssociative, false
 }
 
 func (a associative) Prepend(v Value) Sequence {

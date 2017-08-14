@@ -8,12 +8,13 @@ func SequenceToList(s Sequence) List {
 		return l
 	}
 	if c, ok := s.(Counted); ok {
-		r := make([]Value, c.Count())
-		for i, idx := s, 0; i.IsSequence(); i = i.Rest() {
-			r[idx] = i.First()
+		res := make([]Value, c.Count())
+		idx := 0
+		for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
+			res[idx] = f
 			idx++
 		}
-		return NewList(r...)
+		return NewList(res...)
 	}
 	return uncountedToList(s)
 }
@@ -28,12 +29,13 @@ func SequenceToVector(s Sequence) Vector {
 		return v
 	}
 	if c, ok := s.(Counted); ok {
-		r := make([]Value, c.Count())
-		for i, idx := s, 0; i.IsSequence(); i = i.Rest() {
-			r[idx] = i.First()
+		res := make([]Value, c.Count())
+		idx := 0
+		for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
+			res[idx] = f
 			idx++
 		}
-		return vector(r)
+		return vector(res)
 	}
 	return uncountedToVector(s)
 }
@@ -43,11 +45,11 @@ func uncountedToVector(s Sequence) Vector {
 }
 
 func uncountedToArray(s Sequence) []Value {
-	r := []Value{}
-	for i := s; i.IsSequence(); i = i.Rest() {
-		r = append(r, i.First())
+	res := []Value{}
+	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
+		res = append(res, f)
 	}
-	return r
+	return res
 }
 
 // SequenceToAssociative takes any sequence and converts it to an associative
@@ -63,13 +65,10 @@ func SequenceToAssociative(s Sequence) Associative {
 		ml := l / 2
 		r := make([]Vector, ml)
 		i := s
+		var k, v Value
 		for idx := 0; idx < ml; idx++ {
-			k := i.First()
-			i = i.Rest()
-
-			v := i.First()
-			i = i.Rest()
-
+			k, i, _ = i.Split()
+			v, i, _ = i.Split()
 			r[idx] = NewVector(k, v)
 		}
 		return associative(r)
@@ -78,18 +77,16 @@ func SequenceToAssociative(s Sequence) Associative {
 }
 
 func uncountedToAssociative(s Sequence) Associative {
-	r := []Vector{}
-	for i := s; i.IsSequence(); i = i.Rest() {
-		k := i.First()
-		i = i.Rest()
-		if i.IsSequence() {
-			v := i.First()
-			r = append(r, NewVector(k, v))
+	res := []Vector{}
+	var v Value
+	for k, r, ok := s.Split(); ok; k, r, ok = r.Split() {
+		if v, r, ok = r.Split(); ok {
+			res = append(res, NewVector(k, v))
 		} else {
 			panic(ErrStr(ExpectedPair))
 		}
 	}
-	return associative(r)
+	return associative(res)
 }
 
 // MakeStr converts a Value to a Str if it's not already one
@@ -106,12 +103,11 @@ func SequenceToStr(s Sequence) Str {
 		return st
 	}
 	var buf bytes.Buffer
-	for i := s; i.IsSequence(); i = i.Rest() {
-		v := i.First()
-		if v == Nil {
+	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
+		if f == Nil {
 			continue
 		}
-		buf.WriteString(string(MakeStr(v)))
+		buf.WriteString(string(MakeStr(f)))
 	}
 	return Str(buf.String())
 }

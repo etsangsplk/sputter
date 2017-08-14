@@ -4,7 +4,7 @@ import a "github.com/kode4food/sputter/api"
 
 type listFunction struct{ BaseBuiltIn }
 
-func (f *listFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+func (*listFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	return a.SequenceToList(args)
 }
 

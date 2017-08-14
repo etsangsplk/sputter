@@ -85,7 +85,7 @@ var (
 	False Bool = false
 
 	// Nil is a value that represents the absence of a Value
-	Nil = new(nilValue)
+	Nil = &nilValue{}
 )
 
 // Name makes Name Named
@@ -100,8 +100,8 @@ func (n Name) Str() Str {
 
 // Apply makes Bool Applicable
 func (b Bool) Apply(_ Context, args Sequence) Value {
-	for i := args; i.IsSequence(); i = i.Rest() {
-		if i.First() != b {
+	for f, r, ok := args.Split(); ok; f, r, ok = r.Split() {
+		if f != b {
 			return False
 		}
 	}
@@ -125,8 +125,8 @@ func (b Bool) Str() Str {
 }
 
 func (n *nilValue) Apply(_ Context, args Sequence) Value {
-	for i := args; i.IsSequence(); i = i.Rest() {
-		if i.First() != Nil {
+	for f, r, ok := args.Split(); ok; f, r, ok = r.Split() {
+		if f != Nil {
 			return False
 		}
 	}
