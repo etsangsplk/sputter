@@ -11,7 +11,8 @@ type (
 	// Instruction represents a decoded VM instruction
 	Instruction struct {
 		OpCode OpCode
-		Arg0   uint
+		Op1    uint
+		Op2    uint
 	}
 
 	// Module is the basic translation unit for the VM
@@ -25,6 +26,8 @@ type (
 
 	operandStack []a.Value
 )
+
+var negOne = a.Zero.Sub(a.One)
 
 // Apply makes Module applicable
 func (m *Module) Apply(c a.Context, args a.Sequence) a.Value {
@@ -62,18 +65,28 @@ start:
 		PC++
 		goto start
 
+	case Pop:
+		pop()
+		PC++
+		goto start
+
 	case Load:
-		push(LOCALS[INST[PC].Arg0])
+		push(LOCALS[INST[PC].Op1])
 		PC++
 		goto start
 
 	case Store:
-		LOCALS[INST[PC].Arg0] = pop()
+		LOCALS[INST[PC].Op1] = pop()
+		PC++
+		goto start
+
+	case StoreConst:
+		LOCALS[INST[PC].Op2] = DATA[INST[PC].Op1]
 		PC++
 		goto start
 
 	case Clear:
-		LOCALS[INST[PC].Arg0] = a.Nil
+		LOCALS[INST[PC].Op1] = a.Nil
 		PC++
 		goto start
 
@@ -123,8 +136,13 @@ start:
 		PC++
 		goto start
 
+	case NegOne:
+		push(negOne)
+		PC++
+		goto start
+
 	case Const:
-		push(DATA[INST[PC].Arg0])
+		push(DATA[INST[PC].Op1])
 		PC++
 		goto start
 
@@ -175,15 +193,20 @@ start:
 		goto start
 
 	case Split:
-		if r1, s1, b1 = a.AssertSequence(pop()).Split(); b1 {
-			push(a.True)
+		if s1, b1 = pop().(a.Sequence); !b1 {
+			push(a.False)
+			PC++
+			goto start
+		}
+		if r1, s1, b1 = s1.Split(); b1 {
 			push(s1)
 			push(r1)
+			push(a.True)
+			r1 = nil // gc
+			s1 = nil // gc
 		} else {
 			push(a.False)
 		}
-		r1 = nil // gc
-		s1 = nil // gc
 		PC++
 		goto start
 
@@ -202,11 +225,11 @@ start:
 			goto start
 		}
 		r1 = nil // gc
-		PC = INST[PC].Arg0
+		PC = INST[PC].Op1
 		goto start
 
 	case Jump:
-		PC = INST[PC].Arg0
+		PC = INST[PC].Op1
 		goto start
 
 	case Return:

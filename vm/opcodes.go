@@ -6,8 +6,10 @@ type OpCode uint
 // These are the OpCodes recognized by the Virtual Machine
 const (
 	NoOp OpCode = iota
+	Pop
 	Load
 	Store
+	StoreConst
 	Clear
 	Dup
 	Swap
@@ -17,6 +19,7 @@ const (
 	False
 	Zero
 	One
+	NegOne
 	Const
 	Def
 	Let
