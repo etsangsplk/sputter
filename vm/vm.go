@@ -23,8 +23,6 @@ type (
 		Data         []a.Value
 		Instructions []Instruction
 	}
-
-	operandStack []a.Value
 )
 
 var negOne = a.Zero.Sub(a.One)
@@ -35,6 +33,8 @@ func (m *Module) Apply(c a.Context, args a.Sequence) a.Value {
 	var r1 a.Value
 	var u1, u2 uint
 	var s1 a.Sequence
+	var o1 operandStack
+	var e1 a.Evaluable
 	var b1 bool
 	var PC uint
 	var SP uint
@@ -161,7 +161,25 @@ start:
 		goto start
 
 	case Eval:
-		push(a.Eval(c, pop()))
+		r1, _ = a.MacroExpand(c, pop())
+		if e1, b1 = r1.(a.Evaluable); b1 {
+			push(e1.Eval(c))
+			e1 = nil // gc
+		} else {
+			push(r1)
+		}
+		r1 = nil // gc
+		PC++
+		goto start
+
+	case Args:
+		u1 = INST[PC].Op1
+		u2 = SP + u1
+		o1 = make(operandStack, u1)
+		copy(o1, STACK[SP+1:u2+1])
+		STACK[u2] = o1
+		SP = u2 - 1
+		o1 = nil // gc
 		PC++
 		goto start
 

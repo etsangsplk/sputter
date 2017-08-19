@@ -24,6 +24,7 @@ const (
 	Def
 	Let
 	Eval
+	Args
 	Apply
 	IsSeq
 	First

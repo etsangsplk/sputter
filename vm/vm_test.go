@@ -5,10 +5,13 @@ import (
 
 	a "github.com/kode4food/sputter/api"
 	"github.com/kode4food/sputter/assert"
+	b "github.com/kode4food/sputter/builtins"
 	"github.com/kode4food/sputter/vm"
 )
 
 var (
+	str, _ = b.GetFunction("str")
+
 	vmTestData = []a.Value{
 		s("The first bit of data"),
 		s("Hello there!"),
@@ -16,6 +19,7 @@ var (
 		a.True,
 		a.False,
 		a.EmptyList,
+		str,
 	}
 
 	vmTestArgs = a.NewList(s("first"), s("second"), s("third"))
@@ -224,6 +228,31 @@ func TestCondJump(t *testing.T) {
 		{OpCode: vm.Const, Op1: 1},
 		{OpCode: vm.Return},
 	}, s("The first bit of data"))
+}
+
+func TestEval(t *testing.T) {
+	testInstructions(t, []vm.Instruction{
+		{OpCode: vm.Const, Op1: 0}, // string
+		{OpCode: vm.Eval},
+		{OpCode: vm.Return},
+	}, s("The first bit of data"))
+
+	testInstructions(t, []vm.Instruction{
+		{OpCode: vm.Const, Op1: 5}, // empty list
+		{OpCode: vm.Eval},
+		{OpCode: vm.Return},
+	}, a.EmptyList)
+}
+
+func TestApply(t *testing.T) {
+	testInstructions(t, []vm.Instruction{
+		{OpCode: vm.Const, Op1: 6}, // func
+		{OpCode: vm.Const, Op1: 1}, // string
+		{OpCode: vm.Const, Op1: 0}, // string
+		{OpCode: vm.Args, Op1: 2},
+		{OpCode: vm.Apply},
+		{OpCode: vm.Return},
+	}, s("The first bit of dataHello there!"))
 }
 
 func TestPanic(t *testing.T) {
