@@ -3,7 +3,7 @@ package api
 import "bytes"
 
 // ExpectedVector is raised if a value is not a Vector
-const ExpectedVector = "value is not a vector: %s"
+const ExpectedVector = "value is not a Values: %s"
 
 type (
 	// Vector is a fixed-length array of Values
@@ -16,25 +16,29 @@ type (
 		IsVector() bool
 	}
 
-	vector Values
+	// Values is the concrete implementation of a Vector
+	Values []Value
 )
 
-var emptyVector = vector(emptyValues)
+var emptyVector = Values{}
 
 // NewVector instantiates a new Vector
 func NewVector(v ...Value) Vector {
-	return vector(v)
+	return Values(v)
 }
 
-func (v vector) IsVector() bool {
+// IsVector identifies this Value as a Vector
+func (v Values) IsVector() bool {
 	return true
 }
 
-func (v vector) Count() int {
+// Count returns the number of elements in the Value array
+func (v Values) Count() int {
 	return len(v)
 }
 
-func (v vector) ElementAt(index int) (Value, bool) {
+// ElementAt returns a specific element of the Value array
+func (v Values) ElementAt(index int) (Value, bool) {
 	vals := v
 	if index >= 0 && index < len(vals) {
 		return vals[index], true
@@ -42,34 +46,44 @@ func (v vector) ElementAt(index int) (Value, bool) {
 	return Nil, false
 }
 
-func (v vector) Apply(_ Context, args Sequence) Value {
+// Apply makes Values Applicable
+func (v Values) Apply(_ Context, args Sequence) Value {
 	return IndexedApply(v, args)
 }
 
-func (v vector) Eval(c Context) Value {
+// Eval evaluates its elements, returning a new Value array
+func (v Values) Eval(c Context) Value {
 	l := len(v)
-	r := make(vector, l)
+	r := make(Values, l)
 	for i := 0; i < l; i++ {
 		r[i] = Eval(c, v[i])
 	}
 	return r
 }
 
-func (v vector) First() Value {
+// First returns the first element of the Value array
+func (v Values) First() Value {
 	if len(v) > 0 {
 		return v[0]
 	}
 	return Nil
 }
 
-func (v vector) Rest() Sequence {
+// Rest returns the elements of the Value array that follow the first
+func (v Values) Rest() Sequence {
 	if len(v) > 1 {
 		return v[1:]
 	}
 	return emptyVector
 }
 
-func (v vector) Split() (Value, Sequence, bool) {
+// IsSequence returns whether or not this Value array has any elements
+func (v Values) IsSequence() bool {
+	return len(v) > 0
+}
+
+// Split breaks the Value array into its components (first, rest, isSequence)
+func (v Values) Split() (Value, Sequence, bool) {
 	lv := len(v)
 	if lv > 1 {
 		return v[0], v[1:], true
@@ -79,19 +93,18 @@ func (v vector) Split() (Value, Sequence, bool) {
 	return Nil, emptyVector, false
 }
 
-func (v vector) Prepend(p Value) Sequence {
-	return append(vector{p}, v...)
+// Prepend inserts an element at the beginning of the Value array
+func (v Values) Prepend(p Value) Sequence {
+	return append(Values{p}, v...)
 }
 
-func (v vector) Conjoin(a Value) Sequence {
+// Conjoin appends an element to the end of the Value array
+func (v Values) Conjoin(a Value) Sequence {
 	return append(v, a)
 }
 
-func (v vector) IsSequence() bool {
-	return len(v) > 0
-}
-
-func (v vector) Str() Str {
+// Str converts this Value array to a Str
+func (v Values) Str() Str {
 	var b bytes.Buffer
 	l := len(v)
 

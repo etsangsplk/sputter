@@ -107,7 +107,7 @@ func (l *list) Eval(c Context) Value {
 
 func (l *list) evalArgs(c Context, args *list) Vector {
 	ac := args.count
-	r := make(vector, ac)
+	r := make(Values, ac)
 	for idx, i := 0, args; idx < ac; idx++ {
 		r[idx] = Eval(c, i.first)
 		i = i.rest

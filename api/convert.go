@@ -29,7 +29,7 @@ func SequenceToVector(s Sequence) Vector {
 		return v
 	}
 	if c, ok := s.(Counted); ok {
-		res := make(vector, c.Count())
+		res := make(Values, c.Count())
 		idx := 0
 		for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
 			res[idx] = f
@@ -41,7 +41,7 @@ func SequenceToVector(s Sequence) Vector {
 }
 
 func uncountedToVector(s Sequence) Vector {
-	return vector(uncountedToArray(s))
+	return Values(uncountedToArray(s))
 }
 
 func uncountedToArray(s Sequence) Values {
