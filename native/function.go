@@ -118,7 +118,7 @@ func (fi funcInfo) makePluralFuncMapper() outMapper {
 		return a.NewExecFunction(func(_ a.Context, args a.Sequence) a.Value {
 			fin := prepareArgs(args)
 			r := fn.Call(fin)
-			fout := make([]a.Value, olen)
+			fout := make(a.Values, olen)
 			for i := 0; i < olen; i++ {
 				fout[i] = out[i](r[i])
 			}

@@ -14,7 +14,7 @@ const (
 )
 
 type (
-	// Associative is a Mappable that is implemented atop an array
+	// Associative is a Mappable that is implemented atop an Values
 	Associative interface {
 		Conjoiner
 		Mapped
@@ -81,14 +81,14 @@ func (a associative) First() Value {
 
 func (a associative) Rest() Sequence {
 	if len(a) > 1 {
-		return Sequence(a[1:])
+		return a[1:]
 	}
 	return emptyAssociative
 }
 
 func (a associative) Split() (Value, Sequence, bool) {
 	if len(a) > 0 {
-		return a[0], Sequence(a[1:]), true
+		return a[0], a[1:], true
 	}
 	return Nil, emptyAssociative, false
 }

@@ -12,7 +12,7 @@ import (
 var (
 	str, _ = b.GetFunction("str")
 
-	vmTestData = []a.Value{
+	vmTestData = a.Values{
 		s("The first bit of data"),
 		s("Hello there!"),
 		a.ErrStr("i blew up!"),

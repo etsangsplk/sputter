@@ -6,7 +6,7 @@ import a "github.com/kode4food/sputter/api"
 
 type (
 	// Data represents the data segment of a Module
-	Data []a.Value
+	Data a.Values
 
 	// Instruction represents a decoded VM instruction
 	Instruction struct {
@@ -20,7 +20,7 @@ type (
 		a.BaseFunction
 		LocalsSize   uint
 		StackSize    uint
-		Data         []a.Value
+		Data         a.Values
 		Instructions []Instruction
 	}
 )
@@ -33,16 +33,16 @@ func (m *Module) Apply(c a.Context, args a.Sequence) a.Value {
 	var r1 a.Value
 	var u1, u2 uint
 	var s1 a.Sequence
-	var o1 operandStack
+	var o1 a.Values
 	var e1 a.Evaluable
 	var b1 bool
 	var PC uint
 	var SP uint
 
-	LOCALS := make([]a.Value, m.LocalsSize)
+	LOCALS := make(a.Values, m.LocalsSize)
 	LOCALS[0] = args
 
-	STACK := make(operandStack, m.StackSize)
+	STACK := make(a.Values, m.StackSize)
 	SP = m.StackSize - 1
 
 	DATA := m.Data
@@ -175,7 +175,7 @@ start:
 	case Args:
 		u1 = INST[PC].Op1
 		u2 = SP + u1
-		o1 = make(operandStack, u1)
+		o1 = make(a.Values, u1)
 		copy(o1, STACK[SP+1:u2+1])
 		STACK[u2] = o1
 		SP = u2 - 1

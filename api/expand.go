@@ -87,8 +87,8 @@ func expandAssociative(c Context, as Associative) Value {
 	return NewAssociative(res...)
 }
 
-func expandElements(c Context, s Sequence) []Value {
-	res := []Value{}
+func expandElements(c Context, s Sequence) Values {
+	res := Values{}
 	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
 		res = append(res, MacroExpandAll(c, f))
 	}

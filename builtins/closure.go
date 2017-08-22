@@ -25,7 +25,7 @@ func assertUnqualifiedNames(s a.Sequence) a.Names {
 
 func makeLocalSymbolVector(names a.Names) a.Vector {
 	nl := len(names)
-	nv := make([]a.Value, nl)
+	nv := make(a.Values, nl)
 	for i := 0; i < nl; i++ {
 		nv[i] = a.NewLocalSymbol(names[i])
 	}

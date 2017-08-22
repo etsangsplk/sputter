@@ -21,7 +21,7 @@ func env() a.Value {
 }
 
 func args() a.Value {
-	r := []a.Value{}
+	r := a.Values{}
 	for _, v := range os.Args {
 		r = append(r, a.Str(v))
 	}

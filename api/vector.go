@@ -6,7 +6,7 @@ import "bytes"
 const ExpectedVector = "value is not a vector: %s"
 
 type (
-	// Vector is a fixed-length Array of Values
+	// Vector is a fixed-length array of Values
 	Vector interface {
 		Conjoiner
 		Indexed
@@ -16,10 +16,10 @@ type (
 		IsVector() bool
 	}
 
-	vector []Value
+	vector Values
 )
 
-var emptyVector = vector{}
+var emptyVector = vector(emptyValues)
 
 // NewVector instantiates a new Vector
 func NewVector(v ...Value) Vector {
@@ -35,8 +35,9 @@ func (v vector) Count() int {
 }
 
 func (v vector) ElementAt(index int) (Value, bool) {
-	if index >= 0 && index < len(v) {
-		return v[index], true
+	vals := v
+	if index >= 0 && index < len(vals) {
+		return vals[index], true
 	}
 	return Nil, false
 }
@@ -63,7 +64,7 @@ func (v vector) First() Value {
 
 func (v vector) Rest() Sequence {
 	if len(v) > 1 {
-		return Sequence(v[1:])
+		return v[1:]
 	}
 	return emptyVector
 }
@@ -71,7 +72,7 @@ func (v vector) Rest() Sequence {
 func (v vector) Split() (Value, Sequence, bool) {
 	lv := len(v)
 	if lv > 1 {
-		return v[0], Sequence(v[1:]), true
+		return v[0], v[1:], true
 	} else if lv == 1 {
 		return v[0], emptyVector, true
 	}

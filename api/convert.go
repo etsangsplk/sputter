@@ -8,7 +8,7 @@ func SequenceToList(s Sequence) List {
 		return l
 	}
 	if c, ok := s.(Counted); ok {
-		res := make([]Value, c.Count())
+		res := make(Values, c.Count())
 		idx := 0
 		for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
 			res[idx] = f
@@ -29,13 +29,13 @@ func SequenceToVector(s Sequence) Vector {
 		return v
 	}
 	if c, ok := s.(Counted); ok {
-		res := make([]Value, c.Count())
+		res := make(vector, c.Count())
 		idx := 0
 		for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
 			res[idx] = f
 			idx++
 		}
-		return vector(res)
+		return res
 	}
 	return uncountedToVector(s)
 }
@@ -44,8 +44,8 @@ func uncountedToVector(s Sequence) Vector {
 	return vector(uncountedToArray(s))
 }
 
-func uncountedToArray(s Sequence) []Value {
-	res := []Value{}
+func uncountedToArray(s Sequence) Values {
+	res := Values{}
 	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
 		res = append(res, f)
 	}

@@ -109,7 +109,7 @@ func (sc *syntaxContext) quoteSequence(s a.Sequence) a.Value {
 }
 
 func (sc *syntaxContext) quoteAssociative(as a.Associative) a.Value {
-	res := []a.Value{}
+	res := a.Values{}
 	for f, r, ok := as.Split(); ok; f, r, ok = r.Split() {
 		p := f.(a.Vector)
 		k, _ := p.ElementAt(0)
@@ -121,7 +121,7 @@ func (sc *syntaxContext) quoteAssociative(as a.Associative) a.Value {
 }
 
 func (sc *syntaxContext) quoteElements(s a.Sequence) a.Value {
-	res := []a.Value{}
+	res := a.Values{}
 	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
 		if v, ok := isUnquoteSplicing(f); ok {
 			res = append(res, v)

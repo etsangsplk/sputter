@@ -142,7 +142,7 @@ func (r *reader) list() a.Value {
 }
 
 func (r *reader) vector() a.Value {
-	res := make([]a.Value, 0)
+	res := make(a.Values, 0)
 
 	for {
 		if t, ok := r.nextToken(); ok {
@@ -161,7 +161,7 @@ func (r *reader) vector() a.Value {
 
 func (r *reader) associative() a.Value {
 	res := make([]a.Vector, 0)
-	mp := make([]a.Value, 2)
+	mp := make(a.Values, 2)
 
 	for idx := 0; ; idx++ {
 		if t, ok := r.nextToken(); ok {
@@ -178,7 +178,7 @@ func (r *reader) associative() a.Value {
 				} else {
 					mp[1] = e
 					res = append(res, a.NewVector(mp...))
-					mp = make([]a.Value, 2)
+					mp = make(a.Values, 2)
 				}
 			}
 		} else {

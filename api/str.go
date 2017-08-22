@@ -78,7 +78,7 @@ func (s Str) Conjoin(v Value) Sequence {
 
 func (s Str) vector() Vector {
 	c := []rune(string(s))
-	r := make([]Value, len(c))
+	r := make(Values, len(c))
 	for i := 0; i < len(c); i++ {
 		r[i] = Str(c[i])
 	}
