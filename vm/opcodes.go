@@ -24,8 +24,9 @@ const (
 	Def
 	Let
 	Eval
-	Args
 	Apply
+	Call
+	Vector
 	IsSeq
 	First
 	Rest

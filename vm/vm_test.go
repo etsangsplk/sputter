@@ -244,12 +244,20 @@ func TestEval(t *testing.T) {
 	}, a.EmptyList)
 }
 
-func TestApply(t *testing.T) {
+func TestCallAndApply(t *testing.T) {
 	testInstructions(t, []vm.Instruction{
 		{OpCode: vm.Const, Op1: 6}, // func
 		{OpCode: vm.Const, Op1: 1}, // string
 		{OpCode: vm.Const, Op1: 0}, // string
-		{OpCode: vm.Args, Op1: 2},
+		{OpCode: vm.Call, Op1: 2},
+		{OpCode: vm.Return},
+	}, s("The first bit of dataHello there!"))
+
+	testInstructions(t, []vm.Instruction{
+		{OpCode: vm.Const, Op1: 6}, // func
+		{OpCode: vm.Const, Op1: 1}, // string
+		{OpCode: vm.Const, Op1: 0}, // string
+		{OpCode: vm.Vector, Op1: 2},
 		{OpCode: vm.Apply},
 		{OpCode: vm.Return},
 	}, s("The first bit of dataHello there!"))

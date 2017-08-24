@@ -33,7 +33,7 @@ func (m *Module) Apply(c a.Context, args a.Sequence) a.Value {
 	var r1 a.Value
 	var u1, u2 uint
 	var s1 a.Sequence
-	var o1 a.Values
+	var v1 a.Values
 	var e1 a.Evaluable
 	var b1 bool
 	var PC uint
@@ -172,21 +172,32 @@ start:
 		PC++
 		goto start
 
-	case Args:
-		u1 = INST[PC].Op1
-		u2 = SP + u1
-		o1 = make(a.Values, u1)
-		copy(o1, STACK[SP+1:u2+1])
-		STACK[u2] = o1
-		SP = u2 - 1
-		o1 = nil // gc
-		PC++
-		goto start
-
 	case Apply:
 		s1 = a.AssertSequence(pop())
 		push(a.AssertApplicable(pop()).Apply(c, s1))
 		s1 = nil // gc
+		PC++
+		goto start
+
+	case Call:
+		u1 = INST[PC].Op1
+		u2 = SP + u1 + 1
+		v1 = make(a.Values, u1)
+		copy(v1, STACK[SP+1:u2])
+		STACK[u2] = STACK[u2].(a.Applicable).Apply(c, v1)
+		SP = u2 - 1
+		v1 = nil // gc
+		PC++
+		goto start
+
+	case Vector:
+		u1 = INST[PC].Op1
+		u2 = SP + u1
+		v1 = make(a.Values, u1)
+		copy(v1, STACK[SP+1:u2+1])
+		STACK[u2] = v1
+		SP = u2 - 1
+		v1 = nil // gc
 		PC++
 		goto start
 
