@@ -146,13 +146,6 @@ start:
 		PC++
 		goto start
 
-	case Def:
-		r1 = pop()
-		a.GetContextNamespace(c).Put(a.AssertUnqualified(pop()).Name(), r1)
-		r1 = nil // gc
-		PC++
-		goto start
-
 	case Let:
 		r1 = pop()
 		c.Put(a.AssertUnqualified(pop()).Name(), r1)

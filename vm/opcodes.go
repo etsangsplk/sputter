@@ -21,7 +21,6 @@ const (
 	One
 	NegOne
 	Const
-	Def
 	Let
 	Eval
 	Apply
