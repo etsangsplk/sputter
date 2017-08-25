@@ -22,7 +22,6 @@ const (
 type (
 	// Namespace is a container where Qualified Symbols are mapped to Values
 	Namespace interface {
-		Value
 		Context
 		Domain() Name
 		Intern(Name) Symbol

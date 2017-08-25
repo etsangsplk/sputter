@@ -30,6 +30,7 @@ var negOne = a.Zero.Sub(a.One)
 // Apply makes Module applicable
 func (m *Module) Apply(c a.Context, args a.Sequence) a.Value {
 	// Registers
+	var c1 a.Context
 	var r1 a.Value
 	var u1, u2 uint
 	var s1 a.Sequence
@@ -40,7 +41,8 @@ func (m *Module) Apply(c a.Context, args a.Sequence) a.Value {
 	var SP uint
 
 	LOCALS := make(a.Values, m.LocalsSize)
-	LOCALS[0] = args
+	LOCALS[Context] = c
+	LOCALS[Args] = args
 
 	STACK := make(a.Values, m.StackSize)
 	SP = m.StackSize - 1
@@ -146,9 +148,18 @@ start:
 		PC++
 		goto start
 
-	case Let:
+	case Def:
 		r1 = pop()
-		c.Put(a.AssertUnqualified(pop()).Name(), r1)
+		a.GetContextNamespace(c).Put(a.AssertUnqualified(pop()).Name(), r1)
+		r1 = nil // gc
+		PC++
+		goto start
+
+	case Let:
+		c1 = LOCALS[INST[PC].Op1].(a.Context)
+		r1 = pop()
+		c1.Put(a.AssertUnqualified(pop()).Name(), r1)
+		c1 = nil // gc
 		r1 = nil // gc
 		PC++
 		goto start
@@ -256,9 +267,6 @@ start:
 
 	case Return:
 		return pop()
-
-	case ReturnNil:
-		return a.Nil
 
 	case Panic:
 		panic(pop())

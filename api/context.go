@@ -12,6 +12,7 @@ const (
 type (
 	// Context represents a mutable variable scope
 	Context interface {
+		Value
 		Get(Name) (Value, bool)
 		Has(Name) (Context, bool)
 		Put(Name, Value)
@@ -109,4 +110,9 @@ func (c *context) Delete(n Name) {
 	c.Lock()
 	defer c.Unlock()
 	delete(c.vars, n)
+}
+
+// Str converts this Value into a Str
+func (c *context) Str() Str {
+	return MakeDumpStr(c)
 }

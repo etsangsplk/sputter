@@ -3,6 +3,13 @@ package vm
 // OpCode represents a decoded VM instruction identifier
 type OpCode uint
 
+// These are the default positions for certain locals
+const (
+	Context uint = iota
+	Args
+	Variables
+)
+
 // These are the OpCodes recognized by the Virtual Machine
 const (
 	NoOp OpCode = iota
@@ -21,6 +28,7 @@ const (
 	One
 	NegOne
 	Const
+	Def
 	Let
 	Eval
 	Apply
@@ -34,6 +42,5 @@ const (
 	CondJump
 	Jump
 	Return
-	ReturnNil
 	Panic
 )

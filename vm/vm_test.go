@@ -78,8 +78,8 @@ func TestConst(t *testing.T) {
 	}, a.True)
 
 	testInstructions(t, []vm.Instruction{
-		{OpCode: vm.StoreConst, Op1: 1, Op2: 0},
-		{OpCode: vm.Load, Op1: 0},
+		{OpCode: vm.StoreConst, Op1: 1, Op2: vm.Variables + 0},
+		{OpCode: vm.Load, Op1: vm.Variables + 0},
 		{OpCode: vm.Return},
 	}, s("Hello there!"))
 }
@@ -93,12 +93,6 @@ func TestSwap(t *testing.T) {
 	}, s("The first bit of data"))
 }
 
-func TestReturnNil(t *testing.T) {
-	testInstructions(t, []vm.Instruction{
-		{OpCode: vm.ReturnNil},
-	}, a.Nil)
-}
-
 func TestReturn(t *testing.T) {
 	testInstructions(t, []vm.Instruction{
 		{OpCode: vm.Const, Op1: 1},
@@ -108,7 +102,7 @@ func TestReturn(t *testing.T) {
 
 func TestSequences(t *testing.T) {
 	testInstructions(t, []vm.Instruction{
-		{OpCode: vm.Load, Op1: 0},
+		{OpCode: vm.Load, Op1: vm.Args},
 		{OpCode: vm.IsSeq},
 		{OpCode: vm.Return},
 	}, a.True)
@@ -120,19 +114,19 @@ func TestSequences(t *testing.T) {
 	}, a.False)
 
 	testInstructions(t, []vm.Instruction{
-		{OpCode: vm.Load, Op1: 0},
+		{OpCode: vm.Load, Op1: vm.Args},
 		{OpCode: vm.First},
 		{OpCode: vm.Return},
 	}, s("first"))
 
 	testInstructions(t, []vm.Instruction{
-		{OpCode: vm.Load, Op1: 0},
+		{OpCode: vm.Load, Op1: vm.Args},
 		{OpCode: vm.Rest},
 		{OpCode: vm.Return},
 	}, s(`("second" "third")`))
 
 	testInstructions(t, []vm.Instruction{
-		{OpCode: vm.Load, Op1: 0},
+		{OpCode: vm.Load, Op1: vm.Args},
 		{OpCode: vm.Const, Op1: 1},
 		{OpCode: vm.Prepend},
 		{OpCode: vm.Return},
@@ -153,13 +147,13 @@ func TestSequenceSplit(t *testing.T) {
 	}, a.False)
 
 	testInstructions(t, []vm.Instruction{
-		{OpCode: vm.Load, Op1: 0}, // list
+		{OpCode: vm.Load, Op1: vm.Args}, // list
 		{OpCode: vm.Split},
 		{OpCode: vm.Return},
 	}, a.True)
 
 	testInstructions(t, []vm.Instruction{
-		{OpCode: vm.Load, Op1: 0}, // list
+		{OpCode: vm.Load, Op1: vm.Args}, // list
 		{OpCode: vm.Split},
 		{OpCode: vm.CondJump, Op1: 5},
 		{OpCode: vm.Const, Op1: 2}, // error
@@ -168,7 +162,7 @@ func TestSequenceSplit(t *testing.T) {
 	}, s("first"))
 
 	testInstructions(t, []vm.Instruction{
-		{OpCode: vm.Load, Op1: 0}, // list
+		{OpCode: vm.Load, Op1: vm.Args}, // list
 		{OpCode: vm.Split},
 		{OpCode: vm.CondJump, Op1: 5},
 		{OpCode: vm.Const, Op1: 2}, // error
@@ -180,13 +174,13 @@ func TestSequenceSplit(t *testing.T) {
 
 func TestDup(t *testing.T) {
 	testInstructions(t, []vm.Instruction{
-		{OpCode: vm.Load, Op1: 0},
+		{OpCode: vm.Load, Op1: vm.Args},
 		{OpCode: vm.Dup},
 		{OpCode: vm.First},
 		{OpCode: vm.Dup},
-		{OpCode: vm.Store, Op1: 1},
+		{OpCode: vm.Store, Op1: vm.Variables + 0},
 		{OpCode: vm.Prepend},
-		{OpCode: vm.Load, Op1: 1},
+		{OpCode: vm.Load, Op1: vm.Variables + 0},
 		{OpCode: vm.Prepend},
 		{OpCode: vm.Return},
 	}, s(`("first" "first" "first" "second" "third")`))
@@ -194,8 +188,8 @@ func TestDup(t *testing.T) {
 
 func TestClear(t *testing.T) {
 	testInstructions(t, []vm.Instruction{
-		{OpCode: vm.Clear, Op1: 0},
-		{OpCode: vm.Load, Op1: 0},
+		{OpCode: vm.Clear, Op1: vm.Args},
+		{OpCode: vm.Load, Op1: vm.Args},
 		{OpCode: vm.Return},
 	}, a.Nil)
 }
