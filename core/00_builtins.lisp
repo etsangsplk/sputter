@@ -142,3 +142,6 @@
 
 (def-builtin make-recover :special-form true)
 (def-builtin panic)
+
+;; current time
+(def-builtin current-time)

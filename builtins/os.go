@@ -3,9 +3,12 @@ package builtins
 import (
 	"os"
 	"regexp"
+	"time"
 
 	a "github.com/kode4food/sputter/api"
 )
+
+type currentTimeFunction struct{ BaseBuiltIn }
 
 var envPairRegex = regexp.MustCompile("^(?P<Key>[^=]+)=(?P<Value>.*)$")
 
@@ -29,7 +32,15 @@ func args() a.Value {
 	return r
 }
 
+func (*currentTimeFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+	return a.NewFloat(float64(time.Now().UnixNano()))
+}
+
 func init() {
+	var currentTime *currentTimeFunction
+
 	Namespace.Put("*env*", env())
 	Namespace.Put("*args*", args())
+
+	RegisterBuiltIn("current-time", currentTime)
 }
