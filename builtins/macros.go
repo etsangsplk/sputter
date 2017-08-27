@@ -18,7 +18,7 @@ func (*defMacroFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	n := a.NewLocalSymbol(fd.name)
 	fn := makeFunction(c, fd)
 	r := fn.WithMetadata(macroMetadata)
-	return new(defFunction).Apply(c, a.NewVector(n, r))
+	return new(defFunction).Apply(c, a.Values{n, r})
 }
 
 func (*expand1Function) Apply(c a.Context, args a.Sequence) a.Value {

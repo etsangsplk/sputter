@@ -31,19 +31,19 @@ func makeLazyResolver(c a.Context, f a.Applicable) a.LazyResolver {
 
 func makeValueFilter(c a.Context, f a.Applicable) a.ValueFilter {
 	return func(v a.Value) bool {
-		return a.Truthy(f.Apply(c, a.NewVector(v)))
+		return a.Truthy(f.Apply(c, a.Values{v}))
 	}
 }
 
 func makeValueMapper(c a.Context, f a.Applicable) a.ValueMapper {
 	return func(v a.Value) a.Value {
-		return f.Apply(c, a.NewVector(v))
+		return f.Apply(c, a.Values{v})
 	}
 }
 
 func makeValueReducer(c a.Context, f a.Applicable) a.ValueReducer {
 	return func(l, r a.Value) a.Value {
-		return f.Apply(c, a.NewVector(l, r))
+		return f.Apply(c, a.Values{l, r})
 	}
 }
 

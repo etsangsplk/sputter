@@ -6,6 +6,7 @@ import (
 	_ "github.com/kode4food/sputter/builtins"
 	c "github.com/kode4food/sputter/cli"
 	_ "github.com/kode4food/sputter/core"
+	_ "github.com/kode4food/sputter/vm"
 )
 
 func main() {

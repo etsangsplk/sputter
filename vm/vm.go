@@ -250,6 +250,51 @@ start:
 		PC++
 		goto start
 
+	case Add:
+		push(pop().(a.Number).Add(pop().(a.Number)))
+		PC++
+		goto start
+
+	case Sub:
+		push(pop().(a.Number).Sub(pop().(a.Number)))
+		PC++
+		goto start
+
+	case Mul:
+		push(pop().(a.Number).Mul(pop().(a.Number)))
+		PC++
+		goto start
+
+	case Div:
+		push(pop().(a.Number).Div(pop().(a.Number)))
+		PC++
+		goto start
+
+	case Mod:
+		push(pop().(a.Number).Mod(pop().(a.Number)))
+		PC++
+		goto start
+
+	case Eq:
+		if pop().(a.Number).Cmp(pop().(a.Number)) == a.EqualTo {
+			push(a.True)
+			PC++
+			goto start
+		}
+		push(a.False)
+		PC++
+		goto start
+
+	case Neq:
+		if pop().(a.Number).Cmp(pop().(a.Number)) != a.EqualTo {
+			push(a.True)
+			PC++
+			goto start
+		}
+		push(a.False)
+		PC++
+		goto start
+
 	case CondJump:
 		r1 = pop()
 		if r1 == a.False || r1 == a.Nil {

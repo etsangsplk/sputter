@@ -54,14 +54,14 @@ var (
 
 // Read completely consumes a Lexer before returning a Value Sequence
 func Read(context a.Context, lexer a.Sequence) a.Sequence {
-	r := a.NewVector()
+	r := a.Values{}
 	iter := a.Iterate(lexer)
 	ri := &reader{
 		context: context,
 		iter:    iter,
 	}
 	for f, ok := ri.nextValue(); ok; f, ok = ri.nextValue() {
-		r = r.Conjoin(f).(a.Vector)
+		r = append(r, f)
 	}
 	return a.MakeBlock(r)
 }
@@ -148,7 +148,7 @@ func (r *reader) vector() a.Value {
 		if t, ok := r.nextToken(); ok {
 			switch t.Type {
 			case VectorEnd:
-				return a.NewVector(res...)
+				return res
 			default:
 				e := r.value(t)
 				res = append(res, e)
@@ -177,7 +177,7 @@ func (r *reader) associative() a.Value {
 					mp[0] = e
 				} else {
 					mp[1] = e
-					res = append(res, a.NewVector(mp...))
+					res = append(res, mp)
 					mp = make(a.Values, 2)
 				}
 			}

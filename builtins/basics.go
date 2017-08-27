@@ -23,7 +23,7 @@ func (*recoverFunction) Apply(c a.Context, args a.Sequence) (res a.Value) {
 
 	defer func() {
 		post := a.AssertApplicable(a.Eval(c, args.Rest().First()))
-		res = post.Apply(c, a.NewVector(res, recover().(a.Value)))
+		res = post.Apply(c, a.Values{res, recover().(a.Value)})
 	}()
 
 	return a.Eval(c, args.First())

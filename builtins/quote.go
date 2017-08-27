@@ -117,7 +117,7 @@ func (sc *syntaxContext) quoteAssociative(as a.Associative) a.Value {
 		res = append(res, k)
 		res = append(res, v)
 	}
-	return a.NewList(applySym, assocSym, sc.quoteElements(a.NewVector(res...)))
+	return a.NewList(applySym, assocSym, sc.quoteElements(res))
 }
 
 func (sc *syntaxContext) quoteElements(s a.Sequence) a.Value {

@@ -29,7 +29,7 @@ func makeLocalSymbolVector(names a.Names) a.Vector {
 	for i := 0; i < nl; i++ {
 		nv[i] = a.NewLocalSymbol(names[i])
 	}
-	return a.NewVector(nv...)
+	return nv
 }
 
 func consolidateNames(include a.Names, exclude a.Names) a.Names {

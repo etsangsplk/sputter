@@ -13,9 +13,10 @@ func env() a.Value {
 	r := []a.Vector{}
 	for _, v := range os.Environ() {
 		e := envPairRegex.FindStringSubmatch(v)
-		r = append(r, a.NewVector(
+		r = append(r, a.Values{
 			a.NewKeyword(a.Name(e[1])),
-			a.Str(e[2])))
+			a.Str(e[2]),
+		})
 	}
 	return a.NewAssociative(r...)
 }
@@ -25,7 +26,7 @@ func args() a.Value {
 	for _, v := range os.Args {
 		r = append(r, a.Str(v))
 	}
-	return a.NewVector(r...)
+	return r
 }
 
 func init() {

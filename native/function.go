@@ -122,7 +122,7 @@ func (fi funcInfo) makePluralFuncMapper() outMapper {
 			for i := 0; i < olen; i++ {
 				fout[i] = out[i](r[i])
 			}
-			return a.NewVector(fout...)
+			return fout
 		})
 	}
 }

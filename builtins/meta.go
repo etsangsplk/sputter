@@ -21,7 +21,7 @@ func toProperties(args a.MappedSequence) a.Properties {
 func fromMetadata(m a.Object) a.Value {
 	r := []a.Vector{}
 	for k, v := range m.Flatten() {
-		r = append(r, a.NewVector(k, v))
+		r = append(r, a.Values{k, v})
 	}
 	return a.NewAssociative(r...)
 }
