@@ -20,6 +20,8 @@ var (
 		a.False,
 		a.EmptyList,
 		str,
+		f(20),
+		f(3),
 	}
 
 	vmTestArgs = a.NewList(s("first"), s("second"), s("third"))
@@ -61,6 +63,15 @@ func testMapped(t *testing.T, o vm.OpCode, expect a.Value) {
 	}, expect)
 }
 
+func testBinary(t *testing.T, o vm.OpCode, expect a.Value) {
+	testInstructions(t, []vm.Instruction{
+		{OpCode: vm.Const, Op1: 8},
+		{OpCode: vm.Const, Op1: 7},
+		{OpCode: o},
+		{OpCode: vm.Return},
+	}, expect)
+}
+
 func TestMappedOpCodes(t *testing.T) {
 	testMapped(t, vm.Nil, a.Nil)
 	testMapped(t, vm.EmptyList, a.EmptyList)
@@ -69,6 +80,21 @@ func TestMappedOpCodes(t *testing.T) {
 	testMapped(t, vm.Zero, f(0))
 	testMapped(t, vm.One, f(1))
 	testMapped(t, vm.NegOne, f(-1))
+}
+
+func TestBinaryMath(t *testing.T) {
+	testBinary(t, vm.Add, f(23))
+	testBinary(t, vm.Sub, f(17))
+	testBinary(t, vm.Mul, f(60))
+	testBinary(t, vm.Div, f(20).Div(f(3)))
+	testBinary(t, vm.Mod, f(2))
+
+	testBinary(t, vm.Eq, a.False)
+	testBinary(t, vm.Neq, a.True)
+	testBinary(t, vm.Gt, a.True)
+	testBinary(t, vm.Gte, a.True)
+	testBinary(t, vm.Lt, a.False)
+	testBinary(t, vm.Lte, a.False)
 }
 
 func TestConst(t *testing.T) {

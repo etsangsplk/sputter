@@ -65,10 +65,11 @@ func (w *Wrapper) Equal(expect a.Value, expr Any) {
 		w.String(string(s), expr)
 		return
 	}
-	if n, ok := expect.(a.Number); ok {
-		f, _ := n.Float64()
-		w.Number(f, expr)
-		return
+	if n1, ok := expect.(a.Number); ok {
+		if n2, ok := expr.(a.Number); ok {
+			w.as.Equal(a.EqualTo, n1.Cmp(n2))
+			return
+		}
 	}
 	w.String(string(expect.Str()), expr)
 }

@@ -30,13 +30,6 @@ var negOne = a.Zero.Sub(a.One)
 // Apply makes Module applicable
 func (m *Module) Apply(c a.Context, args a.Sequence) a.Value {
 	// Registers
-	var c1 a.Context
-	var r1 a.Value
-	var u1, u2 uint
-	var s1 a.Sequence
-	var v1 a.Values
-	var e1 a.Evaluable
-	var b1 bool
 	var PC uint
 	var SP uint
 
@@ -61,263 +54,208 @@ func (m *Module) Apply(c a.Context, args a.Sequence) a.Value {
 		return STACK[SP]
 	}
 
-start:
-	switch INST[PC].OpCode {
-	case NoOp:
-		PC++
-		goto start
+	for {
+		switch INST[PC].OpCode {
+		case NoOp:
+			// Do Nothing
 
-	case Pop:
-		pop()
-		PC++
-		goto start
+		case Pop:
+			pop()
 
-	case Load:
-		push(LOCALS[INST[PC].Op1])
-		PC++
-		goto start
+		case Load:
+			push(LOCALS[INST[PC].Op1])
 
-	case Store:
-		LOCALS[INST[PC].Op1] = pop()
-		PC++
-		goto start
+		case Store:
+			LOCALS[INST[PC].Op1] = pop()
 
-	case StoreConst:
-		LOCALS[INST[PC].Op2] = DATA[INST[PC].Op1]
-		PC++
-		goto start
+		case StoreConst:
+			LOCALS[INST[PC].Op2] = DATA[INST[PC].Op1]
 
-	case Clear:
-		LOCALS[INST[PC].Op1] = a.Nil
-		PC++
-		goto start
+		case Clear:
+			LOCALS[INST[PC].Op1] = a.Nil
 
-	case Dup:
-		STACK[SP] = STACK[SP+1]
-		SP--
-		PC++
-		goto start
+		case Dup:
+			STACK[SP] = STACK[SP+1]
+			SP--
 
-	case Swap:
-		u1 = SP + 1
-		u2 = SP + 2
-		r1 = STACK[u1]
-		STACK[u1] = STACK[u2]
-		STACK[u2] = r1
-		r1 = nil // gc
-		PC++
-		goto start
+		case Swap:
+			u1 := SP + 1
+			u2 := SP + 2
+			r1 := STACK[u1]
+			STACK[u1] = STACK[u2]
+			STACK[u2] = r1
 
-	case Nil:
-		push(a.Nil)
-		PC++
-		goto start
+		case Nil:
+			push(a.Nil)
 
-	case EmptyList:
-		push(a.EmptyList)
-		PC++
-		goto start
+		case EmptyList:
+			push(a.EmptyList)
 
-	case True:
-		push(a.True)
-		PC++
-		goto start
-
-	case False:
-		push(a.False)
-		PC++
-		goto start
-
-	case Zero:
-		push(a.Zero)
-		PC++
-		goto start
-
-	case One:
-		push(a.One)
-		PC++
-		goto start
-
-	case NegOne:
-		push(negOne)
-		PC++
-		goto start
-
-	case Const:
-		push(DATA[INST[PC].Op1])
-		PC++
-		goto start
-
-	case Def:
-		r1 = pop()
-		a.GetContextNamespace(c).Put(a.AssertUnqualified(pop()).Name(), r1)
-		r1 = nil // gc
-		PC++
-		goto start
-
-	case Let:
-		c1 = LOCALS[INST[PC].Op1].(a.Context)
-		r1 = pop()
-		c1.Put(a.AssertUnqualified(pop()).Name(), r1)
-		c1 = nil // gc
-		r1 = nil // gc
-		PC++
-		goto start
-
-	case Eval:
-		r1, _ = a.MacroExpand(c, pop())
-		if e1, b1 = r1.(a.Evaluable); b1 {
-			push(e1.Eval(c))
-			e1 = nil // gc
-		} else {
-			push(r1)
-		}
-		r1 = nil // gc
-		PC++
-		goto start
-
-	case Apply:
-		s1 = a.AssertSequence(pop())
-		push(a.AssertApplicable(pop()).Apply(c, s1))
-		s1 = nil // gc
-		PC++
-		goto start
-
-	case Call:
-		u1 = INST[PC].Op1
-		u2 = SP + u1 + 1
-		v1 = make(a.Values, u1)
-		copy(v1, STACK[SP+1:u2])
-		STACK[u2] = STACK[u2].(a.Applicable).Apply(c, v1)
-		SP = u2 - 1
-		v1 = nil // gc
-		PC++
-		goto start
-
-	case Vector:
-		u1 = INST[PC].Op1
-		u2 = SP + u1
-		v1 = make(a.Values, u1)
-		copy(v1, STACK[SP+1:u2+1])
-		STACK[u2] = v1
-		SP = u2 - 1
-		v1 = nil // gc
-		PC++
-		goto start
-
-	case IsSeq:
-		if s1, b1 = pop().(a.Sequence); b1 && s1.IsSequence() {
+		case True:
 			push(a.True)
-		} else {
+
+		case False:
 			push(a.False)
-		}
-		s1 = nil // gc
-		PC++
-		goto start
 
-	case First:
-		push(a.AssertSequence(pop()).First())
-		PC++
-		goto start
+		case Zero:
+			push(a.Zero)
 
-	case Rest:
-		push(a.AssertSequence(pop()).Rest())
-		PC++
-		goto start
+		case One:
+			push(a.One)
 
-	case Split:
-		if s1, b1 = pop().(a.Sequence); !b1 {
+		case NegOne:
+			push(negOne)
+
+		case Const:
+			push(DATA[INST[PC].Op1])
+
+		case Def:
+			r1 := pop()
+			a.GetContextNamespace(c).Put(a.AssertUnqualified(pop()).Name(), r1)
+
+		case Let:
+			c1 := LOCALS[INST[PC].Op1].(a.Context)
+			r1 := pop()
+			c1.Put(a.AssertUnqualified(pop()).Name(), r1)
+
+		case Eval:
+			r1, _ := a.MacroExpand(c, pop())
+			if e1, b1 := r1.(a.Evaluable); b1 {
+				push(e1.Eval(c))
+			} else {
+				push(r1)
+			}
+
+		case Apply:
+			s1 := a.AssertSequence(pop())
+			push(a.AssertApplicable(pop()).Apply(c, s1))
+
+		case Call:
+			u1 := INST[PC].Op1
+			u2 := SP + u1 + 1
+			v1 := make(a.Values, u1)
+			copy(v1, STACK[SP+1:u2])
+			STACK[u2] = STACK[u2].(a.Applicable).Apply(c, v1)
+			SP = u2 - 1
+
+		case Vector:
+			u1 := INST[PC].Op1
+			u2 := SP + u1
+			v1 := make(a.Values, u1)
+			copy(v1, STACK[SP+1:u2+1])
+			STACK[u2] = v1
+			SP = u2 - 1
+
+		case IsSeq:
+			if s1, b1 := pop().(a.Sequence); b1 && s1.IsSequence() {
+				push(a.True)
+			} else {
+				push(a.False)
+			}
+
+		case First:
+			push(a.AssertSequence(pop()).First())
+
+		case Rest:
+			push(a.AssertSequence(pop()).Rest())
+
+		case Split:
+			if s1, b1 := pop().(a.Sequence); b1 {
+				if r1, s1, b1 := s1.Split(); b1 {
+					push(s1)
+					push(r1)
+					push(a.True)
+					PC++
+					continue
+				}
+			}
 			push(a.False)
-			PC++
-			goto start
+
+		case Prepend:
+			r1 := pop()
+			push(a.AssertSequence(pop()).Prepend(r1))
+
+		case Add:
+			push(pop().(a.Number).Add(pop().(a.Number)))
+
+		case Sub:
+			push(pop().(a.Number).Sub(pop().(a.Number)))
+
+		case Mul:
+			push(pop().(a.Number).Mul(pop().(a.Number)))
+
+		case Div:
+			push(pop().(a.Number).Div(pop().(a.Number)))
+
+		case Mod:
+			push(pop().(a.Number).Mod(pop().(a.Number)))
+
+		case Eq:
+			if pop().(a.Number).Cmp(pop().(a.Number)) == a.EqualTo {
+				push(a.True)
+			} else {
+				push(a.False)
+			}
+
+		case Neq:
+			if pop().(a.Number).Cmp(pop().(a.Number)) != a.EqualTo {
+				push(a.True)
+			} else {
+				push(a.False)
+			}
+
+		case Gt:
+			if pop().(a.Number).Cmp(pop().(a.Number)) == a.GreaterThan {
+				push(a.True)
+			} else {
+				push(a.False)
+			}
+
+		case Gte:
+			cmp := pop().(a.Number).Cmp(pop().(a.Number))
+			if cmp == a.GreaterThan || cmp == a.EqualTo {
+				push(a.True)
+			} else {
+				push(a.False)
+			}
+
+		case Lt:
+			if pop().(a.Number).Cmp(pop().(a.Number)) == a.LessThan {
+				push(a.True)
+			} else {
+				push(a.False)
+			}
+
+		case Lte:
+			cmp := pop().(a.Number).Cmp(pop().(a.Number))
+			if cmp == a.LessThan || cmp == a.EqualTo {
+				push(a.True)
+			} else {
+				push(a.False)
+			}
+
+		case CondJump:
+			r1 := pop()
+			if r1 != a.False && r1 != a.Nil {
+				PC = INST[PC].Op1
+				continue
+			}
+
+		case Jump:
+			PC = INST[PC].Op1
+			continue
+
+		case Return:
+			return pop()
+
+		case Panic:
+			panic(pop())
+
+		default:
+			panic("how did we get here?")
 		}
-		if r1, s1, b1 = s1.Split(); b1 {
-			push(s1)
-			push(r1)
-			push(a.True)
-			r1 = nil // gc
-			s1 = nil // gc
-		} else {
-			push(a.False)
-		}
 		PC++
-		goto start
-
-	case Prepend:
-		r1 = pop()
-		push(a.AssertSequence(pop()).Prepend(r1))
-		r1 = nil // gc
-		PC++
-		goto start
-
-	case Add:
-		push(pop().(a.Number).Add(pop().(a.Number)))
-		PC++
-		goto start
-
-	case Sub:
-		push(pop().(a.Number).Sub(pop().(a.Number)))
-		PC++
-		goto start
-
-	case Mul:
-		push(pop().(a.Number).Mul(pop().(a.Number)))
-		PC++
-		goto start
-
-	case Div:
-		push(pop().(a.Number).Div(pop().(a.Number)))
-		PC++
-		goto start
-
-	case Mod:
-		push(pop().(a.Number).Mod(pop().(a.Number)))
-		PC++
-		goto start
-
-	case Eq:
-		if pop().(a.Number).Cmp(pop().(a.Number)) == a.EqualTo {
-			push(a.True)
-			PC++
-			goto start
-		}
-		push(a.False)
-		PC++
-		goto start
-
-	case Neq:
-		if pop().(a.Number).Cmp(pop().(a.Number)) != a.EqualTo {
-			push(a.True)
-			PC++
-			goto start
-		}
-		push(a.False)
-		PC++
-		goto start
-
-	case CondJump:
-		r1 = pop()
-		if r1 == a.False || r1 == a.Nil {
-			r1 = nil // gc
-			PC++
-			goto start
-		}
-		r1 = nil // gc
-		PC = INST[PC].Op1
-		goto start
-
-	case Jump:
-		PC = INST[PC].Op1
-		goto start
-
-	case Return:
-		return pop()
-
-	case Panic:
-		panic(pop())
 	}
-
-	panic("how did we get here?")
 }
 
 // WithMetadata creates a copy of this Module with additional Metadata

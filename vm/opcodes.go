@@ -39,6 +39,10 @@ const (
 	Mod
 	Eq
 	Neq
+	Gt
+	Gte
+	Lt
+	Lte
 	CondJump
 	Jump
 	Return

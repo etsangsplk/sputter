@@ -47,11 +47,3 @@
              result# (sputter:with-open [~@(rest (rest bindings))] ~@body)]
         (when (apply? close#) (close#))
         result#)))
-
-(defmacro print-duration-ms
-  [form]
-  `(let [start# (current-time)
-         result# ~form
-         end# (current-time)]
-    (println (/ (- end# start#) 1000000) "ms")
-    result#))
