@@ -1,7 +1,7 @@
 ;;;; sputter core: functions
 
 (defmacro assert-args
-  ([] nil)
+  ([]       nil)
   ([clause] (panic :message "assert-args clauses must be paired"))
   ([& clauses]
     `(cond

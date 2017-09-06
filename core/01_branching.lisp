@@ -7,17 +7,19 @@
 
 (defmacro when
   {:doc-asset "when"}
-  [test & body]
-  `(if ~test (do ~@body) nil))
+  ([test]        nil)
+  ([test form]   `(if ~test ~form nil))
+  ([test & forms] `(if ~test (do ~@forms) nil)))
 
 (defmacro when-not
   {:doc-asset "when"}
-  [test & body]
-  `(if ~test nil (do ~@body)))
+  ([test]        nil)
+  ([test form]   `(if ~test nil ~form))
+  ([test & forms] `(if ~test nil (do ~@forms))))
 
 (defmacro cond
   {:doc-asset "cond"}
-  ([] nil)
+  ([]       nil)
   ([clause] clause)
   ([& clauses]
     `(if ~(clauses 0)
@@ -26,7 +28,7 @@
 
 (defmacro and
   {:doc-asset "and"}
-  ([] true)
+  ([]       true)
   ([clause] clause)
   ([& clauses]
     `(let [and# ~(clauses 0)]
@@ -34,7 +36,7 @@
 
 (defmacro or
   {:doc-asset "or"}
-  ([] nil)
+  ([]       nil)
   ([clause] clause)
   ([& clauses]
     `(let [or# ~(clauses 0)]
