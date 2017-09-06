@@ -32,6 +32,7 @@ const (
 	Rest
 	Split
 	Prepend
+	Inc
 	Add
 	Sub
 	Mul

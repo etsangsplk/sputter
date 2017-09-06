@@ -212,6 +212,14 @@ func TestDup(t *testing.T) {
 	}, s(`("first" "first" "first" "second" "third")`))
 }
 
+func TestInc(t *testing.T) {
+	testInstructions(t, []vm.Instruction{
+		{OpCode: vm.One},
+		{OpCode: vm.Inc},
+		{OpCode: vm.Return},
+	}, f(2))
+}
+
 func TestClear(t *testing.T) {
 	testInstructions(t, []vm.Instruction{
 		{OpCode: vm.Clear, Op1: vm.Args},

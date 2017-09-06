@@ -18,7 +18,7 @@ snapshot:
 	go get github.com/kode4food/go-snapshot
 
 lint:
-	go get -u github.com/golang/lint/golint
+	go get github.com/golang/lint/golint
 
 init: glide assets lint
 	glide install

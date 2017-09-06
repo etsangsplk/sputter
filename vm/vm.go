@@ -175,6 +175,10 @@ func (m *Module) Apply(c a.Context, args a.Sequence) a.Value {
 			r1 := pop()
 			push(a.AssertSequence(pop()).Prepend(r1))
 
+		case Inc:
+			u1 := SP + 1
+			STACK[u1] = STACK[u1].(a.Number).Add(a.One)
+
 		case Add:
 			push(pop().(a.Number).Add(pop().(a.Number)))
 
