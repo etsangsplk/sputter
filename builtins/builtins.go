@@ -93,11 +93,11 @@ func defBuiltIn(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
 	f, r, _ := args.Split()
 	n := a.AssertUnqualified(f).Name()
-	if f, ok := GetFunction(n); ok {
+	if nf, ok := GetFunction(n); ok {
 		var md a.Object = toProperties(a.SequenceToAssociative(r))
-		r := f.WithMetadata(md)
-		a.GetContextNamespace(c).Put(n, r)
-		return r
+		nr := nf.WithMetadata(md)
+		a.GetContextNamespace(c).Put(n, nr)
+		return nr
 	}
 	panic(a.ErrStr(a.KeyNotFound, n))
 }

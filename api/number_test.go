@@ -74,9 +74,8 @@ func TestStringifyNumbers(t *testing.T) {
 
 func testResult(as *assert.Wrapper, n a.Number, expect string) {
 	expectNum := a.ParseNumber(s(expect))
-
-	f, _ := expectNum.Float64()
-	testExact(as, n, f)
+	expectFloat, _ := expectNum.Float64()
+	testExact(as, n, expectFloat)
 	as.Equal(expectNum, n)
 }
 

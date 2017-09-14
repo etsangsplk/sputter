@@ -29,8 +29,8 @@ func TestFunction(t *testing.T) {
 		(identity "foo")
 	`, s("foo"))
 
-	v, _ := ns.Get("say-hello")
-	fv := v.(a.Function)
+	r, _ := ns.Get("say-hello")
+	fv := r.(a.Function)
 	as.String("this is a doc string", fv.Documentation())
 }
 

@@ -13,8 +13,8 @@ const stdoutName = "*stdout*"
 
 func bindWrite(w a.Writer) a.Function {
 	return a.NewExecFunction(func(_ a.Context, args a.Sequence) a.Value {
-		for f, r, ok := args.Split(); ok; f, r, ok = r.Split() {
-			w.Write(f)
+		for af, r, ok := args.Split(); ok; af, r, ok = r.Split() {
+			w.Write(af)
 		}
 		return a.Nil
 	})

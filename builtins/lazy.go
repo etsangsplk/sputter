@@ -18,8 +18,8 @@ func makeLazyResolver(c a.Context, f a.Applicable) a.LazyResolver {
 	return func() (a.Value, a.Sequence, bool) {
 		r := f.Apply(c, a.EmptyList)
 		if s, ok := r.(a.Sequence); ok {
-			if f, r, ok := s.Split(); ok {
-				return f, r, true
+			if sf, sr, ok := s.Split(); ok {
+				return sf, sr, true
 			}
 		}
 		if r == a.Nil {
@@ -150,8 +150,8 @@ func makeIntermediate(n a.Name, e a.Value, next forProc) forProc {
 func makeTerminal(n a.Name, e a.Value, s a.Sequence) forProc {
 	bl := a.MakeBlock(s)
 	return func(c a.Context) {
-		s := a.AssertSequence(a.Eval(c, e))
-		for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
+		es := a.AssertSequence(a.Eval(c, e))
+		for f, r, ok := es.Split(); ok; f, r, ok = r.Split() {
 			l := a.ChildContext(c)
 			l.Put(n, f)
 			bl.Eval(l)

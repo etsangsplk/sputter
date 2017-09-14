@@ -231,9 +231,9 @@ func parseFunctionRest(fn a.Name, r a.Sequence) *functionDefinition {
 
 func parseFunctionSignatures(s a.Sequence) functionSignatures {
 	f, r, ok := s.Split()
-	if args, ok := f.(a.Vector); ok {
+	if ar, ok := f.(a.Vector); ok {
 		return functionSignatures{
-			{args: args, body: r},
+			{args: ar, body: r},
 		}
 	}
 	res := functionSignatures{}
@@ -272,7 +272,7 @@ func makeSingleFunction(c a.Context, s *functionSignature) a.Function {
 func makeMultiFunction(c a.Context, sigs functionSignatures) a.Function {
 	ls := len(sigs)
 	matchers := make([]argProcessorMatch, ls)
-	args := make([]string, ls)
+	ar := make([]string, ls)
 
 	for i, s := range sigs {
 		ex := a.MacroExpandAll(c, s.body).(a.Sequence)
@@ -280,12 +280,12 @@ func makeMultiFunction(c a.Context, sigs functionSignatures) a.Function {
 			args: makeArgProcessor(c, s.args),
 			body: a.MakeBlock(ex),
 		}
-		args[i] = string(s.args.Str())
+		ar[i] = string(s.args.Str())
 	}
 
 	return &multiFunction{
 		BaseFunction: a.DefaultBaseFunction,
-		args:         strings.Join(args, " or "),
+		args:         strings.Join(ar, " or "),
 		matchers:     matchers,
 	}
 }

@@ -43,8 +43,8 @@ func local(n a.Name) a.Symbol {
 func TestMissingBuiltIn(t *testing.T) {
 	as := assert.New(t)
 
-	v, ok := b.GetFunction("boom")
-	as.Nil(v)
+	r, ok := b.GetFunction("boom")
+	as.Nil(r)
 	as.False(ok)
 }
 

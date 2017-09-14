@@ -116,8 +116,8 @@ func TestConcat(t *testing.T) {
 	_, ok := i.Next()
 	as.False(ok)
 
-	s := `("first" "middle" "last" 1 2 3 "blah1" "blah2" "blah3")`
-	as.String(s, a.MakeSequenceStr(w1))
+	expect := `("first" "middle" "last" 1 2 3 "blah1" "blah2" "blah3")`
+	as.String(expect, a.MakeSequenceStr(w1))
 }
 
 func TestReduce(t *testing.T) {

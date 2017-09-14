@@ -17,8 +17,8 @@ func assertUnqualifiedNames(s a.Sequence) a.Names {
 	l := v.Count()
 	r := make(a.Names, l)
 	for i := 0; i < l; i++ {
-		v, _ := v.ElementAt(i)
-		r[i] = a.AssertUnqualified(v).Name()
+		e, _ := v.ElementAt(i)
+		r[i] = a.AssertUnqualified(e).Name()
 	}
 	return r
 }
@@ -88,8 +88,8 @@ func (*makeClosureFunction) Apply(c a.Context, args a.Sequence) a.Value {
 
 func isClosure(v a.Value) (a.Names, bool) {
 	if l, ok := isBuiltInCall("closure", v); ok {
-		v := a.AssertVector(l.Rest().First())
-		return assertUnqualifiedNames(v), true
+		e := a.AssertVector(l.Rest().First())
+		return assertUnqualifiedNames(e), true
 	}
 	return emptyNames, false
 }
@@ -99,8 +99,8 @@ func (*closureFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	f, r, _ := args.Split()
 	in := a.AssertVector(f)
 	vars := make(a.Variables, in.Count())
-	for f, r, ok := in.(a.Sequence).Split(); ok; f, r, ok = r.Split() {
-		n := a.AssertUnqualified(f).Name()
+	for nf, nr, ok := in.(a.Sequence).Split(); ok; nf, nr, ok = nr.Split() {
+		n := a.AssertUnqualified(nf).Name()
 		if v, ok := c.Get(n); ok {
 			vars[n] = v
 		}

@@ -346,9 +346,9 @@ func doc(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
 	sym := a.AssertUnqualified(args.First())
 	if v, ok := c.Get(sym.Name()); ok {
-		if d, ok := v.(a.Documented); ok {
-			doc := d.Documentation()
-			f := formatForREPL(string(doc))
+		if vd, ok := v.(a.Documented); ok {
+			docStr := vd.Documentation()
+			f := formatForREPL(string(docStr))
 			fmt.Println(f)
 			return nothing
 		}

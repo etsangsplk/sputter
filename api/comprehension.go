@@ -53,9 +53,9 @@ func Concat(s Sequence) Sequence {
 		for f, r, ok := next.Split(); ok; f, r, ok = r.Split() {
 			v := AssertSequence(f)
 			next = r
-			if f, r, ok := v.Split(); ok {
-				next = next.Prepend(r)
-				return f, NewLazySequence(res), true
+			if vf, vr, ok := v.Split(); ok {
+				next = next.Prepend(vr)
+				return vf, NewLazySequence(res), true
 			}
 		}
 		return Nil, EmptyList, false

@@ -96,20 +96,20 @@ func TestAssociativeIterate(t *testing.T) {
 	i := a.Iterate(m1)
 	if v, ok := i.Next(); ok {
 		vec := v.(a.Vector)
-		k, _ := vec.ElementAt(0)
-		v, _ := vec.ElementAt(1)
-		as.Equal(a.NewKeyword("name"), k)
-		as.String("Sputter", v)
+		key, _ := vec.ElementAt(0)
+		val, _ := vec.ElementAt(1)
+		as.Equal(a.NewKeyword("name"), key)
+		as.String("Sputter", val)
 	} else {
 		as.Fail("couldn't get first element")
 	}
 
 	if v, ok := i.Next(); ok {
 		vec := v.(a.Vector)
-		k, _ := vec.ElementAt(0)
-		v, _ := vec.ElementAt(1)
-		as.Equal(a.NewKeyword("age"), k)
-		as.Number(99, v)
+		key, _ := vec.ElementAt(0)
+		val, _ := vec.ElementAt(1)
+		as.Equal(a.NewKeyword("age"), key)
+		as.Number(99, val)
 	} else {
 		as.Fail("couldn't get second element")
 	}

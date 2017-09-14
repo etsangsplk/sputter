@@ -18,9 +18,6 @@ var (
 	// DocAssetKey is the Metadata key for Asset Strings
 	DocAssetKey = NewKeyword("doc-asset")
 
-	// TagsKey is the Metadata key for Value tagging (Values of keywords)
-	TagsKey = NewKeyword("tags")
-
 	// InstanceKey is the Metadata key for a Value's instance ID
 	InstanceKey = NewKeyword("instance")
 

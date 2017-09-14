@@ -17,8 +17,8 @@ func TestLazySeq(t *testing.T) {
 			return a.Nil, a.EmptyList, false
 		}
 		i++
-		f := a.NewFloat(float64(i))
-		return f, a.NewLazySequence(inc), true
+		first := a.NewFloat(float64(i))
+		return first, a.NewLazySequence(inc), true
 	}
 
 	l := a.NewLazySequence(inc).Prepend(a.NewFloat(0))

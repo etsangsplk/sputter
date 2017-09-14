@@ -160,8 +160,9 @@ func (m *Module) Apply(c a.Context, args a.Sequence) a.Value {
 			push(a.AssertSequence(pop()).Rest())
 
 		case Split:
+			var r1 a.Value
 			if s1, b1 := pop().(a.Sequence); b1 {
-				if r1, s1, b1 := s1.Split(); b1 {
+				if r1, s1, b1 = s1.Split(); b1 {
 					push(s1)
 					push(r1)
 					push(a.True)

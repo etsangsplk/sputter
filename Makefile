@@ -25,3 +25,8 @@ init: glide assets lint
 
 install: init main test
 	go install
+
+upgrade-deps:
+	go get -u github.com/Masterminds/glide
+	go get -u github.com/kode4food/go-snapshot
+	go get -u github.com/golang/lint/golint

@@ -91,7 +91,7 @@ func WithNamespace(c Context, ns Namespace) Context {
 }
 
 // ElementAt retrieves a value from the Context chain
-func (w *withNamespace) Get(n Name) (v Value, bound bool) {
+func (w *withNamespace) Get(n Name) (Value, bool) {
 	if v, ok := w.ns.Get(n); ok {
 		return v, true
 	}
