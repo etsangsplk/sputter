@@ -2,6 +2,11 @@ package builtins
 
 import a "github.com/kode4food/sputter/api"
 
+const (
+	withNamespaceName = "with-ns"
+	getNamespaceName  = "ns"
+)
+
 type (
 	withNamespaceFunction struct{ BaseBuiltIn }
 	getNamespaceFunction  struct{ BaseBuiltIn }
@@ -29,6 +34,6 @@ func init() {
 	var withNamespace *withNamespaceFunction
 	var getNamespace *getNamespaceFunction
 
-	RegisterBuiltIn("with-ns", withNamespace)
-	RegisterBuiltIn("ns", getNamespace)
+	RegisterBuiltIn(withNamespaceName, withNamespace)
+	RegisterBuiltIn(getNamespaceName, getNamespace)
 }

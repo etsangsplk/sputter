@@ -8,6 +8,12 @@ import (
 	a "github.com/kode4food/sputter/api"
 )
 
+const (
+	envName         = "*env*"
+	argsName        = "*args*"
+	currentTimeName = "current-time"
+)
+
 type currentTimeFunction struct{ BaseBuiltIn }
 
 var envPairRegex = regexp.MustCompile("^(?P<Key>[^=]+)=(?P<Value>.*)$")
@@ -39,8 +45,8 @@ func (*currentTimeFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 func init() {
 	var currentTime *currentTimeFunction
 
-	Namespace.Put("*env*", env())
-	Namespace.Put("*args*", args())
+	Namespace.Put(envName, env())
+	Namespace.Put(argsName, args())
 
-	RegisterBuiltIn("current-time", currentTime)
+	RegisterBuiltIn(currentTimeName, currentTime)
 }

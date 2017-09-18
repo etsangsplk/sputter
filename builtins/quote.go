@@ -12,6 +12,11 @@ const (
 	// UnsupportedSyntaxQuote is raised when something can't be quoted
 	UnsupportedSyntaxQuote = "unsupported type in syntax quote: %s"
 
+	quoteName           = "quote"
+	syntaxQuoteName     = "syntax-quote"
+	unquoteName         = "unquote"
+	unquoteSplicingName = "unquote-splicing"
+
 	genSymTemplate = "x-%s-gensym-%d"
 )
 
@@ -26,12 +31,12 @@ type (
 )
 
 var (
-	quoteSym  = a.NewBuiltInSymbol("quote")
-	listSym   = a.NewBuiltInSymbol("list")
-	vectorSym = a.NewBuiltInSymbol("vector")
-	assocSym  = a.NewBuiltInSymbol("assoc")
-	applySym  = a.NewBuiltInSymbol("apply")
-	concatSym = a.NewBuiltInSymbol("concat")
+	quoteSym  = a.NewBuiltInSymbol(quoteName)
+	listSym   = a.NewBuiltInSymbol(listName)
+	vectorSym = a.NewBuiltInSymbol(vectorName)
+	assocSym  = a.NewBuiltInSymbol(assocName)
+	applySym  = a.NewBuiltInSymbol(applyName)
+	concatSym = a.NewBuiltInSymbol(concatName)
 
 	genSymIncrement uint64
 )
@@ -144,11 +149,11 @@ func isWrapperCall(n a.Name, v a.Value) (a.Value, bool) {
 }
 
 func isUnquote(v a.Value) (a.Value, bool) {
-	return isWrapperCall("unquote", v)
+	return isWrapperCall(unquoteName, v)
 }
 
 func isUnquoteSplicing(v a.Value) (a.Value, bool) {
-	return isWrapperCall("unquote-splicing", v)
+	return isWrapperCall(unquoteSplicingName, v)
 }
 
 func (*quoteFunction) Apply(_ a.Context, args a.Sequence) a.Value {
@@ -169,6 +174,6 @@ func init() {
 	var quote *quoteFunction
 	var syntaxQuote *syntaxQuoteFunction
 
-	RegisterBuiltIn("quote", quote)
-	RegisterBuiltIn("syntax-quote", syntaxQuote)
+	RegisterBuiltIn(quoteName, quote)
+	RegisterBuiltIn(syntaxQuoteName, syntaxQuote)
 }

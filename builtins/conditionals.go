@@ -2,6 +2,8 @@ package builtins
 
 import a "github.com/kode4food/sputter/api"
 
+const ifName = "if"
+
 type ifFunction struct{ BaseBuiltIn }
 
 func (*ifFunction) Apply(c a.Context, args a.Sequence) a.Value {
@@ -19,5 +21,5 @@ func (*ifFunction) Apply(c a.Context, args a.Sequence) a.Value {
 func init() {
 	var _if *ifFunction
 
-	RegisterBuiltIn("if", _if)
+	RegisterBuiltIn(ifName, _if)
 }

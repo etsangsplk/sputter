@@ -2,8 +2,13 @@ package builtins
 
 import a "github.com/kode4food/sputter/api"
 
-// ExpectedBindings is raised if a binding vector isn't an even number
-const ExpectedBindings = "expected bindings in the form: name value"
+const (
+	// ExpectedBindings is raised if a binding vector isn't an even number
+	ExpectedBindings = "expected bindings in the form: name value"
+
+	defName = "def"
+	letName = "let"
+)
 
 type (
 	defFunction struct{ BaseBuiltIn }
@@ -48,6 +53,6 @@ func init() {
 	var def *defFunction
 	var let *letFunction
 
-	RegisterBuiltIn("def", def)
-	RegisterBuiltIn("let", let)
+	RegisterBuiltIn(defName, def)
+	RegisterBuiltIn(letName, let)
 }

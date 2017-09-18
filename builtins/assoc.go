@@ -2,6 +2,12 @@ package builtins
 
 import a "github.com/kode4food/sputter/api"
 
+const (
+	assocName    = "assoc"
+	isAssocName  = "assoc?"
+	isMappedName = "mapped?"
+)
+
 type assocFunction struct{ BaseBuiltIn }
 
 func (*assocFunction) Apply(_ a.Context, args a.Sequence) a.Value {
@@ -25,7 +31,7 @@ func isMapped(v a.Value) bool {
 func init() {
 	var assoc *assocFunction
 
-	RegisterBuiltIn("assoc", assoc)
-	RegisterSequencePredicate("assoc?", isAssociative)
-	RegisterSequencePredicate("mapped?", isMapped)
+	RegisterBuiltIn(assocName, assoc)
+	RegisterSequencePredicate(isAssocName, isAssociative)
+	RegisterSequencePredicate(isMappedName, isMapped)
 }

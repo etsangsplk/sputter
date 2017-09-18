@@ -7,8 +7,13 @@ type (
 	closureFunction     struct{ BaseBuiltIn }
 )
 
+const (
+	makeClosureName = "make-closure"
+	closureName     = "closure"
+)
+
 var (
-	closureSym = a.NewBuiltInSymbol("closure")
+	closureSym = a.NewBuiltInSymbol(closureName)
 	emptyNames = a.Names{}
 )
 
@@ -87,7 +92,7 @@ func (*makeClosureFunction) Apply(c a.Context, args a.Sequence) a.Value {
 }
 
 func isClosure(v a.Value) (a.Names, bool) {
-	if l, ok := isBuiltInCall("closure", v); ok {
+	if l, ok := isBuiltInCall(closureName, v); ok {
 		e := a.AssertVector(l.Rest().First())
 		return assertUnqualifiedNames(e), true
 	}
@@ -117,6 +122,6 @@ func init() {
 	var makeClosure *makeClosureFunction
 	var closure *closureFunction
 
-	RegisterBuiltIn("make-closure", makeClosure)
-	RegisterBuiltIn("closure", closure)
+	RegisterBuiltIn(makeClosureName, makeClosure)
+	RegisterBuiltIn(closureName, closure)
 }

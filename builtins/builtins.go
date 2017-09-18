@@ -6,6 +6,8 @@ import (
 	a "github.com/kode4food/sputter/api"
 )
 
+const defBuiltInName = "def-builtin"
+
 type (
 	// BuiltInFunction is an interface that identifies a built-in
 	BuiltInFunction interface {
@@ -103,7 +105,7 @@ func defBuiltIn(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	Namespace.Put("def-builtin",
+	Namespace.Put(defBuiltInName,
 		a.NewExecFunction(defBuiltIn).WithMetadata(a.Properties{
 			a.SpecialKey: a.True,
 		}),

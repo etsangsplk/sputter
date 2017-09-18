@@ -8,13 +8,14 @@ import (
 )
 
 const (
-	newlineName = a.Name("*newline*")
-	spaceName   = a.Name("*space*")
-	stdinName   = a.Name("*stdin*")
-	stdoutName  = a.Name("*stdout*")
-	stderrName  = a.Name("*stderr*")
-	newLine     = a.Str("\n")
-	space       = a.Str(" ")
+	newlineName = "*newline*"
+	spaceName   = "*space*"
+	stdinName   = "*stdin*"
+	stdoutName  = "*stdout*"
+	stderrName  = "*stderr*"
+
+	newLine = a.Str("\n")
+	space   = a.Str(" ")
 )
 
 type outputFunc func(a.Writer, a.Value)

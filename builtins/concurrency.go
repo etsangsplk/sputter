@@ -8,6 +8,13 @@ type (
 	goFunction      struct{ BaseBuiltIn }
 )
 
+const (
+	chanName      = "chan"
+	promiseName   = "promise"
+	goName        = "make-go"
+	isPromiseName = "promise?"
+)
+
 var (
 	// MetaChannel is the key used to identify a Channel
 	MetaChannel = a.NewKeyword("channel")
@@ -61,9 +68,9 @@ func init() {
 	var promise *promiseFunction
 	var _go *goFunction
 
-	RegisterBuiltIn("chan", _chan)
-	RegisterBuiltIn("promise", promise)
-	RegisterBuiltIn("make-go", _go)
+	RegisterBuiltIn(chanName, _chan)
+	RegisterBuiltIn(promiseName, promise)
+	RegisterBuiltIn(goName, _go)
 
-	RegisterSequencePredicate("promise?", isPromise)
+	RegisterSequencePredicate(isPromiseName, isPromise)
 }

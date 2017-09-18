@@ -2,6 +2,12 @@ package builtins
 
 import a "github.com/kode4food/sputter/api"
 
+const (
+	withMetaName = "with-meta"
+	metaName     = "meta"
+	isMetaName   = "meta?"
+)
+
 type (
 	withMetaFunction struct{ BaseBuiltIn }
 	getMetaFunction  struct{ BaseBuiltIn }
@@ -52,8 +58,8 @@ func init() {
 	var withMeta *withMetaFunction
 	var getMeta *getMetaFunction
 
-	RegisterBuiltIn("with-meta", withMeta)
-	RegisterBuiltIn("meta", getMeta)
+	RegisterBuiltIn(withMetaName, withMeta)
+	RegisterBuiltIn(metaName, getMeta)
 
-	RegisterSequencePredicate("meta?", isAnnotated)
+	RegisterSequencePredicate(isMetaName, isAnnotated)
 }

@@ -2,6 +2,26 @@ package builtins
 
 import a "github.com/kode4food/sputter/api"
 
+const (
+	posInfName = "inf"
+	negInfName = "-inf"
+	addName    = "+"
+	subName    = "-"
+	mulName    = "*"
+	divName    = "/"
+	modName    = "%"
+	eqName     = "="
+	neqName    = "!="
+	gtName     = ">"
+	gteName    = ">="
+	ltName     = "<"
+	lteName    = "<="
+
+	isPosInfName = "inf?"
+	isNegInfName = "-inf?"
+	isNaNName    = "nan?"
+)
+
 type (
 	reduceFunc  func(prev a.Number, next a.Number) a.Number
 	compareFunc func(prev a.Number, next a.Number) bool
@@ -160,22 +180,22 @@ func init() {
 	var lt *ltFunction
 	var lte *lteFunction
 
-	Namespace.Put("inf", a.PosInfinity)
-	Namespace.Put("-inf", a.NegInfinity)
+	Namespace.Put(posInfName, a.PosInfinity)
+	Namespace.Put(negInfName, a.NegInfinity)
 
-	RegisterBuiltIn("+", add)
-	RegisterBuiltIn("-", sub)
-	RegisterBuiltIn("*", mul)
-	RegisterBuiltIn("/", div)
-	RegisterBuiltIn("%", mod)
-	RegisterBuiltIn("=", eq)
-	RegisterBuiltIn("!=", neq)
-	RegisterBuiltIn(">", gt)
-	RegisterBuiltIn(">=", gte)
-	RegisterBuiltIn("<", lt)
-	RegisterBuiltIn("<=", lte)
+	RegisterBuiltIn(addName, add)
+	RegisterBuiltIn(subName, sub)
+	RegisterBuiltIn(mulName, mul)
+	RegisterBuiltIn(divName, div)
+	RegisterBuiltIn(modName, mod)
+	RegisterBuiltIn(eqName, eq)
+	RegisterBuiltIn(neqName, neq)
+	RegisterBuiltIn(gtName, gt)
+	RegisterBuiltIn(gteName, gte)
+	RegisterBuiltIn(ltName, lt)
+	RegisterBuiltIn(lteName, lte)
 
-	RegisterSequencePredicate("inf?", isPosInfinity)
-	RegisterSequencePredicate("-inf?", isNegInfinity)
-	RegisterSequencePredicate("nan?", isNaN)
+	RegisterSequencePredicate(isPosInfName, isPosInfinity)
+	RegisterSequencePredicate(isNegInfName, isNegInfinity)
+	RegisterSequencePredicate(isNaNName, isNaN)
 }

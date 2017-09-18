@@ -2,6 +2,11 @@ package builtins
 
 import a "github.com/kode4food/sputter/api"
 
+const (
+	listName   = "list"
+	isListName = "list?"
+)
+
 type listFunction struct{ BaseBuiltIn }
 
 func (*listFunction) Apply(_ a.Context, args a.Sequence) a.Value {
@@ -18,6 +23,6 @@ func isList(v a.Value) bool {
 func init() {
 	var list *listFunction
 
-	RegisterBuiltIn("list", list)
-	RegisterSequencePredicate("list?", isList)
+	RegisterBuiltIn(listName, list)
+	RegisterSequencePredicate(isListName, isList)
 }

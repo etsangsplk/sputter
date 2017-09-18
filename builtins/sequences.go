@@ -2,6 +2,19 @@ package builtins
 
 import a "github.com/kode4food/sputter/api"
 
+const (
+	firstName      = "first"
+	restName       = "rest"
+	consName       = "cons"
+	conjName       = "conj"
+	lenName        = "len"
+	nthName        = "nth"
+	getName        = "get"
+	isSequenceName = "seq?"
+	isCountedName  = "len?"
+	isIndexedName  = "indexed?"
+)
+
 type (
 	firstFunction struct{ BaseBuiltIn }
 	restFunction  struct{ BaseBuiltIn }
@@ -92,15 +105,15 @@ func init() {
 	var nth *nthFunction
 	var get *getFunction
 
-	RegisterBuiltIn("first", first)
-	RegisterBuiltIn("rest", rest)
-	RegisterBuiltIn("cons", cons)
-	RegisterBuiltIn("conj", conj)
-	RegisterBuiltIn("len", _len)
-	RegisterBuiltIn("nth", nth)
-	RegisterBuiltIn("get", get)
+	RegisterBuiltIn(firstName, first)
+	RegisterBuiltIn(restName, rest)
+	RegisterBuiltIn(consName, cons)
+	RegisterBuiltIn(conjName, conj)
+	RegisterBuiltIn(lenName, _len)
+	RegisterBuiltIn(nthName, nth)
+	RegisterBuiltIn(getName, get)
 
-	RegisterSequencePredicate("seq?", isSequence)
-	RegisterSequencePredicate("len?", isCounted)
-	RegisterSequencePredicate("indexed?", isIndexed)
+	RegisterSequencePredicate(isSequenceName, isSequence)
+	RegisterSequencePredicate(isCountedName, isCounted)
+	RegisterSequencePredicate(isIndexedName, isIndexed)
 }

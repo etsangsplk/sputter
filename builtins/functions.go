@@ -12,6 +12,11 @@ const (
 
 	// ExpectedArguments is thrown if argument patterns don't match
 	ExpectedArguments = "expected arguments of the form: %s"
+
+	lambdaName        = "lambda"
+	applyName         = "apply"
+	isApplicableName  = "apply?"
+	isSpecialFormName = "special-form?"
 )
 
 type (
@@ -321,9 +326,9 @@ func init() {
 	var lambda *lambdaFunction
 	var apply *applyFunction
 
-	RegisterBuiltIn("lambda", lambda)
-	RegisterBuiltIn("apply", apply)
+	RegisterBuiltIn(lambdaName, lambda)
+	RegisterBuiltIn(applyName, apply)
 
-	RegisterSequencePredicate("apply?", isApplicable)
-	RegisterSequencePredicate("special-form?", isSpecialForm)
+	RegisterSequencePredicate(isApplicableName, isApplicable)
+	RegisterSequencePredicate(isSpecialFormName, isSpecialForm)
 }

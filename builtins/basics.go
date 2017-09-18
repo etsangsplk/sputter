@@ -5,6 +5,14 @@ import (
 	e "github.com/kode4food/sputter/evaluator"
 )
 
+const (
+	panicName   = "panic"
+	recoverName = "make-recover"
+	doName      = "do"
+	readName    = "read"
+	evalName    = "eval"
+)
+
 type (
 	panicFunction   struct{ BaseBuiltIn }
 	recoverFunction struct{ BaseBuiltIn }
@@ -57,9 +65,9 @@ func init() {
 	var read *readFunction
 	var eval *evalFunction
 
-	RegisterBuiltIn("panic", _panic)
-	RegisterBuiltIn("make-recover", _recover)
-	RegisterBuiltIn("do", do)
-	RegisterBuiltIn("read", read)
-	RegisterBuiltIn("eval", eval)
+	RegisterBuiltIn(panicName, _panic)
+	RegisterBuiltIn(recoverName, _recover)
+	RegisterBuiltIn(doName, do)
+	RegisterBuiltIn(readName, read)
+	RegisterBuiltIn(evalName, eval)
 }

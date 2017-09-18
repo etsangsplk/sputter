@@ -2,6 +2,18 @@ package builtins
 
 import a "github.com/kode4food/sputter/api"
 
+const (
+	lazySequenceName = "make-lazy-seq"
+	concatName       = "concat"
+	filterName       = "filter"
+	mapName          = "map"
+	reduceName       = "reduce"
+	takeName         = "take"
+	dropName         = "drop"
+	rangeName        = "make-range"
+	forEachName      = "for-each"
+)
+
 type (
 	lazySequenceFunction struct{ BaseBuiltIn }
 	concatFunction       struct{ BaseBuiltIn }
@@ -170,13 +182,13 @@ func init() {
 	var _range *rangeFunction
 	var forEach *forEachFunction
 
-	RegisterBuiltIn("make-lazy-seq", lazySequence)
-	RegisterBuiltIn("concat", concat)
-	RegisterBuiltIn("filter", filter)
-	RegisterBuiltIn("map", _map)
-	RegisterBuiltIn("reduce", reduce)
-	RegisterBuiltIn("take", take)
-	RegisterBuiltIn("drop", drop)
-	RegisterBuiltIn("make-range", _range)
-	RegisterBuiltIn("for-each", forEach)
+	RegisterBuiltIn(lazySequenceName, lazySequence)
+	RegisterBuiltIn(concatName, concat)
+	RegisterBuiltIn(filterName, filter)
+	RegisterBuiltIn(mapName, _map)
+	RegisterBuiltIn(reduceName, reduce)
+	RegisterBuiltIn(takeName, take)
+	RegisterBuiltIn(dropName, drop)
+	RegisterBuiltIn(rangeName, _range)
+	RegisterBuiltIn(forEachName, forEach)
 }

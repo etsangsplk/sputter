@@ -2,6 +2,12 @@ package builtins
 
 import a "github.com/kode4food/sputter/api"
 
+const (
+	isIdenticalName = "eq"
+	isNilName       = "nil?"
+	isKeywordName   = "keyword?"
+)
+
 // PredicateKey identifies a Function as being a predicate
 var PredicateKey = a.NewKeyword("predicate")
 
@@ -52,7 +58,7 @@ func RegisterSequencePredicate(n a.Name, fn a.ValueFilter) {
 	RegisterFunction(a.Name("!"+n), neg)
 }
 
-func identical(_ a.Context, args a.Sequence) a.Value {
+func isIdentical(_ a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 	l := args.First()
 	for f, r, ok := args.Split(); ok; f, r, ok = r.Split() {
@@ -75,8 +81,8 @@ func isKeyword(v a.Value) bool {
 }
 
 func init() {
-	RegisterPredicate("eq", identical)
+	RegisterPredicate(isIdenticalName, isIdentical)
 
-	RegisterSequencePredicate("nil?", isNil)
-	RegisterSequencePredicate("keyword?", isKeyword)
+	RegisterSequencePredicate(isNilName, isNil)
+	RegisterSequencePredicate(isKeywordName, isKeyword)
 }

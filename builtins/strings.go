@@ -5,6 +5,12 @@ import (
 	a "github.com/kode4food/sputter/api"
 )
 
+const (
+	strName       = "str"
+	readerStrName = "str!"
+	isStrName     = "str?"
+)
+
 type (
 	strFunction       struct{ BaseBuiltIn }
 	readerStrFunction struct{ BaseBuiltIn }
@@ -42,8 +48,8 @@ func init() {
 	var str *strFunction
 	var readerStr *readerStrFunction
 
-	RegisterBuiltIn("str", str)
-	RegisterBuiltIn("str!", readerStr)
+	RegisterBuiltIn(strName, str)
+	RegisterBuiltIn(readerStrName, readerStr)
 
-	RegisterSequencePredicate("str?", isStr)
+	RegisterSequencePredicate(isStrName, isStr)
 }
