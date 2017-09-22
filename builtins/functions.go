@@ -243,9 +243,9 @@ func parseFunctionSignatures(s a.Sequence) functionSignatures {
 	}
 	res := functionSignatures{}
 	for ; ok; f, r, ok = r.Split() {
-		lf, lr, _ := a.AssertList(f).Split()
+		lf, lr, _ := f.(a.List).Split()
 		res = append(res, &functionSignature{
-			args: a.AssertVector(lf),
+			args: lf.(a.Vector),
 			body: lr,
 		})
 	}
@@ -303,8 +303,8 @@ func (*lambdaFunction) Apply(c a.Context, args a.Sequence) a.Value {
 func (*applyFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 2)
 	f, r, _ := args.Split()
-	fn := a.AssertApplicable(f)
-	s := a.AssertSequence(r.First())
+	fn := f.(a.Applicable)
+	s := r.First().(a.Sequence)
 	return fn.Apply(c, s)
 }
 

@@ -3,6 +3,7 @@ package integration_test_test
 import (
 	"testing"
 
+	"fmt"
 	a "github.com/kode4food/sputter/api"
 	"github.com/kode4food/sputter/assert"
 	_ "github.com/kode4food/sputter/core"
@@ -29,6 +30,11 @@ func local(n a.Name) a.Symbol {
 	return a.NewLocalSymbol(n)
 }
 
+func cvtErr(concrete, intf, method string) a.Error {
+	err := "interface conversion: %s is not %s: missing method %s"
+	return a.ErrStr(fmt.Sprintf(err, concrete, intf, method))
+}
+
 func runCode(src string) a.Value {
 	return e.EvalStr(e.NewEvalContext(), a.Str(src))
 }
@@ -38,7 +44,7 @@ func testCode(t *testing.T, src string, expect a.Value) {
 	as.Equal(expect, runCode(src))
 }
 
-func testBadCode(t *testing.T, src string, err a.Object) {
+func testBadCode(t *testing.T, src string, err error) {
 	as := assert.New(t)
 
 	defer as.ExpectError(err)

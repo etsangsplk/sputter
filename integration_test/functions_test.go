@@ -31,11 +31,11 @@ func TestLambda(t *testing.T) {
 }
 
 func TestBadLambda(t *testing.T) {
-	err := a.ErrStr(a.ExpectedList, "99")
-	testBadCode(t, `(lambda 99 "hello")`, err)
+	e := cvtErr("*api.dec", "api.List", "Apply")
+	testBadCode(t, `(lambda 99 "hello")`, e)
 
-	err = a.ErrStr(a.ExpectedUnqualified, "foo:bar")
-	testBadCode(t, `(lambda foo:bar [] "hello")`, err)
+	e = a.ErrStr(a.ExpectedUnqualified, "foo:bar")
+	testBadCode(t, `(lambda foo:bar [] "hello")`, e)
 }
 
 func TestApply(t *testing.T) {
@@ -46,8 +46,8 @@ func TestApply(t *testing.T) {
 			[1 2 3])
 	`, f(6))
 
-	appErr := a.ErrStr(a.ExpectedApplicable, "32")
-	testBadCode(t, `(apply 32 [1 2 3])`, appErr)
+	e := cvtErr("*api.dec", "api.Applicable", "Apply")
+	testBadCode(t, `(apply 32 [1 2 3])`, e)
 }
 
 func TestRestFunctions(t *testing.T) {

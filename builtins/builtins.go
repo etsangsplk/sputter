@@ -12,7 +12,7 @@ type (
 	// BuiltInFunction is an interface that identifies a built-in
 	BuiltInFunction interface {
 		a.Function
-		IsBuiltIn() bool
+		BuiltInType()
 	}
 
 	// BaseBuiltIn is the base structure for built-in Functions
@@ -38,10 +38,8 @@ func MakeBuiltIn(f BuiltInFunction) a.Function {
 	return newBuiltInWithBase(t, a.DefaultBaseFunction)
 }
 
-// IsBuiltIn returns whether or not this Function is a built-in
-func (f *BaseBuiltIn) IsBuiltIn() bool {
-	return true
-}
+// BuiltInType returns whether or not this Function is a built-in
+func (f *BaseBuiltIn) BuiltInType() {}
 
 // WithMetadata creates a copy of this Function with additional Metadata
 func (f *BaseBuiltIn) WithMetadata(md a.Object) a.AnnotatedValue {

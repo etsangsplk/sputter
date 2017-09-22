@@ -54,11 +54,3 @@ func TestEvaluateBlock(t *testing.T) {
 	r := a.MakeBlock(l).Eval(c)
 	as.String("Hello, Foo!", r)
 }
-
-func TestAssertApplicable(t *testing.T) {
-	as := assert.New(t)
-	a.AssertApplicable(a.NewExecFunction(nil))
-
-	defer as.ExpectError(a.ErrStr(a.ExpectedApplicable, f(99)))
-	a.AssertApplicable(f(99))
-}

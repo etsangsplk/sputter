@@ -87,12 +87,12 @@ func TestSymbolParsing(t *testing.T) {
 	s4 := a.ParseSymbol("one:too:")
 	as.String("one", string(s4.Domain()))
 	as.String("too:", string(s4.Name()))
-
 }
 
 func TestAssertSymbol(t *testing.T) {
 	as := assert.New(t)
-	defer as.ExpectError(a.ErrStr(a.ExpectedSymbol, "37"))
+	e := cvtErr("*api.dec", "api.Symbol", "Domain")
+	defer as.ExpectError(e)
 	a.AssertUnqualified(f(37))
 }
 

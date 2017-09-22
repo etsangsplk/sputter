@@ -14,9 +14,6 @@ const (
 
 	// ContextDomain identifies the scoped domain
 	ContextDomain = Name("*ns*")
-
-	// ExpectedNamespace is thrown when a Value is not a Namespace
-	ExpectedNamespace = "value is not a namespace: %s"
 )
 
 type (
@@ -76,7 +73,7 @@ func GetNamespace(n Name) Namespace {
 // GetContextNamespace resolves the Namespace based on its Context
 func GetContextNamespace(c Context) Namespace {
 	if v, ok := c.Get(ContextDomain); ok {
-		return AssertNamespace(v)
+		return v.(Namespace)
 	}
 	return GetNamespace(UserDomain)
 }
@@ -96,14 +93,6 @@ func (w *withNamespace) Get(n Name) (Value, bool) {
 		return v, true
 	}
 	return w.Context.Get(n)
-}
-
-// AssertNamespace will cast a Value to a Namespace or explode violently
-func AssertNamespace(v Value) Namespace {
-	if r, ok := v.(Namespace); ok {
-		return r
-	}
-	panic(ErrStr(ExpectedNamespace, v))
 }
 
 func init() {

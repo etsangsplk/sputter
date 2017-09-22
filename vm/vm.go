@@ -127,8 +127,9 @@ func (m *Module) Apply(c a.Context, args a.Sequence) a.Value {
 			}
 
 		case Apply:
-			s1 := a.AssertSequence(pop())
-			push(a.AssertApplicable(pop()).Apply(c, s1))
+			s1 := pop().(a.Sequence)
+			f1 := pop().(a.Applicable)
+			push(f1.Apply(c, s1))
 
 		case Call:
 			u1 := INST[PC].Op1
@@ -154,10 +155,10 @@ func (m *Module) Apply(c a.Context, args a.Sequence) a.Value {
 			}
 
 		case First:
-			push(a.AssertSequence(pop()).First())
+			push(pop().(a.Sequence).First())
 
 		case Rest:
-			push(a.AssertSequence(pop()).Rest())
+			push(pop().(a.Sequence).Rest())
 
 		case Split:
 			var r1 a.Value
@@ -174,11 +175,15 @@ func (m *Module) Apply(c a.Context, args a.Sequence) a.Value {
 
 		case Prepend:
 			r1 := pop()
-			push(a.AssertSequence(pop()).Prepend(r1))
+			push(pop().(a.Sequence).Prepend(r1))
 
 		case Inc:
 			u1 := SP + 1
 			STACK[u1] = STACK[u1].(a.Number).Add(a.One)
+
+		case Dec:
+			u1 := SP + 1
+			STACK[u1] = STACK[u1].(a.Number).Sub(a.One)
 
 		case Add:
 			push(pop().(a.Number).Add(pop().(a.Number)))

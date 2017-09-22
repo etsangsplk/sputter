@@ -32,7 +32,7 @@ func (*letFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	l := a.ChildContext(c)
 
 	f, r, _ := args.Split()
-	b := a.AssertVector(f)
+	b := f.(a.Vector)
 	bc := b.Count()
 	if bc%2 != 0 {
 		panic(a.ErrStr(ExpectedBindings))

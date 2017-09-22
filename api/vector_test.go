@@ -64,7 +64,6 @@ func TestVectorEval(t *testing.T) {
 	as := assert.New(t)
 
 	v := a.NewVector(s("hello"), s("how"), new(testEvaluable), s("you?"))
-	as.True(v.IsVector())
 
 	c := a.NewContext()
 	r := a.Eval(c, v)
@@ -102,16 +101,6 @@ func TestIterate(t *testing.T) {
 
 	as.Equal(a.Nil, e5)
 	as.False(ok)
-}
-
-func TestAssertVector(t *testing.T) {
-	as := assert.New(t)
-
-	v := a.NewVector(s("hello"), s("how"), s("are"), s("you?"))
-	a.AssertVector(v)
-
-	defer as.ExpectError(a.ErrStr(a.ExpectedVector, f(99)))
-	a.AssertVector(f(99))
 }
 
 func TestVectorExplosion(t *testing.T) {

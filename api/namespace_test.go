@@ -42,11 +42,3 @@ func TestWithNamespace(t *testing.T) {
 	as.String("inner", v2)
 	as.String("skipped", v3)
 }
-
-func TestAssertNamespace(t *testing.T) {
-	as := assert.New(t)
-	a.AssertNamespace(a.GetNamespace("hello"))
-
-	defer as.ExpectError(a.ErrStr(a.ExpectedNamespace, s("hello")))
-	a.AssertNamespace(s("hello"))
-}

@@ -6,9 +6,6 @@ const (
 	// UnknownSymbol is thrown if a symbol cannot be resolved
 	UnknownSymbol = "symbol has not been defined: %s"
 
-	// ExpectedSymbol is thrown when a Value is not a unqualified Symbol
-	ExpectedSymbol = "value is not a symbol: %s"
-
 	// ExpectedUnqualified is thrown when a Symbol is unexpectedly qualified
 	ExpectedUnqualified = "symbol should be unqualified: %s"
 )
@@ -117,11 +114,9 @@ func (s *symbol) Str() Str {
 // AssertUnqualified will cast a Value into a Symbol and explode
 // violently if it's qualified with a domain
 func AssertUnqualified(v Value) Symbol {
-	if r, ok := v.(Symbol); ok {
-		if r.Domain() == LocalDomain {
-			return r
-		}
-		panic(ErrStr(ExpectedUnqualified, r.Qualified()))
+	r := v.(Symbol)
+	if r.Domain() == LocalDomain {
+		return r
 	}
-	panic(ErrStr(ExpectedSymbol, v))
+	panic(ErrStr(ExpectedUnqualified, r.Qualified()))
 }

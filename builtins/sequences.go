@@ -50,7 +50,7 @@ func isIndexed(v a.Value) bool {
 
 func fetchSequence(args a.Sequence) a.Sequence {
 	a.AssertArity(args, 1)
-	return a.AssertSequence(args.First())
+	return args.First().(a.Sequence)
 }
 
 func (*firstFunction) Apply(_ a.Context, args a.Sequence) a.Value {
@@ -65,13 +65,13 @@ func (*consFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 2)
 	h := args.First()
 	r := args.Rest().First()
-	return a.AssertSequence(r).Prepend(h)
+	return r.(a.Sequence).Prepend(h)
 }
 
 func (*conjFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 	f, r, ok := args.Split()
-	s := a.AssertConjoiner(f)
+	s := f.(a.Conjoiner)
 	for f, r, ok = r.Split(); ok; f, r, ok = r.Split() {
 		s = s.Conjoin(f).(a.Conjoiner)
 	}
@@ -86,13 +86,13 @@ func (*lenFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 
 func (*nthFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
-	s := a.AssertIndexed(args.First())
+	s := args.First().(a.Indexed)
 	return a.IndexedApply(s, args.Rest())
 }
 
 func (*getFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
-	s := a.AssertMapped(args.First())
+	s := args.First().(a.Mapped)
 	return a.MappedApply(s, args.Rest())
 }
 

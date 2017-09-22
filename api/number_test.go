@@ -107,14 +107,6 @@ func TestNumberMath(t *testing.T) {
 	testResult(as, n1.Add(n7), "25.7")
 }
 
-func TestAssertNumber(t *testing.T) {
-	as := assert.New(t)
-	a.AssertNumber(f(99))
-
-	defer as.ExpectError(a.ErrStr(a.ExpectedNumber, s("not a number")))
-	a.AssertNumber(s("not a number"))
-}
-
 func TestAssertInteger(t *testing.T) {
 	as := assert.New(t)
 	a.AssertInteger(f(99))

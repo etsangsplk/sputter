@@ -2,9 +2,6 @@ package api
 
 import "bytes"
 
-// ExpectedApplicable is thrown when a Value is not Applicable
-const ExpectedApplicable = "value does not support application: %s"
-
 type (
 	// Applicable is the standard signature for any Value that can be applied
 	// to a sequence of arguments
@@ -64,12 +61,4 @@ func (b *block) Str() Str {
 		buf.WriteString(string(f.Str()))
 	}
 	return Str(buf.String())
-}
-
-// AssertApplicable will cast a Value into an Applicable or explode violently
-func AssertApplicable(v Value) Applicable {
-	if r, ok := v.(Applicable); ok {
-		return r
-	}
-	panic(ErrStr(ExpectedApplicable, v))
 }

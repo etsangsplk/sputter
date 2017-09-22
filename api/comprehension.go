@@ -51,7 +51,7 @@ func Concat(s Sequence) Sequence {
 
 	res = func() (Value, Sequence, bool) {
 		for f, r, ok := next.Split(); ok; f, r, ok = r.Split() {
-			v := AssertSequence(f)
+			v := f.(Sequence)
 			next = r
 			if vf, vr, ok := v.Split(); ok {
 				next = next.Prepend(vr)

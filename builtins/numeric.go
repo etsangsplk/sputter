@@ -5,6 +5,8 @@ import a "github.com/kode4food/sputter/api"
 const (
 	posInfName = "inf"
 	negInfName = "-inf"
+	incName    = "inc"
+	decName    = "dec"
 	addName    = "+"
 	subName    = "-"
 	mulName    = "*"
@@ -26,6 +28,8 @@ type (
 	reduceFunc  func(prev a.Number, next a.Number) a.Number
 	compareFunc func(prev a.Number, next a.Number) bool
 
+	incFunction struct{ BaseBuiltIn }
+	decFunction struct{ BaseBuiltIn }
 	addFunction struct{ BaseBuiltIn }
 	subFunction struct{ BaseBuiltIn }
 	mulFunction struct{ BaseBuiltIn }
@@ -42,7 +46,7 @@ type (
 func reduceNum(s a.Sequence, v a.Number, fn reduceFunc) a.Value {
 	res := v
 	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
-		fv := a.AssertNumber(f)
+		fv := f.(a.Number)
 		res = fn(res, fv)
 	}
 	return res
@@ -51,20 +55,31 @@ func reduceNum(s a.Sequence, v a.Number, fn reduceFunc) a.Value {
 func fetchFirstNumber(args a.Sequence) (a.Number, a.Sequence) {
 	a.AssertMinimumArity(args, 1)
 	f, r, _ := args.Split()
-	nv := a.AssertNumber(f)
-	return nv, r
+	return f.(a.Number), r
 }
 
 func compare(_ a.Context, s a.Sequence, fn compareFunc) a.Bool {
 	cur, rest := fetchFirstNumber(s)
 	for f, r, ok := rest.Split(); ok; f, r, ok = r.Split() {
-		v := a.AssertNumber(f)
+		v := f.(a.Number)
 		if !fn(cur, v) {
 			return a.False
 		}
 		cur = v
 	}
 	return a.True
+}
+
+func (*incFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+	a.AssertArity(args, 1)
+	nv := args.First().(a.Number)
+	return nv.Add(a.One)
+}
+
+func (*decFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+	a.AssertArity(args, 1)
+	nv := args.First().(a.Number)
+	return nv.Sub(a.One)
 }
 
 func (*addFunction) Apply(_ a.Context, args a.Sequence) a.Value {
@@ -168,6 +183,8 @@ func isNaN(v a.Value) bool {
 }
 
 func init() {
+	var inc *incFunction
+	var dec *decFunction
 	var add *addFunction
 	var sub *subFunction
 	var mul *mulFunction
@@ -183,6 +200,8 @@ func init() {
 	Namespace.Put(posInfName, a.PosInfinity)
 	Namespace.Put(negInfName, a.NegInfinity)
 
+	RegisterBuiltIn(incName, inc)
+	RegisterBuiltIn(decName, dec)
 	RegisterBuiltIn(addName, add)
 	RegisterBuiltIn(subName, sub)
 	RegisterBuiltIn(mulName, mul)

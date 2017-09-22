@@ -2,17 +2,17 @@ package builtins
 
 import a "github.com/kode4food/sputter/api"
 
-type (
-	chanFunction    struct{ BaseBuiltIn }
-	promiseFunction struct{ BaseBuiltIn }
-	goFunction      struct{ BaseBuiltIn }
-)
-
 const (
 	chanName      = "chan"
 	promiseName   = "promise"
 	goName        = "make-go"
 	isPromiseName = "promise?"
+)
+
+type (
+	chanFunction    struct{ BaseBuiltIn }
+	promiseFunction struct{ BaseBuiltIn }
+	goFunction      struct{ BaseBuiltIn }
 )
 
 var (

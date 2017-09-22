@@ -227,17 +227,9 @@ func (r *rat) Str() Str {
 	return Str((*big.Rat)(r).String())
 }
 
-// AssertNumber will cast a Value into a Number or explode violently
-func AssertNumber(v Value) Number {
-	if r, ok := v.(Number); ok {
-		return r
-	}
-	panic(ErrStr(ExpectedNumber, v))
-}
-
 // AssertInteger will cast a Value into an Integer or explode violently
 func AssertInteger(v Value) int {
-	n := AssertNumber(v)
+	n := v.(Number)
 	f, _ := n.Float64()
 	i := int(f)
 	if f-float64(i) == 0 {

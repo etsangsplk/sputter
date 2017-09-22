@@ -1,9 +1,6 @@
 package api
 
 const (
-	// ExpectedBool is thrown when a Value is not a Bool
-	ExpectedBool = "value is not a bool: %s"
-
 	// LessThan means left Value is less than right Value
 	LessThan Comparison = -1
 
@@ -145,12 +142,4 @@ func Truthy(v Value) bool {
 	default:
 		return true
 	}
-}
-
-// AssertBool will cast a Value into a Bool or explode violently
-func AssertBool(v Value) Bool {
-	if b, ok := v.(Bool); ok {
-		return b
-	}
-	panic(ErrStr(ExpectedBool, v))
 }

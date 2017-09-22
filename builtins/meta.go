@@ -34,16 +34,14 @@ func fromMetadata(m a.Object) a.Value {
 
 func (*withMetaFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 2)
-	o := a.AssertAnnotated(args.First())
-	if m, ok := args.Rest().First().(a.MappedSequence); ok {
-		return o.WithMetadata(toProperties(m))
-	}
-	panic(a.ErrStr(a.ExpectedMapped, o))
+	o := args.First().(a.Annotated)
+	m := args.Rest().First().(a.MappedSequence)
+	return o.WithMetadata(toProperties(m))
 }
 
 func (*getMetaFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
-	o := a.AssertAnnotated(args.First())
+	o := args.First().(a.Annotated)
 	return fromMetadata(o.Metadata())
 }
 

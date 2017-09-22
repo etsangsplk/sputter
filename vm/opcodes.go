@@ -33,6 +33,7 @@ const (
 	Split
 	Prepend
 	Inc
+	Dec
 	Add
 	Sub
 	Mul

@@ -2,10 +2,6 @@ package builtins
 
 import a "github.com/kode4food/sputter/api"
 
-var macroMetadata = a.Properties{
-	a.MacroKey: a.True,
-}
-
 const (
 	defMacroName       = "defmacro"
 	macroExpand1Name   = "macroexpand1"
@@ -20,6 +16,10 @@ type (
 	expandFunction    struct{ BaseBuiltIn }
 	expandAllFunction struct{ BaseBuiltIn }
 )
+
+var macroMetadata = a.Properties{
+	a.MacroKey: a.True,
+}
 
 func (*defMacroFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	fd := parseNamedFunction(args)

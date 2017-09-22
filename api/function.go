@@ -1,5 +1,13 @@
 package api
 
+const (
+	// DefaultFunctionName is the default name for anonymous functions
+	DefaultFunctionName = Name("<lambda>")
+
+	// DefaultFunctionType is the default type for functions
+	DefaultFunctionType = Name("function")
+)
+
 type (
 	// Function is a Value that can be invoked
 	Function interface {
@@ -24,12 +32,6 @@ type (
 )
 
 var (
-	// DefaultFunctionName is the default name for anonymous functions
-	DefaultFunctionName = Name("<lambda>")
-
-	// DefaultFunctionType is the default type for functions
-	DefaultFunctionType = Name("function")
-
 	// MacroKey identifies a Function as being a Macro
 	MacroKey = NewKeyword("macro")
 

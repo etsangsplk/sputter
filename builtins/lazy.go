@@ -29,15 +29,13 @@ type (
 func makeLazyResolver(c a.Context, f a.Applicable) a.LazyResolver {
 	return func() (a.Value, a.Sequence, bool) {
 		r := f.Apply(c, a.EmptyList)
-		if s, ok := r.(a.Sequence); ok {
+		if r != a.Nil {
+			s := r.(a.Sequence)
 			if sf, sr, ok := s.Split(); ok {
 				return sf, sr, true
 			}
 		}
-		if r == a.Nil {
-			return a.Nil, a.EmptyList, false
-		}
-		panic(a.ErrStr(a.ExpectedSequence, r))
+		return a.Nil, a.EmptyList, false
 	}
 }
 
@@ -66,7 +64,7 @@ func (*lazySequenceFunction) Apply(c a.Context, args a.Sequence) a.Value {
 
 func (*concatFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	if a.AssertMinimumArity(args, 1) == 1 {
-		return a.AssertSequence(args.First())
+		return args.First().(a.Sequence)
 	}
 	return a.Concat(args)
 }
@@ -74,7 +72,7 @@ func (*concatFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 func (*filterFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 	f, r, _ := args.Split()
-	fn := a.AssertApplicable(f)
+	fn := f.(a.Applicable)
 	s := a.Concat(r)
 	return a.Filter(s, makeValueFilter(c, fn))
 }
@@ -82,7 +80,7 @@ func (*filterFunction) Apply(c a.Context, args a.Sequence) a.Value {
 func (*mapFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 	f, r, _ := args.Split()
-	fn := a.AssertApplicable(f)
+	fn := f.(a.Applicable)
 	s := a.Concat(r)
 	return a.Map(s, makeValueMapper(c, fn))
 }
@@ -90,7 +88,7 @@ func (*mapFunction) Apply(c a.Context, args a.Sequence) a.Value {
 func (*reduceFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 	f, r, _ := args.Split()
-	fn := a.AssertApplicable(f)
+	fn := f.(a.Applicable)
 	s := a.Concat(r)
 	return a.Reduce(s, makeValueReducer(c, fn))
 }
@@ -114,17 +112,17 @@ func (*dropFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 func (*rangeFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 3)
 	f, r, _ := args.Split()
-	low := a.AssertNumber(f)
+	low := f.(a.Number)
 	rf, rr, _ := r.Split()
-	high := a.AssertNumber(rf)
-	step := a.AssertNumber(rr.First())
+	high := rf.(a.Number)
+	step := rr.First().(a.Number)
 	return a.NewRange(low, high, step)
 }
 
 func (*forEachFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 	f, r, _ := args.Split()
-	b := a.AssertVector(f)
+	b := f.(a.Vector)
 	bc := b.Count()
 	if bc%2 != 0 {
 		panic(a.ErrStr(ExpectedBindings))
@@ -150,7 +148,7 @@ func (*forEachFunction) Apply(c a.Context, args a.Sequence) a.Value {
 
 func makeIntermediate(n a.Name, e a.Value, next forProc) forProc {
 	return func(c a.Context) {
-		s := a.AssertSequence(a.Eval(c, e))
+		s := a.Eval(c, e).(a.Sequence)
 		for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
 			l := a.ChildContext(c)
 			l.Put(n, f)
@@ -162,7 +160,7 @@ func makeIntermediate(n a.Name, e a.Value, next forProc) forProc {
 func makeTerminal(n a.Name, e a.Value, s a.Sequence) forProc {
 	bl := a.MakeBlock(s)
 	return func(c a.Context) {
-		es := a.AssertSequence(a.Eval(c, e))
+		es := a.Eval(c, e).(a.Sequence)
 		for f, r, ok := es.Split(); ok; f, r, ok = r.Split() {
 			l := a.ChildContext(c)
 			l.Put(n, f)

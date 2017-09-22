@@ -187,8 +187,8 @@ func (r *REPL) outputResult(v any) {
 	fmt.Println(res)
 }
 
-func (r *REPL) outputError(err a.Object) {
-	msg := err.MustGet(a.MessageKey)
+func (r *REPL) outputError(err error) {
+	msg := err.Error()
 	res := fmt.Sprintf(bad, r.nsSpace(), r.idx, msg)
 	fmt.Println(res)
 }
@@ -270,18 +270,18 @@ func isEmptyString(s string) bool {
 	return len(strings.TrimSpace(s)) == 0
 }
 
-func toError(v interface{}) a.Object {
+func toError(v interface{}) error {
 	if v == nil {
 		return nil
 	}
-	if a.IsErr(v) {
-		return v.(a.Object)
+	if e, ok := v.(error); ok {
+		return e
 	}
 	panic(fmt.Sprintf("non-standard error: %s", v))
 }
 
-func isRecoverable(err a.Object) bool {
-	msg := err.MustGet(a.MessageKey).(a.Str)
+func isRecoverable(err error) bool {
+	msg := err.Error()
 	return msg == e.ListNotClosed ||
 		msg == e.VectorNotClosed ||
 		msg == e.MapNotClosed

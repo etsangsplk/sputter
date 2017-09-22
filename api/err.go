@@ -2,11 +2,23 @@ package api
 
 import "fmt"
 
+const errName = Name("error")
+
+type (
+	// Error represents a Go error as an Object
+	Error interface {
+		error
+		Object
+	}
+
+	err struct {
+		Object
+	}
+)
+
 var (
 	// MessageKey identifies the message property of an error
 	MessageKey = NewKeyword("message")
-
-	errName = Name("error")
 
 	errPrototype = Properties{
 		TypeKey:    errName,
@@ -15,12 +27,14 @@ var (
 )
 
 // Err generates a standard interpreter error
-func Err(p Properties) Object {
-	return errPrototype.Child(p)
+func Err(p Properties) Error {
+	return &err{
+		Object: errPrototype.Child(p),
+	}
 }
 
 // ErrStr generates a standard interpreter error from a Str
-func ErrStr(s string, args ...interface{}) Object {
+func ErrStr(s string, args ...interface{}) Error {
 	sargs := make([]interface{}, len(args))
 	for i, a := range args {
 		if v, ok := a.(Value); ok {
@@ -34,12 +48,6 @@ func ErrStr(s string, args ...interface{}) Object {
 	})
 }
 
-// IsErr tests whether or not a Value is an error Object
-func IsErr(v interface{}) bool {
-	if e, ok := v.(Object); ok {
-		if t, ok := e.Get(TypeKey); ok && t == errName {
-			return true
-		}
-	}
-	return false
+func (e *err) Error() string {
+	return string(e.MustGet(MessageKey).(Str))
 }

@@ -181,7 +181,7 @@ func TestBuiltIns(t *testing.T) {
 	as.String("there", a.Eval(c, tr))
 }
 
-func testReaderError(t *testing.T, src string, err a.Object) {
+func testReaderError(t *testing.T, src string, err error) {
 	as := assert.New(t)
 
 	defer as.ExpectError(err)

@@ -153,11 +153,11 @@ func (w *Wrapper) Compare(c a.Comparison, l a.Number, r a.Number) {
 }
 
 // ExpectError is used with a defer to make sure an error was triggered
-func (w *Wrapper) ExpectError(err a.Object) {
+func (w *Wrapper) ExpectError(err error) {
 	if rec := recover(); rec != nil {
-		if a.IsErr(rec) {
-			errStr := string(err.MustGet(a.MessageKey).Str())
-			recStr := rec.(a.Object).MustGet(a.MessageKey).Str()
+		if re, ok := rec.(error); ok {
+			errStr := err.Error()
+			recStr := re.Error()
 			w.String(errStr, recStr)
 			return
 		}

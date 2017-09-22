@@ -21,7 +21,6 @@ func TestAssociative(t *testing.T) {
 	as := assert.New(t)
 	m1 := getTestMap()
 
-	as.True(m1.IsAssociative())
 	as.Number(3, a.Count(m1))
 
 	nameKey := a.NewKeyword("name")
@@ -166,13 +165,4 @@ func TestKeywordMiss(t *testing.T) {
 
 	defer as.ExpectError(a.ErrStr(a.KeyNotFound, nameKey))
 	nameKey.Apply(c, a.NewList(m1))
-}
-
-func TestAssertMapped(t *testing.T) {
-	as := assert.New(t)
-	m1 := getTestMap()
-	a.AssertMapped(m1)
-
-	defer as.ExpectError(a.ErrStr(a.ExpectedMapped, f(99)))
-	a.AssertMapped(f(99))
 }

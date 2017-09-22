@@ -20,30 +20,7 @@ func TestNonCountableSequence(t *testing.T) {
 	as := assert.New(t)
 	nc := new(ncSeq)
 
-	defer as.ExpectError(a.ErrStr(a.ExpectedCounted, "()"))
+	e := cvtErr("*api_test.ncSeq", "api.CountedSequence", "Count")
+	defer as.ExpectError(e)
 	a.Count(nc)
-}
-
-func TestAssertSequence(t *testing.T) {
-	as := assert.New(t)
-	a.AssertSequence(a.NewList(s("hello")))
-
-	defer as.ExpectError(a.ErrStr(a.ExpectedSequence, f(99)))
-	a.AssertSequence(f(99))
-}
-
-func TestAssertIndexed(t *testing.T) {
-	as := assert.New(t)
-	a.AssertIndexed(a.NewList(s("hello")))
-
-	defer as.ExpectError(a.ErrStr(a.ExpectedIndexed, f(99)))
-	a.AssertIndexed(f(99))
-}
-
-func TestAssertConjoiner(t *testing.T) {
-	as := assert.New(t)
-	a.AssertConjoiner(a.NewList(s("hello")))
-
-	defer as.ExpectError(a.ErrStr(a.ExpectedConjoiner, f(99)))
-	a.AssertConjoiner(f(99))
 }

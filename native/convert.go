@@ -27,7 +27,7 @@ func reflectToValue(v reflect.Value) a.Value {
 }
 
 func boolToReflect(v a.Value) reflect.Value {
-	return reflect.ValueOf(bool(a.AssertBool(v)))
+	return reflect.ValueOf(bool(v.(a.Bool)))
 }
 
 func reflectToBool(v reflect.Value) a.Value {
@@ -35,7 +35,7 @@ func reflectToBool(v reflect.Value) a.Value {
 }
 
 func strToReflect(v a.Value) reflect.Value {
-	return reflect.ValueOf(string(a.AssertStr(v)))
+	return reflect.ValueOf(string(v.(a.Str)))
 }
 
 func reflectToStr(v reflect.Value) a.Value {
@@ -43,12 +43,12 @@ func reflectToStr(v reflect.Value) a.Value {
 }
 
 func numberToFloat32(v a.Value) reflect.Value {
-	f, _ := a.AssertNumber(v).Float64()
+	f, _ := v.(a.Number).Float64()
 	return reflect.ValueOf(float32(f))
 }
 
 func numberToFloat64(v a.Value) reflect.Value {
-	f, _ := a.AssertNumber(v).Float64()
+	f, _ := v.(a.Number).Float64()
 	return reflect.ValueOf(f)
 }
 

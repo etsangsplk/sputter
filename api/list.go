@@ -1,8 +1,5 @@
 package api
 
-// ExpectedList is thrown when a value is not a List
-const ExpectedList = "value is not a list: %s"
-
 // List contains a node to a singly-linked List
 type List interface {
 	Conjoiner
@@ -10,7 +7,7 @@ type List interface {
 	Counted
 	Applicable
 	Evaluable
-	IsList() bool
+	ListType()
 }
 
 type list struct {
@@ -38,9 +35,7 @@ func NewList(v ...Value) List {
 	return r
 }
 
-func (l *list) IsList() bool {
-	return true
-}
+func (l *list) ListType() {}
 
 func (l *list) First() Value {
 	return l.first
@@ -96,13 +91,11 @@ func (l *list) Eval(c Context) Value {
 	}
 
 	t := l.first
-	if a, ok := Eval(c, t).(Applicable); ok {
-		if IsSpecialForm(a) {
-			return a.Apply(c, l.rest)
-		}
-		return a.Apply(c, l.evalArgs(c, l.rest))
+	a := Eval(c, t).(Applicable)
+	if IsSpecialForm(a) {
+		return a.Apply(c, l.rest)
 	}
-	panic(ErrStr(ExpectedApplicable, t))
+	return a.Apply(c, l.evalArgs(c, l.rest))
 }
 
 func (l *list) evalArgs(c Context, args *list) Vector {
@@ -117,14 +110,6 @@ func (l *list) evalArgs(c Context, args *list) Vector {
 
 func (l *list) Str() Str {
 	return MakeSequenceStr(l)
-}
-
-// AssertList will cast a Value into a List or explode violently
-func AssertList(v Value) Sequence {
-	if r, ok := v.(List); ok {
-		return r
-	}
-	panic(ErrStr(ExpectedList, v))
 }
 
 func init() {

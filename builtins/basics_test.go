@@ -26,7 +26,7 @@ func TestReadEval(t *testing.T) {
 
 	r1 := read.Apply(c, args(s("[1 2 3]")))
 	e1 := eval.Apply(c, args(r1))
-	v1 := a.AssertVector(e1)
+	v1 := e1.(a.Vector)
 
 	v2, ok := v1.ElementAt(0)
 	as.True(ok)

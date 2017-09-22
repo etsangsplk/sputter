@@ -26,7 +26,6 @@ func TestList(t *testing.T) {
 	n1 := f(12)
 	l1 := a.NewList(n1)
 
-	as.True(l1.IsList())
 	as.Equal(n1, l1.First())
 	as.Equal(a.EmptyList, l1.Rest())
 	as.False(l1.Rest().IsSequence())
@@ -98,7 +97,7 @@ func TestListEval(t *testing.T) {
 	as.Equal(a.EmptyList, a.Eval(c, a.EmptyList))
 }
 
-func testBrokenEval(t *testing.T, val a.Value, err a.Object) {
+func testBrokenEval(t *testing.T, val a.Value, err error) {
 	as := assert.New(t)
 
 	defer as.ExpectError(err)
@@ -107,13 +106,13 @@ func testBrokenEval(t *testing.T, val a.Value, err a.Object) {
 }
 
 func TestNonFunction(t *testing.T) {
-	err1 := a.ErrStr(a.UnknownSymbol, "unknown")
+	e := a.ErrStr(a.UnknownSymbol, "unknown")
 	sym := a.NewLocalSymbol("unknown")
 	seq := a.NewList(sym, s("foo"))
-	testBrokenEval(t, seq.(a.List), err1)
+	testBrokenEval(t, seq.(a.List), e)
 
-	err2 := a.ErrStr(a.ExpectedApplicable, f(99))
-	testBrokenEval(t, a.NewList(f(99)), err2)
+	e = cvtErr("*api.dec", "api.Applicable", "Apply")
+	testBrokenEval(t, a.NewList(f(99)), e)
 }
 
 func TestListExplosion(t *testing.T) {

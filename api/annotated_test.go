@@ -54,10 +54,7 @@ func TestAnnotated(t *testing.T) {
 	as := assert.New(t)
 
 	fn := a.NewExecFunction(nil)
-	as.Identical(fn, a.AssertAnnotated(fn))
-
-	defer as.ExpectError(a.ErrStr(a.ExpectedAnnotated, f(99)))
-	a.AssertAnnotated(f(99))
+	as.Identical(fn, fn.(a.Annotated))
 }
 
 func TestGetDocumentation(t *testing.T) {

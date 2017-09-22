@@ -19,8 +19,8 @@ func init() {
 	defer func() {
 		if rec := recover(); rec != nil {
 			fmt.Fprint(os.Stderr, "\nBootstrap Error\n\n")
-			if a.IsErr(rec) {
-				msg := rec.(a.Object).MustGet(a.MessageKey)
+			if e, ok := rec.(error); ok {
+				msg := e.Error()
 				fmt.Fprintf(os.Stderr, "  %s: %s\n\n", filename, msg)
 			} else {
 				fmt.Fprintf(os.Stderr, "  %s: %s\n\n", filename, rec)

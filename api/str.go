@@ -6,9 +6,6 @@ import (
 	"unicode/utf8"
 )
 
-// ExpectedStr is thrown when a Value is not a Str
-const ExpectedStr = "value is not a string: %s"
-
 // Str is the Sequence-compatible representation of string values
 type Str string
 
@@ -135,12 +132,4 @@ func MakeDumpStr(v Value) Str {
 	p := Str(fmt.Sprintf("%p", &v))
 	m = m.Child(Properties{InstanceKey: p})
 	return m.Str()
-}
-
-// AssertStr will cast a Value into a Str or explode violently
-func AssertStr(v Value) Str {
-	if s, ok := v.(Str); ok {
-		return s
-	}
-	panic(ErrStr(ExpectedStr, v))
 }

@@ -2,9 +2,6 @@ package api
 
 import "bytes"
 
-// ExpectedVector is raised if a value is not a Vector
-const ExpectedVector = "value is not a Values: %s"
-
 type (
 	// Vector is a fixed-length array of Values
 	Vector interface {
@@ -13,7 +10,7 @@ type (
 		Counted
 		Applicable
 		Evaluable
-		IsVector() bool
+		VectorType()
 	}
 
 	// Values is the concrete implementation of a Vector
@@ -27,10 +24,8 @@ func NewVector(v ...Value) Vector {
 	return Values(v)
 }
 
-// IsVector identifies this Value as a Vector
-func (v Values) IsVector() bool {
-	return true
-}
+// VectorType identifies this Value as a Vector
+func (v Values) VectorType() {}
 
 // Count returns the number of elements in the Value array
 func (v Values) Count() int {
@@ -117,12 +112,4 @@ func (v Values) Str() Str {
 	}
 	b.WriteString("]")
 	return Str(b.String())
-}
-
-// AssertVector will cast the Value into a Vector or die trying
-func AssertVector(v Value) Vector {
-	if r, ok := v.(Vector); ok {
-		return r
-	}
-	panic(ErrStr(ExpectedVector, v))
 }

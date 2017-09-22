@@ -6,9 +6,6 @@ const (
 	// ExpectedPair is thrown if you prepend to a Map incorrectly
 	ExpectedPair = "expected two element vectors when prepending"
 
-	// ExpectedMapped is thrown if the Value is not a Mapped item
-	ExpectedMapped = "expected a mapped value: %s"
-
 	// KeyNotFound is thrown if a Key is not found in a Mapped item
 	KeyNotFound = "key not found: %s"
 )
@@ -21,7 +18,7 @@ type (
 		Counted
 		Applicable
 		Evaluable
-		IsAssociative() bool
+		AssociativeType()
 	}
 
 	associative []Vector
@@ -34,9 +31,7 @@ func NewAssociative(v ...Vector) Associative {
 	return associative(v)
 }
 
-func (a associative) IsAssociative() bool {
-	return true
-}
+func (a associative) AssociativeType() {}
 
 func (a associative) Count() int {
 	return len(a)
@@ -140,12 +135,4 @@ func MappedApply(s Mapped, args Sequence) Value {
 		return args.Rest().First()
 	}
 	panic(ErrStr(KeyNotFound, key))
-}
-
-// AssertMapped will cast Value to a Mapped or explode violently
-func AssertMapped(v Value) Mapped {
-	if r, ok := v.(Mapped); ok {
-		return r
-	}
-	panic(ErrStr(ExpectedMapped, v))
 }

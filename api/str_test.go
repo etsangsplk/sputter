@@ -19,7 +19,6 @@ func TestStr(t *testing.T) {
 	as := assert.New(t)
 
 	s1 := s("hello")
-	as.Identical(s1, a.AssertStr(s1))
 	as.Number(5, a.Count(s1))
 	as.String("h", s1.First())
 	as.String("ello", s1.Rest())
@@ -69,9 +68,6 @@ func TestStr(t *testing.T) {
 	as.Number(3, a.Count(s6))
 	as.String("再", s6.First())
 	as.String("见!", s6.Rest())
-
-	defer as.ExpectError(a.ErrStr(a.ExpectedStr, f(99)))
-	a.AssertStr(f(99))
 }
 
 func TestEmptyStr(t *testing.T) {

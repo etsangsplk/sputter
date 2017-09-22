@@ -14,7 +14,7 @@ func TestAssoc(t *testing.T) {
 
 	assoc := getBuiltIn("assoc")
 	a1 := assoc.Apply(c, args(kw("hello"), s("foo")))
-	m1 := a.AssertMapped(a1)
+	m1 := a1.(a.Mapped)
 	v1, ok := m1.Get(kw("hello"))
 	as.True(ok)
 	as.String("foo", v1)

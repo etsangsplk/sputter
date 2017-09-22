@@ -2,9 +2,6 @@ package api
 
 import d "github.com/kode4food/sputter/docstring"
 
-// ExpectedAnnotated is thrown if a Value is not Annotated
-const ExpectedAnnotated = "value does not support annotation: %s"
-
 var (
 	// NameKey is the Metadata key for a Value's Name
 	NameKey = NewKeyword("name")
@@ -59,12 +56,4 @@ func GetDocumentation(md Object) Str {
 		}
 	}
 	return Undocumented
-}
-
-// AssertAnnotated will cast a Value to Annotated or die trying
-func AssertAnnotated(v Value) Annotated {
-	if a, ok := v.(Annotated); ok {
-		return a
-	}
-	panic(ErrStr(ExpectedAnnotated, v))
 }

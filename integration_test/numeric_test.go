@@ -28,9 +28,9 @@ func TestNestedNumber(t *testing.T) {
 }
 
 func TestNonNumber(t *testing.T) {
-	helloErr := a.ErrStr(a.ExpectedNumber, `"hello"`)
-	testBadCode(t, `(+ 99 "hello")`, helloErr)
-	testBadCode(t, `(+ "hello")`, helloErr)
+	e := cvtErr("api.Str", "api.Number", "Add")
+	testBadCode(t, `(+ 99 "hello")`, e)
+	testBadCode(t, `(+ "hello")`, e)
 }
 
 func TestCompare(t *testing.T) {
@@ -64,7 +64,7 @@ func TestCompare(t *testing.T) {
 }
 
 func TestBadCompare(t *testing.T) {
-	helloErr := a.ErrStr(a.ExpectedNumber, `"hello"`)
-	testBadCode(t, `(< 99 "hello")`, helloErr)
-	testBadCode(t, `(< "hello" "there")`, helloErr)
+	e := cvtErr("api.Str", "api.Number", "Add")
+	testBadCode(t, `(< 99 "hello")`, e)
+	testBadCode(t, `(< "hello" "there")`, e)
 }

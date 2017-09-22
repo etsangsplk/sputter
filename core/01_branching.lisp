@@ -7,14 +7,14 @@
 
 (defmacro when
   {:doc-asset "when"}
-  ([test]        nil)
-  ([test form]   `(if ~test ~form nil))
+  ([test]         nil)
+  ([test form]    `(if ~test ~form nil))
   ([test & forms] `(if ~test (do ~@forms) nil)))
 
 (defmacro when-not
   {:doc-asset "when"}
-  ([test]        nil)
-  ([test form]   `(if ~test nil ~form))
+  ([test]         nil)
+  ([test form]    `(if ~test nil ~form))
   ([test & forms] `(if ~test nil (do ~@forms))))
 
 (defmacro cond

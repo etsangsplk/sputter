@@ -2,14 +2,14 @@ package builtins
 
 import a "github.com/kode4food/sputter/api"
 
-type (
-	makeClosureFunction struct{ BaseBuiltIn }
-	closureFunction     struct{ BaseBuiltIn }
-)
-
 const (
 	makeClosureName = "make-closure"
 	closureName     = "closure"
+)
+
+type (
+	makeClosureFunction struct{ BaseBuiltIn }
+	closureFunction     struct{ BaseBuiltIn }
 )
 
 var (
@@ -18,7 +18,7 @@ var (
 )
 
 func assertUnqualifiedNames(s a.Sequence) a.Names {
-	v := a.AssertVector(s)
+	v := s.(a.Vector)
 	l := v.Count()
 	r := make(a.Names, l)
 	for i := 0; i < l; i++ {
@@ -85,7 +85,7 @@ func visitSequence(s a.Sequence) a.Names {
 func (*makeClosureFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
 	f, r, _ := args.Split()
-	ex := assertUnqualifiedNames(a.AssertVector(f))
+	ex := assertUnqualifiedNames(f.(a.Vector))
 	cb := a.MacroExpandAll(c, r)
 	nm := consolidateNames(visitValue(cb), ex)
 	return a.NewList(closureSym, makeLocalSymbolVector(nm), cb)
@@ -93,7 +93,7 @@ func (*makeClosureFunction) Apply(c a.Context, args a.Sequence) a.Value {
 
 func isClosure(v a.Value) (a.Names, bool) {
 	if l, ok := isBuiltInCall(closureName, v); ok {
-		e := a.AssertVector(l.Rest().First())
+		e := l.Rest().First().(a.Vector)
 		return assertUnqualifiedNames(e), true
 	}
 	return emptyNames, false
@@ -102,7 +102,7 @@ func isClosure(v a.Value) (a.Names, bool) {
 func (*closureFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 2)
 	f, r, _ := args.Split()
-	in := a.AssertVector(f)
+	in := f.(a.Vector)
 	vars := make(a.Variables, in.Count())
 	for nf, nr, ok := in.(a.Sequence).Split(); ok; nf, nr, ok = nr.Split() {
 		n := a.AssertUnqualified(nf).Name()
@@ -111,7 +111,7 @@ func (*closureFunction) Apply(c a.Context, args a.Sequence) a.Value {
 		}
 	}
 
-	s := a.AssertSequence(r.First())
+	s := r.First().(a.Sequence)
 	bl := a.MakeBlock(s)
 	ns := a.GetContextNamespace(c)
 	l := a.ChildContextVars(ns, vars)
