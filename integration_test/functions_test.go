@@ -34,7 +34,7 @@ func TestBadLambda(t *testing.T) {
 	e := cvtErr("*api.dec", "api.List", "Apply")
 	testBadCode(t, `(lambda 99 "hello")`, e)
 
-	e = a.ErrStr(a.ExpectedUnqualified, "foo:bar")
+	e = cvtErr("*api.qualifiedSymbol", "api.LocalSymbol", "LocalSymbolType")
 	testBadCode(t, `(lambda foo:bar [] "hello")`, e)
 }
 

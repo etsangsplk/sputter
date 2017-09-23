@@ -36,7 +36,6 @@ func TestBlock(t *testing.T) {
 	s1 := a.NewList(helloSym, s("World"))
 	s2 := a.NewList(helloSym, s("Foo"))
 	l := a.MakeBlock(a.NewList(s1, s2))
-	as.True(l.IsBlock())
 	as.String(`(hello "World")(hello "Foo")`, l)
 
 	r := a.Eval(c, l)

@@ -24,7 +24,6 @@ func TestAssociative(t *testing.T) {
 	as.Number(3, a.Count(m1))
 
 	nameKey := a.NewKeyword("name")
-	as.True(nameKey.IsKeyword())
 	as.Equal(a.Name("name"), nameKey.Name())
 
 	nameValue, ok := m1.Get(nameKey)

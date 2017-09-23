@@ -17,7 +17,7 @@ type (
 		Typed
 		Documented
 		Applicable
-		IsFunction() bool
+		FunctionType()
 	}
 
 	// BaseFunction provides common behavior for different Function types
@@ -71,10 +71,8 @@ func (f *BaseFunction) Extend(md Object) BaseFunction {
 	}
 }
 
-// IsFunction identifies this Value as a Function
-func (f *BaseFunction) IsFunction() bool {
-	return true
-}
+// FunctionType identifies this Value as a Function
+func (f *BaseFunction) FunctionType() {}
 
 // Metadata returns the Function's metadata Object
 func (f *BaseFunction) Metadata() Object {

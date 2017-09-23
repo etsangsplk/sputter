@@ -18,8 +18,6 @@ func TestFunction(t *testing.T) {
 		a.DocKey:  s("this is a test"),
 	}).(a.Function)
 
-	as.True(f1.IsFunction())
-
 	f2 := a.NewExecFunction(nil)
 	f3 := f1.WithMetadata(a.Properties{
 		a.DocKey: s("modified"),

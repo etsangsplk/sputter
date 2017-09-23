@@ -111,12 +111,12 @@ func (m *Module) Apply(c a.Context, args a.Sequence) a.Value {
 
 		case Def:
 			r1 := pop()
-			a.GetContextNamespace(c).Put(a.AssertUnqualified(pop()).Name(), r1)
+			a.GetContextNamespace(c).Put(pop().(a.LocalSymbol).Name(), r1)
 
 		case Let:
 			c1 := LOCALS[INST[PC].Op1].(a.Context)
 			r1 := pop()
-			c1.Put(a.AssertUnqualified(pop()).Name(), r1)
+			c1.Put(pop().(a.LocalSymbol).Name(), r1)
 
 		case Eval:
 			r1, _ := a.MacroExpand(c, pop())

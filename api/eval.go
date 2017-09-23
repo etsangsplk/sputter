@@ -18,7 +18,7 @@ type (
 	Block interface {
 		Sequence
 		Evaluable
-		IsBlock() bool
+		BlockType()
 	}
 
 	block struct {
@@ -43,9 +43,7 @@ func MakeBlock(s Sequence) Block {
 	return &block{Sequence: s}
 }
 
-func (b *block) IsBlock() bool {
-	return true
-}
+func (b *block) BlockType() {}
 
 func (b *block) Eval(c Context) Value {
 	var res Value = Nil

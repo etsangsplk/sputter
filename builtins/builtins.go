@@ -92,7 +92,7 @@ func isBuiltInCall(n a.Name, v a.Value) (a.List, bool) {
 func defBuiltIn(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
 	f, r, _ := args.Split()
-	n := a.AssertUnqualified(f).Name()
+	n := f.(a.LocalSymbol).Name()
 	if nf, ok := GetFunction(n); ok {
 		var md a.Object = toProperties(a.SequenceToAssociative(r))
 		nr := nf.WithMetadata(md)

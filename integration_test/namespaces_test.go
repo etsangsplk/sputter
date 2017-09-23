@@ -32,7 +32,8 @@ func TestNamespaces(t *testing.T) {
 			x)
 	`, s("x in the namespace"))
 
+	e := cvtErr("*api.qualifiedSymbol", "api.LocalSymbol", "LocalSymbolType")
 	testBadCode(t, `
 		(ns foo:bar)
-	`, a.ErrStr(a.ExpectedUnqualified, "foo:bar"))
+	`, e)
 }

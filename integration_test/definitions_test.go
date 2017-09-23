@@ -35,7 +35,7 @@ func TestFunction(t *testing.T) {
 }
 
 func TestBadFunction(t *testing.T) {
-	symErr := cvtErr("*api.dec", "api.Symbol", "Domain")
+	symErr := cvtErr("*api.dec", "api.LocalSymbol", "Domain")
 	vecErr := cvtErr("*api.dec", "api.Vector", "Apply")
 	listErr := cvtErr("*api.dec", "api.List", "Apply")
 

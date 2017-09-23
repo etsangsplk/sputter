@@ -20,7 +20,7 @@ func (*defFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	ns := a.GetContextNamespace(c)
 
 	f, r, _ := args.Split()
-	n := a.AssertUnqualified(f).Name()
+	n := f.(a.LocalSymbol).Name()
 	v := r.First()
 
 	ns.Put(n, a.Eval(c, v))
@@ -40,7 +40,7 @@ func (*letFunction) Apply(c a.Context, args a.Sequence) a.Value {
 
 	for i := 0; i < bc; i++ {
 		s, _ := b.ElementAt(i)
-		n := a.AssertUnqualified(s).Name()
+		n := s.(a.LocalSymbol).Name()
 		i++
 		v, _ := b.ElementAt(i)
 		l.Put(n, a.Eval(l, v))

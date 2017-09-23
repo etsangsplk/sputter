@@ -134,7 +134,7 @@ func (*forEachFunction) Apply(c a.Context, args a.Sequence) a.Value {
 		o := i * 2
 		s, _ := b.ElementAt(o)
 		e, _ := b.ElementAt(o + 1)
-		n := a.AssertUnqualified(s).Name()
+		n := s.(a.LocalSymbol).Name()
 		if i == depth-1 {
 			proc = makeTerminal(n, e, r)
 		} else {

@@ -23,7 +23,7 @@ func assertUnqualifiedNames(s a.Sequence) a.Names {
 	r := make(a.Names, l)
 	for i := 0; i < l; i++ {
 		e, _ := v.ElementAt(i)
-		r[i] = a.AssertUnqualified(e).Name()
+		r[i] = e.(a.LocalSymbol).Name()
 	}
 	return r
 }
@@ -105,7 +105,7 @@ func (*closureFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	in := f.(a.Vector)
 	vars := make(a.Variables, in.Count())
 	for nf, nr, ok := in.(a.Sequence).Split(); ok; nf, nr, ok = nr.Split() {
-		n := a.AssertUnqualified(nf).Name()
+		n := nf.(a.LocalSymbol).Name()
 		if v, ok := c.Get(n); ok {
 			vars[n] = v
 		}

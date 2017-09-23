@@ -12,7 +12,7 @@ type Keyword interface {
 	Value
 	Applicable
 	Named
-	IsKeyword() bool
+	KeywordType()
 }
 
 type keyword struct {
@@ -26,9 +26,7 @@ func NewKeyword(n Name) Keyword {
 	}).(Keyword)
 }
 
-func (k *keyword) IsKeyword() bool {
-	return true
-}
+func (k *keyword) KeywordType() {}
 
 func (k *keyword) Name() Name {
 	return k.name

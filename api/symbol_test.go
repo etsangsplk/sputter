@@ -14,7 +14,6 @@ func TestSymbol(t *testing.T) {
 	c.Put("howdy", s("ho"))
 
 	sym := a.NewLocalSymbol("howdy")
-	as.True(sym.IsSymbol())
 	as.String("ho", a.Eval(c, sym))
 	as.String("howdy", sym)
 }
@@ -87,19 +86,4 @@ func TestSymbolParsing(t *testing.T) {
 	s4 := a.ParseSymbol("one:too:")
 	as.String("one", string(s4.Domain()))
 	as.String("too:", string(s4.Name()))
-}
-
-func TestAssertSymbol(t *testing.T) {
-	as := assert.New(t)
-	e := cvtErr("*api.dec", "api.Symbol", "Domain")
-	defer as.ExpectError(e)
-	a.AssertUnqualified(f(37))
-}
-
-func TestAssertUnqualified(t *testing.T) {
-	as := assert.New(t)
-	a.AssertUnqualified(a.NewLocalSymbol("hello"))
-
-	defer as.ExpectError(a.ErrStr(a.ExpectedUnqualified, "bar:hello"))
-	a.AssertUnqualified(a.NewQualifiedSymbol("hello", "bar"))
 }

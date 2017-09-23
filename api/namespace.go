@@ -22,9 +22,16 @@ type (
 		Context
 		Domain() Name
 		Intern(Name) Symbol
+		NamespaceType()
 	}
 
-	namespace struct {
+	qualifiedNamespace struct {
+		Context
+		domain  Name
+		symbols u.Cache
+	}
+
+	localNamespace struct {
 		Context
 		domain  Name
 		symbols u.Cache
@@ -38,29 +45,49 @@ type (
 
 var namespaces = u.NewCache()
 
-func (ns *namespace) Domain() Name {
+func (ns *qualifiedNamespace) Domain() Name {
 	return ns.domain
 }
 
-// Intern returns a IsSymbol based on the Name and Namespace Domain.
-// This IsSymbol will be atomic, meaning that there will be only one
-// instance, allowing the Symbols to be compared by reference
-func (ns *namespace) Intern(n Name) Symbol {
+func (ns *qualifiedNamespace) Intern(n Name) Symbol {
 	d := ns.domain
-	k := qualifiedName(n, d)
+	k := Name(d + ":" + n)
 	return ns.symbols.Get(k, func() u.Any {
-		return &symbol{name: n, domain: d}
+		return &qualifiedSymbol{
+			name:   n,
+			domain: d,
+		}
 	}).(Symbol)
 }
 
-func (ns *namespace) Str() Str {
+func (ns *qualifiedNamespace) Str() Str {
 	return "(ns " + Str(ns.domain) + ")"
 }
+
+func (ns *qualifiedNamespace) NamespaceType() {}
+
+func (ns *localNamespace) Domain() Name {
+	return LocalDomain
+}
+
+func (ns *localNamespace) Intern(n Name) Symbol {
+	return ns.symbols.Get(n, func() u.Any {
+		return &localSymbol{
+			name: n,
+		}
+	}).(Symbol)
+}
+
+func (ns *localNamespace) Str() Str {
+	return "(ns *local*)"
+}
+
+func (ns *localNamespace) NamespaceType() {}
 
 // GetNamespace returns the Namespace for the specified domain.
 func GetNamespace(n Name) Namespace {
 	return namespaces.Get(n, func() u.Any {
-		ns := &namespace{
+		ns := &qualifiedNamespace{
 			Context: NewContext(),
 			domain:  n,
 			symbols: u.NewCache(),
@@ -87,7 +114,7 @@ func WithNamespace(c Context, ns Namespace) Context {
 	})
 }
 
-// ElementAt retrieves a value from the Context chain
+// Get retrieves a value from the Context chain
 func (w *withNamespace) Get(n Name) (Value, bool) {
 	if v, ok := w.ns.Get(n); ok {
 		return v, true
@@ -99,8 +126,17 @@ func init() {
 	builtInContext := NewContext()
 	userContext := ChildContext(builtInContext)
 
+	namespaces.Get(LocalDomain, func() u.Any {
+		ns := &localNamespace{
+			Context: NewContext(),
+			symbols: u.NewCache(),
+		}
+		ns.Put(ContextDomain, ns)
+		return ns
+	})
+
 	namespaces.Get(BuiltInDomain, func() u.Any {
-		ns := &namespace{
+		ns := &qualifiedNamespace{
 			Context: builtInContext,
 			domain:  BuiltInDomain,
 			symbols: u.NewCache(),
@@ -110,7 +146,7 @@ func init() {
 	})
 
 	namespaces.Get(UserDomain, func() u.Any {
-		ns := &namespace{
+		ns := &qualifiedNamespace{
 			Context: userContext,
 			domain:  UserDomain,
 			symbols: u.NewCache(),

@@ -122,7 +122,7 @@ func (f *blockFunction) WithMetadata(md a.Object) a.AnnotatedValue {
 func makeArgProcessor(cl a.Context, s a.Sequence) argProcessor {
 	an := []a.Name{}
 	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
-		n := a.AssertUnqualified(f).Name()
+		n := f.(a.LocalSymbol).Name()
 		if n == restMarker {
 			rn := parseRestArg(r)
 			return makeRestArgProcessor(cl, an, rn)
@@ -134,7 +134,7 @@ func makeArgProcessor(cl a.Context, s a.Sequence) argProcessor {
 
 func parseRestArg(s a.Sequence) a.Name {
 	if f, r, ok := s.Split(); ok {
-		n := a.AssertUnqualified(f).Name()
+		n := f.(a.LocalSymbol).Name()
 		if n != restMarker && !r.IsSequence() {
 			return n
 		}
@@ -199,10 +199,8 @@ func optionalMetadata(args a.Sequence) (a.Object, a.Sequence) {
 func optionalName(args a.Sequence) (a.Name, a.Sequence) {
 	f, r, _ := args.Split()
 	if s, ok := f.(a.Symbol); ok {
-		if s.Domain() == a.LocalDomain {
-			return s.Name(), r
-		}
-		panic(a.ErrStr(a.ExpectedUnqualified, s.Qualified()))
+		ls := s.(a.LocalSymbol)
+		return ls.Name(), r
 	}
 	return a.DefaultFunctionName, args
 }
@@ -210,7 +208,7 @@ func optionalName(args a.Sequence) (a.Name, a.Sequence) {
 func parseNamedFunction(args a.Sequence) *functionDefinition {
 	a.AssertMinimumArity(args, 3)
 	f, r, _ := args.Split()
-	fn := a.AssertUnqualified(f).Name()
+	fn := f.(a.LocalSymbol).Name()
 	return parseFunctionRest(fn, r)
 }
 

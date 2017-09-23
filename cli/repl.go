@@ -289,7 +289,7 @@ func isRecoverable(err error) bool {
 
 func use(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
-	n := a.AssertUnqualified(args.First()).Name()
+	n := args.First().(a.LocalSymbol).Name()
 	ns := a.GetNamespace(n)
 	c.Delete(a.ContextDomain)
 	c.Put(a.ContextDomain, ns)
@@ -344,7 +344,7 @@ func help(_ a.Context, args a.Sequence) a.Value {
 
 func doc(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
-	sym := a.AssertUnqualified(args.First())
+	sym := args.First().(a.LocalSymbol)
 	if v, ok := c.Get(sym.Name()); ok {
 		if vd, ok := v.(a.Documented); ok {
 			docStr := vd.Documentation()
