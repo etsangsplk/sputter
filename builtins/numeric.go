@@ -130,9 +130,9 @@ func (*eqFunction) Apply(c a.Context, args a.Sequence) a.Value {
 }
 
 func (*neqFunction) Apply(c a.Context, args a.Sequence) a.Value {
-	return compare(c, args, func(p a.Number, n a.Number) bool {
+	return !compare(c, args, func(p a.Number, n a.Number) bool {
 		return p.Cmp(n) == a.EqualTo
-	}).Not()
+	})
 }
 
 func (*gtFunction) Apply(c a.Context, args a.Sequence) a.Value {

@@ -20,8 +20,8 @@ type (
 		Str() Str
 	}
 
-	// ValueProcessor is the standard ReflectedFunction interface for a func that
-	// processes a Value against a Context (example: Emit)
+	// ValueProcessor is the standard ReflectedFunction interface for a func
+	// that processes a Value against a Context (example: Emit)
 	ValueProcessor func(Context, Value) Value
 
 	// Comparison represents the result of a equality comparison
@@ -101,14 +101,6 @@ func (b Bool) Apply(_ Context, args Sequence) Value {
 		if f != b {
 			return False
 		}
-	}
-	return True
-}
-
-// Not inverts the Bool's value
-func (b Bool) Not() Bool {
-	if b == True {
-		return False
 	}
 	return True
 }

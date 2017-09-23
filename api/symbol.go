@@ -102,14 +102,6 @@ func (s *qualifiedSymbol) Str() Str {
 func (s *qualifiedSymbol) SymbolType()          {}
 func (s *qualifiedSymbol) QualifiedSymbolType() {}
 
-func (s *localSymbol) Resolve(c Context) (Value, bool) {
-	n := s.name
-	if r, ok := c.Get(n); ok {
-		return r, true
-	}
-	return GetContextNamespace(c).Get(n)
-}
-
 func (s *localSymbol) Name() Name {
 	return s.name
 }
@@ -124,6 +116,14 @@ func (s *localSymbol) Qualified() Name {
 
 func (s *localSymbol) Namespace(c Context) Namespace {
 	return GetContextNamespace(c)
+}
+
+func (s *localSymbol) Resolve(c Context) (Value, bool) {
+	n := s.name
+	if r, ok := c.Get(n); ok {
+		return r, true
+	}
+	return GetContextNamespace(c).Get(n)
 }
 
 func (s *localSymbol) Eval(c Context) Value {
