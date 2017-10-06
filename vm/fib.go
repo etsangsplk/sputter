@@ -14,23 +14,21 @@ func init() {
 		LocalsSize:   16,
 		Data:         nil,
 		Instructions: []Instruction{
-			{OpCode: Const, Op1: 1},             //  0: push eq
 			{OpCode: Load, Op1: Args},           //  1: load args
 			{OpCode: First},                     //  2: take first arg
 			{OpCode: Dup},                       //  3: duplicate it
 			{OpCode: Store, Op1: Variables + 0}, //  4: store dup into var 0
 			{OpCode: Zero},                      //  5: push 0
 			{OpCode: Eq},                        //  6: eq
-			{OpCode: CondJump, Op1: 29},         //  7: goto 'return 0'
-			{OpCode: Const, Op1: 1},             //  8: push eq
+			{OpCode: CondJump, Op1: 27},         //  7: goto 'return 0'
 			{OpCode: Load, Op1: Variables + 0},  //  9: load var 0
 			{OpCode: One},                       // 10: push 1
 			{OpCode: Eq},                        // 11: eq
-			{OpCode: CondJump, Op1: 31},         // 12: goto 'return 1'
+			{OpCode: CondJump, Op1: 29},         // 12: goto 'return 1'
 			{OpCode: Load, Op1: Variables + 0},  // 13: load var 0
 			{OpCode: Const, Op1: 1},             // 14: push 2
 			{OpCode: Eq},                        // 15: eq
-			{OpCode: CondJump, Op1: 31},         // 16: goto 'return 1'
+			{OpCode: CondJump, Op1: 29},         // 16: goto 'return 1'
 			{OpCode: Const, Op1: 0},             // 17: push fib
 			{OpCode: One},                       // 18: push 1
 			{OpCode: Load, Op1: Variables + 0},  // 19: load var 0
