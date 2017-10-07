@@ -49,6 +49,7 @@ const (
 	Jump
 	Return
 	Panic
+	Label
 )
 
 // These are the default positions for certain locals

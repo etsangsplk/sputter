@@ -15,13 +15,16 @@ type (
 		Op2    uint
 	}
 
+	// Instructions represents multiple VM instructions
+	Instructions []Instruction
+
 	// Module is the basic translation unit for the VM
 	Module struct {
 		a.BaseFunction
 		LocalsSize   uint
 		StackSize    uint
 		Data         a.Values
-		Instructions []Instruction
+		Instructions Instructions
 	}
 )
 
