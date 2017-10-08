@@ -1,7 +1,7 @@
-# Sputter (a Lisp Interpreter)
+# Sputter (a Lisp Experiment)
 [![Go Report Card](https://goreportcard.com/badge/github.com/kode4food/sputter)](https://goreportcard.com/report/github.com/kode4food/sputter) [![Build Status](https://travis-ci.org/kode4food/sputter.svg?branch=master)](https://travis-ci.org/kode4food/sputter) [![Coverage Status](https://coveralls.io/repos/github/kode4food/sputter/badge.svg?branch=master)](https://coveralls.io/github/kode4food/sputter?branch=master)
 
-Sputter is a simple Lisp Interpreter written in
+Sputter is a simple Lisp Environment written in
 [Go](https://golang.org/). Basically, it's just me having some fun
 and trying to improve my Go skills. That means you're unlikely to
 find something you'd want to use in production here. On the other
@@ -16,7 +16,7 @@ package.
 go get github.com/kode4food/sputter
 ```
 
-## How To Invoke The Interpreter
+## How To Run A Source File
 Once you've installed the package, you can run it from `GOPATH/bin`
 like so:
 
@@ -28,7 +28,7 @@ sputter somefile.lisp
 cat somefile.lisp | sputter
 ```
 
-## How To Invoke The REPL
+## How To Start The REPL
 Sputter has a very crude Read-Eval-Print Loop that will be more than
 happy to start if you call it with no arguments from the terminal:
 
