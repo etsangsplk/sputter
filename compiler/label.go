@@ -1,6 +1,9 @@
-package vm
+package compiler
 
-import a "github.com/kode4food/sputter/api"
+import (
+	a "github.com/kode4food/sputter/api"
+	"github.com/kode4food/sputter/vm"
+)
 
 const (
 	// UnknownLabel is raised when a jump is attempted to an unknown label
@@ -10,10 +13,15 @@ const (
 	DuplicatedLabel = "duplicated label: %s"
 )
 
-type labelMap map[uint]uint
+type (
+	// InstructionsProcessor transforms a set of Instructions
+	InstructionsProcessor func(vm.Instructions) vm.Instructions
+
+	labelMap map[uint]uint
+)
 
 // RemoveLabels processes Instructions, turning Labels into Jump indexes
-func RemoveLabels(inst Instructions) Instructions {
+func RemoveLabels(inst vm.Instructions) vm.Instructions {
 	if m, ok := gatherLabels(inst); ok {
 		inst = stripLabels(inst, m)
 		return rewriteJumps(inst, m)
@@ -21,11 +29,11 @@ func RemoveLabels(inst Instructions) Instructions {
 	return inst
 }
 
-func gatherLabels(inst Instructions) (labelMap, bool) {
+func gatherLabels(inst vm.Instructions) (labelMap, bool) {
 	m := labelMap{}
 	i := uint(0)
 	for _, e := range inst {
-		if e.OpCode != Label {
+		if e.OpCode != vm.Label {
 			i++
 			continue
 		}
@@ -37,11 +45,11 @@ func gatherLabels(inst Instructions) (labelMap, bool) {
 	return m, len(m) > 0
 }
 
-func stripLabels(inst Instructions, m labelMap) Instructions {
-	r := make(Instructions, len(inst)-len(m))
+func stripLabels(inst vm.Instructions, m labelMap) vm.Instructions {
+	r := make(vm.Instructions, len(inst)-len(m))
 	i := 0
 	for _, e := range inst {
-		if e.OpCode == Label {
+		if e.OpCode == vm.Label {
 			continue
 		}
 		r[i] = e
@@ -50,12 +58,12 @@ func stripLabels(inst Instructions, m labelMap) Instructions {
 	return r
 }
 
-func rewriteJumps(inst Instructions, m labelMap) Instructions {
-	r := make(Instructions, len(inst))
+func rewriteJumps(inst vm.Instructions, m labelMap) vm.Instructions {
+	r := make(vm.Instructions, len(inst))
 	for i, e := range inst {
-		if e.OpCode == Jump || e.OpCode == CondJump {
+		if e.OpCode == vm.Jump || e.OpCode == vm.CondJump {
 			if addr, ok := m[e.Op1]; ok {
-				e = Instruction{
+				e = vm.Instruction{
 					OpCode: e.OpCode,
 					Op1:    addr,
 				}
