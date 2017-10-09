@@ -37,7 +37,7 @@
 
 (defmacro with-open [bindings & body]
   (assert-args
-    (paired-vector? bindings) "with-open bindings must be a paired vector")
+    (paired-vector? bindings) "with-open bindings must be a key-value vector")
   (cond
     (= (len bindings) 0)
       `(sputter:do ~@body)

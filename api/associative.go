@@ -4,7 +4,7 @@ import "bytes"
 
 const (
 	// ExpectedPair is thrown if you prepend to a Map incorrectly
-	ExpectedPair = "expected two element vectors when prepending"
+	ExpectedPair = "expected a key-value pair"
 
 	// KeyNotFound is thrown if a Key is not found in a Mapped item
 	KeyNotFound = "key not found: %s"
@@ -89,8 +89,7 @@ func (a associative) Split() (Value, Sequence, bool) {
 }
 
 func (a associative) Prepend(v Value) Sequence {
-	if mp, ok := v.(Vector); ok {
-		AssertArity(mp, 2)
+	if mp, ok := v.(Vector); ok && mp.Count() == 2 {
 		return append(associative{mp}, a...)
 	}
 	panic(ErrStr(ExpectedPair))
