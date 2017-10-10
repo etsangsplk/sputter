@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/kode4food/readline"
+	"github.com/chzyer/readline"
 	a "github.com/kode4food/sputter/api"
 	d "github.com/kode4food/sputter/docstring"
 	e "github.com/kode4food/sputter/evaluator"

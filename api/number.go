@@ -220,7 +220,7 @@ func (r *rat) Float64() (float64, bool) {
 }
 
 func (d *dec) Str() Str {
-	return Str((*apd.Decimal)(d).ToStandard())
+	return Str((*apd.Decimal)(d).Text('f'))
 }
 
 func (r *rat) Str() Str {

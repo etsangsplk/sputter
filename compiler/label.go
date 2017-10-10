@@ -13,12 +13,7 @@ const (
 	DuplicatedLabel = "duplicated label: %s"
 )
 
-type (
-	// InstructionsProcessor transforms a set of Instructions
-	InstructionsProcessor func(vm.Instructions) vm.Instructions
-
-	labelMap map[uint]uint
-)
+type labelMap map[uint]uint
 
 // RemoveLabels processes Instructions, turning Labels into Jump indexes
 func RemoveLabels(inst vm.Instructions) vm.Instructions {
