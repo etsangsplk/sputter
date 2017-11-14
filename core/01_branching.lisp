@@ -5,6 +5,12 @@
   [val]
   `(if ~val false true))
 
+(defmacro unless
+  {:doc "logically inverts the results of an 'if' function"}
+  ([test]           nil)
+  ([test then]      `(if ~test nil ~then))
+  ([test then else] `(if ~test ~else ~then)))
+
 (defmacro when
   {:doc-asset "when"}
   ([test]         nil)
@@ -34,6 +40,11 @@
     `(let [and# ~(clauses 0)]
       (if and# (sputter:and ~@(rest clauses)) and#))))
 
+(defmacro !and
+  {:doc-asset "and"}
+  [& clauses]
+  `(sputter:not (sputter:and ~@clauses)))
+
 (defmacro or
   {:doc-asset "or"}
   ([]       nil)
@@ -41,3 +52,8 @@
   ([& clauses]
     `(let [or# ~(clauses 0)]
       (if or# or# (sputter:or ~@(rest clauses))))))
+
+(defmacro !or
+  {:doc-asset "or"}
+  [& clauses]
+  `(sputter:not (sputter:or ~@clauses)))

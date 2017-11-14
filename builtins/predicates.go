@@ -6,6 +6,8 @@ const (
 	isIdenticalName = "eq"
 	isNilName       = "nil?"
 	isKeywordName   = "keyword?"
+	isSymbolName    = "symbol?"
+	isLocalName     = "local?"
 )
 
 // PredicateKey identifies a Function as being a predicate
@@ -80,9 +82,25 @@ func isKeyword(v a.Value) bool {
 	return false
 }
 
+func isSymbol(v a.Value) bool {
+	if _, ok := v.(a.Symbol); ok {
+		return true
+	}
+	return false
+}
+
+func isLocal(v a.Value) bool {
+	if _, ok := v.(a.LocalSymbol); ok {
+		return true
+	}
+	return false
+}
+
 func init() {
 	RegisterPredicate(isIdenticalName, isIdentical)
 
 	RegisterSequencePredicate(isNilName, isNil)
 	RegisterSequencePredicate(isKeywordName, isKeyword)
+	RegisterSequencePredicate(isSymbolName, isSymbol)
+	RegisterSequencePredicate(isLocalName, isLocal)
 }

@@ -66,6 +66,8 @@ type (
 		Get(Value) (Value, bool)
 	}
 
+	// Associable
+
 	// Indexed is the interface for Values that have indexed elements
 	Indexed interface {
 		ElementAt(int) (Value, bool)
@@ -128,10 +130,8 @@ func (n *nilValue) Str() Str {
 
 // Truthy evaluates whether or not a Value is Truthy
 func Truthy(v Value) bool {
-	switch {
-	case v == False || v == Nil:
+	if v == False || v == Nil {
 		return false
-	default:
-		return true
 	}
+	return true
 }

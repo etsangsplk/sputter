@@ -38,6 +38,10 @@
 (def-builtin !nil? :doc-asset "is-nil")
 (def-builtin keyword?)
 (def-builtin !keyword?)
+(def-builtin symbol?)
+(def-builtin !symbol?)
+(def-builtin local?)
+(def-builtin !local?)
 
 ;; strings
 
