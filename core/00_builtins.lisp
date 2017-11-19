@@ -22,6 +22,7 @@
 (def-builtin macroexpand-all :special-form true)
 (def-builtin quote           :doc-asset "quote" :macro true :special-form true)
 (def-builtin syntax-quote    :macro true)
+(def-builtin gensym)
 (def-builtin macro?)
 (def-builtin !macro?)
 
@@ -146,8 +147,9 @@
 
 ;; panic and recover
 
-(def-builtin make-recover :special-form true)
 (def-builtin panic)
+(def-builtin raise)
+(def-builtin recover :special-form true)
 
 ;; current time
 (def-builtin current-time)

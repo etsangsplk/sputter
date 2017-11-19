@@ -1,9 +1,7 @@
 package builtins
 
 import (
-	"fmt"
 	"strings"
-	"sync/atomic"
 
 	a "github.com/kode4food/sputter/api"
 )
@@ -16,8 +14,6 @@ const (
 	syntaxQuoteName     = "syntax-quote"
 	unquoteName         = "unquote"
 	unquoteSplicingName = "unquote-splicing"
-
-	genSymTemplate = "x-%s-gensym-%d"
 )
 
 type (
@@ -37,8 +33,6 @@ var (
 	assocSym  = a.NewBuiltInSymbol(assocName)
 	applySym  = a.NewBuiltInSymbol(applyName)
 	concatSym = a.NewBuiltInSymbol(concatName)
-
-	genSymIncrement uint64
 )
 
 func (sc *syntaxContext) quote(v a.Value) a.Value {
@@ -76,9 +70,7 @@ func (sc *syntaxContext) generateSymbol(s a.Symbol) (a.Symbol, bool) {
 		return r, true
 	}
 
-	idx := atomic.AddUint64(&genSymIncrement, 1)
-	q := fmt.Sprintf(genSymTemplate, n[0:len(n)-1], idx)
-	r := a.NewLocalSymbol(a.Name(q))
+	r := a.NewGeneratedSymbol(a.Name(n[0 : len(n)-1]))
 	sc.genSyms[n] = r
 	return r, true
 }

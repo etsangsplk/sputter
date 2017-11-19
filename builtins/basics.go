@@ -7,7 +7,8 @@ import (
 
 const (
 	panicName   = "panic"
-	recoverName = "make-recover"
+	raiseName   = "raise"
+	recoverName = "recover"
 	doName      = "do"
 	readName    = "read"
 	evalName    = "eval"
@@ -15,6 +16,7 @@ const (
 
 type (
 	panicFunction   struct{ BaseBuiltIn }
+	raiseFunction   struct{ BaseBuiltIn }
 	recoverFunction struct{ BaseBuiltIn }
 	doFunction      struct{ BaseBuiltIn }
 	readFunction    struct{ BaseBuiltIn }
@@ -26,12 +28,19 @@ func (*panicFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	panic(a.Err(p))
 }
 
+func (*raiseFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+	a.AssertArity(args, 1)
+	panic(args.First().(a.Error))
+}
+
 func (*recoverFunction) Apply(c a.Context, args a.Sequence) (res a.Value) {
 	a.AssertArity(args, 2)
 
 	defer func() {
-		post := a.Eval(c, args.Rest().First()).(a.Applicable)
-		res = post.Apply(c, a.Values{res, recover().(a.Value)})
+		if rec := recover(); rec != nil {
+			post := a.Eval(c, args.Rest().First()).(a.Applicable)
+			res = post.Apply(c, a.Values{rec.(a.Value)})
+		}
 	}()
 
 	return a.Eval(c, args.First())
@@ -60,12 +69,14 @@ func (*evalFunction) Apply(c a.Context, args a.Sequence) a.Value {
 
 func init() {
 	var _panic *panicFunction
+	var raise *raiseFunction
 	var _recover *recoverFunction
 	var do *doFunction
 	var read *readFunction
 	var eval *evalFunction
 
 	RegisterBuiltIn(panicName, _panic)
+	RegisterBuiltIn(raiseName, raise)
 	RegisterBuiltIn(recoverName, _recover)
 	RegisterBuiltIn(doName, do)
 	RegisterBuiltIn(readName, read)

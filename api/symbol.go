@@ -1,9 +1,17 @@
 package api
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+	"sync/atomic"
+)
 
-// UnknownSymbol is thrown if a symbol cannot be resolved
-const UnknownSymbol = "symbol has not been defined: %s"
+const (
+	// UnknownSymbol is thrown if a symbol cannot be resolved
+	UnknownSymbol = "symbol has not been defined: %s"
+
+	genSymTemplate = "x-%s-gensym-%d"
+)
 
 type (
 	// Symbol is a qualified identifier that can be resolved
@@ -40,6 +48,8 @@ type (
 	}
 )
 
+var genSymIncrement uint64
+
 // NewQualifiedSymbol returns a Qualified Symbol for a specific domain
 func NewQualifiedSymbol(name Name, domain Name) Symbol {
 	ns := GetNamespace(domain)
@@ -54,6 +64,13 @@ func NewBuiltInSymbol(name Name) Symbol {
 // NewLocalSymbol returns a Symbol from the local domain
 func NewLocalSymbol(name Name) Symbol {
 	return NewQualifiedSymbol(name, LocalDomain)
+}
+
+// NewGeneratedSymbol creates a generated Symbol
+func NewGeneratedSymbol(name Name) Symbol {
+	idx := atomic.AddUint64(&genSymIncrement, 1)
+	q := fmt.Sprintf(genSymTemplate, name, idx)
+	return NewLocalSymbol(Name(q))
 }
 
 // ParseSymbol parses a qualified Name and produces a Symbol
