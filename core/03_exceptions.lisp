@@ -17,14 +17,14 @@
 (defn is-catch
   {:private true}
   [clause parsed]
-  (and (sputter:is-call 'catch clause)
-       (sputter:is-catch-binding (nth clause 1))
+  (and (is-call 'catch clause)
+       (is-catch-binding (nth clause 1))
        (!seq? (:block parsed))))
 
 (defn is-finally
   {:private true}
   [clause parsed]
-  (and (sputter:is-call 'finally clause)
+  (and (is-call 'finally clause)
        (!seq? (:finally parsed))
        (!seq? (:catch parsed))
        (!seq? (:block parsed))))
@@ -32,8 +32,8 @@
 (defn is-expr
   {:private true}
   [clause parsed]
-  (!or (sputter:is-call 'catch clause)
-       (sputter:is-call 'finally clause)))
+  (!or (is-call 'catch clause)
+       (is-call 'finally clause)))
 
 (defn try-prepend
   {:private true}
@@ -80,17 +80,16 @@
   {:private true}
   [clauses]
   (let [err (gensym "err")]
-  `(sputter:lambda [~err]
-    (sputter:cond
+  `(lambda [~err]
+    (cond
       ~@(apply list (try-catch-clause clauses err))
       :else [true ~err]))))
 
 (defmacro try
   [& clauses]
   (let [parsed# (try-parse clauses)]
-    `(let [rec# (sputter:recover
-                  [false (do ~@(:block parsed#))]
-                  ~(try-catch (:catch parsed#)))
+    `(let [rec# (recover [false (do ~@(:block parsed#))]
+                         ~(try-catch (:catch parsed#)))
            err# (rec# 0)
            res# (rec# 1)]
       (do ~@(rest (:finally parsed#)))

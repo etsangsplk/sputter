@@ -17,10 +17,10 @@
 
 (defmacro range
   {:doc-asset "range"}
-  ([]             `(sputter:make-range 0 sputter:inf 1))
-  ([max]          `(sputter:make-range 0 ~max 1))
-  ([min max]      `(sputter:make-range ~min ~max 1))
-  ([min max step] `(sputter:make-range ~min ~max ~step)))
+  ([]             `(make-range 0 inf 1))
+  ([max]          `(make-range 0 ~max 1))
+  ([min max]      `(make-range ~min ~max 1))
+  ([min max step] `(make-range ~min ~max ~step)))
 
 (defmacro lazy-seq
   {:doc-asset "lazy-seq"}

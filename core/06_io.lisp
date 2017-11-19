@@ -40,7 +40,7 @@
     (paired-vector? bindings) "with-open bindings must be a key-value vector")
   (cond
     (= (len bindings) 0)
-      `(sputter:do ~@body)
+      `(do ~@body)
     (>= (len bindings) 2)
       `(let [~(bindings 0) ~(bindings 1),
              close# (get ~(bindings 0) :close nil),

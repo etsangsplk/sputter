@@ -43,7 +43,7 @@
 (defmacro !and
   {:doc-asset "and"}
   [& clauses]
-  `(sputter:not (sputter:and ~@clauses)))
+  `(not (and ~@clauses)))
 
 (defmacro or
   {:doc-asset "or"}
@@ -56,4 +56,4 @@
 (defmacro !or
   {:doc-asset "or"}
   [& clauses]
-  `(sputter:not (sputter:or ~@clauses)))
+  `(not (or ~@clauses)))
