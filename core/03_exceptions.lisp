@@ -97,10 +97,12 @@
 
 (defmacro try
   [& clauses]
-  (let [parsed# (try-parse clauses)]
-    `(let [rec# (recover [false (do ~@(:block parsed#))]
-                         ~(try-catch (:catch parsed#)))
+  (let [parsed#  (try-parse clauses)
+        block#   (:block parsed#)
+        catches# (:catch parsed#)
+        finally# (rest (first (:finally parsed#)))]
+    `(let [rec# (recover [false (do ~@block#)] ~(try-catch catches#))
            err# (rec# 0)
            res# (rec# 1)]
-      (do ~@(rest (:finally parsed#)))
+      (do ~@finally#)
       (if err# (raise res#) res#))))

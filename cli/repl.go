@@ -270,14 +270,17 @@ func isEmptyString(s string) bool {
 	return len(strings.TrimSpace(s)) == 0
 }
 
-func toError(v interface{}) error {
-	if v == nil {
+func toError(i interface{}) error {
+	if i == nil {
 		return nil
 	}
-	if e, ok := v.(error); ok {
+	if e, ok := i.(error); ok {
 		return e
 	}
-	return a.ErrStr(fmt.Sprintf("non-standard error: %s", v))
+	if v, ok := i.(a.Value); ok {
+		return a.ErrStr(string(v.Str()))
+	}
+	panic(fmt.Sprintf("non-standard error: %s", i))
 }
 
 func isRecoverable(err error) bool {

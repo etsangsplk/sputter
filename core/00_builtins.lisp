@@ -22,9 +22,9 @@
 (def-builtin macroexpand-all :special-form true)
 (def-builtin quote           :doc-asset "quote" :macro true :special-form true)
 (def-builtin syntax-quote    :macro true)
-(def-builtin gensym)
 (def-builtin macro?)
 (def-builtin !macro?)
+(def-builtin gensym)
 
 ;; namespaces
 
@@ -152,4 +152,5 @@
 (def-builtin recover :special-form true)
 
 ;; current time
+
 (def-builtin current-time)
