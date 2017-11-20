@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	panicName   = "panic"
+	errorName   = "make-error"
 	raiseName   = "raise"
 	recoverName = "recover"
 	doName      = "do"
@@ -15,7 +15,7 @@ const (
 )
 
 type (
-	panicFunction   struct{ BaseBuiltIn }
+	errorFunction   struct{ BaseBuiltIn }
 	raiseFunction   struct{ BaseBuiltIn }
 	recoverFunction struct{ BaseBuiltIn }
 	doFunction      struct{ BaseBuiltIn }
@@ -23,14 +23,14 @@ type (
 	evalFunction    struct{ BaseBuiltIn }
 )
 
-func (*panicFunction) Apply(_ a.Context, args a.Sequence) a.Value {
-	p := toProperties(a.SequenceToAssociative(args))
-	panic(a.Err(p))
+func (*errorFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+	a.AssertArity(args, 1)
+	return a.Err(toProperties(args.First().(a.Associative)))
 }
 
 func (*raiseFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 1)
-	panic(args.First().(a.Error))
+	panic(args.First())
 }
 
 func (*recoverFunction) Apply(c a.Context, args a.Sequence) (res a.Value) {
@@ -68,14 +68,14 @@ func (*evalFunction) Apply(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	var _panic *panicFunction
+	var _error *errorFunction
 	var raise *raiseFunction
 	var _recover *recoverFunction
 	var do *doFunction
 	var read *readFunction
 	var eval *evalFunction
 
-	RegisterBuiltIn(panicName, _panic)
+	RegisterBuiltIn(errorName, _error)
 	RegisterBuiltIn(raiseName, raise)
 	RegisterBuiltIn(recoverName, _recover)
 	RegisterBuiltIn(doName, do)

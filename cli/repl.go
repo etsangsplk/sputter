@@ -277,7 +277,7 @@ func toError(v interface{}) error {
 	if e, ok := v.(error); ok {
 		return e
 	}
-	panic(fmt.Sprintf("non-standard error: %s", v))
+	return a.ErrStr(fmt.Sprintf("non-standard error: %s", v))
 }
 
 func isRecoverable(err error) bool {

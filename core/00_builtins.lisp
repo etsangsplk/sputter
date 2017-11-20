@@ -145,9 +145,9 @@
 (def-builtin drop          :doc-asset "drop")
 (def-builtin make-range)
 
-;; panic and recover
+;; raise and recover
 
-(def-builtin panic)
+(def-builtin make-error)
 (def-builtin raise)
 (def-builtin recover :special-form true)
 

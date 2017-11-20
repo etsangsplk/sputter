@@ -1,5 +1,13 @@
 ;;;; sputter core: exceptions
 
+(defmacro error
+  [& clauses]
+  `(make-error (assoc ~@clauses)))
+
+(defmacro panic
+  [& clauses]
+  `(raise (error ~@clauses)))
+
 (defn is-call
   {:private true}
   [sym clause]
@@ -55,11 +63,12 @@
         :else            (panic :message "malformed try-catch-finally")))))
 
 (defn try-catch-branch
+  {:private true}
   [clauses errSym]
-  (let [clause (first clauses)
-        var    ((clause 1) 1)
-        expr   (rest (rest clause))]
-    (make-lazy-seq
+  (make-lazy-seq
+    (let [clause (first clauses)
+          var    ((clause 1) 1)
+          expr   (rest (rest clause))]
       (cons
         (list 'sputter:let
               [var errSym]
@@ -67,11 +76,12 @@
         (try-catch-clause (rest clauses) errSym)))))
 
 (defn try-catch-clause
+  {:private true}
   [clauses errSym]
-  (let [clause (first clauses)
-        pred   ((clause 1) 0)]
-    (make-lazy-seq
-      (when (seq? clauses)
+  (make-lazy-seq
+    (when (seq? clauses)
+      (let [clause (first clauses)
+            pred   ((clause 1) 0)]
         (cons
           (list pred errSym)
           (try-catch-branch clauses errSym))))))
