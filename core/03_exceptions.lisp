@@ -64,36 +64,36 @@
 
 (defn try-catch-branch
   {:private true}
-  [clauses errSym]
+  [clauses err-sym]
   (make-lazy-seq
     (let [clause (first clauses)
           var    ((clause 1) 1)
           expr   (rest (rest clause))]
       (cons
         (list 'sputter:let
-              [var errSym]
+              [var err-sym]
               [false (cons 'sputter:do expr)])
-        (try-catch-clause (rest clauses) errSym)))))
+        (try-catch-clause (rest clauses) err-sym)))))
 
 (defn try-catch-clause
   {:private true}
-  [clauses errSym]
+  [clauses err-sym]
   (make-lazy-seq
     (when (seq? clauses)
       (let [clause (first clauses)
             pred   ((clause 1) 0)]
         (cons
-          (list pred errSym)
-          (try-catch-branch clauses errSym))))))
+          (list pred err-sym)
+          (try-catch-branch clauses err-sym))))))
 
 (defn try-catch
   {:private true}
   [clauses]
   (let [err (gensym "err")]
-  `(lambda [~err]
-    (cond
-      ~@(apply list (try-catch-clause clauses err))
-      :else [true ~err]))))
+    `(lambda [~err]
+      (cond
+        ~@(apply list (try-catch-clause clauses err))
+        :else [true ~err]))))
 
 (defmacro try
   [& clauses]

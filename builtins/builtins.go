@@ -60,7 +60,9 @@ func newBuiltInWithBase(t reflect.Type, b a.BaseFunction) a.Function {
 
 // RegisterFunction registers a built-in Function by Name
 func RegisterFunction(n a.Name, f a.Function) {
-	builtInFuncs[n] = f
+	builtInFuncs[n] = f.WithMetadata(a.Properties{
+		a.NameKey: n,
+	}).(a.Function)
 }
 
 // RegisterBuiltIn registers a Base-derived Function by Name
