@@ -97,6 +97,8 @@
 
 (defmacro try
   [& clauses]
+  (assert-args
+    (seq? clauses) "try-catch-finally requires at least one clause")
   (let [parsed#  (try-parse clauses)
         block#   (:block parsed#)
         catches# (:catch parsed#)
