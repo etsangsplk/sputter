@@ -26,6 +26,9 @@ var (
 	// Namespace is a special Namespace for built-in identifiers
 	Namespace = a.GetNamespace(a.BuiltInDomain)
 
+	// BuiltInKey is the Metadata key for a built-in Function
+	BuiltInKey = a.NewKeyword("built-in")
+
 	builtInFuncs = map[a.Name]a.Function{}
 
 	baseZeroValue BaseBuiltIn
@@ -35,7 +38,10 @@ var (
 // MakeBuiltIn uses reflection to instantiate a built-in Function
 func MakeBuiltIn(f BuiltInFunction) a.Function {
 	t := reflect.TypeOf(f).Elem()
-	return newBuiltInWithBase(t, a.DefaultBaseFunction)
+	b := newBuiltInWithBase(t, a.DefaultBaseFunction)
+	return b.WithMetadata(a.Properties{
+		BuiltInKey: a.True,
+	}).(a.Function)
 }
 
 // BuiltInType returns whether or not this Function is a built-in
@@ -107,7 +113,9 @@ func defBuiltIn(c a.Context, args a.Sequence) a.Value {
 func init() {
 	Namespace.Put(defBuiltInName,
 		a.NewExecFunction(defBuiltIn).WithMetadata(a.Properties{
+			a.NameKey:    a.Name(defBuiltInName),
 			a.SpecialKey: a.True,
+			BuiltInKey:   a.True,
 		}),
 	)
 }
