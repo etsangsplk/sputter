@@ -65,6 +65,8 @@
 (defn try-catch-branch
   {:private true}
   [clauses err-sym]
+  (assert-args
+    (seq? clauses) "catch branch not paired")
   (make-lazy-seq
     (let [clause (first clauses)
           var    ((clause 1) 1)
@@ -95,6 +97,13 @@
         ~@(apply list (try-catch-clause clauses err))
         :else [true ~err]))))
 
+(defn try-finally
+  {:private true}
+  [clauses]
+  (map
+    (lambda [clause] (first (rest clause)))
+    clauses))
+
 (defmacro try
   [& clauses]
   (assert-args
@@ -102,9 +111,9 @@
   (let [parsed#  (try-parse clauses)
         block#   (:block parsed#)
         catches# (:catch parsed#)
-        finally# (rest (first (:finally parsed#)))]
+        finally# (:finally parsed#)]
     `(let [rec# (recover [false (do ~@block#)] ~(try-catch catches#))
            err# (rec# 0)
            res# (rec# 1)]
-      (do ~@finally#)
+      ~@(try-finally finally#)
       (if err# (raise res#) res#))))
