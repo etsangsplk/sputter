@@ -30,6 +30,7 @@
 
 (def-builtin with-ns :doc-asset "with-ns" :special-form true)
 (def-builtin ns      :doc-asset "ns"      :special-form true)
+(def-builtin ns-put)
 
 ;; basic predicates
 
