@@ -1,5 +1,5 @@
-# (ns name) returns a namespace
-Will return a namespace context based on its name. If the namespace does not already exist, it will be created before being returned.
+# (ns name?) returns a namespace
+Will return a namespace context based on its name. If the namespace does not already exist, it will be created before being returned. If no name is provided, the current namespace will be returned.
 
 ## An Example
 

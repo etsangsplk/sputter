@@ -26,8 +26,10 @@ func (*withNamespaceFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	return a.MakeBlock(r).Eval(sc)
 }
 
-func (*getNamespaceFunction) Apply(_ a.Context, args a.Sequence) a.Value {
-	a.AssertArity(args, 1)
+func (*getNamespaceFunction) Apply(c a.Context, args a.Sequence) a.Value {
+	if a.AssertArityRange(args, 0, 1) == 0 {
+		return a.GetContextNamespace(c)
+	}
 	n := args.First().(a.LocalSymbol).Name()
 	return a.GetNamespace(n)
 }
@@ -36,11 +38,11 @@ func (*namespacePutFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 3)
 
 	f, r, _ := args.Split()
-	ns := f.(a.Namespace)
+	ns := a.Eval(c, f).(a.Namespace)
 
 	f, r, _ = r.Split()
 	n := f.(a.LocalSymbol).Name()
-	ns.Put(n, r.First())
+	ns.Put(n, a.Eval(c, r.First()))
 	return f
 }
 

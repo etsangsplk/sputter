@@ -18,12 +18,9 @@ type (
 var nsPut = new(namespacePutFunction)
 
 func (*defFunction) Apply(c a.Context, args a.Sequence) a.Value {
-	a.AssertMinimumArity(args, 2)
+	a.AssertArity(args, 2)
 	ns := a.GetContextNamespace(c)
-	f, r, _ := args.Split()
-	n := f.(a.LocalSymbol)
-	v := a.Eval(c, r.First())
-	return nsPut.Apply(c, a.Values{ns, n, v})
+	return nsPut.Apply(c, args.Prepend(ns))
 }
 
 func (*letFunction) Apply(c a.Context, args a.Sequence) a.Value {

@@ -1,6 +1,5 @@
 ;;;; sputter core: builtins
 
-(def-builtin def  :doc-asset "def" :special-form true)
 (def-builtin if   :doc-asset "if"  :special-form true)
 (def-builtin let  :doc-asset "let" :special-form true)
 (def-builtin do   :doc-asset "do"  :special-form true)
@@ -30,7 +29,7 @@
 
 (def-builtin with-ns :doc-asset "with-ns" :special-form true)
 (def-builtin ns      :doc-asset "ns"      :special-form true)
-(def-builtin ns-put)
+(def-builtin ns-put  :special-form true)
 
 ;; basic predicates
 
