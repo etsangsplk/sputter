@@ -6,7 +6,7 @@
   `(if ~val false true))
 
 (defmacro unless
-  {:doc "logically inverts the results of an 'if' function"}
+  {:doc-asset "if"}
   ([test]           nil)
   ([test then]      `(if ~test nil ~then))
   ([test then else] `(if ~test ~else ~then)))

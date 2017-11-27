@@ -8,3 +8,5 @@ If the evaluated predicate is truthy (not false, not nil), the 'then' form is ev
   (if (> (len x) 3)
     "x is big"
     "x is small")
+
+If the symbol `unless` is used instead of `if`, then the logical branching will be inverted.
