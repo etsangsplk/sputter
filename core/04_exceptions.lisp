@@ -68,8 +68,8 @@
   (assert-args
     (seq? clauses) "catch branch not paired")
   (make-lazy-seq
-    (let [clause (first clauses)
-          var    ((clause 1) 1)
+    (let [clause (first clauses),
+          var    ((clause 1) 1),
           expr   (rest (rest clause))]
       (cons
         (list 'sputter:let
@@ -82,7 +82,7 @@
   [clauses err-sym]
   (make-lazy-seq
     (when (seq? clauses)
-      (let [clause (first clauses)
+      (let [clause (first clauses),
             pred   ((clause 1) 0)]
         (cons
           (list pred err-sym)
@@ -108,12 +108,12 @@
   [& clauses]
   (assert-args
     (seq? clauses) "try-catch-finally requires at least one clause")
-  (let [parsed#  (try-parse clauses)
-        block#   (:block parsed#)
-        catches# (:catch parsed#)
+  (let [parsed#  (try-parse clauses),
+        block#   (:block parsed#),
+        catches# (:catch parsed#),
         finally# (:finally parsed#)]
-    `(let [rec# (recover [false (do ~@block#)] ~(try-catch catches#))
-           err# (rec# 0)
+    `(let [rec# (recover [false (do ~@block#)] ~(try-catch catches#)),
+           err# (rec# 0),
            res# (rec# 1)]
       ~@(try-finally finally#)
       (if err# (raise res#) res#))))

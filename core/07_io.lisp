@@ -19,8 +19,7 @@
   (. sputter:*stdout* :write *newline*))
 
 (defn print [& forms]
-  (let [seq (pr-map-with-nil,
-        str forms)]
+  (let [seq (pr-map-with-nil str forms)]
     (if (seq? seq)
       (. sputter:*stdout* :write (first seq)))
     (for-each [elem (rest seq)]
