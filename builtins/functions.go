@@ -251,21 +251,17 @@ func parseFunctionSignatures(s a.Sequence) functionSignatures {
 }
 
 func makeFunction(c a.Context, d *functionDefinition) a.Function {
-	var res a.Function
-
 	if len(d.sigs) > 1 {
-		res = makeMultiFunction(c, d)
-	} else {
-		res = makeSingleFunction(c, d)
+		return makeMultiFunction(c, d)
 	}
-	return res.WithMetadata(d.meta).(a.Function)
+	return makeSingleFunction(c, d)
 }
 
 func makeSingleFunction(c a.Context, d *functionDefinition) a.Function {
 	s := d.sigs[0]
 
 	f := &singleFunction{
-		BaseFunction: a.DefaultBaseFunction,
+		BaseFunction: a.DefaultBaseFunction.Extend(d.meta),
 		args:         string(s.args.Str()),
 	}
 
@@ -284,7 +280,7 @@ func makeMultiFunction(c a.Context, d *functionDefinition) a.Function {
 	ls := len(sigs)
 
 	f := &multiFunction{
-		BaseFunction: a.DefaultBaseFunction,
+		BaseFunction: a.DefaultBaseFunction.Extend(d.meta),
 	}
 
 	n := a.ChildContextVars(c, a.Variables{

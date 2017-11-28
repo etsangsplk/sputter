@@ -5,37 +5,38 @@
   [target]
   (unless (list? target) (list target) target))
 
-(defn thread-first
+(defn make-threader
   {:private true}
-  [value target]
-  (let [l (thread-to-list target),
-        f (first l),
-        r (rest l)]
-    (apply list (concat [f value] r))))
+  [func]
+  (fn [value forms]
+    (if (seq? forms)
+      (let [v (func value (first forms)),
+            f (rest forms)]
+        (self v f))
+      value)))
 
-(defn thread-last
-  {:private true}
-  [value target]
-  (let [l (thread-to-list target),
-        f (first l),
-        r (rest l)]
-    (apply list (concat [f] r [value]))))
+(def thread-first
+  (make-threader
+    (fn [value target]
+      (let [l (thread-to-list target),
+            f (first l),
+            r (rest l)]
+        (to-list [f value] r)))))
 
-(defn thread
-  {:private true}
-  [func value forms]
-  (if (seq? forms)
-    (let [v (func value (first forms)),
-          f (rest forms)]
-      (sputter:thread func v f))
-    value))
+(def thread-last
+  (make-threader
+    (fn [value target]
+      (let [l (thread-to-list target),
+            f (first l),
+            r (rest l)]
+        (to-list [f] r [value])))))
 
 (defmacro ->
   {:doc "threads value through a series of forms, as their first argument"}
   [value & forms]
-  (thread thread-first value forms))
+  (thread-first value forms))
 
 (defmacro ->>
   {:doc "threads value through a series of forms, as their last argument"}
   [value & forms]
-  (thread thread-last value forms))
+  (thread-last value forms))
