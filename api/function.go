@@ -2,7 +2,7 @@ package api
 
 const (
 	// DefaultFunctionName is the default name for anonymous functions
-	DefaultFunctionName = Name("<lambda>")
+	DefaultFunctionName = Name("self")
 
 	// DefaultFunctionType is the default type for functions
 	DefaultFunctionType = Name("function")

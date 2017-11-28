@@ -254,43 +254,57 @@ func makeFunction(c a.Context, d *functionDefinition) a.Function {
 	var res a.Function
 
 	if len(d.sigs) > 1 {
-		res = makeMultiFunction(c, d.sigs)
+		res = makeMultiFunction(c, d)
 	} else {
-		res = makeSingleFunction(c, d.sigs[0])
+		res = makeSingleFunction(c, d)
 	}
 	return res.WithMetadata(d.meta).(a.Function)
 }
 
-func makeSingleFunction(c a.Context, s *functionSignature) a.Function {
-	ex := a.MacroExpandAll(c, s.body).(a.Sequence)
+func makeSingleFunction(c a.Context, d *functionDefinition) a.Function {
+	s := d.sigs[0]
 
-	return &singleFunction{
+	f := &singleFunction{
 		BaseFunction: a.DefaultBaseFunction,
-		argProcessor: makeArgProcessor(c, s.args),
 		args:         string(s.args.Str()),
-		body:         a.MakeBlock(ex),
 	}
+
+	n := a.ChildContextVars(c, a.Variables{
+		d.name: f,
+	})
+
+	ex := a.MacroExpandAll(n, s.body).(a.Sequence)
+	f.argProcessor = makeArgProcessor(n, s.args)
+	f.body = a.MakeBlock(ex)
+	return f
 }
 
-func makeMultiFunction(c a.Context, sigs functionSignatures) a.Function {
+func makeMultiFunction(c a.Context, d *functionDefinition) a.Function {
+	sigs := d.sigs
 	ls := len(sigs)
+
+	f := &multiFunction{
+		BaseFunction: a.DefaultBaseFunction,
+	}
+
+	n := a.ChildContextVars(c, a.Variables{
+		d.name: f,
+	})
+
 	matchers := make([]argProcessorMatch, ls)
 	ar := make([]string, ls)
-
 	for i, s := range sigs {
-		ex := a.MacroExpandAll(c, s.body).(a.Sequence)
+		ex := a.MacroExpandAll(n, s.body).(a.Sequence)
 		matchers[i] = argProcessorMatch{
-			args: makeArgProcessor(c, s.args),
+			args: makeArgProcessor(n, s.args),
 			body: a.MakeBlock(ex),
 		}
 		ar[i] = string(s.args.Str())
 	}
 
-	return &multiFunction{
-		BaseFunction: a.DefaultBaseFunction,
-		args:         strings.Join(ar, " or "),
-		matchers:     matchers,
-	}
+	f.matchers = matchers
+	f.args = strings.Join(ar, " or ")
+	return f
 }
 
 func (*lambdaFunction) Apply(c a.Context, args a.Sequence) a.Value {
