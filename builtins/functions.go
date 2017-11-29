@@ -265,12 +265,12 @@ func makeSingleFunction(c a.Context, d *functionDefinition) a.Function {
 		args:         string(s.args.Str()),
 	}
 
-	n := a.ChildContextVars(c, a.Variables{
+	nc := a.ChildContextVars(c, a.Variables{
 		d.name: f,
 	})
 
-	ex := a.MacroExpandAll(n, s.body).(a.Sequence)
-	f.argProcessor = makeArgProcessor(n, s.args)
+	ex := a.MacroExpandAll(nc, s.body).(a.Sequence)
+	f.argProcessor = makeArgProcessor(nc, s.args)
 	f.body = a.MakeBlock(ex)
 	return f
 }
@@ -283,16 +283,16 @@ func makeMultiFunction(c a.Context, d *functionDefinition) a.Function {
 		BaseFunction: a.DefaultBaseFunction.Extend(d.meta),
 	}
 
-	n := a.ChildContextVars(c, a.Variables{
+	nc := a.ChildContextVars(c, a.Variables{
 		d.name: f,
 	})
 
 	matchers := make([]argProcessorMatch, ls)
 	ar := make([]string, ls)
 	for i, s := range sigs {
-		ex := a.MacroExpandAll(n, s.body).(a.Sequence)
+		ex := a.MacroExpandAll(nc, s.body).(a.Sequence)
 		matchers[i] = argProcessorMatch{
-			args: makeArgProcessor(n, s.args),
+			args: makeArgProcessor(nc, s.args),
 			body: a.MakeBlock(ex),
 		}
 		ar[i] = string(s.args.Str())
