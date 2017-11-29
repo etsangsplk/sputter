@@ -3,9 +3,6 @@ Will bind a value to a name in the specified namespace. All bindings are immutab
 
 ## An Example
 
-  (ns-put (ns maps) x
-    (map
-      (fn [y] y ** 2)
-      seq1 seq2 seq3))
+  (ns-put (ns config) env "production")
 
-This example will create a lazy map where each value of the three provided sequences is doubled upon request. It will then bind that lazy map to the namespace entry `x` in a namespace called `maps`.
+This example will bind the string _"production"_ to the name `env` in the `config` namespace.
