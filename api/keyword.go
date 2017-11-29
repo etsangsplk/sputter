@@ -32,19 +32,16 @@ func (k *keyword) Name() Name {
 	return k.name
 }
 
-func (k *keyword) Apply(c Context, args Sequence) Value {
-	AssertArity(args, 1)
-	return k.Get(args.First())
-}
-
-func (k *keyword) Get(v Value) Value {
-	if g, ok := v.(Mapped); ok {
-		if r, ok := g.Get(k); ok {
-			return r
-		}
-		panic(ErrStr(KeyNotFound, k))
+func (k *keyword) Apply(_ Context, args Sequence) Value {
+	i := AssertArityRange(args, 1, 2)
+	s := args.First().(Mapped)
+	if r, ok := s.Get(k); ok {
+		return r
 	}
-	panic(ErrStr(ExpectedGetter, v))
+	if i == 2 {
+		return args.Rest().First()
+	}
+	panic(ErrStr(KeyNotFound, k))
 }
 
 func (k *keyword) Str() Str {

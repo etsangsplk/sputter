@@ -12,4 +12,4 @@ Will create an anonymous function that may be passed around in a first-class man
 
 This example will return the vector _[2 4 6 8 10 12]_.
 
-Anonymous functions produce a closure that copies the variables that have been referenced from the surrounding scope.
+Anonymous functions produce a closure that copies the bindings that have been referenced from the surrounding scope.

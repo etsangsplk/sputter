@@ -1,9 +1,9 @@
-# (defn name meta? [args] form+) assigns a namespace function
-Will declare a function in the current namespace, which is 'user' by default.
+# (defn name meta? [args] form+) binds a namespace function
+Will bind a function by name to the current namespace, which is 'user' by default.
 
 ## An Example
 
-  (defn fib    
+  (defn fib
     {:doc "returns an element of the fibonacci sequence"}
     [i]
     (cond
