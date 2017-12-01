@@ -15,12 +15,12 @@
 
 ;; macros
 
-(def-builtin defmacro        :doc-asset "defmacro" :special-form true)
-(def-builtin macroexpand1    :special-form true)
-(def-builtin macroexpand     :special-form true)
-(def-builtin macroexpand-all :special-form true)
-(def-builtin quote           :doc-asset "quote" :macro true :special-form true)
-(def-builtin syntax-quote    :macro true)
+(def-builtin defmacro     :doc-asset "defmacro" :special-form true)
+(def-builtin quote        :doc-asset "quote" :macro true :special-form true)
+(def-builtin syntax-quote :macro true)
+(def-builtin macroexpand1)
+(def-builtin macroexpand)
+(def-builtin macroexpand-all)
 (def-builtin macro?)
 (def-builtin !macro?)
 (def-builtin gensym)

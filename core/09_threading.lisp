@@ -22,3 +22,23 @@
           f (first l),
           r (rest l)]
       `(->> (~f ~@r ~value) ~@(rest forms)))))
+
+(defmacro some->
+  ([value] value)
+  ([value & forms]
+    (let [l (thread-to-list (first forms)),
+          f (first l),
+          r (rest l)]
+      `(let [val# ~value]
+        (when-not (nil? val#)
+          (some-> (~f val# ~@r) ~@(rest forms)))))))
+
+(defmacro some->>
+  ([value] value)
+  ([value & forms]
+    (let [l (thread-to-list (first forms)),
+          f (first l),
+          r (rest l)]
+      `(let [val# ~value]
+        (when-not (nil? val#)
+          (some->> (~f ~@r val#) ~@(rest forms)))))))

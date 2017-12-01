@@ -21,7 +21,7 @@ const (
 	One
 	NegOne
 	Const
-	Def
+	NamespacePut
 	Let
 	Eval
 	Apply

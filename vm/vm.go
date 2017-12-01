@@ -112,9 +112,10 @@ func (m *Module) Apply(c a.Context, args a.Sequence) a.Value {
 		case Const:
 			push(DATA[INST[PC].Op1])
 
-		case Def:
+		case NamespacePut:
 			r1 := pop()
-			a.GetContextNamespace(c).Put(pop().(a.LocalSymbol).Name(), r1)
+			n1 := pop().(a.LocalSymbol).Name()
+			pop().(a.Namespace).Put(n1, r1)
 
 		case Let:
 			c1 := LOCALS[INST[PC].Op1].(a.Context)
