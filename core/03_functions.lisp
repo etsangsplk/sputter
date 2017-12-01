@@ -5,7 +5,7 @@
   ([clause] (panic :message "assert-args clauses must be paired"))
   ([& clauses]
     `(cond
-      ~(clauses 0) (sputter:assert-args ~@(rest (rest clauses)))
+      ~(clauses 0) (assert-args ~@(rest (rest clauses)))
       :else        (panic :message ~(clauses 1)))))
 
 (defmacro fn

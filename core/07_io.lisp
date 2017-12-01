@@ -43,6 +43,6 @@
     (>= (len bindings) 2)
       `(let [~(bindings 0) ~(bindings 1),
              close# (get ~(bindings 0) :close nil),
-             result# (sputter:with-open [~@(rest (rest bindings))] ~@body)]
+             result# (with-open [~@(rest (rest bindings))] ~@body)]
         (when (apply? close#) (close#))
         result#)))

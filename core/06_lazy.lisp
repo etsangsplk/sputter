@@ -47,7 +47,7 @@
   (lazy-seq
     (when-let [s coll]
       (when (pred (first s))
-        (cons (first s) (sputter:take-while pred (rest s)))))))
+        (cons (first s) (take-while pred (rest s)))))))
 
 (defmacro for
   [seq-exprs & body]

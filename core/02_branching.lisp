@@ -30,7 +30,7 @@
   ([& clauses]
     `(if ~(clauses 0)
          ~(clauses 1)
-         (sputter:cond ~@(rest (rest clauses))))))
+         (cond ~@(rest (rest clauses))))))
 
 (defmacro and
   {:doc-asset "and"}
@@ -38,7 +38,7 @@
   ([clause] clause)
   ([& clauses]
     `(let [and# ~(clauses 0)]
-      (if and# (sputter:and ~@(rest clauses)) and#))))
+      (if and# (and ~@(rest clauses)) and#))))
 
 (defmacro !and
   {:doc-asset "and"}
@@ -51,7 +51,7 @@
   ([clause] clause)
   ([& clauses]
     `(let [or# ~(clauses 0)]
-      (if or# or# (sputter:or ~@(rest clauses))))))
+      (if or# or# (or ~@(rest clauses))))))
 
 (defmacro !or
   {:doc-asset "or"}
