@@ -108,12 +108,12 @@
   [& clauses]
   (assert-args
     (seq? clauses) "try-catch-finally requires at least one clause")
-  (let [parsed#  (try-parse clauses),
-        block#   (:block parsed#),
-        catches# (:catch parsed#),
-        finally# (:finally parsed#)]
-    `(let [rec# (recover [false (do ~@block#)] ~(try-catch catches#)),
+  (let [parsed  (try-parse clauses),
+        block   (:block parsed),
+        catches (:catch parsed),
+        finally (:finally parsed)]
+    `(let [rec# (recover [false (do ~@block)] ~(try-catch catches)),
            err# (rec# 0),
            res# (rec# 1)]
-      ~@(try-finally finally#)
+      ~@(try-finally finally)
       (if err# (raise res#) res#))))
