@@ -41,15 +41,22 @@
 
 (defn take-while
   [pred coll]
-  (assert-args
-    (apply? pred) "predicate must be supplied"
-    (seq? coll)   "collection must be supplied")
   (lazy-seq
     (when-let [s coll]
       (when (pred (first s))
-        (cons (first s) (take-while pred (rest s)))))))
+        (cons (first s)
+              (take-while pred (rest s)))))))
 
 (defmacro for
   [seq-exprs & body]
   `(generate
     (for-each ~seq-exprs (emit (do ~@body)))))
+
+(defn partition
+  {:doc "partitions a sequence into groups of count, incrementing by step"}
+  ([count coll] (partition count count coll))
+  ([count step coll]
+    (lazy-seq
+      (when (seq? coll)
+        (cons (to-list (take count coll))
+              (partition count step (drop step coll)))))))
