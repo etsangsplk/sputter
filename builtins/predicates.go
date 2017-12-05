@@ -11,27 +11,24 @@ const (
 )
 
 type (
-	isNilFunction     struct{ a.BaseFunction }
-	isKeywordFunction struct{ a.BaseFunction }
-	isSymbolFunction  struct{ a.BaseFunction }
-	isLocalFunction   struct{ a.BaseFunction }
+	isIdenticalFunction struct{ a.BaseFunction }
+	isNilFunction       struct{ a.BaseFunction }
+	isKeywordFunction   struct{ a.BaseFunction }
+	isSymbolFunction    struct{ a.BaseFunction }
+	isLocalFunction     struct{ a.BaseFunction }
 )
 
-// PredicateKey identifies a Function as being a predicate
-var PredicateKey = a.NewKeyword("predicate")
-
-// NewPredicate creates a new Predicate instance
-func NewPredicate(f a.SequenceProcessor) a.Function {
-	return a.NewExecFunction(f).WithMetadata(a.Properties{
-		PredicateKey: a.True,
-	}).(a.Function)
-}
-
 // RegisterPredicate registers a simple predicate
-func RegisterPredicate(n a.Name, f a.SequenceProcessor) {
-	pos := NewPredicate(f)
-	neg := NewPredicate(func(c a.Context, args a.Sequence) a.Value {
-		if f(c, args) == a.True {
+func RegisterPredicate(n a.Name, fn a.Applicable) {
+	pos := a.NewExecFunction(func(c a.Context, args a.Sequence) a.Value {
+		if !a.Truthy(fn.Apply(c, args)) {
+			return a.False
+		}
+		return a.True
+	})
+
+	neg := a.NewExecFunction(func(c a.Context, args a.Sequence) a.Value {
+		if a.Truthy(pos.Apply(c, args)) {
 			return a.False
 		}
 		return a.True
@@ -43,7 +40,7 @@ func RegisterPredicate(n a.Name, f a.SequenceProcessor) {
 
 // RegisterSequencePredicate registers a set-based predicate
 func RegisterSequencePredicate(n a.Name, fn a.Applicable) {
-	pos := NewPredicate(func(c a.Context, args a.Sequence) a.Value {
+	pos := a.NewExecFunction(func(c a.Context, args a.Sequence) a.Value {
 		a.AssertMinimumArity(args, 1)
 		for f, r, ok := args.Split(); ok; f, r, ok = r.Split() {
 			if !a.Truthy(fn.Apply(c, a.Values{f})) {
@@ -53,7 +50,7 @@ func RegisterSequencePredicate(n a.Name, fn a.Applicable) {
 		return a.True
 	})
 
-	neg := NewPredicate(func(c a.Context, args a.Sequence) a.Value {
+	neg := a.NewExecFunction(func(c a.Context, args a.Sequence) a.Value {
 		a.AssertMinimumArity(args, 1)
 		for f, r, ok := args.Split(); ok; f, r, ok = r.Split() {
 			if a.Truthy(fn.Apply(c, a.Values{f})) {
@@ -67,7 +64,7 @@ func RegisterSequencePredicate(n a.Name, fn a.Applicable) {
 	RegisterFunction(a.Name("!"+n), neg)
 }
 
-func isIdentical(_ a.Context, args a.Sequence) a.Value {
+func (*isIdenticalFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
 	l := args.First()
 	for f, r, ok := args.Split(); ok; f, r, ok = r.Split() {
@@ -107,6 +104,7 @@ func (*isLocalFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
+	var isIdentical *isIdenticalFunction
 	var isNil *isNilFunction
 	var isKeyword *isKeywordFunction
 	var isSymbol *isSymbolFunction
