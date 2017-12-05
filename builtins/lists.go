@@ -7,21 +7,26 @@ const (
 	isListName = "list?"
 )
 
-type listFunction struct{ BaseBuiltIn }
+type (
+	listFunction struct{ BaseBuiltIn }
+
+	isListFunction struct{ a.BaseFunction }
+)
 
 func (*listFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	return a.SequenceToList(args)
 }
 
-func isList(v a.Value) bool {
-	if _, ok := v.(a.List); ok {
-		return true
+func (*isListFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+	if _, ok := args.First().(a.List); ok {
+		return a.True
 	}
-	return false
+	return a.False
 }
 
 func init() {
 	var list *listFunction
+	var isList *isListFunction
 
 	RegisterBuiltIn(listName, list)
 	RegisterSequencePredicate(isListName, isList)

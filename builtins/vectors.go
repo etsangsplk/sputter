@@ -7,23 +7,27 @@ const (
 	isVectorName = "vector?"
 )
 
-type vectorFunction struct{ BaseBuiltIn }
+type (
+	vectorFunction struct{ BaseBuiltIn }
+
+	isVectorFunction struct{ a.BaseFunction }
+)
 
 func (*vectorFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	return a.SequenceToVector(args)
 }
 
-func isVector(v a.Value) bool {
-	if _, ok := v.(a.Vector); ok {
-		return true
+func (*isVectorFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+	if _, ok := args.First().(a.Vector); ok {
+		return a.True
 	}
-	return false
+	return a.False
 }
 
 func init() {
 	var vector *vectorFunction
+	var isVector *isVectorFunction
 
 	RegisterBuiltIn(vectorName, vector)
-
 	RegisterSequencePredicate(isVectorName, isVector)
 }

@@ -19,7 +19,7 @@ type currentTimeFunction struct{ BaseBuiltIn }
 var envPairRegex = regexp.MustCompile("^(?P<Key>[^=]+)=(?P<Value>.*)$")
 
 func env() a.Value {
-	r := []a.Vector{}
+	var r []a.Vector
 	for _, v := range os.Environ() {
 		e := envPairRegex.FindStringSubmatch(v)
 		r = append(r, a.Values{

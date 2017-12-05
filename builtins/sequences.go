@@ -24,29 +24,12 @@ type (
 	nthFunction   struct{ BaseBuiltIn }
 	getFunction   struct{ BaseBuiltIn }
 
+	isSequenceFunction struct{ a.BaseFunction }
+	isCountedFunction  struct{ a.BaseFunction }
+	isIndexedFunction  struct{ a.BaseFunction }
+
 	forProc func(a.Context)
 )
-
-func isSequence(v a.Value) bool {
-	if s, ok := v.(a.Sequence); ok {
-		return s.IsSequence()
-	}
-	return false
-}
-
-func isCounted(v a.Value) bool {
-	if _, ok := v.(a.CountedSequence); ok {
-		return true
-	}
-	return false
-}
-
-func isIndexed(v a.Value) bool {
-	if _, ok := v.(a.IndexedSequence); ok {
-		return true
-	}
-	return false
-}
 
 func fetchSequence(args a.Sequence) a.Sequence {
 	a.AssertArity(args, 1)
@@ -96,6 +79,27 @@ func (*getFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	return a.MappedApply(s, args.Rest())
 }
 
+func (*isSequenceFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+	if s, ok := args.First().(a.Sequence); ok && s.IsSequence() {
+		return a.True
+	}
+	return a.False
+}
+
+func (*isCountedFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+	if _, ok := args.First().(a.CountedSequence); ok {
+		return a.True
+	}
+	return a.False
+}
+
+func (*isIndexedFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+	if _, ok := args.First().(a.IndexedSequence); ok {
+		return a.True
+	}
+	return a.False
+}
+
 func init() {
 	var first *firstFunction
 	var rest *restFunction
@@ -104,6 +108,9 @@ func init() {
 	var _len *lenFunction
 	var nth *nthFunction
 	var get *getFunction
+	var isSequence *isSequenceFunction
+	var isCounted *isCountedFunction
+	var isIndexed *isIndexedFunction
 
 	RegisterBuiltIn(firstName, first)
 	RegisterBuiltIn(restName, rest)
@@ -112,7 +119,6 @@ func init() {
 	RegisterBuiltIn(lenName, _len)
 	RegisterBuiltIn(nthName, nth)
 	RegisterBuiltIn(getName, get)
-
 	RegisterSequencePredicate(isSequenceName, isSequence)
 	RegisterSequencePredicate(isCountedName, isCounted)
 	RegisterSequencePredicate(isIndexedName, isIndexed)

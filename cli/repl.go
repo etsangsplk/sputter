@@ -253,7 +253,7 @@ func markCloser(line []rune, pos int, o rune) []rune {
 }
 
 func markMatch(line []rune, pos int) []rune {
-	m := []rune{}
+	var m []rune
 	if pos > 0 {
 		m = append(m, line[:pos]...)
 	}

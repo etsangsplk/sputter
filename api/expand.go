@@ -74,7 +74,7 @@ func expandSequence(c Context, s Sequence) Value {
 }
 
 func expandAssociative(c Context, as Associative) Value {
-	res := []Vector{}
+	var res []Vector
 	for f, r, ok := as.(Sequence).Split(); ok; f, r, ok = r.Split() {
 		e := f.(Vector)
 		k, _ := e.ElementAt(0)

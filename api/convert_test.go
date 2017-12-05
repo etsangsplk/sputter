@@ -31,21 +31,21 @@ func TestSequenceConversions(t *testing.T) {
 	as.Identical(s1, s2)
 }
 
-func identity(v a.Value) a.Value {
-	return v
-}
+var identity = a.NewExecFunction(func(_ a.Context, args a.Sequence) a.Value {
+	return args.First()
+})
 
 func TestUncountedConversions(t *testing.T) {
 	as := assert.New(t)
-	l1 := a.Map(a.NewList(a.Str("hello"), a.Str("there")), identity)
+	l1 := a.Map(nil, a.NewList(a.Str("hello"), a.Str("there")), identity)
 	v1 := a.SequenceToVector(l1)
 	v2 := a.SequenceToVector(v1)
-	l2 := a.SequenceToList(a.Map(v2, identity))
+	l2 := a.SequenceToList(a.Map(nil, v2, identity))
 	l3 := a.SequenceToList(l2)
-	a1 := a.SequenceToAssociative(a.Map(l3, identity))
+	a1 := a.SequenceToAssociative(a.Map(nil, l3, identity))
 	a2 := a.SequenceToAssociative(a1)
 
-	l4 := a.Map(a.NewList(a.Str("hello"), a.Nil, a.Str("there"), v1), identity)
+	l4 := a.Map(nil, a.NewList(a.Str("hello"), a.Nil, a.Str("there"), v1), identity)
 	s1 := a.SequenceToStr(l4)
 
 	as.String(`["hello" "there"]`, v1)
@@ -68,7 +68,7 @@ func TestAssocConvertError(t *testing.T) {
 func TestUncountedAssocConvertError(t *testing.T) {
 	as := assert.New(t)
 
-	v1 := a.Map(a.NewVector(a.NewKeyword("boom")), identity)
+	v1 := a.Map(nil, a.NewVector(a.NewKeyword("boom")), identity)
 	defer as.ExpectError(a.ErrStr(a.ExpectedPair))
 	a.SequenceToAssociative(v1)
 }

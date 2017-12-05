@@ -11,6 +11,8 @@ const (
 type (
 	withMetaFunction struct{ BaseBuiltIn }
 	getMetaFunction  struct{ BaseBuiltIn }
+
+	isAnnotatedFunction struct{ a.BaseFunction }
 )
 
 func toProperties(args a.MappedSequence) a.Properties {
@@ -25,7 +27,7 @@ func toProperties(args a.MappedSequence) a.Properties {
 }
 
 func fromMetadata(m a.Object) a.Value {
-	r := []a.Vector{}
+	r := make([]a.Vector, 0)
 	for k, v := range m.Flatten() {
 		r = append(r, a.Values{k, v})
 	}
@@ -45,19 +47,19 @@ func (*getMetaFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	return fromMetadata(o.Metadata())
 }
 
-func isAnnotated(v a.Value) bool {
-	if _, ok := v.(a.Annotated); ok {
-		return true
+func (*isAnnotatedFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+	if _, ok := args.First().(a.Annotated); ok {
+		return a.True
 	}
-	return false
+	return a.False
 }
 
 func init() {
 	var withMeta *withMetaFunction
 	var getMeta *getMetaFunction
+	var isAnnotated *isAnnotatedFunction
 
 	RegisterBuiltIn(withMetaName, withMeta)
 	RegisterBuiltIn(metaName, getMeta)
-
 	RegisterSequencePredicate(isMetaName, isAnnotated)
 }

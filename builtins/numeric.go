@@ -41,6 +41,10 @@ type (
 	gteFunction struct{ BaseBuiltIn }
 	ltFunction  struct{ BaseBuiltIn }
 	lteFunction struct{ BaseBuiltIn }
+
+	isPosInfinityFunction struct{ a.BaseFunction }
+	isNegInfinityFunction struct{ a.BaseFunction }
+	isNaNFunction         struct{ a.BaseFunction }
 )
 
 func reduceNum(s a.Sequence, v a.Number, fn reduceFunc) a.Value {
@@ -161,25 +165,32 @@ func (*lteFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	})
 }
 
-func isPosInfinity(v a.Value) bool {
-	if n, ok := v.(a.Number); ok {
-		return a.PosInfinity.Cmp(n) == a.EqualTo
+func (*isPosInfinityFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+	if n, ok := args.First().(a.Number); ok {
+		if a.PosInfinity.Cmp(n) == a.EqualTo {
+			return a.True
+		}
 	}
-	return false
+	return a.False
 }
 
-func isNegInfinity(v a.Value) bool {
-	if n, ok := v.(a.Number); ok {
-		return a.NegInfinity.Cmp(n) == a.EqualTo
+func (*isNegInfinityFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+	if n, ok := args.First().(a.Number); ok {
+		if a.NegInfinity.Cmp(n) == a.EqualTo {
+			return a.True
+		}
 	}
-	return false
+	return a.False
 }
 
-func isNaN(v a.Value) bool {
-	if n, ok := v.(a.Number); ok {
-		return n.IsNaN()
+func (*isNaNFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+	if n, ok := args.First().(a.Number); ok {
+		if n.IsNaN() {
+			return a.True
+		}
+		return a.False
 	}
-	return true
+	return a.True
 }
 
 func init() {
@@ -197,6 +208,10 @@ func init() {
 	var lt *ltFunction
 	var lte *lteFunction
 
+	var isPosInfinity *isPosInfinityFunction
+	var isNegInfinity *isNegInfinityFunction
+	var isNaN *isNaNFunction
+
 	Namespace.Put(posInfName, a.PosInfinity)
 	Namespace.Put(negInfName, a.NegInfinity)
 
@@ -213,7 +228,6 @@ func init() {
 	RegisterBuiltIn(gteName, gte)
 	RegisterBuiltIn(ltName, lt)
 	RegisterBuiltIn(lteName, lte)
-
 	RegisterSequencePredicate(isPosInfName, isPosInfinity)
 	RegisterSequencePredicate(isNegInfName, isNegInfinity)
 	RegisterSequencePredicate(isNaNName, isNaN)

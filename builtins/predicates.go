@@ -10,6 +10,13 @@ const (
 	isLocalName     = "local?"
 )
 
+type (
+	isNilFunction     struct{ a.BaseFunction }
+	isKeywordFunction struct{ a.BaseFunction }
+	isSymbolFunction  struct{ a.BaseFunction }
+	isLocalFunction   struct{ a.BaseFunction }
+)
+
 // PredicateKey identifies a Function as being a predicate
 var PredicateKey = a.NewKeyword("predicate")
 
@@ -35,21 +42,21 @@ func RegisterPredicate(n a.Name, f a.SequenceProcessor) {
 }
 
 // RegisterSequencePredicate registers a set-based predicate
-func RegisterSequencePredicate(n a.Name, fn a.ValueFilter) {
-	pos := NewPredicate(func(_ a.Context, args a.Sequence) a.Value {
+func RegisterSequencePredicate(n a.Name, fn a.Applicable) {
+	pos := NewPredicate(func(c a.Context, args a.Sequence) a.Value {
 		a.AssertMinimumArity(args, 1)
 		for f, r, ok := args.Split(); ok; f, r, ok = r.Split() {
-			if !fn(f) {
+			if !a.Truthy(fn.Apply(c, a.Values{f})) {
 				return a.False
 			}
 		}
 		return a.True
 	})
 
-	neg := NewPredicate(func(_ a.Context, args a.Sequence) a.Value {
+	neg := NewPredicate(func(c a.Context, args a.Sequence) a.Value {
 		a.AssertMinimumArity(args, 1)
 		for f, r, ok := args.Split(); ok; f, r, ok = r.Split() {
-			if fn(f) {
+			if a.Truthy(fn.Apply(c, a.Values{f})) {
 				return a.False
 			}
 		}
@@ -71,34 +78,41 @@ func isIdentical(_ a.Context, args a.Sequence) a.Value {
 	return a.True
 }
 
-func isNil(v a.Value) bool {
-	return v == a.Nil
+func (*isNilFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+	if args.First() == a.Nil {
+		return a.True
+	}
+	return a.False
 }
 
-func isKeyword(v a.Value) bool {
-	if _, ok := v.(a.Keyword); ok {
-		return true
+func (*isKeywordFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+	if _, ok := args.First().(a.Keyword); ok {
+		return a.True
 	}
-	return false
+	return a.False
 }
 
-func isSymbol(v a.Value) bool {
-	if _, ok := v.(a.Symbol); ok {
-		return true
+func (*isSymbolFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+	if _, ok := args.First().(a.Symbol); ok {
+		return a.True
 	}
-	return false
+	return a.False
 }
 
-func isLocal(v a.Value) bool {
-	if _, ok := v.(a.LocalSymbol); ok {
-		return true
+func (*isLocalFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+	if _, ok := args.First().(a.LocalSymbol); ok {
+		return a.True
 	}
-	return false
+	return a.False
 }
 
 func init() {
-	RegisterPredicate(isIdenticalName, isIdentical)
+	var isNil *isNilFunction
+	var isKeyword *isKeywordFunction
+	var isSymbol *isSymbolFunction
+	var isLocal *isLocalFunction
 
+	RegisterPredicate(isIdenticalName, isIdentical)
 	RegisterSequencePredicate(isNilName, isNil)
 	RegisterSequencePredicate(isKeywordName, isKeyword)
 	RegisterSequencePredicate(isSymbolName, isSymbol)

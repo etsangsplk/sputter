@@ -15,6 +15,8 @@ type (
 	expand1Function   struct{ BaseBuiltIn }
 	expandFunction    struct{ BaseBuiltIn }
 	expandAllFunction struct{ BaseBuiltIn }
+
+	isMacroFunction struct{ a.BaseFunction }
 )
 
 var macroMetadata = a.Properties{
@@ -46,12 +48,13 @@ func (*expandAllFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	return a.MacroExpandAll(c, args.First())
 }
 
-func isMacro(v a.Value) bool {
-	if ap, ok := v.(a.Applicable); ok {
-		m, _ := a.IsMacro(ap)
-		return m
+func (*isMacroFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+	if ap, ok := args.First().(a.Applicable); ok {
+		if ok, _ = a.IsMacro(ap); ok {
+			return a.True
+		}
 	}
-	return false
+	return a.False
 }
 
 func init() {
@@ -59,11 +62,11 @@ func init() {
 	var macroExpand1 *expand1Function
 	var macroExpand *expandFunction
 	var macroExpandAll *expandAllFunction
+	var isMacro *isMacroFunction
 
 	RegisterBuiltIn(defMacroName, defMacro)
 	RegisterBuiltIn(macroExpand1Name, macroExpand1)
 	RegisterBuiltIn(macroExpandName, macroExpand)
 	RegisterBuiltIn(macroExpandAllName, macroExpandAll)
-
 	RegisterSequencePredicate(isMacroName, isMacro)
 }

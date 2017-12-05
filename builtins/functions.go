@@ -23,6 +23,9 @@ type (
 	lambdaFunction struct{ BaseBuiltIn }
 	applyFunction  struct{ BaseBuiltIn }
 
+	isApplicableFunction  struct{ a.BaseFunction }
+	isSpecialFormFunction struct{ a.BaseFunction }
+
 	argProcessor func(a.Context, a.Sequence) (a.Context, bool)
 
 	functionSignature struct {
@@ -120,7 +123,7 @@ func (f *blockFunction) WithMetadata(md a.Object) a.AnnotatedValue {
 }
 
 func makeArgProcessor(cl a.Context, s a.Sequence) argProcessor {
-	an := []a.Name{}
+	var an []a.Name
 	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
 		n := f.(a.LocalSymbol).Name()
 		if n == restMarker {
@@ -316,27 +319,28 @@ func (*applyFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	return fn.Apply(c, s)
 }
 
-func isApplicable(v a.Value) bool {
-	if _, ok := v.(a.Applicable); ok {
-		return true
+func (*isApplicableFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+	if _, ok := args.First().(a.Applicable); ok {
+		return a.True
 	}
-	return false
+	return a.False
 }
 
-func isSpecialForm(v a.Value) bool {
-	if ap, ok := v.(a.Applicable); ok {
-		return a.IsSpecialForm(ap)
+func (*isSpecialFormFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+	if ap, ok := args.First().(a.Applicable); ok && a.IsSpecialForm(ap) {
+		return a.True
 	}
-	return false
+	return a.False
 }
 
 func init() {
 	var lambda *lambdaFunction
 	var apply *applyFunction
+	var isApplicable *isApplicableFunction
+	var isSpecialForm *isSpecialFormFunction
 
 	RegisterBuiltIn(lambdaName, lambda)
 	RegisterBuiltIn(applyName, apply)
-
 	RegisterSequencePredicate(isApplicableName, isApplicable)
 	RegisterSequencePredicate(isSpecialFormName, isSpecialForm)
 }

@@ -8,28 +8,35 @@ const (
 	isMappedName = "mapped?"
 )
 
-type assocFunction struct{ BaseBuiltIn }
+type (
+	assocFunction struct{ BaseBuiltIn }
+
+	isAssociativeFunction struct{ a.BaseFunction }
+	isMappedFunction      struct{ a.BaseFunction }
+)
 
 func (*assocFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	return a.SequenceToAssociative(args)
 }
 
-func isAssociative(v a.Value) bool {
-	if _, ok := v.(a.Associative); ok {
-		return true
+func (*isAssociativeFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+	if _, ok := args.First().(a.Associative); ok {
+		return a.True
 	}
-	return false
+	return a.False
 }
 
-func isMapped(v a.Value) bool {
-	if _, ok := v.(a.MappedSequence); ok {
-		return true
+func (*isMappedFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+	if _, ok := args.First().(a.MappedSequence); ok {
+		return a.True
 	}
-	return false
+	return a.False
 }
 
 func init() {
 	var assoc *assocFunction
+	var isAssociative *isAssociativeFunction
+	var isMapped *isMappedFunction
 
 	RegisterBuiltIn(assocName, assoc)
 	RegisterSequencePredicate(isAssocName, isAssociative)

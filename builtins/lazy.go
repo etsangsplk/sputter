@@ -39,24 +39,6 @@ func makeLazyResolver(c a.Context, f a.Applicable) a.LazyResolver {
 	}
 }
 
-func makeValueFilter(c a.Context, f a.Applicable) a.ValueFilter {
-	return func(v a.Value) bool {
-		return a.Truthy(f.Apply(c, a.Values{v}))
-	}
-}
-
-func makeValueMapper(c a.Context, f a.Applicable) a.ValueMapper {
-	return func(v a.Value) a.Value {
-		return f.Apply(c, a.Values{v})
-	}
-}
-
-func makeValueReducer(c a.Context, f a.Applicable) a.ValueReducer {
-	return func(l, r a.Value) a.Value {
-		return f.Apply(c, a.Values{l, r})
-	}
-}
-
 func (*lazySequenceFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	fn := NewBlockFunction(args)
 	return a.NewLazySequence(makeLazyResolver(c, fn))
@@ -74,7 +56,7 @@ func (*filterFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	f, r, _ := args.Split()
 	fn := f.(a.Applicable)
 	s := a.Concat(r)
-	return a.Filter(s, makeValueFilter(c, fn))
+	return a.Filter(c, s, fn)
 }
 
 func (*mapFunction) Apply(c a.Context, args a.Sequence) a.Value {
@@ -82,7 +64,7 @@ func (*mapFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	f, r, _ := args.Split()
 	fn := f.(a.Applicable)
 	s := a.Concat(r)
-	return a.Map(s, makeValueMapper(c, fn))
+	return a.Map(c, s, fn)
 }
 
 func (*reduceFunction) Apply(c a.Context, args a.Sequence) a.Value {
@@ -90,7 +72,7 @@ func (*reduceFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	f, r, _ := args.Split()
 	fn := f.(a.Applicable)
 	s := a.Concat(r)
-	return a.Reduce(s, makeValueReducer(c, fn))
+	return a.Reduce(c, s, fn)
 }
 
 func (*takeFunction) Apply(_ a.Context, args a.Sequence) a.Value {

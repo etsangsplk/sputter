@@ -77,7 +77,7 @@ func SequenceToAssociative(s Sequence) Associative {
 }
 
 func uncountedToAssociative(s Sequence) Associative {
-	res := []Vector{}
+	res := make([]Vector, 0)
 	var v Value
 	for k, r, ok := s.Split(); ok; k, r, ok = r.Split() {
 		if v, r, ok = r.Split(); ok {

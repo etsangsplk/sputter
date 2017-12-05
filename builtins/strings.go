@@ -2,6 +2,7 @@ package builtins
 
 import (
 	"bytes"
+
 	a "github.com/kode4food/sputter/api"
 )
 
@@ -14,6 +15,8 @@ const (
 type (
 	strFunction       struct{ BaseBuiltIn }
 	readerStrFunction struct{ BaseBuiltIn }
+
+	isStrFunction struct{ a.BaseFunction }
 )
 
 var emptyString = a.Str("")
@@ -37,19 +40,19 @@ func (*readerStrFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	return a.Str(b.String())
 }
 
-func isStr(v a.Value) bool {
-	if _, ok := v.(a.Str); ok {
-		return true
+func (*isStrFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+	if _, ok := args.First().(a.Str); ok {
+		return a.True
 	}
-	return false
+	return a.False
 }
 
 func init() {
 	var str *strFunction
 	var readerStr *readerStrFunction
+	var isStr *isStrFunction
 
 	RegisterBuiltIn(strName, str)
 	RegisterBuiltIn(readerStrName, readerStr)
-
 	RegisterSequencePredicate(isStrName, isStr)
 }

@@ -49,6 +49,8 @@ type (
 	}
 
 	matchEntries []matchEntry
+
+	notWhitespaceFunction struct{ a.BaseFunction }
 )
 
 var (
@@ -57,7 +59,10 @@ var (
 		`\\`: `\`,
 		`\"`: `"`,
 	}
+
 	matchers matchEntries
+
+	notWhitespace *notWhitespaceFunction
 )
 
 // Scan creates a new lexer Sequence
@@ -75,9 +80,15 @@ func Scan(src a.Str) a.Sequence {
 
 	l := a.NewLazySequence(resolver)
 
-	return a.Filter(l, func(v a.Value) bool {
-		return isNotWhitespace(v.(*Token))
-	})
+	return a.Filter(nil, l, notWhitespace)
+}
+
+func (*notWhitespaceFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+	t := args.First().(*Token)
+	if t.Type != Whitespace && t.Type != Comment {
+		return a.True
+	}
+	return a.False
 }
 
 func matchToken(src string) (*Token, string) {
@@ -96,10 +107,6 @@ func matchToken(src string) (*Token, string) {
 // Str converts this Value into a Str
 func (t *Token) Str() a.Str {
 	return a.Values{a.NewFloat(float64(t.Type)), t.Value}.Str()
-}
-
-func isNotWhitespace(t *Token) bool {
-	return t.Type != Whitespace && t.Type != Comment
 }
 
 func makeToken(t TokenType, v a.Value) *Token {

@@ -13,6 +13,8 @@ type (
 	chanFunction    struct{ BaseBuiltIn }
 	promiseFunction struct{ BaseBuiltIn }
 	goFunction      struct{ BaseBuiltIn }
+
+	isPromiseFunction struct{ a.BaseFunction }
 )
 
 var (
@@ -50,11 +52,11 @@ func (*promiseFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	return a.NewPromise()
 }
 
-func isPromise(v a.Value) bool {
-	if _, ok := v.(a.Promise); ok {
-		return true
+func (*isPromiseFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+	if _, ok := args.First().(a.Promise); ok {
+		return a.True
 	}
-	return false
+	return a.False
 }
 
 func (*goFunction) Apply(c a.Context, args a.Sequence) a.Value {
@@ -67,10 +69,10 @@ func init() {
 	var _chan *chanFunction
 	var promise *promiseFunction
 	var _go *goFunction
+	var isPromise *isPromiseFunction
 
 	RegisterBuiltIn(chanName, _chan)
 	RegisterBuiltIn(promiseName, promise)
 	RegisterBuiltIn(goName, _go)
-
 	RegisterSequencePredicate(isPromiseName, isPromise)
 }

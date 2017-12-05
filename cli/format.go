@@ -83,8 +83,8 @@ func getFormatWidth() (width int) {
 }
 
 func wrapLines(s []string) []string {
+	var r []string
 	w := getFormatWidth()
-	r := []string{}
 	for _, e := range s {
 		r = append(r, wrapLine(e, w)...)
 	}
@@ -92,7 +92,7 @@ func wrapLines(s []string) []string {
 }
 
 func wrapLine(s string, w int) []string {
-	r := []string{}
+	var r []string
 	i, s := lineIndent(s)
 	il := strippedLen(i)
 
