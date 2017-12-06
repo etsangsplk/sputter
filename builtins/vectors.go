@@ -4,13 +4,12 @@ import a "github.com/kode4food/sputter/api"
 
 const (
 	vectorName   = "vector"
-	isVectorName = "vector?"
+	isVectorName = "is-vector"
 )
 
 type (
-	vectorFunction struct{ BaseBuiltIn }
-
-	isVectorFunction struct{ a.BaseFunction }
+	vectorFunction   struct{ BaseBuiltIn }
+	isVectorFunction struct{ BaseBuiltIn }
 )
 
 func (*vectorFunction) Apply(_ a.Context, args a.Sequence) a.Value {
@@ -29,5 +28,5 @@ func init() {
 	var isVector *isVectorFunction
 
 	RegisterBuiltIn(vectorName, vector)
-	RegisterSequencePredicate(isVectorName, isVector)
+	RegisterBuiltIn(isVectorName, isVector)
 }

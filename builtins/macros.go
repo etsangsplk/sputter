@@ -7,7 +7,7 @@ const (
 	macroExpand1Name   = "macroexpand1"
 	macroExpandName    = "macroexpand"
 	macroExpandAllName = "macroexpand-all"
-	isMacroName        = "macro?"
+	isMacroName        = "is-macro"
 )
 
 type (
@@ -15,8 +15,7 @@ type (
 	expand1Function   struct{ BaseBuiltIn }
 	expandFunction    struct{ BaseBuiltIn }
 	expandAllFunction struct{ BaseBuiltIn }
-
-	isMacroFunction struct{ a.BaseFunction }
+	isMacroFunction   struct{ BaseBuiltIn }
 )
 
 var macroMetadata = a.Properties{
@@ -68,5 +67,5 @@ func init() {
 	RegisterBuiltIn(macroExpand1Name, macroExpand1)
 	RegisterBuiltIn(macroExpandName, macroExpand)
 	RegisterBuiltIn(macroExpandAllName, macroExpandAll)
-	RegisterSequencePredicate(isMacroName, isMacro)
+	RegisterBuiltIn(isMacroName, isMacro)
 }

@@ -11,31 +11,31 @@
 (defn is-call
   {:private true}
   [sym clause]
-  (and (local? sym)
-       (list? clause)
+  (and (is-local sym)
+       (is-list clause)
        (eq sym (first clause))))
 
 (defn is-catch-binding
   {:private true}
   [form]
-  (and (vector? form)
+  (and (is-vector form)
        (= 2 (len form))
-       (local? (form 1))))
+       (is-local (form 1))))
 
 (defn is-catch
   {:private true}
   [clause parsed]
   (and (is-call 'catch clause)
        (is-catch-binding (nth clause 1))
-       (!seq? (:block parsed))))
+       (not (is-seq (:block parsed)))))
 
 (defn is-finally
   {:private true}
   [clause parsed]
   (and (is-call 'finally clause)
-       (!seq? (:finally parsed))
-       (!seq? (:catch parsed))
-       (!seq? (:block parsed))))
+       (not (is-seq (:finally parsed)))
+       (not (is-seq (:catch parsed)))
+       (not (is-seq (:block parsed)))))
 
 (defn is-expr
   {:private true}
@@ -51,7 +51,7 @@
 (defn try-parse
   {:private true}
   [clauses]
-  (unless (seq? clauses)
+  (unless (is-seq clauses)
     {:block () :catch () :finally ()}
     (let [f (first clauses),
           r (rest clauses),
@@ -66,7 +66,7 @@
   {:private true}
   [clauses err-sym]
   (assert-args
-    (seq? clauses) "catch branch not paired")
+    (is-seq clauses) "catch branch not paired")
   (make-lazy-seq
     (let [clause (first clauses),
           var    ((clause 1) 1),
@@ -81,7 +81,7 @@
   {:private true}
   [clauses err-sym]
   (make-lazy-seq
-    (when (seq? clauses)
+    (when (is-seq clauses)
       (let [clause (first clauses),
             pred   ((clause 1) 0)]
         (cons
@@ -107,7 +107,7 @@
 (defmacro try
   [& clauses]
   (assert-args
-    (seq? clauses) "try-catch-finally requires at least one clause")
+    (is-seq clauses) "try-catch-finally requires at least one clause")
   (let [parsed  (try-parse clauses),
         block   (:block parsed),
         catches (:catch parsed),

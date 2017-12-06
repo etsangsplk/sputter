@@ -1,17 +1,22 @@
 ;;;; sputter core: builtins
 
-(def-builtin if   :doc-asset "if"  :special-form true)
-(def-builtin let  :doc-asset "let" :special-form true)
-(def-builtin do   :doc-asset "do"  :special-form true)
-(def-builtin read :doc-asset "read")
-(def-builtin eval :doc-asset "eval")
+(def-builtin if    :doc-asset "if"  :special-form true)
+(def-builtin let   :doc-asset "let" :special-form true)
+(def-builtin do    :doc-asset "do"  :special-form true)
+(def-builtin read  :doc-asset "read")
+(def-builtin eval  :doc-asset "eval")
+(def-builtin is-eq :doc-asset "is-eq")
+
+;; basic predicates
+
+(def-builtin is-nil  :doc-asset "is-nil")
+(def-builtin is-keyword)
 
 ;; metadata
 
 (def-builtin with-meta :doc-asset "with-meta")
 (def-builtin meta      :doc-asset "meta")
-(def-builtin meta?     :doc-asset "has-meta")
-(def-builtin !meta?    :doc-asset "has-meta")
+(def-builtin is-meta   :doc-asset "has-meta")
 
 ;; macros
 
@@ -21,9 +26,13 @@
 (def-builtin macroexpand1)
 (def-builtin macroexpand)
 (def-builtin macroexpand-all)
-(def-builtin macro?)
-(def-builtin !macro?)
+(def-builtin is-macro)
+
+;; symbols
+
 (def-builtin gensym)
+(def-builtin is-symbol)
+(def-builtin is-local)
 
 ;; namespaces
 
@@ -31,64 +40,33 @@
 (def-builtin ns      :doc-asset "ns"      :special-form true)
 (def-builtin ns-put  :doc-asset "ns-put"  :special-form true)
 
-;; basic predicates
-
-(def-builtin eq    :doc-asset "eq")
-(def-builtin !eq   :doc-asset "eq")
-(def-builtin nil?  :doc-asset "is-nil")
-(def-builtin !nil? :doc-asset "is-nil")
-(def-builtin keyword?)
-(def-builtin !keyword?)
-(def-builtin symbol?)
-(def-builtin !symbol?)
-(def-builtin local?)
-(def-builtin !local?)
-
 ;; strings
 
-(def-builtin str   :doc-asset "str")
-(def-builtin str!  :doc-asset "str")
-(def-builtin str?  :doc-asset "is-str")
-(def-builtin !str? :doc-asset "is-str")
+(def-builtin str    :doc-asset "str")
+(def-builtin str!   :doc-asset "str")
+(def-builtin is-str :doc-asset "is-str")
 
 ;; sequences
 
-(def-builtin first :doc-asset "first")
-(def-builtin rest  :doc-asset "rest")
-(def-builtin cons  :doc-asset "cons")
-(def-builtin conj  :doc-asset "conj")
-(def-builtin len   :doc-asset "len")
-(def-builtin nth   :doc-asset "nth")
-(def-builtin get   :doc-asset "get")
-
-;; predicates
-
-(def-builtin seq?      :doc-asset "is-seq")
-(def-builtin !seq?     :doc-asset "is-seq")
-(def-builtin len?      :doc-asset "is-len")
-(def-builtin !len?     :doc-asset "is-len")
-(def-builtin indexed?  :doc-asset "is-indexed")
-(def-builtin !indexed? :doc-asset "is-indexed")
-
-;; associatives
-
-(def-builtin assoc    :doc-asset "assoc")
-(def-builtin assoc?   :doc-asset "is-assoc")
-(def-builtin !assoc?  :doc-asset "is-assoc")
-(def-builtin mapped?  :doc-asset "is-mapped")
-(def-builtin !mapped? :doc-asset "is-mapped")
-
-;; lists
-
+(def-builtin first  :doc-asset "first")
+(def-builtin rest   :doc-asset "rest")
+(def-builtin last   :doc-asset "last")
+(def-builtin cons   :doc-asset "cons")
+(def-builtin conj   :doc-asset "conj")
+(def-builtin len    :doc-asset "len")
+(def-builtin nth    :doc-asset "nth")
+(def-builtin get    :doc-asset "get")
+(def-builtin assoc  :doc-asset "assoc")
 (def-builtin list   :doc-asset "list")
-(def-builtin list?  :doc-asset "is-list")
-(def-builtin !list? :doc-asset "is-list")
+(def-builtin vector :doc-asset "vector")
 
-;; vectors
-
-(def-builtin vector   :doc-asset "vector")
-(def-builtin vector?  :doc-asset "is-vector")
-(def-builtin !vector? :doc-asset "is-vector")
+(def-builtin is-seq     :doc-asset "is-seq")
+(def-builtin is-len     :doc-asset "is-len")
+(def-builtin is-indexed :doc-asset "is-indexed")
+(def-builtin is-assoc   :doc-asset "is-assoc")
+(def-builtin is-mapped  :doc-asset "is-mapped")
+(def-builtin is-list    :doc-asset "is-list")
+(def-builtin is-vector  :doc-asset "is-vector")
 
 ;; numeric
 
@@ -107,12 +85,9 @@
 (def-builtin <  :doc "checks that a set of numbers decreases in value")
 (def-builtin <= :doc "checks that a set of numbers doesn't increase in value")
 
-(def-builtin inf?   :doc "checks a number for positive infinity")
-(def-builtin !inf?  :doc "checks a number for positive infinity")
-(def-builtin -inf?  :doc "checks a number for negative infinity")
-(def-builtin !-inf? :doc "checks a number for negative infinity")
-(def-builtin nan?   :doc "checks that a value is not a number")
-(def-builtin !nan?  :doc "checks that a value is not a number")
+(def-builtin is-pos-inf :doc "checks a number for positive infinity")
+(def-builtin is-neg-inf :doc "checks a number for negative infinity")
+(def-builtin is-nan     :doc "checks that a value is not a number")
 
 ;; functions
 
@@ -120,18 +95,15 @@
 (def-builtin lambda       :doc-asset "lambda"  :special-form true)
 (def-builtin apply        :doc-asset "apply")
 (def-builtin make-closure :macro true)
-(def-builtin apply?)
-(def-builtin !apply?)
-(def-builtin special-form?)
-(def-builtin !special-form?)
+(def-builtin is-apply)
+(def-builtin is-special-form)
 
 ;; concurrency
 
-(def-builtin make-go   :special-form true)
-(def-builtin chan      :doc-asset "chan")
-(def-builtin promise   :doc-asset "promise")
-(def-builtin promise?  :doc-asset "is-promise")
-(def-builtin !promise? :doc-asset "is-promise")
+(def-builtin make-go    :special-form true)
+(def-builtin chan       :doc-asset "chan")
+(def-builtin promise    :doc-asset "promise")
+(def-builtin is-promise :doc-asset "is-promise")
 
 ;; lazy sequences
 

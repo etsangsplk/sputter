@@ -4,12 +4,12 @@
   {:private true}
   [func seq]
   (map
-    (fn [val] (if (nil? val) val (func val)))
+    (fn [val] (if (is-nil val) val (func val)))
     seq))
 
 (defn pr [& forms]
   (let [seq (pr-map-with-nil str! forms)]
-    (if (seq? seq)
+    (if (is-seq seq)
       (. sputter:*stdout* :write (first seq)))
     (for-each [elem (rest seq)]
       (. sputter:*stdout* :write *space* elem))))
@@ -20,7 +20,7 @@
 
 (defn print [& forms]
   (let [seq (pr-map-with-nil str forms)]
-    (if (seq? seq)
+    (if (is-seq seq)
       (. sputter:*stdout* :write (first seq)))
     (for-each [elem (rest seq)]
       (. sputter:*stdout* :write *space* elem))))
@@ -32,7 +32,7 @@
 (defn paired-vector?
   {:private true}
   [val]
-  (and (vector? val) (= (% (len val) 2) 0)))
+  (and (is-vector val) (= (% (len val) 2) 0)))
 
 (defmacro with-open [bindings & body]
   (assert-args
@@ -44,5 +44,5 @@
       `(let [~(bindings 0) ~(bindings 1),
              close# (get ~(bindings 0) :close nil),
              result# (with-open [~@(rest (rest bindings))] ~@body)]
-        (when (apply? close#) (close#))
+        (when (is-apply close#) (close#))
         result#)))

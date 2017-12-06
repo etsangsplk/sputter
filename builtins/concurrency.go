@@ -6,15 +6,14 @@ const (
 	chanName      = "chan"
 	promiseName   = "promise"
 	goName        = "make-go"
-	isPromiseName = "promise?"
+	isPromiseName = "is-promise"
 )
 
 type (
-	chanFunction    struct{ BaseBuiltIn }
-	promiseFunction struct{ BaseBuiltIn }
-	goFunction      struct{ BaseBuiltIn }
-
-	isPromiseFunction struct{ a.BaseFunction }
+	chanFunction      struct{ BaseBuiltIn }
+	promiseFunction   struct{ BaseBuiltIn }
+	goFunction        struct{ BaseBuiltIn }
+	isPromiseFunction struct{ BaseBuiltIn }
 )
 
 var (
@@ -74,5 +73,5 @@ func init() {
 	RegisterBuiltIn(chanName, _chan)
 	RegisterBuiltIn(promiseName, promise)
 	RegisterBuiltIn(goName, _go)
-	RegisterSequencePredicate(isPromiseName, isPromise)
+	RegisterBuiltIn(isPromiseName, isPromise)
 }

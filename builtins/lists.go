@@ -4,13 +4,12 @@ import a "github.com/kode4food/sputter/api"
 
 const (
 	listName   = "list"
-	isListName = "list?"
+	isListName = "is-list"
 )
 
 type (
-	listFunction struct{ BaseBuiltIn }
-
-	isListFunction struct{ a.BaseFunction }
+	listFunction   struct{ BaseBuiltIn }
+	isListFunction struct{ BaseBuiltIn }
 )
 
 func (*listFunction) Apply(_ a.Context, args a.Sequence) a.Value {
@@ -29,5 +28,5 @@ func init() {
 	var isList *isListFunction
 
 	RegisterBuiltIn(listName, list)
-	RegisterSequencePredicate(isListName, isList)
+	RegisterBuiltIn(isListName, isList)
 }

@@ -15,16 +15,15 @@ const (
 
 	lambdaName        = "lambda"
 	applyName         = "apply"
-	isApplicableName  = "apply?"
-	isSpecialFormName = "special-form?"
+	isApplyName       = "is-apply"
+	isSpecialFormName = "is-special-form"
 )
 
 type (
-	lambdaFunction struct{ BaseBuiltIn }
-	applyFunction  struct{ BaseBuiltIn }
-
-	isApplicableFunction  struct{ a.BaseFunction }
-	isSpecialFormFunction struct{ a.BaseFunction }
+	lambdaFunction        struct{ BaseBuiltIn }
+	applyFunction         struct{ BaseBuiltIn }
+	isApplyFunction       struct{ BaseBuiltIn }
+	isSpecialFormFunction struct{ BaseBuiltIn }
 
 	argProcessor func(a.Context, a.Sequence) (a.Context, bool)
 
@@ -319,7 +318,7 @@ func (*applyFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	return fn.Apply(c, s)
 }
 
-func (*isApplicableFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+func (*isApplyFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	if _, ok := args.First().(a.Applicable); ok {
 		return a.True
 	}
@@ -336,11 +335,11 @@ func (*isSpecialFormFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 func init() {
 	var lambda *lambdaFunction
 	var apply *applyFunction
-	var isApplicable *isApplicableFunction
+	var isApply *isApplyFunction
 	var isSpecialForm *isSpecialFormFunction
 
 	RegisterBuiltIn(lambdaName, lambda)
 	RegisterBuiltIn(applyName, apply)
-	RegisterSequencePredicate(isApplicableName, isApplicable)
-	RegisterSequencePredicate(isSpecialFormName, isSpecialForm)
+	RegisterBuiltIn(isApplyName, isApply)
+	RegisterBuiltIn(isSpecialFormName, isSpecialForm)
 }

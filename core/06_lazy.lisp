@@ -31,7 +31,7 @@
 (defmacro when-let
   [bindings & body]
   (assert-args
-    (vector? bindings)   "binding vector must be supplied"
+    (is-vector bindings)   "binding vector must be supplied"
     (= 2 (len bindings)) "binding vector must contain 2 elements")
   (let [form (bindings 0),
         test (bindings 1)]
@@ -57,6 +57,6 @@
   ([count coll] (partition count count coll))
   ([count step coll]
     (lazy-seq
-      (when (seq? coll)
+      (when (is-seq coll)
         (cons (to-list (take count coll))
               (partition count step (drop step coll)))))))

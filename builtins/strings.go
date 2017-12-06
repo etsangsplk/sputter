@@ -9,14 +9,13 @@ import (
 const (
 	strName       = "str"
 	readerStrName = "str!"
-	isStrName     = "str?"
+	isStrName     = "is-str"
 )
 
 type (
 	strFunction       struct{ BaseBuiltIn }
 	readerStrFunction struct{ BaseBuiltIn }
-
-	isStrFunction struct{ a.BaseFunction }
+	isStrFunction     struct{ BaseBuiltIn }
 )
 
 var emptyString = a.Str("")
@@ -54,5 +53,5 @@ func init() {
 
 	RegisterBuiltIn(strName, str)
 	RegisterBuiltIn(readerStrName, readerStr)
-	RegisterSequencePredicate(isStrName, isStr)
+	RegisterBuiltIn(isStrName, isStr)
 }

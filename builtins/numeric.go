@@ -19,32 +19,31 @@ const (
 	ltName     = "<"
 	lteName    = "<="
 
-	isPosInfName = "inf?"
-	isNegInfName = "-inf?"
-	isNaNName    = "nan?"
+	isPosInfName = "is-pos-inf"
+	isNegInfName = "is-neg-inf"
+	isNaNName    = "is-nan"
 )
 
 type (
 	reduceFunc  func(prev a.Number, next a.Number) a.Number
 	compareFunc func(prev a.Number, next a.Number) bool
 
-	incFunction struct{ BaseBuiltIn }
-	decFunction struct{ BaseBuiltIn }
-	addFunction struct{ BaseBuiltIn }
-	subFunction struct{ BaseBuiltIn }
-	mulFunction struct{ BaseBuiltIn }
-	divFunction struct{ BaseBuiltIn }
-	modFunction struct{ BaseBuiltIn }
-	eqFunction  struct{ BaseBuiltIn }
-	neqFunction struct{ BaseBuiltIn }
-	gtFunction  struct{ BaseBuiltIn }
-	gteFunction struct{ BaseBuiltIn }
-	ltFunction  struct{ BaseBuiltIn }
-	lteFunction struct{ BaseBuiltIn }
-
-	isPosInfinityFunction struct{ a.BaseFunction }
-	isNegInfinityFunction struct{ a.BaseFunction }
-	isNaNFunction         struct{ a.BaseFunction }
+	incFunction      struct{ BaseBuiltIn }
+	decFunction      struct{ BaseBuiltIn }
+	addFunction      struct{ BaseBuiltIn }
+	subFunction      struct{ BaseBuiltIn }
+	mulFunction      struct{ BaseBuiltIn }
+	divFunction      struct{ BaseBuiltIn }
+	modFunction      struct{ BaseBuiltIn }
+	eqFunction       struct{ BaseBuiltIn }
+	neqFunction      struct{ BaseBuiltIn }
+	gtFunction       struct{ BaseBuiltIn }
+	gteFunction      struct{ BaseBuiltIn }
+	ltFunction       struct{ BaseBuiltIn }
+	lteFunction      struct{ BaseBuiltIn }
+	isPosInfFunction struct{ BaseBuiltIn }
+	isNegInfFunction struct{ BaseBuiltIn }
+	isNaNFunction    struct{ BaseBuiltIn }
 )
 
 func reduceNum(s a.Sequence, v a.Number, fn reduceFunc) a.Value {
@@ -165,7 +164,7 @@ func (*lteFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	})
 }
 
-func (*isPosInfinityFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+func (*isPosInfFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	if n, ok := args.First().(a.Number); ok {
 		if a.PosInfinity.Cmp(n) == a.EqualTo {
 			return a.True
@@ -174,7 +173,7 @@ func (*isPosInfinityFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	return a.False
 }
 
-func (*isNegInfinityFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+func (*isNegInfFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	if n, ok := args.First().(a.Number); ok {
 		if a.NegInfinity.Cmp(n) == a.EqualTo {
 			return a.True
@@ -207,9 +206,8 @@ func init() {
 	var gte *gteFunction
 	var lt *ltFunction
 	var lte *lteFunction
-
-	var isPosInfinity *isPosInfinityFunction
-	var isNegInfinity *isNegInfinityFunction
+	var isPosInf *isPosInfFunction
+	var isNegInf *isNegInfFunction
 	var isNaN *isNaNFunction
 
 	Namespace.Put(posInfName, a.PosInfinity)
@@ -228,7 +226,7 @@ func init() {
 	RegisterBuiltIn(gteName, gte)
 	RegisterBuiltIn(ltName, lt)
 	RegisterBuiltIn(lteName, lte)
-	RegisterSequencePredicate(isPosInfName, isPosInfinity)
-	RegisterSequencePredicate(isNegInfName, isNegInfinity)
-	RegisterSequencePredicate(isNaNName, isNaN)
+	RegisterBuiltIn(isPosInfName, isPosInf)
+	RegisterBuiltIn(isNegInfName, isNegInf)
+	RegisterBuiltIn(isNaNName, isNaN)
 }

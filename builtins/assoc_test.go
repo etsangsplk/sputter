@@ -19,11 +19,11 @@ func TestAssoc(t *testing.T) {
 	as.True(ok)
 	as.String("foo", v1)
 
-	isAssoc := getBuiltIn("assoc?")
+	isAssoc := getBuiltIn("is-assoc")
 	as.True(isAssoc.Apply(c, args(a1)))
 	as.False(isAssoc.Apply(c, args(f(99))))
 
-	isMapped := getBuiltIn("mapped?")
+	isMapped := getBuiltIn("is-mapped")
 	as.True(isMapped.Apply(c, args(a1)))
 	as.False(isMapped.Apply(c, args(f(99))))
 }

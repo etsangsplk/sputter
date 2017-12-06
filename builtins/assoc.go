@@ -4,22 +4,21 @@ import a "github.com/kode4food/sputter/api"
 
 const (
 	assocName    = "assoc"
-	isAssocName  = "assoc?"
-	isMappedName = "mapped?"
+	isAssocName  = "is-assoc"
+	isMappedName = "is-mapped"
 )
 
 type (
-	assocFunction struct{ BaseBuiltIn }
-
-	isAssociativeFunction struct{ a.BaseFunction }
-	isMappedFunction      struct{ a.BaseFunction }
+	assocFunction    struct{ BaseBuiltIn }
+	isAssocFunction  struct{ BaseBuiltIn }
+	isMappedFunction struct{ BaseBuiltIn }
 )
 
 func (*assocFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	return a.SequenceToAssociative(args)
 }
 
-func (*isAssociativeFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+func (*isAssocFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	if _, ok := args.First().(a.Associative); ok {
 		return a.True
 	}
@@ -35,10 +34,10 @@ func (*isMappedFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 
 func init() {
 	var assoc *assocFunction
-	var isAssociative *isAssociativeFunction
+	var isAssoc *isAssocFunction
 	var isMapped *isMappedFunction
 
 	RegisterBuiltIn(assocName, assoc)
-	RegisterSequencePredicate(isAssocName, isAssociative)
-	RegisterSequencePredicate(isMappedName, isMapped)
+	RegisterBuiltIn(isAssocName, isAssoc)
+	RegisterBuiltIn(isMappedName, isMapped)
 }

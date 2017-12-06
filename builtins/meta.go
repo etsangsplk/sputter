@@ -5,14 +5,13 @@ import a "github.com/kode4food/sputter/api"
 const (
 	withMetaName = "with-meta"
 	metaName     = "meta"
-	isMetaName   = "meta?"
+	isMetaName   = "is-meta"
 )
 
 type (
 	withMetaFunction struct{ BaseBuiltIn }
 	getMetaFunction  struct{ BaseBuiltIn }
-
-	isAnnotatedFunction struct{ a.BaseFunction }
+	isMetaFunction   struct{ BaseBuiltIn }
 )
 
 func toProperties(args a.MappedSequence) a.Properties {
@@ -35,10 +34,13 @@ func fromMetadata(m a.Object) a.Value {
 }
 
 func (*withMetaFunction) Apply(_ a.Context, args a.Sequence) a.Value {
-	a.AssertArity(args, 2)
-	o := args.First().(a.Annotated)
-	m := args.Rest().First().(a.MappedSequence)
-	return o.WithMetadata(toProperties(m))
+	a.AssertMinimumArity(args, 2)
+	o := args.First().(a.AnnotatedValue)
+	for f, r, ok := args.Rest().Split(); ok; f, r, ok = r.Split() {
+		m := f.(a.MappedSequence)
+		o = o.WithMetadata(toProperties(m))
+	}
+	return o
 }
 
 func (*getMetaFunction) Apply(_ a.Context, args a.Sequence) a.Value {
@@ -47,7 +49,7 @@ func (*getMetaFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	return fromMetadata(o.Metadata())
 }
 
-func (*isAnnotatedFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+func (*isMetaFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	if _, ok := args.First().(a.Annotated); ok {
 		return a.True
 	}
@@ -57,9 +59,9 @@ func (*isAnnotatedFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 func init() {
 	var withMeta *withMetaFunction
 	var getMeta *getMetaFunction
-	var isAnnotated *isAnnotatedFunction
+	var isMeta *isMetaFunction
 
 	RegisterBuiltIn(withMetaName, withMeta)
 	RegisterBuiltIn(metaName, getMeta)
-	RegisterSequencePredicate(isMetaName, isAnnotated)
+	RegisterBuiltIn(isMetaName, isMeta)
 }
