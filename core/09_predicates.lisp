@@ -24,7 +24,6 @@
 (defmacro def-neg-predicate
   {:private true}
   [name func-name]
-  (println "neg" name func-name)
   `(def ~name
     (with-meta
       (fn [~'first & ~'rest]
@@ -35,7 +34,6 @@
 
 (defmacro def-predicate
   [pos-name neg-name func-name]
-  (println "def" pos-name neg-name func-name)
   `(do
     (def-pos-predicate ~pos-name ~func-name)
     (def-neg-predicate ~neg-name ~func-name)))
