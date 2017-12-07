@@ -1,42 +1,44 @@
 ;;;; sputter core: predicates
 
-(defn lazy-predicate
+(defn predicate-lazy-seq
   {:private true}
   [func coll]
   (lazy-seq
     (if (is-seq coll)
       (let [f (func (first coll))]
         (if f
-          (cons f (lazy-predicate func (rest coll)))
+          (cons f (predicate-lazy-seq func (rest coll)))
           '(false)))
       '(true))))
 
-(defmacro def-pos-predicate
+(defmacro def-predicate-pos
   {:private true}
   [name func-name]
   `(def ~name
     (with-meta
-      (fn [~'first & ~'rest]
-        (last (lazy-predicate ~func-name (cons ~'first ~'rest))))
+      (fn [& forms]
+        (assert-args (is-seq forms) "expected at least 1 argument(s), got 0")
+        (last (predicate-lazy-seq ~func-name forms)))
       (meta ~func-name)
       {:name ~(str name)})))
 
-(defmacro def-neg-predicate
+(defmacro def-predicate-neg
   {:private true}
   [name func-name]
   `(def ~name
     (with-meta
-      (fn [~'first & ~'rest]
+      (fn [& forms]
+        (assert-args (is-seq forms) "expected at least 1 argument(s), got 0")
         (let [nf# (fn [x] (not (~func-name x)))]
-          (last (lazy-predicate nf# (cons ~'first ~'rest)))))
+          (last (predicate-lazy-seq nf# forms))))
       (meta ~func-name)
       {:name ~(str name)})))
 
 (defmacro def-predicate
   [pos-name neg-name func-name]
   `(do
-    (def-pos-predicate ~pos-name ~func-name)
-    (def-neg-predicate ~neg-name ~func-name)))
+    (def-predicate-pos ~pos-name ~func-name)
+    (def-predicate-neg ~neg-name ~func-name)))
 
 (defn is-even
   {:doc "will return whether or not the number is even"}

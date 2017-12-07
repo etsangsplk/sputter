@@ -33,6 +33,5 @@ func TestPredicates(t *testing.T) {
 	testCode(t, `(keyword? 99)`, a.False)
 	testCode(t, `(!keyword? 99)`, a.True)
 
-	errStr := a.ErrStr("expected arguments of the form: [first & rest]")
-	testBadCode(t, `(nil?)`, errStr)
+	testBadCode(t, `(nil?)`, a.ErrStr(a.BadMinimumArity, 1, 0))
 }
