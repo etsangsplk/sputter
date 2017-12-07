@@ -61,13 +61,13 @@
 (def-predicate is-neg-inf "-inf" :doc "checks a number for negative infinity")
 (def-predicate is-nan "nan"      :doc "checks that a value is not a number")
 
-(def-predicate is-macro "macro")
-(def-predicate is-apply "apply")
-(def-predicate is-special-form "special-form")
-(def-predicate is-keyword "keyword")
+(def-predicate is-macro "macro" :doc "tests if a value is a macro")
+(def-predicate is-apply "apply" :doc "tests if a value can be applied")
+(def-predicate is-special-form "special-form" :doc "tests for a special form")
 
-(def-predicate is-symbol "symbol" :doc "tests if a value is a symbol")
-(def-predicate is-local "local"   :doc "tests if a value is an unqualified symbol")
+(def-predicate is-keyword "keyword" :doc "tests if a value is a keyword")
+(def-predicate is-symbol "symbol"   :doc "tests if a value is a symbol")
+(def-predicate is-local "local"     :doc "tests if a value is an unqualified symbol")
 
 (def-predicate is-even "even" :doc "tests if a number is even")
 (def-predicate is-odd "odd"   :doc "tests if a number is odd")
