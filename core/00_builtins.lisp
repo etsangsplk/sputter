@@ -9,14 +9,14 @@
 
 ;; basic predicates
 
-(def-builtin is-nil  :doc-asset "is-nil")
+(def-builtin is-nil)
 (def-builtin is-keyword)
 
 ;; metadata
 
 (def-builtin with-meta :doc-asset "with-meta")
 (def-builtin meta      :doc-asset "meta")
-(def-builtin is-meta   :doc-asset "has-meta")
+(def-builtin is-meta)
 
 ;; macros
 
@@ -32,8 +32,8 @@
 
 (def-builtin sym       :doc "converts a string into an interned symbol")
 (def-builtin gensym    :doc "creates a unique symbol, useful in macros")
-(def-builtin is-symbol :doc "tests if a value is a symbol")
-(def-builtin is-local  :doc "tests if a value is an unqualified symbol")
+(def-builtin is-symbol)
+(def-builtin is-local)
 
 ;; namespaces
 
@@ -45,7 +45,7 @@
 
 (def-builtin str    :doc-asset "str")
 (def-builtin str!   :doc-asset "str")
-(def-builtin is-str :doc-asset "is-str")
+(def-builtin is-str)
 
 ;; sequences
 
@@ -61,13 +61,13 @@
 (def-builtin list   :doc-asset "list")
 (def-builtin vector :doc-asset "vector")
 
-(def-builtin is-seq     :doc-asset "is-seq")
-(def-builtin is-len     :doc-asset "is-len")
-(def-builtin is-indexed :doc-asset "is-indexed")
-(def-builtin is-assoc   :doc-asset "is-assoc")
-(def-builtin is-mapped  :doc-asset "is-mapped")
-(def-builtin is-list    :doc-asset "is-list")
-(def-builtin is-vector  :doc-asset "is-vector")
+(def-builtin is-seq)
+(def-builtin is-len)
+(def-builtin is-indexed)
+(def-builtin is-assoc)
+(def-builtin is-mapped)
+(def-builtin is-list)
+(def-builtin is-vector)
 
 ;; numeric
 
@@ -86,9 +86,9 @@
 (def-builtin <  :doc "checks that a set of numbers decreases in value")
 (def-builtin <= :doc "checks that a set of numbers doesn't increase in value")
 
-(def-builtin is-pos-inf :doc "checks a number for positive infinity")
-(def-builtin is-neg-inf :doc "checks a number for negative infinity")
-(def-builtin is-nan     :doc "checks that a value is not a number")
+(def-builtin is-pos-inf)
+(def-builtin is-neg-inf)
+(def-builtin is-nan)
 
 ;; functions
 
@@ -104,7 +104,7 @@
 (def-builtin make-go    :special-form true)
 (def-builtin chan       :doc-asset "chan")
 (def-builtin promise    :doc-asset "promise")
-(def-builtin is-promise :doc-asset "is-promise")
+(def-builtin is-promise)
 
 ;; lazy sequences
 
