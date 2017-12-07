@@ -46,7 +46,7 @@ that will change rapidly. The current built-in forms are:
   * Symbols and Keywords: `sym` `gensym` `sym?` `local?` `keyword?`
   * Functions: `defn` `fn` `lambda` `closure` `apply` `apply?` `special-form?`
   * Threading: `->` `->>` `some->` `some->>` `as->` `cond->` `cond->>`
-  * Macros: `defmacro` `macro?` `macroexpand1` `macroexpand` `macroexpand-all`
+  * Macros: `defmacro` `macroexpand1` `macroexpand` `macroexpand-all` `macro?`
   * Errors: `error` `raise` `panic` `try` `assert-args`
   * Quoting: `quote` `syntax-quote`
   * Predicates: `eq` `nil?`
