@@ -38,26 +38,32 @@ happy to start if you call it with no arguments from the terminal:
 I just started this thing and it's still pretty fragile, but
 that will change rapidly. The current built-in forms are:
 
-  * Branching: `if`, `cond`, `do`, `when`, `when-not`, `and`, `or`
-  * Numeric: `+`, `-`, `*`, `/`, `!=`, `=`, `<`, `<=`, `>`, `>=`, `inf`, `-inf`
-  * Numeric Predicates: `inf?`, `-inf?`, `nan?`
-  * Values: `def`, `let`, `put-ns`, `ns`, `with-ns`, `quote`, `keyword?`
-  * Functions: `defn`, `fn`, `lambda`, `apply`, `apply?`, `special-form?`
-  * Macros: `defmacro`, `macro?`
-  * Predicates: `eq`, `nil?`
-  * Sequences: `cons`, `conj`, `first`, `rest`, `seq?`, `range`
-  * Lists: `list`, `list?`, `to-list`
-  * Vectors: `vector`, `vector?`, `to-vector`
-  * Associative Arrays: `assoc`, `assoc?`, `to-assoc`
-  * Counted Sequences: `len`, `len?`
-  * Indexed Sequences: `nth`, `indexed?`
-  * Mapped Sequences: `mapped?`, `get`
-  * Comprehensions: `concat`, `map`, `filter`, `reduce`, `take`, `drop`
-  * Metadata: `meta`, `meta?`, `with-meta`
-  * Concurrency: `go`, `chan`, `generate`, `future`, `promise`, `promise?`
-  * Strings: `str`, `str!`, `str?`
-  * I/O: `print`, `println`, `pr`, `prn`
-  * Operating System: `*env*`, `*args*`, `*stdout*`, `*stderr*`, `*stdin*`
+  * Basics: read eval do
+  * Branching: if not unless when when-not cond and or
+  * Numeric: + - * / % = != < > <= >= inf -inf inc dec range
+  * Numeric Predicates: inf? -inf? nan? even? odd?
+  * Values: def let when-let put-ns ns with-ns
+  * Symbols and Keywords: sym gensym sym? local? keyword?
+  * Functions: defn fn lambda closure apply apply? special-form?
+  * Threading: -> ->> some-> some->> as-> cond-> cond->>
+  * Macros: defmacro macro? macroexpand1 macroexpand macroexpand-all
+  * Errors: error raise panic try assert-args
+  * Quoting: quote syntax-quote
+  * Predicates: eq nil?
+  * Sequences: cons conj first rest last for-each seq?
+  * Lists: list to-list list?
+  * Vectors: vector to-vector vector?
+  * Associative Arrays: assoc to-assoc assoc?
+  * Counted Sequences: len len?
+  * Indexed Sequences: nth indexed?
+  * Mapped Sequences: get . mapped?
+  * Comprehensions: concat map filter reduce take take-while drop
+  * Lazy Sequences: lazy-seq partition
+  * Metadata: meta with-meta meta?
+  * Concurrency: go chan generate future promise promise?
+  * Strings: str str! str?
+  * I/O: print println pr prn with-open
+  * Operating System: time *env* *args* *stdout* *stderr* *stdin*
 
 Documentation for most of these forms may be viewed in the
 REPL using the `doc` function.
