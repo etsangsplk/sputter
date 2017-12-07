@@ -63,6 +63,7 @@
       `((sputter:fn [val] (if ~pred (~sym val ~form) val))))))
 
 (defmacro cond->
+  {:doc "conditionally threads through a set of forms as their first argument"}
   ([value] value)
   ([value & clauses]
     (assert-args
@@ -70,6 +71,7 @@
     `(-> ~value ~@(map (make-cond-clause ->) (partition 2 clauses)))))
 
 (defmacro cond->>
+  {:doc "conditionally threads through a set of forms as their last argument"}
   ([value] value)
   ([value & clauses]
     (assert-args

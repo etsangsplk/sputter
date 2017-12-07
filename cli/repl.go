@@ -274,8 +274,8 @@ func toError(i interface{}) error {
 	if i == nil {
 		return nil
 	}
-	if e, ok := i.(error); ok {
-		return e
+	if er, ok := i.(error); ok {
+		return er
 	}
 	if v, ok := i.(a.Value); ok {
 		return a.ErrStr(string(v.Str()))

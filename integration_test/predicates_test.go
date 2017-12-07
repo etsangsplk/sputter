@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	a "github.com/kode4food/sputter/api"
+	b "github.com/kode4food/sputter/builtins"
 	_ "github.com/kode4food/sputter/core"
 )
 
@@ -33,5 +34,5 @@ func TestPredicates(t *testing.T) {
 	testCode(t, `(keyword? 99)`, a.False)
 	testCode(t, `(!keyword? 99)`, a.True)
 
-	testBadCode(t, `(nil?)`, a.ErrStr(a.BadMinimumArity, 1, 0))
+	testBadCode(t, `(nil?)`, a.ErrStr(b.ExpectedArguments, "[first & rest]"))
 }

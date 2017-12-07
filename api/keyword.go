@@ -2,9 +2,6 @@ package api
 
 import u "github.com/kode4food/sputter/util"
 
-// ExpectedGetter is thrown if the Value is not a Mapped
-const ExpectedGetter = "expected a propertied value: %s"
-
 var keywords = u.NewCache()
 
 // Keyword is a Value that represents a Name that resolves to itself

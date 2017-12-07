@@ -13,32 +13,53 @@
 
 (defmacro def-predicate-pos
   {:private true}
-  [name func-name]
-  `(def ~name
-    (with-meta
-      (fn [& forms]
-        (assert-args (is-seq forms) "expected at least 1 argument(s), got 0")
-        (last (predicate-lazy-seq ~func-name forms)))
-      (meta ~func-name)
-      {:name ~(str name)})))
+  [func name]
+  (let [func-name (sym (str name "?"))]
+    `(def ~func-name
+      (with-meta
+        (fn [~'first & ~'rest]
+          (last (predicate-lazy-seq ~func (cons ~'first ~'rest))))
+        (meta ~func)
+        {:name ~(str func-name)}))))
 
 (defmacro def-predicate-neg
   {:private true}
-  [name func-name]
-  `(def ~name
-    (with-meta
-      (fn [& forms]
-        (assert-args (is-seq forms) "expected at least 1 argument(s), got 0")
-        (let [nf# (fn [x] (not (~func-name x)))]
-          (last (predicate-lazy-seq nf# forms))))
-      (meta ~func-name)
-      {:name ~(str name)})))
+  [func name]
+  (let [func-name (sym (str "!" name "?"))]
+    `(def ~func-name
+      (with-meta
+        (fn [~'first & ~'rest]
+          (let [nf# (fn [x] (not (~func x)))]
+            (last (predicate-lazy-seq nf# (cons ~'first ~'rest)))))
+        (meta ~func)
+        {:name ~(str func-name)}))))
 
 (defmacro def-predicate
-  [pos-name neg-name func-name]
+  [func name]
   `(do
-    (def-predicate-pos ~pos-name ~func-name)
-    (def-predicate-neg ~neg-name ~func-name)))
+    (def-predicate-pos ~func ~name)
+    (def-predicate-neg ~func ~name)))
+
+(def-predicate is-nil "nil")
+(def-predicate is-str "str")
+(def-predicate is-seq "seq")
+(def-predicate is-len "len")
+(def-predicate is-indexed "indexed")
+(def-predicate is-assoc "assoc")
+(def-predicate is-mapped "mapped")
+(def-predicate is-list "list")
+(def-predicate is-vector "vector")
+(def-predicate is-promise "promise")
+(def-predicate is-meta "meta")
+(def-predicate is-pos-inf "inf")
+(def-predicate is-neg-inf "-inf")
+(def-predicate is-nan "nan")
+(def-predicate is-macro "macro")
+(def-predicate is-apply "apply")
+(def-predicate is-special-form "special-form")
+(def-predicate is-keyword "keyword")
+(def-predicate is-symbol "symbol")
+(def-predicate is-local "local")
 
 (defn is-even
   {:doc "will return whether or not the number is even"}
@@ -48,28 +69,7 @@
 (defn is-odd
   {:doc "will return whether or not the number is odd"}
   [value]
-  (!= (% value 2) 0))
+  (= (% value 2) 1))
 
-(def-predicate even? !even? is-even)
-(def-predicate odd? !odd? is-odd)
-
-(def-predicate nil? !nil? is-nil)
-(def-predicate str? !str? is-str)
-(def-predicate seq? !seq? is-seq)
-(def-predicate len? !len? is-len)
-(def-predicate indexed? !indexed? is-indexed)
-(def-predicate assoc? !assoc? is-assoc)
-(def-predicate mapped? !mapped? is-mapped)
-(def-predicate list? !list? is-list)
-(def-predicate vector? !vector? is-vector)
-(def-predicate promise? !promise? is-promise)
-(def-predicate meta? !meta? is-meta)
-(def-predicate inf? !inf? is-pos-inf)
-(def-predicate -inf? !-inf? is-neg-inf)
-(def-predicate nan? !nan? is-nan)
-(def-predicate macro? !macro? is-macro)
-(def-predicate apply? !apply? is-apply)
-(def-predicate special-form? !special-form? is-special-form)
-(def-predicate keyword? !keyword? is-keyword)
-(def-predicate symbol? !symbol? is-symbol)
-(def-predicate local? !local? is-local)
+(def-predicate is-even "even")
+(def-predicate is-odd "odd")

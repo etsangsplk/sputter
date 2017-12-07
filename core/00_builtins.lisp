@@ -30,9 +30,10 @@
 
 ;; symbols
 
-(def-builtin gensym)
-(def-builtin is-symbol)
-(def-builtin is-local)
+(def-builtin sym       :doc "converts a string into an interned symbol")
+(def-builtin gensym    :doc "creates a unique symbol, useful in macros")
+(def-builtin is-symbol :doc "tests if a value is a symbol")
+(def-builtin is-local  :doc "tests if a value is an unqualified symbol")
 
 ;; namespaces
 

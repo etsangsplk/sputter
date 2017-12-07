@@ -2,11 +2,26 @@ package builtins
 
 import a "github.com/kode4food/sputter/api"
 
-const genSymName = "gensym"
+const (
+	symName      = "sym"
+	genSymName   = "gensym"
+	isSymbolName = "is-symbol"
+	isLocalName  = "is-local"
+)
 
-type genSymFunction struct{ BaseBuiltIn }
+type (
+	symFunction      struct{ BaseBuiltIn }
+	genSymFunction   struct{ BaseBuiltIn }
+	isSymbolFunction struct{ BaseBuiltIn }
+	isLocalFunction  struct{ BaseBuiltIn }
+)
 
 var anonName = a.Name("anon")
+
+func (*symFunction) Apply(c a.Context, args a.Sequence) a.Value {
+	a.AssertArity(args, 1)
+	return a.ParseSymbol(a.Name(args.First().(a.Str)))
+}
 
 func (*genSymFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	if a.AssertArityRange(args, 0, 1) == 1 {
@@ -15,8 +30,28 @@ func (*genSymFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	return a.NewGeneratedSymbol(anonName)
 }
 
-func init() {
-	var genSym *genSymFunction
+func (*isSymbolFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+	if _, ok := args.First().(a.Symbol); ok {
+		return a.True
+	}
+	return a.False
+}
 
+func (*isLocalFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+	if _, ok := args.First().(a.LocalSymbol); ok {
+		return a.True
+	}
+	return a.False
+}
+
+func init() {
+	var sym *symFunction
+	var genSym *genSymFunction
+	var isSymbol *isSymbolFunction
+	var isLocal *isLocalFunction
+
+	RegisterBuiltIn(symName, sym)
 	RegisterBuiltIn(genSymName, genSym)
+	RegisterBuiltIn(isSymbolName, isSymbol)
+	RegisterBuiltIn(isLocalName, isLocal)
 }
