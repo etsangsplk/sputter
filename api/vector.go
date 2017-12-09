@@ -98,6 +98,11 @@ func (v Values) Conjoin(a Value) Sequence {
 	return append(v, a)
 }
 
+// Concat concatenates two Value arrays
+func (v Values) Concat(a Values) Sequence {
+	return append(v, SequenceToValues(a)...)
+}
+
 // Str converts this Value array to a Str
 func (v Values) Str() Str {
 	var b bytes.Buffer

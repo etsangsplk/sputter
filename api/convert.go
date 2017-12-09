@@ -20,12 +20,20 @@ func SequenceToList(s Sequence) List {
 }
 
 func uncountedToList(s Sequence) List {
-	return NewList(uncountedToArray(s)...)
+	return NewList(uncountedToValues(s)...)
 }
 
 // SequenceToVector takes any sequence and converts it to a Vector
 func SequenceToVector(s Sequence) Vector {
 	if v, ok := s.(Vector); ok {
+		return v
+	}
+	return SequenceToValues(s)
+}
+
+// SequenceToValues takes any sequence and converts it to a Value array
+func SequenceToValues(s Sequence) Values {
+	if v, ok := s.(Values); ok {
 		return v
 	}
 	if c, ok := s.(Counted); ok {
@@ -37,14 +45,10 @@ func SequenceToVector(s Sequence) Vector {
 		}
 		return res
 	}
-	return uncountedToVector(s)
+	return uncountedToValues(s)
 }
 
-func uncountedToVector(s Sequence) Vector {
-	return Values(uncountedToArray(s))
-}
-
-func uncountedToArray(s Sequence) Values {
+func uncountedToValues(s Sequence) Values {
 	res := Values{}
 	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
 		res = append(res, f)

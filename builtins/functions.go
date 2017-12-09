@@ -15,6 +15,7 @@ const (
 
 	lambdaName        = "lambda"
 	applyName         = "apply"
+	partialName       = "partial"
 	isApplyName       = "is-apply"
 	isSpecialFormName = "is-special-form"
 )
@@ -22,6 +23,7 @@ const (
 type (
 	lambdaFunction        struct{ BaseBuiltIn }
 	applyFunction         struct{ BaseBuiltIn }
+	partialFunction       struct{ BaseBuiltIn }
 	isApplyFunction       struct{ BaseBuiltIn }
 	isSpecialFormFunction struct{ BaseBuiltIn }
 
@@ -318,6 +320,16 @@ func (*applyFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	return fn.Apply(c, s)
 }
 
+func (*partialFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+	a.AssertMinimumArity(args, 1)
+	fn := args.First().(a.Applicable)
+	bound := a.SequenceToValues(args.Rest())
+	return a.NewExecFunction(func(c a.Context, args a.Sequence) a.Value {
+		fullArgs := bound.Concat(a.SequenceToValues(args))
+		return fn.Apply(c, fullArgs)
+	})
+}
+
 func (*isApplyFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	if _, ok := args.First().(a.Applicable); ok {
 		return a.True
@@ -335,11 +347,13 @@ func (*isSpecialFormFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 func init() {
 	var lambda *lambdaFunction
 	var apply *applyFunction
+	var partial *partialFunction
 	var isApply *isApplyFunction
 	var isSpecialForm *isSpecialFormFunction
 
 	RegisterBuiltIn(lambdaName, lambda)
 	RegisterBuiltIn(applyName, apply)
+	RegisterBuiltIn(partialName, partial)
 	RegisterBuiltIn(isApplyName, isApply)
 	RegisterBuiltIn(isSpecialFormName, isSpecialForm)
 }
