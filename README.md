@@ -41,7 +41,7 @@ change rapidly. The current built-in forms are:
   * Numeric Predicates: `inf?` `-inf?` `nan?` `even?` `odd?`
   * Values: `def` `let` `when-let` `put-ns` `ns` `with-ns`
   * Symbols and Keywords: `sym` `gensym` `sym?` `local?` `keyword?`
-  * Functions: `defn` `fn` `lambda` `closure` `apply` `partial` `apply?` `special-form?`
+  * Functions: `defn` `fn` `lambda` `apply` `partial` `apply?` `closure` `special-form?`
   * Threading: `->` `->>` `some->` `some->>` `as->` `cond->` `cond->>`
   * Macros: `defmacro` `macroexpand1` `macroexpand` `macroexpand-all` `macro?`
   * Errors: `error` `raise` `panic` `try` `assert-args`
