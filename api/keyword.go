@@ -8,7 +8,7 @@ var keywords = u.NewCache()
 type Keyword interface {
 	Value
 	Applicable
-	Named
+	Name() Name
 	KeywordType()
 }
 

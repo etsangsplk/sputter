@@ -1,8 +1,6 @@
 package builtins
 
-import (
-	a "github.com/kode4food/sputter/api"
-)
+import a "github.com/kode4food/sputter/api"
 
 const partialName = "partial"
 
@@ -19,8 +17,7 @@ type (
 // BoundKey is the Metadata key for a bound Function
 var BoundKey = a.NewKeyword("bound")
 
-// BindFunction binds a set of arguments to an Applicable
-func BindFunction(bound a.Applicable, args a.Values) *boundFunction {
+func bindFunction(bound a.Applicable, args a.Values) *boundFunction {
 	var md a.Object
 	if an, ok := bound.(a.Annotated); ok {
 		md = an.Metadata()
@@ -44,7 +41,7 @@ func (f *boundFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	return f.bound.Apply(c, fullArgs)
 }
 
-func (f *boundFunction) Rebind(args a.Values) *boundFunction {
+func (f *boundFunction) rebind(args a.Values) *boundFunction {
 	return &boundFunction{
 		BaseFunction: f.BaseFunction,
 		bound:        f.bound,
@@ -66,10 +63,9 @@ func (*partialFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	values := a.SequenceToValues(args.Rest())
 
 	if bf, ok := bound.(*boundFunction); ok {
-		return bf.Rebind(values)
-	} else {
-		return BindFunction(bound, values)
+		return bf.rebind(values)
 	}
+	return bindFunction(bound, values)
 }
 
 func init() {
