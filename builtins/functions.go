@@ -64,6 +64,12 @@ type (
 		a.BaseFunction
 		body a.Block
 	}
+
+	boundFunction struct {
+		a.BaseFunction
+		bound a.Applicable
+		args  a.Values
+	}
 )
 
 var (
@@ -121,6 +127,11 @@ func (f *blockFunction) WithMetadata(md a.Object) a.AnnotatedValue {
 		BaseFunction: f.Extend(md),
 		body:         f.body,
 	}
+}
+
+func (f *boundFunction) Apply(c a.Context, args a.Sequence) a.Value {
+	fullArgs := f.args.Concat(a.SequenceToValues(args))
+	return f.bound.Apply(c, fullArgs)
 }
 
 func makeArgProcessor(cl a.Context, s a.Sequence) argProcessor {
@@ -322,12 +333,18 @@ func (*applyFunction) Apply(c a.Context, args a.Sequence) a.Value {
 
 func (*partialFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
-	fn := args.First().(a.Applicable)
-	bound := a.SequenceToValues(args.Rest())
-	return a.NewExecFunction(func(c a.Context, args a.Sequence) a.Value {
-		fullArgs := bound.Concat(a.SequenceToValues(args))
-		return fn.Apply(c, fullArgs)
-	})
+	bound := args.First().(a.Applicable)
+	values := a.SequenceToValues(args.Rest())
+	if bf, ok := bound.(*boundFunction); ok {
+		return &boundFunction{
+			bound: bf.bound,
+			args:  bf.args.Concat(values),
+		}
+	}
+	return &boundFunction{
+		bound: bound,
+		args:  values,
+	}
 }
 
 func (*isApplyFunction) Apply(_ a.Context, args a.Sequence) a.Value {

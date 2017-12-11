@@ -99,7 +99,7 @@ func (v Values) Conjoin(a Value) Sequence {
 }
 
 // Concat concatenates two Value arrays
-func (v Values) Concat(a Values) Sequence {
+func (v Values) Concat(a Values) Values {
 	return append(v, SequenceToValues(a)...)
 }
 
