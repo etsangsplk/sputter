@@ -32,8 +32,6 @@ func TestFunction(t *testing.T) {
 
 	v, _ = f3.Metadata().Get(a.DocKey)
 	as.String("modified", v)
-
-	as.Contains(":name test-function", f1)
 	as.String("this is a test", f1.Documentation())
 
 	c := a.NewContext()

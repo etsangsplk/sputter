@@ -122,14 +122,10 @@ func (s Str) Str() Str {
 
 // MakeDumpStr takes a Value and attempts to spit out a bunch of info
 func MakeDumpStr(v Value) Str {
-	m := NewObject(Properties{})
-	if n, ok := v.(Named); ok {
-		m = m.Child(Properties{NameKey: n.Name()})
-	}
+	p := Str(fmt.Sprintf("%p", &v))
+	m := Object(Properties{InstanceKey: p})
 	if t, ok := v.(Typed); ok {
 		m = m.Child(Properties{TypeKey: t.Type()})
 	}
-	p := Str(fmt.Sprintf("%p", &v))
-	m = m.Child(Properties{InstanceKey: p})
 	return m.Str()
 }

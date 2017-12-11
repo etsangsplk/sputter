@@ -85,7 +85,8 @@ func TestListEval(t *testing.T) {
 	as := assert.New(t)
 
 	c := a.NewContext()
-	c.Put(helloThere.Name(), helloThere)
+	n := helloThere.Metadata().MustGet(a.NameKey).(a.Name)
+	c.Put(n, helloThere)
 
 	fl := a.NewList(helloThere)
 	as.String("there", a.Eval(c, fl))

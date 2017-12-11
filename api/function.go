@@ -13,7 +13,6 @@ type (
 	Function interface {
 		Value
 		Annotated
-		Named
 		Typed
 		Documented
 		Applicable
@@ -77,16 +76,6 @@ func (f *BaseFunction) FunctionType() {}
 // Metadata returns the Function's metadata Object
 func (f *BaseFunction) Metadata() Object {
 	return f.meta
-}
-
-// Name inspects the Function's metadata to determine its Name
-func (f *BaseFunction) Name() Name {
-	if v, ok := f.Metadata().Get(NameKey); ok {
-		if n, ok := v.(Name); ok {
-			return n
-		}
-	}
-	return DefaultFunctionName
 }
 
 // Documentation returns the Function's documentation
