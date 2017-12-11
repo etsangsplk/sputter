@@ -15,7 +15,6 @@ const (
 
 	lambdaName        = "lambda"
 	applyName         = "apply"
-	partialName       = "partial"
 	isApplyName       = "is-apply"
 	isSpecialFormName = "is-special-form"
 )
@@ -23,7 +22,6 @@ const (
 type (
 	lambdaFunction        struct{ BaseBuiltIn }
 	applyFunction         struct{ BaseBuiltIn }
-	partialFunction       struct{ BaseBuiltIn }
 	isApplyFunction       struct{ BaseBuiltIn }
 	isSpecialFormFunction struct{ BaseBuiltIn }
 
@@ -63,12 +61,6 @@ type (
 	blockFunction struct {
 		a.BaseFunction
 		body a.Block
-	}
-
-	boundFunction struct {
-		a.BaseFunction
-		bound a.Applicable
-		args  a.Values
 	}
 )
 
@@ -127,11 +119,6 @@ func (f *blockFunction) WithMetadata(md a.Object) a.AnnotatedValue {
 		BaseFunction: f.Extend(md),
 		body:         f.body,
 	}
-}
-
-func (f *boundFunction) Apply(c a.Context, args a.Sequence) a.Value {
-	fullArgs := f.args.Concat(a.SequenceToValues(args))
-	return f.bound.Apply(c, fullArgs)
 }
 
 func makeArgProcessor(cl a.Context, s a.Sequence) argProcessor {
@@ -331,22 +318,6 @@ func (*applyFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	return fn.Apply(c, s)
 }
 
-func (*partialFunction) Apply(_ a.Context, args a.Sequence) a.Value {
-	a.AssertMinimumArity(args, 1)
-	bound := args.First().(a.Applicable)
-	values := a.SequenceToValues(args.Rest())
-	if bf, ok := bound.(*boundFunction); ok {
-		return &boundFunction{
-			bound: bf.bound,
-			args:  bf.args.Concat(values),
-		}
-	}
-	return &boundFunction{
-		bound: bound,
-		args:  values,
-	}
-}
-
 func (*isApplyFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	if _, ok := args.First().(a.Applicable); ok {
 		return a.True
@@ -364,13 +335,11 @@ func (*isSpecialFormFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 func init() {
 	var lambda *lambdaFunction
 	var apply *applyFunction
-	var partial *partialFunction
 	var isApply *isApplyFunction
 	var isSpecialForm *isSpecialFormFunction
 
 	RegisterBuiltIn(lambdaName, lambda)
 	RegisterBuiltIn(applyName, apply)
-	RegisterBuiltIn(partialName, partial)
 	RegisterBuiltIn(isApplyName, isApply)
 	RegisterBuiltIn(isSpecialFormName, isSpecialForm)
 }

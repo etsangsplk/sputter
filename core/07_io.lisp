@@ -42,7 +42,8 @@
       `(do ~@body)
     (>= (len bindings) 2)
       `(let [~(bindings 0) ~(bindings 1),
-             close# (get ~(bindings 0) :close nil),
-             result# (with-open [~@(rest (rest bindings))] ~@body)]
-        (when (is-apply close#) (close#))
-        result#)))
+             close# (get ~(bindings 0) :close nil)]
+        (try
+          (with-open [~@(rest (rest bindings))] ~@body)
+          (finally
+            (when (is-apply close#) (close#)))))))
