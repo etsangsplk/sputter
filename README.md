@@ -39,7 +39,7 @@ change rapidly. The current built-in forms are:
   * Branching: `if` `not` `unless` `when` `when-not` `cond` `and` `or`
   * Numeric: `+` `-` `*` `/` `%` `=` `!=` `<` `>` `<=` `>=` `inf` `-inf` `inc` `dec` `range`
   * Numeric Predicates: `inf?` `-inf?` `nan?` `even?` `odd?`
-  * Values: `def` `let` `when-let` `put-ns` `ns` `with-ns`
+  * Values: `def` `let` `if-let` `when-let` `put-ns` `ns` `with-ns`
   * Symbols and Keywords: `sym` `gensym` `sym?` `local?` `keyword?`
   * Functions: `defn` `fn` `lambda` `apply` `partial` `apply?` `closure` `special-form?`
   * Threading: `->` `->>` `some->` `some->>` `as->` `cond->` `cond->>`
@@ -47,7 +47,7 @@ change rapidly. The current built-in forms are:
   * Errors: `error` `raise` `panic` `try` `assert-args`
   * Quoting: `quote` `syntax-quote`
   * Predicates: `eq` `nil?`
-  * Sequences: `cons` `conj` `first` `rest` `last` `for-each` `seq?`
+  * Sequences: `seq` `cons` `conj` `first` `rest` `last` `for-each` `seq?`
   * Lists: `list` `to-list` `list?`
   * Vectors: `vector` `to-vector` `vector?`
   * Associative Arrays: `assoc` `to-assoc` `assoc?`

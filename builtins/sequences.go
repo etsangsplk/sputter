@@ -3,6 +3,7 @@ package builtins
 import a "github.com/kode4food/sputter/api"
 
 const (
+	seqName       = "seq"
 	firstName     = "first"
 	restName      = "rest"
 	lastName      = "last"
@@ -17,6 +18,7 @@ const (
 )
 
 type (
+	seqFunction       struct{ BaseBuiltIn }
 	firstFunction     struct{ BaseBuiltIn }
 	restFunction      struct{ BaseBuiltIn }
 	lastFunction      struct{ BaseBuiltIn }
@@ -31,6 +33,14 @@ type (
 
 	forProc func(a.Context)
 )
+
+func (*seqFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+	a.AssertArity(args, 1)
+	if s, ok := args.First().(a.Sequence); ok {
+		return s
+	}
+	return a.Nil
+}
 
 func fetchSequence(args a.Sequence) a.Sequence {
 	a.AssertArity(args, 1)
@@ -110,6 +120,7 @@ func (*isIndexedFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
+	var seq *seqFunction
 	var first *firstFunction
 	var rest *restFunction
 	var last *lastFunction
@@ -122,6 +133,7 @@ func init() {
 	var isLen *isLenFunction
 	var isIndexed *isIndexedFunction
 
+	RegisterBuiltIn(seqName, seq)
 	RegisterBuiltIn(firstName, first)
 	RegisterBuiltIn(restName, rest)
 	RegisterBuiltIn(lastName, last)

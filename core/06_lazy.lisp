@@ -28,17 +28,6 @@
   (list 'sputter:make-closure []
     (cons 'sputter:make-lazy-seq body)))
 
-(defmacro when-let
-  [bindings & body]
-  (assert-args
-    (is-vector bindings)   "binding vector must be supplied"
-    (= 2 (len bindings)) "binding vector must contain 2 elements")
-  (let [form (bindings 0),
-        test (bindings 1)]
-    `(let [temp# ~test]
-      (when temp#
-        (let [~form temp#] ~@body)))))
-
 (defn take-while
   [pred coll]
   (lazy-seq

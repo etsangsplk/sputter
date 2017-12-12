@@ -49,6 +49,7 @@
 
 ;; sequences
 
+(def-builtin seq    :doc "attempts to convert value to a seq, nil otherwise")
 (def-builtin first  :doc-asset "first")
 (def-builtin rest   :doc-asset "rest")
 (def-builtin last   :doc-asset "last")
