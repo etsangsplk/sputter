@@ -14,7 +14,7 @@ type (
 	}
 )
 
-// BoundKey is the Metadata key for a bound Function
+// BoundKey is the Metadata key for a Function's bound count
 var BoundKey = a.NewKeyword("bound")
 
 func bindFunction(bound a.Applicable, args a.Values) *boundFunction {
@@ -26,7 +26,7 @@ func bindFunction(bound a.Applicable, args a.Values) *boundFunction {
 	}
 
 	md = md.Child(a.Properties{
-		BoundKey: a.True,
+		BoundKey: a.NewFloat(float64(len(args))),
 	})
 
 	return &boundFunction{
@@ -42,10 +42,14 @@ func (f *boundFunction) Apply(c a.Context, args a.Sequence) a.Value {
 }
 
 func (f *boundFunction) rebind(args a.Values) *boundFunction {
+	newArgs := f.args.Concat(args)
+	md := a.Properties{
+		BoundKey: a.NewFloat(float64(len(newArgs))),
+	}
 	return &boundFunction{
-		BaseFunction: f.BaseFunction,
+		BaseFunction: f.BaseFunction.Extend(md),
 		bound:        f.bound,
-		args:         f.args.Concat(args),
+		args:         newArgs,
 	}
 }
 
