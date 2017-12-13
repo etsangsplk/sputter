@@ -30,8 +30,8 @@
 
 ;; symbols
 
-(def-builtin sym       :doc "converts a string into an interned symbol")
-(def-builtin gensym    :doc "creates a unique symbol, useful in macros")
+(def-builtin sym       :doc-asset "sym")
+(def-builtin gensym    :doc-asset "gensym")
 (def-builtin is-symbol)
 (def-builtin is-local)
 

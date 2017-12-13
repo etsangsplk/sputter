@@ -40,7 +40,7 @@ func makeLazyResolver(c a.Context, f a.Applicable) a.LazyResolver {
 }
 
 func (*lazySequenceFunction) Apply(c a.Context, args a.Sequence) a.Value {
-	fn := NewBlockFunction(args)
+	fn := a.NewBlockFunction(args)
 	return a.NewLazySequence(makeLazyResolver(c, fn))
 }
 

@@ -28,6 +28,11 @@ type (
 		BaseFunction
 		exec SequenceProcessor
 	}
+
+	blockFunction struct {
+		BaseFunction
+		body Block
+	}
 )
 
 var (
@@ -60,6 +65,14 @@ func NewExecFunction(e SequenceProcessor) Function {
 	return &execFunction{
 		BaseFunction: DefaultBaseFunction,
 		exec:         e,
+	}
+}
+
+// NewBlockFunction creates a new simple Function based on a Block
+func NewBlockFunction(args Sequence) Function {
+	return &blockFunction{
+		BaseFunction: DefaultBaseFunction,
+		body:         MakeBlock(args),
 	}
 }
 
@@ -107,6 +120,17 @@ func (f *execFunction) WithMetadata(md Object) AnnotatedValue {
 
 func (f *execFunction) Apply(c Context, args Sequence) Value {
 	return f.exec(c, args)
+}
+
+func (f *blockFunction) Apply(c Context, _ Sequence) Value {
+	return f.body.Eval(c)
+}
+
+func (f *blockFunction) WithMetadata(md Object) AnnotatedValue {
+	return &blockFunction{
+		BaseFunction: f.Extend(md),
+		body:         f.body,
+	}
 }
 
 // IsMacro tests an Applicable as being marked a Macro and is a special form

@@ -57,11 +57,6 @@ type (
 		args     string
 		matchers []argProcessorMatch
 	}
-
-	blockFunction struct {
-		a.BaseFunction
-		body a.Block
-	}
 )
 
 var (
@@ -99,25 +94,6 @@ func (f *multiFunction) WithMetadata(md a.Object) a.AnnotatedValue {
 		BaseFunction: f.Extend(md),
 		args:         f.args,
 		matchers:     f.matchers,
-	}
-}
-
-// NewBlockFunction creates a new simple Function based on a Block
-func NewBlockFunction(args a.Sequence) a.Function {
-	return &blockFunction{
-		BaseFunction: a.DefaultBaseFunction,
-		body:         a.MakeBlock(args),
-	}
-}
-
-func (f *blockFunction) Apply(c a.Context, _ a.Sequence) a.Value {
-	return f.body.Eval(c)
-}
-
-func (f *blockFunction) WithMetadata(md a.Object) a.AnnotatedValue {
-	return &blockFunction{
-		BaseFunction: f.Extend(md),
-		body:         f.body,
 	}
 }
 
