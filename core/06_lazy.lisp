@@ -42,7 +42,7 @@
     (for-each ~seq-exprs (emit (do ~@body)))))
 
 (defn partition
-  {:doc "partitions a sequence into groups of count, incrementing by step"}
+  {:doc-asset "partition"}
   ([count coll] (partition count count coll))
   ([count step coll]
     (lazy-seq

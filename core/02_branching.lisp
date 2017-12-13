@@ -1,7 +1,7 @@
 ;;;; sputter core: branching
 
 (defmacro not
-  {:doc "logically inverts the truthiness of the provided value"}
+  {:doc-asset "not"}
   [val]
   `(if ~val false true))
 
