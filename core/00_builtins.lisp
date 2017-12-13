@@ -30,8 +30,8 @@
 
 ;; symbols
 
-(def-builtin sym       :doc-asset "sym")
-(def-builtin gensym    :doc-asset "gensym")
+(def-builtin sym    :doc-asset "sym")
+(def-builtin gensym :doc-asset "gensym")
 (def-builtin is-symbol)
 (def-builtin is-local)
 
@@ -49,7 +49,7 @@
 
 ;; sequences
 
-(def-builtin seq    :doc "attempts to convert value to a seq, nil otherwise")
+(def-builtin seq    :doc-asset "seq")
 (def-builtin first  :doc-asset "first")
 (def-builtin rest   :doc-asset "rest")
 (def-builtin last   :doc-asset "last")
@@ -96,7 +96,7 @@
 (def-builtin closure      :doc-asset "closure" :macro true :special-form true)
 (def-builtin lambda       :doc-asset "lambda"  :special-form true)
 (def-builtin apply        :doc-asset "apply")
-(def-builtin partial      :doc "generates a function based on a partial apply")
+(def-builtin partial      :doc-asset "partial")
 (def-builtin make-closure :macro true)
 (def-builtin is-apply)
 (def-builtin is-special-form)
