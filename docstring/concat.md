@@ -3,6 +3,6 @@ Creates a lazy sequence whose content is the result of concatenating the values 
 
 ## An Example
 
-  (concat [1 2 3] '(4 5 6))
+  (to-list (concat [1 2 3] '(4 5 6)))
 
-This will return the lazy sequence _(1 2 3 4 5 6)_
+This will return the list _(1 2 3 4 5 6)_
