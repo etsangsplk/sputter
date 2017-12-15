@@ -26,7 +26,7 @@
       `(->> (~f ~@r ~value) ~@(rest forms)))))
 
 (defmacro some->
-  {:doc "like `->`, but returns _nil_ if any form evaluates as such"}
+  {:doc-asset "some-first"}
   ([value] value)
   ([value & forms]
     (let [l (thread-to-list (first forms)),
@@ -37,7 +37,7 @@
           (some-> (~f val# ~@r) ~@(rest forms)))))))
 
 (defmacro some->>
-  {:doc "like `->>`, but returns _nil_ if any form evaluates as such"}
+  {:doc-asset "some-last"}
   ([value] value)
   ([value & forms]
     (let [l (thread-to-list (first forms)),
