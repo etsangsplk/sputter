@@ -1,5 +1,5 @@
 # (get form key default?) retrieves a value by key
-Returns the value within a container that is associated with the specified key. If the key does not exist within the container, then either the default value is returned or an error is raised.
+Returns the value within a sequence that is associated with the specified key. If the key does not exist within the sequence, then either the default value is returned or an error is raised.
 
 ## An Example
 

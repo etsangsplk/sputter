@@ -1,5 +1,5 @@
 # (nth form index default?) retrieves a value by index
-Returns the value that can be found at the specified index of its container. If the index is out of the bounds of the container, then either the default value is returned or an error is raised. Keep in mind that indexes are zero-based.
+Returns the value that can be found at the specified index of its sequence. If the index is out of the bounds of the sequence, then either the default value is returned or an error is raised. Keep in mind that indexes are zero-based.
 
 ## An Example
 

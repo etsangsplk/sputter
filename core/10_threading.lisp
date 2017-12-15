@@ -8,7 +8,7 @@
     target))
 
 (defmacro ->
-  {:doc "threads value through a series of forms, as their first argument"}
+  {:doc-asset "thread-first"}
   ([value] value)
   ([value & forms]
     (let [l (thread-to-list (first forms)),

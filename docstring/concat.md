@@ -1,5 +1,5 @@
 # (concat seq+) lazily concatenates sequences
-Creates a lazy sequence whose content is the result of concatenating the values of each provided sequence.
+Creates a lazy sequence whose content is the result of concatenating the elements of each provided sequence.
 
 ## An Example
 

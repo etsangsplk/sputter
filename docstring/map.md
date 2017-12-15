@@ -1,5 +1,5 @@
 # (map func seq+) lazily maps sequences
-Creates a lazy sequence whose values are the result of applying the provided function to the values of the provided sequences.
+Creates a lazy sequence whose elements are the result of applying the provided function to the elements of the provided sequences.
 
 ## An Example
 
