@@ -1,10 +1,10 @@
-# (->> value forms**) threads value through calls as their last argument
-Threads 'value' through the supplied forms. Any form that is not already an application will be converted into one. The value will then be inserted as its final argument and applied, and so on.
+# (->> expr forms**) threads value through calls as their last argument
+Evaluates 'expr' and threads it through the supplied forms as their last argument. Any form that is not already a function call will be converted into one before threading.
 
 ## An Example
 
-  (->> 0 (+ 10) (* 2) (/ 5))
+  (->> 0 (+ 10) (** 2) (/ 5))
 
-Will expand to `(/ 5 (* 2 (+ 10 0)))` and return _0.25_. In order to better visualize what's going on, one might choose to insert a `,` as a placeholder for the threaded value.
+Will expand to `(/ 5 (** 2 (+ 10 0)))` and return _0.25_. In order to better visualize what's going on, one might choose to insert a `,` as a placeholder for the threaded value.
 
-  (->> 0 (+ 10 ,) (* 2 ,) (/ 5 ,))
+  (->> 0 (+ 10 ,) (** 2 ,) (/ 5 ,))

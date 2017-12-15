@@ -10,10 +10,9 @@ A channel is a data structure that is used to generate a lazy sequence of values
 ## An Example
 
   (let [ch (chan)]
-    (go
-      (. ch :emit "foo")
-      (. ch :emit "bar")
-      (. ch :close))
+    (go (. ch :emit "foo")
+        (. ch :emit "bar")
+        (. ch :close))
 
     (to-vector (:seq ch)))
 
