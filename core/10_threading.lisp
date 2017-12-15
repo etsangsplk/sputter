@@ -17,7 +17,7 @@
       `(-> (~f ~value ~@r) ~@(rest forms)))))
 
 (defmacro ->>
-  {:doc "threads value through a series of forms, as their last argument"}
+  {:doc-asset "thread-last"}
   ([value] value)
   ([value & forms]
     (let [l (thread-to-list (first forms)),
