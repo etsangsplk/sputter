@@ -7,7 +7,7 @@ Evaluates the forms from left to right. As soon as one evaluates to a truthy val
       false
       "not returned")
 
-Will return _6_, never evaluating _false_ or _"not returned"_, whereas:
+Will return _6_, never evaluating _false_ and _"not returned"_, whereas:
 
   (or false
       nil
