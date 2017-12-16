@@ -1,5 +1,5 @@
 # (drop count seq+) drops the first elements of sequences
-Will return a lazy sequence that excludes the first 'count' elements of the provided sequences (concatenated). If the source sequences are shorter than the requested count, an empty list will be returned.
+Will return a lazy sequence that excludes the first /count/ elements of the provided sequences (concatenated). If the source sequences are shorter than the requested count, an empty list will be returned.
 
 ## An Example
 

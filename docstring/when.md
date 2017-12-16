@@ -1,5 +1,5 @@
 # (when pred form**) conditionally evaluates a block
-If the evaluated predicate is truthy (not false, not nil), the forms are evaluated. Will evaluate each form in turn, returning the final evaluation as its result.
+If the evaluated predicate is truthy (not _false_, not _nil_), the forms are evaluated. Will evaluate each form in turn, returning the final evaluation as its result.
 
 ## An Example
 
@@ -9,4 +9,4 @@ If the evaluated predicate is truthy (not false, not nil), the forms are evaluat
     (println "x is big")
     (len x))
 
-If the symbol `when-not` is used instead of `when`, then the predicate is evaluated and the block will be evaluated only if result is not truthy
+If the symbol /when-not/ is used instead of /when/, then the predicate is evaluated and the block will be evaluated only if result is not truthy

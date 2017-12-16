@@ -1,5 +1,5 @@
 # (to-list seq+) converts sequences to a list
-Will concatenate a set of sequences into a list. Unlike the standard `concat` function, which is lazily computed, the result of this function will be materialized immediately.
+Will concatenate a set of sequences into a list. Unlike the standard /concat/ function, which is lazily computed, the result of this function will be materialized immediately.
 
 ## An Example
 

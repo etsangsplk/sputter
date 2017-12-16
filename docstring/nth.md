@@ -10,7 +10,7 @@ This example returns _"wrong"_ because index 4 (the 5th index) is beyond the end
 
 ## Indexed Sequence Application
 
-Instead of using the `nth` function, indexed sequences such as lists and vectors can also have arguments applied directly to them.
+Instead of using the /nth/ function, indexed sequences such as lists and vectors can also have arguments applied directly to them.
 
   (def l '(1 2 3 4))
   (l 4 "wrong")

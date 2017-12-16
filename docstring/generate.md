@@ -10,4 +10,4 @@ Evaluates the specified forms in a separate thread of execution. Returns a seque
 
   (to-vector colors)
 
-This example will bind the lazy sequence returned by the generate call to the name `colors`. The to-vector call will block until that variable is fully consumed, and then return the vector _["red" "orange" "yellow"]_.
+This example will bind the lazy sequence returned by the generate call to the name /colors/. The to-vector call will block until that variable is fully consumed, and then return the vector _["red" "orange" "yellow"]_.

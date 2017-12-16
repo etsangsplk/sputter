@@ -1,5 +1,5 @@
 # (defn name meta? [args] form+) binds a namespace function
-Will bind a function by name to the current namespace, which is 'user' by default.
+Will bind a function by name to the current namespace, which is /user/ by default.
 
 ## An Example
 
@@ -12,4 +12,4 @@ Will bind a function by name to the current namespace, which is 'user' by defaul
       (= i 2) 1
       :else   (+ (fib (- i 2)) (fib (- i 1)))))
 
-This example performs recursion with no tail call optimization, and no memoization. For a more performant and stack-friendly fibonacci sequence generation example, see the documentation of `lazy-seq`.
+This example performs recursion with no tail call optimization, and no memoization. For a more performant and stack-friendly fibonacci sequence generation example, see the documentation of /lazy-seq/.

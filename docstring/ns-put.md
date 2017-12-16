@@ -5,4 +5,4 @@ Will bind a value to a name in the specified namespace. All bindings are immutab
 
   (ns-put (ns config) env "production")
 
-This example will bind the string _"production"_ to the name `env` in the `config` namespace.
+This example will bind the string _"production"_ to the name /env/ in the /config/ namespace.

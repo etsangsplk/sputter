@@ -1,5 +1,5 @@
 # (cond <pred then>** else?) performs conditional branching
-For each `<pred then>` clause, the predicate will be evaluated, and if it is truthy (not false, not nil) the 'then' form is evaluated and returned, otherwise the next clause is processed.
+For each /<pred then>/ clause, the predicate will be evaluated, and if it is truthy (not _false_, not _nil_) the /then/ form is evaluated and returned, otherwise the next clause is processed.
 
 ## An Example
 

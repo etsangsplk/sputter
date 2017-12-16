@@ -7,7 +7,7 @@ If all forms evaluate to nil, then this function will return _true_. The first n
 
 This example will return _false_ because the first form is a list.
 
-Like most predicates, this function can also be negated by prepending the '!' character. This means that all of the provided forms must not be nil.
+Like most predicates, this function can also be negated by prepending the /!/ character. This means that all of the provided forms must not be nil.
 
   (!nil? "hello" [99])
 

@@ -1,5 +1,5 @@
 # (quote form) returns the specified form in data mode
-Meaning that lists and symbols will not be evaluated. This macro is effectively the same as prepending an expression with an apostrophe (').
+Meaning that lists and symbols will not be evaluated. This macro is effectively the same as prepending an expression with an apostrophe (/'/).
 
 ## An Example
 

@@ -7,7 +7,7 @@ If all forms evaluate to strings, then this function will return _true_. The fir
 
 This example will return _false_ because the first form is a list.
 
-Like most predicates, this function can also be negated by prepending the '!' character. This means that all of the provided forms must not be strings.
+Like most predicates, this function can also be negated by prepending the /!/ character. This means that all of the provided forms must not be strings.
 
   (!str? '(1 2 3) [99])
 

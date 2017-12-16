@@ -7,4 +7,4 @@ Will create a new local scope, binding the specified values to that scope by nam
         y [5 6 7 8]]
     (concat x y))
 
-This example will create a list called 'x' and a vector called 'y' and return the lazy concatenation of those sequences. Note that the two names do not exist outside of the `let` form.
+This example will create a list called /x/ and a vector called /y/ and return the lazy concatenation of those sequences. Note that the two names do not exist outside of the /let/ form.

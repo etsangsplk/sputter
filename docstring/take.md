@@ -1,5 +1,5 @@
 # (take count seq+) takes the first elements of sequences
-Will return a lazy sequence of either 'count' or fewer elements from the beginning of the provided sequences (concatenated). If the source sequences are shorter than the requested count, the resulting sequence will be truncated.
+Will return a lazy sequence of either /count/ or fewer elements from the beginning of the provided sequences (concatenated). If the source sequences are shorter than the requested count, the resulting sequence will be truncated.
 
 ## An Example
 

@@ -25,6 +25,7 @@ const (
 	lcyan    = esc + "96m"
 	white    = esc + "97m"
 	bold     = esc + "1m"
+	italic   = esc + "3m"
 	reset    = esc + "0m"
 	clear    = esc + "2J" + esc + "f"
 
@@ -42,11 +43,12 @@ const (
 type formatter func(string) string
 
 var (
-	indent = regexp.MustCompile("^##? |^\\s\\s+")
-	hashes = regexp.MustCompile("^##? ")
-	ticks  = regexp.MustCompile("`[^`]*`")
-	unders = regexp.MustCompile("_[^_]*_")
-	stars  = regexp.MustCompile("[*][^*]*[*]")
+	indent  = regexp.MustCompile("^##? |^\\s\\s+")
+	hashes  = regexp.MustCompile("^##? ")
+	ticks   = regexp.MustCompile("`[^`]*`")
+	slashes = regexp.MustCompile("/[^/]*/")
+	unders  = regexp.MustCompile("_[^_]*_")
+	stars   = regexp.MustCompile("[*][^*]*[*]")
 
 	lineFormatters = map[*regexp.Regexp]formatter{
 		regexp.MustCompile("^#\\s.*$"):   formatHeader1,
@@ -55,9 +57,10 @@ var (
 	}
 
 	docFormatters = map[*regexp.Regexp]formatter{
-		ticks:  trimmedFormatter("`", code),
-		unders: trimmedFormatter("_", result),
-		stars:  trimmedFormatter("*", bold),
+		ticks:   trimmedFormatter("`", code),
+		slashes: trimmedFormatter("/", italic),
+		unders:  trimmedFormatter("_", result),
+		stars:   trimmedFormatter("*", bold),
 	}
 )
 

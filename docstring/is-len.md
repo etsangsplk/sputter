@@ -7,7 +7,7 @@ If all forms evaluate to a valid sequence than can report its length, then this 
 
 This example will return _true_.
 
-Like most predicates, this function can also be negated by prepending the '!' character. This means that all of the provided forms must not be valid counted sequences.
+Like most predicates, this function can also be negated by prepending the /!/ character. This means that all of the provided forms must not be valid counted sequences.
 
   (!len? "hello" 99)
 

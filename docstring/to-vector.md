@@ -1,5 +1,5 @@
 # (to-vector seq+) converts sequences to a vector
-Will concatenate a set of sequences into a vector. Unlike the standard `concat` function, which is lazily computed, the result of this function will be materialized immediately.
+Will concatenate a set of sequences into a vector. Unlike the standard /concat/ function, which is lazily computed, the result of this function will be materialized immediately.
 
 ## An Example
 

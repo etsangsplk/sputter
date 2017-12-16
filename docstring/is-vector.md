@@ -7,7 +7,7 @@ If all forms evaluate to a vector, then this function will return _true_. The fi
 
 This example will return _false_ because the first form is a list.
 
-Like most predicates, this function can also be negated by prepending the '!' character. This means that all of the provided forms must not be vectors.
+Like most predicates, this function can also be negated by prepending the /!/ character. This means that all of the provided forms must not be vectors.
 
   (!vector? "hello" [99])
 

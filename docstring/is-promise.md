@@ -9,7 +9,7 @@ If all forms evaluate to a promise, then this function will return _true_. The f
 
 This example will return _false_ because the third form is a vector.
 
-Like most predicates, this function can also be negated by prepending the '!' character. This means that all of the provided forms must not be promises.
+Like most predicates, this function can also be negated by prepending the /!/ character. This means that all of the provided forms must not be promises.
 
   (!promise? "hello" [1 2 3])
 

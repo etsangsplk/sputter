@@ -11,4 +11,4 @@ Returns a future in the form of a function. The provided forms will be evaluated
 
   (fut)
 
-This example produces a future called `fut` that converts the results of an asynchronous block into a vector. The `(fut)` call will block until the future returns a value.
+This example produces a future called /fut/ that converts the results of an asynchronous block into a vector. The `(fut)` call will block until the future returns a value.

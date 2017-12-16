@@ -1,5 +1,5 @@
 # (defmacro name meta? [name**] form+) binds a reader macro
-Will bind a macro by name to the current namespace, which is 'user' by default. A macro is expanded by the reader in order to alter the source code's data representation before it is evaluated.
+Will bind a macro by name to the current namespace, which is /user/ by default. A macro is expanded by the reader in order to alter the source code's data representation before it is evaluated.
 
 ## An Example
 

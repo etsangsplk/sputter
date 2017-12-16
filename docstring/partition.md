@@ -1,5 +1,5 @@
 # (partition count step? seq) partitions a sequence
-Will partition a sequence into groups of `count` elements, incrementing by the number of elements defined in `step` (or `count` if `step` is not provided).
+Will partition a sequence into groups of /count/ elements, incrementing by the number of elements defined in /step/ (or /count/ if /step/ is not provided).
 
 ## An Example
 

@@ -7,6 +7,6 @@ If a string is provided, that string will be used to qualify the uniquely genera
     (list 'sputter:let [s "hello"] s))
 
   ;; is equivalent to
-  `(let [var# "hello"] var#)
+  ``(let [var# "hello"] var#)
 
 This example will return _"hello"_.
