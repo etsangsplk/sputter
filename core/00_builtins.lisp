@@ -9,6 +9,7 @@
 
 ;; basic predicates
 
+(def-builtin is-atom)
 (def-builtin is-nil)
 (def-builtin is-keyword)
 

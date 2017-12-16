@@ -46,7 +46,7 @@ change rapidly. The current built-in forms are:
   * Macros: `defmacro` `macroexpand1` `macroexpand` `macroexpand-all` `macro?`
   * Errors: `error` `raise` `panic` `try` `assert-args`
   * Quoting: `quote` `syntax-quote`
-  * Predicates: `eq` `nil?`
+  * Predicates: `eq` `atom?` `nil?`
   * Sequences: `seq` `cons` `conj` `first` `rest` `last` `for-each` `seq?`
   * Lists: `list` `to-list` `list?`
   * Vectors: `vector` `to-vector` `vector?`

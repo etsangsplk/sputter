@@ -44,6 +44,7 @@
       (def-predicate-pos ~func ~name ~md)
       (def-predicate-neg ~func ~name ~md))))
 
+(def-predicate is-atom "atom"       :doc-asset "is-atom")
 (def-predicate is-nil "nil"         :doc-asset "is-nil")
 (def-predicate is-str "str"         :doc-asset "is-str")
 (def-predicate is-seq "seq"         :doc-asset "is-seq")

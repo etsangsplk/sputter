@@ -28,9 +28,12 @@
   ([]       nil)
   ([clause] clause)
   ([& clauses]
-    `(if ~(clauses 0)
-         ~(clauses 1)
-         (cond ~@(rest (rest clauses))))))
+    (let [test (clauses 0)
+          branch (clauses 1)]
+      (unless (and (is-atom test) test)
+        `(if ~test ~branch
+          (cond ~@(rest (rest clauses))))
+        branch))))
 
 (defmacro and
   {:doc-asset "and"}
