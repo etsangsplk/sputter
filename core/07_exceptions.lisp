@@ -62,6 +62,14 @@
         (is-expr f p)    (try-prepend p :block f)
         :else            (panic :message "malformed try-catch-finally")))))
 
+(defn try-catch-predicate
+  {:private true}
+  [pred err-sym]
+  (let [l (thread-to-list pred),
+        f (first l),
+        r (rest l)]
+    (cons f (cons err-sym r))))
+
 (defn try-catch-branch
   {:private true}
   [clauses err-sym]
@@ -69,7 +77,7 @@
     (is-seq clauses) "catch branch not paired")
   (make-lazy-seq
     (let [clause (first clauses),
-          var    ((clause 1) 1),
+          var    ((clause 1) 0),
           expr   (rest (rest clause))]
       (cons
         (list 'sputter:let
@@ -83,9 +91,9 @@
   (make-lazy-seq
     (when (is-seq clauses)
       (let [clause (first clauses),
-            pred   ((clause 1) 0)]
+            pred   ((clause 1) 1)]
         (cons
-          (list pred err-sym)
+          (try-catch-predicate pred err-sym)
           (try-catch-branch clauses err-sym))))))
 
 (defn try-catch
@@ -105,6 +113,7 @@
     clauses))
 
 (defmacro try
+  {:doc-asset "try"}
   [& clauses]
   (assert-args
     (is-seq clauses) "try-catch-finally requires at least one clause")
