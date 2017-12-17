@@ -83,9 +83,9 @@
         (list 'sputter:let
               [var err-sym]
               [false (cons 'sputter:do expr)])
-        (try-catch-clause (rest clauses) err-sym)))))
+        (try-catch-clauses (rest clauses) err-sym)))))
 
-(defn try-catch-clause
+(defn try-catch-clauses
   {:private true}
   [clauses err-sym]
   (make-lazy-seq
@@ -102,7 +102,7 @@
   (let [err (gensym "err")]
     `(lambda [~err]
       (cond
-        ~@(apply list (try-catch-clause clauses err))
+        ~@(apply list (try-catch-clauses clauses err))
         :else [true ~err]))))
 
 (defn try-finally
