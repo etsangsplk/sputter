@@ -102,19 +102,18 @@ func isClosure(v a.Value) (a.Names, bool) {
 func (*closureFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertArity(args, 2)
 	f, r, _ := args.Split()
-	in := f.(a.Vector)
-	vars := make(a.Variables, in.Count())
-	for nf, nr, ok := in.(a.Sequence).Split(); ok; nf, nr, ok = nr.Split() {
-		n := nf.(a.LocalSymbol).Name()
-		if v, ok := c.Get(n); ok {
-			vars[n] = v
-		}
-	}
-
+	v := f.(a.Values)
 	s := r.First().(a.Sequence)
 	bl := a.MakeBlock(s)
-	ns := a.GetContextNamespace(c)
-	l := a.ChildVariables(ns, vars)
+	return closureFromValues(c, v, bl)
+}
+
+func closureFromValues(c a.Context, v a.Values, bl a.Block) a.Value {
+	names := make(a.Names, len(v))
+	for i, n := range v {
+		names[i] = n.(a.LocalSymbol).Name()
+	}
+	l := a.NewClosure(c, names)
 	return bl.Eval(l)
 }
 

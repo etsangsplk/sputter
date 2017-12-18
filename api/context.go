@@ -49,6 +49,21 @@ func ChildVariables(parent Context, vars Variables) Context {
 	}
 }
 
+// NewClosure copies variables into an isolated Context
+func NewClosure(parent Context, names Names) Context {
+	ns := GetContextNamespace(parent)
+	vars := make(Variables, len(names))
+	for _, n := range names {
+		if v, ok := parent.Get(n); ok {
+			vars[n] = v
+		}
+	}
+	return &childContext{
+		Context: vars,
+		parent:  ns,
+	}
+}
+
 // Get retrieves a value from the Context chain
 func (c *childContext) Get(n Name) (Value, bool) {
 	if v, ok := c.Context.Get(n); ok {
