@@ -49,8 +49,8 @@ func ChildVariables(parent Context, vars Variables) Context {
 	}
 }
 
-// NewClosure copies variables into an isolated Context
-func NewClosure(parent Context, names Names) Context {
+// MakeClosure copies variables into an isolated Context
+func MakeClosure(parent Context, names Names) Context {
 	ns := GetContextNamespace(parent)
 	vars := make(Variables, len(names))
 	for _, n := range names {

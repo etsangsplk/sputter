@@ -113,7 +113,7 @@ func closureFromValues(c a.Context, v a.Values, bl a.Block) a.Value {
 	for i, n := range v {
 		names[i] = n.(a.LocalSymbol).Name()
 	}
-	l := a.NewClosure(c, names)
+	l := a.MakeClosure(c, names)
 	return bl.Eval(l)
 }
 
