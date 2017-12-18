@@ -114,7 +114,7 @@ func (*closureFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	s := r.First().(a.Sequence)
 	bl := a.MakeBlock(s)
 	ns := a.GetContextNamespace(c)
-	l := a.ChildContextVars(ns, vars)
+	l := a.ChildVariables(ns, vars)
 	return bl.Eval(l)
 }
 

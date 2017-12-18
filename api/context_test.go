@@ -35,7 +35,7 @@ func TestPopulateContext(t *testing.T) {
 func TestPopulateContextVars(t *testing.T) {
 	as := assert.New(t)
 	c1 := a.NewContext()
-	c2 := a.ChildContextVars(c1, a.Variables{
+	c2 := a.ChildVariables(c1, a.Variables{
 		"hello": s("there"),
 	})
 	assertGet(as, c2, "hello", s("there"))

@@ -132,8 +132,7 @@ func makeIntermediate(n a.Name, e a.Value, next forProc) forProc {
 	return func(c a.Context) {
 		s := a.Eval(c, e).(a.Sequence)
 		for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
-			l := a.ChildContext(c)
-			l.Put(n, f)
+			l := a.ChildVariables(c, a.Variables{n: f})
 			next(l)
 		}
 	}
@@ -144,8 +143,7 @@ func makeTerminal(n a.Name, e a.Value, s a.Sequence) forProc {
 	return func(c a.Context) {
 		es := a.Eval(c, e).(a.Sequence)
 		for f, r, ok := es.Split(); ok; f, r, ok = r.Split() {
-			l := a.ChildContext(c)
-			l.Put(n, f)
+			l := a.ChildVariables(c, a.Variables{n: f})
 			bl.Eval(l)
 		}
 	}

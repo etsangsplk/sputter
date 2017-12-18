@@ -25,7 +25,7 @@ func (*defFunction) Apply(c a.Context, args a.Sequence) a.Value {
 
 func (*letFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
-	l := a.ChildContext(c)
+	l := a.ChildLocals(c)
 
 	f, r, _ := args.Split()
 	b := f.(a.Vector)

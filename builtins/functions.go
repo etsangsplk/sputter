@@ -127,7 +127,7 @@ func makeRestArgProcessor(cl a.Context, an []a.Name, rn a.Name) argProcessor {
 		if _, ok := ac(args); !ok {
 			return nil, false
 		}
-		l := a.ChildContext(cl)
+		l := a.ChildLocals(cl)
 		i := args
 		var t a.Value
 		for _, n := range an {
@@ -146,7 +146,7 @@ func makeFixedArgProcessor(cl a.Context, an []a.Name) argProcessor {
 		if _, ok := ac(args); !ok {
 			return nil, false
 		}
-		l := a.ChildContext(cl)
+		l := a.ChildLocals(cl)
 		i := args
 		var t a.Value
 		for _, n := range an {
@@ -243,7 +243,7 @@ func makeSingleFunction(c a.Context, d *functionDefinition) a.Function {
 		args:         string(s.args.Str()),
 	}
 
-	nc := a.ChildContextVars(c, a.Variables{
+	nc := a.ChildVariables(c, a.Variables{
 		d.name: f,
 	})
 
@@ -261,7 +261,7 @@ func makeMultiFunction(c a.Context, d *functionDefinition) a.Function {
 		BaseFunction: a.DefaultBaseFunction.Extend(d.meta),
 	}
 
-	nc := a.ChildContextVars(c, a.Variables{
+	nc := a.ChildVariables(c, a.Variables{
 		d.name: f,
 	})
 

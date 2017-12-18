@@ -21,7 +21,8 @@ func (*withNamespaceFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	n := f.(a.LocalSymbol).Name()
 	ns := a.GetNamespace(n)
 
-	sc := a.WithNamespace(a.ChildContext(c), ns)
+	lc := a.ChildLocals(c)
+	sc := a.WithNamespace(lc, ns)
 	sc.Put(a.ContextDomain, ns)
 	return a.MakeBlock(r).Eval(sc)
 }

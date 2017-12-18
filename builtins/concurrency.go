@@ -60,7 +60,7 @@ func (*isPromiseFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 
 func (*goFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 1)
-	go a.MakeBlock(args).Eval(a.ChildContext(c))
+	go a.MakeBlock(args).Eval(a.ChildLocals(c))
 	return a.Nil
 }
 

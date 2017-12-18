@@ -33,8 +33,16 @@ func ChildContext(parent Context) Context {
 	}
 }
 
-// ChildContextVars creates a new child Context with Variables
-func ChildContextVars(parent Context, vars Variables) Context {
+// ChildLocals creates a new child Context for local variables
+func ChildLocals(parent Context) Context {
+	return &childContext{
+		Context: Variables{},
+		parent:  parent,
+	}
+}
+
+// ChildVariables creates a new child Context with Variables
+func ChildVariables(parent Context, vars Variables) Context {
 	return &childContext{
 		Context: vars,
 		parent:  parent,
