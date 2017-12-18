@@ -1,132 +1,82 @@
 package api
 
-const (
-	// LessThan means left Value is less than right Value
-	LessThan Comparison = -1
+import "sync"
 
-	// EqualTo means left Value is equal to right Value
-	EqualTo Comparison = 0
-
-	// GreaterThan means left Value is greater than right Value
-	GreaterThan Comparison = 1
-)
+// AlreadyBound is thrown when an attempt is made to rebind a Name
+const AlreadyBound = "symbol is already bound in this scope: %s"
 
 type (
-	// Bool represents the values True or False
-	Bool bool
-
-	// Value is the generic interface for all 'Values'
-	Value interface {
-		Str() Str
-	}
-
-	// ValueProcessor is the standard ReflectedFunction interface for a func
-	// that processes a Value against a Context (example: Emit)
-	ValueProcessor func(Context, Value) Value
-
-	// Comparison represents the result of a equality comparison
-	Comparison int
-
-	// Comparer is an interface for a Value capable of comparing.
-	Comparer interface {
-		Compare(Comparer) Comparison
-	}
-
-	// Name is a Variable name
-	Name string
-
-	// Names represents a set of Names
-	Names []Name
-
 	// Variables represents a mapping from Name to Value
 	Variables map[Name]Value
 
-	// Typed is the generic interface for Values that are typed
-	Typed interface {
-		Type() Name
+	// WriteOnceVariables implements Variables with write-once semantics
+	WriteOnceVariables struct {
+		Variables
+		sync.RWMutex
 	}
-
-	// Documented is the generic interface for Values that are documented
-	Documented interface {
-		Documentation() Str
-	}
-
-	// Counted interfaces allow a Value to return a count of its items
-	Counted interface {
-		Count() int
-	}
-
-	// Mapped is the interface for Values that have retrievable Properties
-	Mapped interface {
-		Get(Value) (Value, bool)
-	}
-
-	// Associable
-
-	// Indexed is the interface for Values that have indexed elements
-	Indexed interface {
-		ElementAt(int) (Value, bool)
-	}
-
-	nilValue struct{}
 )
 
-var (
-	// True represents the boolean value of True
-	True Bool = true
+// Get retrieves a variable by name
+func (v Variables) Get(n Name) (Value, bool) {
+	if r, ok := v[n]; ok {
+		return r, ok
+	}
+	return Nil, false
+}
 
-	// False represents the boolean value of false
-	False Bool = false
+// Has checks for the existence of a variable and returns its context
+func (v Variables) Has(n Name) (Context, bool) {
+	if _, ok := v[n]; ok {
+		return v, ok
+	}
+	return v, false
+}
 
-	// Nil is a value that represents the absence of a Value
-	Nil = &nilValue{}
-)
+// Put sets a variable by name
+func (v Variables) Put(n Name, val Value) {
+	v[n] = val
+}
 
-// Name makes Name Named
-func (n Name) Name() Name {
-	return n
+// Delete removes a variable by name
+func (v Variables) Delete(n Name) {
+	delete(v, n)
 }
 
 // Str converts this Value into a Str
-func (n Name) Str() Str {
-	return Str(n)
+func (v Variables) Str() Str {
+	return MakeDumpStr(v)
 }
 
-// Apply makes Bool Applicable
-func (b Bool) Apply(_ Context, args Sequence) Value {
-	for f, r, ok := args.Split(); ok; f, r, ok = r.Split() {
-		if f != b {
-			return False
-		}
+// Get retrieves a variable by name
+func (w *WriteOnceVariables) Get(n Name) (Value, bool) {
+	w.RLock()
+	defer w.RUnlock()
+	return w.Variables.Get(n)
+}
+
+// Has checks for the existence of a variable and returns its context
+func (w *WriteOnceVariables) Has(n Name) (Context, bool) {
+	w.RLock()
+	defer w.RUnlock()
+	if _, ok := w.Variables.Has(n); ok {
+		return w, true
 	}
-	return True
+	return w, false
 }
 
-// Str converts this Value into a Str
-func (b Bool) Str() Str {
-	if bool(b) {
-		return "true"
+// Delete removes a variable by name
+func (w *WriteOnceVariables) Delete(n Name) {
+	w.Lock()
+	defer w.Unlock()
+	w.Variables.Delete(n)
+}
+
+// Put sets a variable by name if it hasn't already been set
+func (w *WriteOnceVariables) Put(n Name, v Value) {
+	w.Lock()
+	defer w.Unlock()
+	if _, ok := w.Variables.Has(n); ok {
+		panic(ErrStr(AlreadyBound, n))
 	}
-	return "false"
-}
-
-func (n *nilValue) Apply(_ Context, args Sequence) Value {
-	for f, r, ok := args.Split(); ok; f, r, ok = r.Split() {
-		if f != Nil {
-			return False
-		}
-	}
-	return True
-}
-
-func (n *nilValue) Str() Str {
-	return "nil"
-}
-
-// Truthy evaluates whether or not a Value is Truthy
-func Truthy(v Value) bool {
-	if v == False || v == Nil {
-		return false
-	}
-	return true
+	w.Variables.Put(n, v)
 }
