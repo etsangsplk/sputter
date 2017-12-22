@@ -30,20 +30,14 @@ type (
 	}
 
 	namespace struct {
-		Variables
+		Context
 		sync.RWMutex
+		symbols u.Cache
 	}
 
 	qualifiedNamespace struct {
-		*namespace
-		domain  Name
-		symbols u.Cache
-	}
-
-	localNamespace struct {
-		*namespace
-		domain  Name
-		symbols u.Cache
+		namespace
+		domain Name
 	}
 
 	childNamespace struct {
@@ -63,14 +57,14 @@ var namespaces = u.NewCache()
 func (ns *namespace) Get(n Name) (Value, bool) {
 	ns.RLock()
 	defer ns.RUnlock()
-	return ns.Variables.Get(n)
+	return ns.Context.Get(n)
 }
 
 // Has checks for the existence of a variable and returns its context
 func (ns *namespace) Has(n Name) (Context, bool) {
 	ns.RLock()
 	defer ns.RUnlock()
-	if _, ok := ns.Variables.Has(n); ok {
+	if _, ok := ns.Context.Has(n); ok {
 		return ns, true
 	}
 	return ns, false
@@ -80,22 +74,34 @@ func (ns *namespace) Has(n Name) (Context, bool) {
 func (ns *namespace) Delete(n Name) {
 	ns.Lock()
 	defer ns.Unlock()
-	ns.Variables.Delete(n)
+	ns.Context.Delete(n)
 }
 
 // Put sets a variable by name if it hasn't already been set
 func (ns *namespace) Put(n Name, v Value) {
 	ns.Lock()
 	defer ns.Unlock()
-	if _, ok := ns.Variables.Has(n); ok {
+	if _, ok := ns.Context.Has(n); ok {
 		panic(ErrStr(AlreadyBound, n))
 	}
-	ns.Variables.Put(n, v)
+	ns.Context.Put(n, v)
 }
 
-func (ns *qualifiedNamespace) Domain() Name {
-	return ns.domain
+func (ns *namespace) Intern(n Name) Symbol {
+	return ns.symbols.Get(n, func() u.Any {
+		return localSymbol(n)
+	}).(Symbol)
 }
+
+func (ns *namespace) Domain() Name {
+	return LocalDomain
+}
+
+func (ns *namespace) Str() Str {
+	return "(ns *local*)"
+}
+
+func (*namespace) NamespaceType() {}
 
 func (ns *qualifiedNamespace) Intern(n Name) Symbol {
 	d := ns.domain
@@ -108,27 +114,13 @@ func (ns *qualifiedNamespace) Intern(n Name) Symbol {
 	}).(Symbol)
 }
 
+func (ns *qualifiedNamespace) Domain() Name {
+	return ns.domain
+}
+
 func (ns *qualifiedNamespace) Str() Str {
 	return "(ns " + Str(ns.domain) + ")"
 }
-
-func (*qualifiedNamespace) NamespaceType() {}
-
-func (ns *localNamespace) Domain() Name {
-	return LocalDomain
-}
-
-func (ns *localNamespace) Intern(n Name) Symbol {
-	return ns.symbols.Get(n, func() u.Any {
-		return localSymbol(n)
-	}).(Symbol)
-}
-
-func (ns *localNamespace) Str() Str {
-	return "(ns *local*)"
-}
-
-func (*localNamespace) NamespaceType() {}
 
 // Get retrieves a variable by name
 func (ns *childNamespace) Get(n Name) (Value, bool) {
@@ -150,11 +142,11 @@ func (ns *childNamespace) Has(n Name) (Context, bool) {
 func GetNamespace(n Name) Namespace {
 	return namespaces.Get(n, func() u.Any {
 		ns := &qualifiedNamespace{
-			namespace: &namespace{
-				Variables: Variables{},
+			namespace: namespace{
+				Context: Variables{},
+				symbols: u.NewCache(),
 			},
-			domain:  n,
-			symbols: u.NewCache(),
+			domain: n,
 		}
 		ns.Put(ContextDomain, ns)
 		return ns
@@ -188,10 +180,8 @@ func (w *withNamespace) Get(n Name) (Value, bool) {
 
 func init() {
 	namespaces.Get(LocalDomain, func() u.Any {
-		ns := &localNamespace{
-			namespace: &namespace{
-				Variables: Variables{},
-			},
+		ns := &namespace{
+			Context: Variables{},
 			symbols: u.NewCache(),
 		}
 		ns.Put(ContextDomain, ns)
@@ -200,11 +190,11 @@ func init() {
 
 	bi := namespaces.Get(BuiltInDomain, func() u.Any {
 		ns := &qualifiedNamespace{
-			namespace: &namespace{
-				Variables: Variables{},
+			namespace: namespace{
+				Context: Variables{},
+				symbols: u.NewCache(),
 			},
-			domain:  BuiltInDomain,
-			symbols: u.NewCache(),
+			domain: BuiltInDomain,
 		}
 		ns.Put(ContextDomain, ns)
 		return ns
@@ -213,11 +203,11 @@ func init() {
 	namespaces.Get(UserDomain, func() u.Any {
 		ns := &childNamespace{
 			Namespace: &qualifiedNamespace{
-				namespace: &namespace{
-					Variables: Variables{},
+				namespace: namespace{
+					Context: Variables{},
+					symbols: u.NewCache(),
 				},
-				domain:  UserDomain,
-				symbols: u.NewCache(),
+				domain: UserDomain,
 			},
 			parent: bi,
 		}
