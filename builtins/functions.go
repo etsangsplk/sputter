@@ -243,7 +243,7 @@ func makeSingleFunction(c a.Context, d *functionDefinition) a.Function {
 		args:         string(s.args.Str()),
 	}
 
-	nc := a.ChildVariables(c, a.Variables{
+	nc := a.ChildContext(c, a.Variables{
 		d.name: f,
 	})
 
@@ -261,7 +261,7 @@ func makeMultiFunction(c a.Context, d *functionDefinition) a.Function {
 		BaseFunction: a.DefaultBaseFunction.Extend(d.meta),
 	}
 
-	nc := a.ChildVariables(c, a.Variables{
+	nc := a.ChildContext(c, a.Variables{
 		d.name: f,
 	})
 

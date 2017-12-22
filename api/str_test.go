@@ -62,7 +62,7 @@ func TestStr(t *testing.T) {
 	as.False(ok)
 	as.Nil(c)
 
-	as.String("e", s1.Apply(a.NewContext(), a.NewVector(f(1))))
+	as.String("e", s1.Apply(a.Variables{}, a.NewVector(f(1))))
 
 	s6 := s("再见!")
 	as.Number(3, a.Count(s6))

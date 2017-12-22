@@ -19,7 +19,7 @@ func TestSingularMethodInvoke(t *testing.T) {
 	as.True(ok)
 	as.NotNil(f1)
 
-	c := a.NewContext()
+	c := a.Variables{}
 	r1 := f1.Apply(c, a.NewVector(a.Str("hello")))
 	as.NotNil(r1)
 	as.Number(5, r1)
@@ -37,7 +37,7 @@ func TestVoidMethodInvoke(t *testing.T) {
 	as.True(ok)
 	as.NotNil(f1)
 
-	c := a.NewContext()
+	c := a.Variables{}
 	r1 := f1.Apply(c, a.NewVector(a.Str("clobbered"), a.NewFloat(-99)))
 	as.Nil(r1)
 
@@ -62,7 +62,7 @@ func TestPluralMethodInvoke(t *testing.T) {
 	as.True(ok)
 	as.NotNil(f1)
 
-	c := a.NewContext()
+	c := a.Variables{}
 	r1 := f1.Apply(c, a.NewVector(a.Str("one"), a.NewFloat(4), a.Str("eight")))
 	as.NotNil(r1)
 

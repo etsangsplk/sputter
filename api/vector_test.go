@@ -37,7 +37,7 @@ func TestVector(t *testing.T) {
 	as.True(ok)
 	as.String("are", r)
 
-	c := a.NewContext()
+	c := a.Variables{}
 	as.String("are", v1.Apply(c, a.NewList(f(2))))
 }
 
@@ -65,7 +65,7 @@ func TestVectorEval(t *testing.T) {
 
 	v := a.NewVector(s("hello"), s("how"), new(testEvaluable), s("you?"))
 
-	c := a.NewContext()
+	c := a.Variables{}
 	r := a.Eval(c, v)
 
 	if _, ok := r.(a.Indexed); !ok {
@@ -111,5 +111,5 @@ func TestVectorExplosion(t *testing.T) {
 	defer as.ExpectError(err)
 
 	v := a.NewVector(s("foo"))
-	v.Apply(a.NewContext(), a.NewList(idx))
+	v.Apply(a.Variables{}, a.NewList(idx))
 }

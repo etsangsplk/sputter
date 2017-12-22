@@ -84,7 +84,7 @@ func (f *BaseFunction) Extend(md Object) BaseFunction {
 }
 
 // FunctionType identifies this Value as a Function
-func (f *BaseFunction) FunctionType() {}
+func (*BaseFunction) FunctionType() {}
 
 // Metadata returns the Function's metadata Object
 func (f *BaseFunction) Metadata() Object {

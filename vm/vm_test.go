@@ -46,13 +46,13 @@ func testInstructions(t *testing.T, inst []vm.Instruction, expect a.Value) {
 		Instructions: inst,
 	}
 
-	r1 := m1.Apply(a.NewContext(), vmTestArgs)
+	r1 := m1.Apply(a.Variables{}, vmTestArgs)
 	as.Equal(expect, r1)
 
 	m2 := m1.WithMetadata(a.Properties{
 		a.NameKey: a.Name("newMetadata"),
 	}).(*vm.Module)
-	r2 := m2.Apply(a.NewContext(), vmTestArgs)
+	r2 := m2.Apply(a.Variables{}, vmTestArgs)
 	as.Equal(expect, r2)
 }
 

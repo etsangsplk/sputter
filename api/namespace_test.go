@@ -27,7 +27,7 @@ func TestWithNamespace(t *testing.T) {
 	ns1.Delete("foo")
 	ns2.Delete("foo")
 
-	c1 := a.ChildContext(ns1)
+	c1 := a.ChildContext(ns1, a.Variables{})
 	c2 := a.WithNamespace(c1, ns2)
 
 	ns1.Put("foo", s("outer"))
@@ -42,3 +42,13 @@ func TestWithNamespace(t *testing.T) {
 	as.String("inner", v2)
 	as.String("skipped", v3)
 }
+
+//func TestWriteOnceRebind(t *testing.T) {
+//	as := assert.New(t)
+//
+//	c := a.NewWriteOnceContext()
+//	c.Put("hello", s("there"))
+//
+//	defer as.ExpectError(a.ErrStr(a.AlreadyBound, a.Name("hello")))
+//	c.Put("hello", s("twice"))
+//}

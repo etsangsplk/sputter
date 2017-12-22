@@ -40,10 +40,12 @@ func MakeBlock(s Sequence) Block {
 	if b, ok := s.(Block); ok {
 		return b
 	}
-	return &block{Sequence: s}
+	return &block{
+		Sequence: s,
+	}
 }
 
-func (b *block) BlockType() {}
+func (*block) BlockType() {}
 
 func (b *block) Eval(c Context) Value {
 	var res Value = Nil

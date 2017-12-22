@@ -38,9 +38,7 @@ type (
 		LocalSymbolType()
 	}
 
-	localSymbol struct {
-		name Name
-	}
+	localSymbol Name
 
 	qualifiedSymbol struct {
 		name   Name
@@ -116,43 +114,43 @@ func (s *qualifiedSymbol) Str() Str {
 	return Str(s.Qualified())
 }
 
-func (s *qualifiedSymbol) SymbolType()          {}
-func (s *qualifiedSymbol) QualifiedSymbolType() {}
+func (*qualifiedSymbol) SymbolType()          {}
+func (*qualifiedSymbol) QualifiedSymbolType() {}
 
-func (s *localSymbol) Name() Name {
-	return s.name
+func (s localSymbol) Name() Name {
+	return Name(s)
 }
 
-func (s *localSymbol) Domain() Name {
+func (localSymbol) Domain() Name {
 	return LocalDomain
 }
 
-func (s *localSymbol) Qualified() Name {
-	return s.name
+func (s localSymbol) Qualified() Name {
+	return Name(s)
 }
 
-func (s *localSymbol) Namespace(c Context) Namespace {
+func (localSymbol) Namespace(c Context) Namespace {
 	return GetContextNamespace(c)
 }
 
-func (s *localSymbol) Resolve(c Context) (Value, bool) {
-	n := s.name
+func (s localSymbol) Resolve(c Context) (Value, bool) {
+	n := Name(s)
 	if r, ok := c.Get(n); ok {
 		return r, true
 	}
 	return GetContextNamespace(c).Get(n)
 }
 
-func (s *localSymbol) Eval(c Context) Value {
+func (s localSymbol) Eval(c Context) Value {
 	if r, ok := s.Resolve(c); ok {
 		return r
 	}
 	panic(ErrStr(UnknownSymbol, s.Qualified()))
 }
 
-func (s *localSymbol) Str() Str {
+func (s localSymbol) Str() Str {
 	return Str(s.Qualified())
 }
 
-func (s *localSymbol) SymbolType()      {}
-func (s *localSymbol) LocalSymbolType() {}
+func (localSymbol) SymbolType()      {}
+func (localSymbol) LocalSymbolType() {}

@@ -34,7 +34,7 @@ func TestFunction(t *testing.T) {
 	as.String("modified", v)
 	as.String("this is a test", f1.Documentation())
 
-	c := a.NewContext()
+	c := a.Variables{}
 	as.String("hello", f1.Apply(c, a.EmptyList))
 
 	f4 := a.NewExecFunction(nil).WithMetadata(a.Properties{

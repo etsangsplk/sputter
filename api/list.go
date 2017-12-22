@@ -35,7 +35,7 @@ func NewList(v ...Value) List {
 	return r
 }
 
-func (l *list) ListType() {}
+func (*list) ListType() {}
 
 func (l *list) First() Value {
 	return l.first

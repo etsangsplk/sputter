@@ -10,7 +10,7 @@ import (
 func TestSymbol(t *testing.T) {
 	as := assert.New(t)
 
-	c := a.NewContext()
+	c := a.Variables{}
 	c.Put("howdy", s("ho"))
 
 	sym := a.NewLocalSymbol("howdy")
@@ -26,12 +26,12 @@ func TestQualifiedSymbol(t *testing.T) {
 	ns2 := a.GetNamespace("ns2")
 	ns2.Put("foo", s("foo-ns2"))
 
-	empty := a.NewContext()
+	empty := a.Variables{}
 
-	c1 := a.NewContext()
+	c1 := a.Variables{}
 	c1.Put(a.ContextDomain, a.GetNamespace("ns1"))
 
-	c2 := a.NewContext()
+	c2 := a.Variables{}
 	c2.Put(a.ContextDomain, a.GetNamespace("ns2"))
 
 	s1 := a.ParseSymbol("ns1:foo")
@@ -63,7 +63,7 @@ func TestUnknownSymbol(t *testing.T) {
 	as := assert.New(t)
 
 	defer as.ExpectError(a.ErrStr(a.UnknownSymbol, "howdy"))
-	c := a.NewContext()
+	c := a.Variables{}
 	sym := a.NewLocalSymbol("howdy")
 	a.Eval(c, sym)
 }

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"fmt"
+
 	a "github.com/kode4food/sputter/api"
 	"github.com/kode4food/sputter/assert"
 	_ "github.com/kode4food/sputter/core"
@@ -55,8 +56,8 @@ func TestBuiltInsContext(t *testing.T) {
 	as := assert.New(t)
 
 	bg1 := e.NewEvalContext()
-	bg2 := a.ChildContext(bg1)
-	bg3 := a.ChildContext(bg2)
+	bg2 := a.ChildLocals(bg1)
+	bg3 := a.ChildLocals(bg2)
 
 	qv, ok := bg3.Get("do")
 	as.True(ok)

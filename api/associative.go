@@ -31,7 +31,7 @@ func NewAssociative(v ...Vector) Associative {
 	return associative(v)
 }
 
-func (a associative) AssociativeType() {}
+func (associative) AssociativeType() {}
 
 func (a associative) Count() int {
 	return len(a)

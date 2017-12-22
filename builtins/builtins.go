@@ -45,7 +45,7 @@ func MakeBuiltIn(f BuiltInFunction) a.Function {
 }
 
 // BuiltInType returns whether or not this Function is a built-in
-func (f *BaseBuiltIn) BuiltInType() {}
+func (*BaseBuiltIn) BuiltInType() {}
 
 // WithMetadata creates a copy of this Function with additional Metadata
 func (f *BaseBuiltIn) WithMetadata(md a.Object) a.AnnotatedValue {

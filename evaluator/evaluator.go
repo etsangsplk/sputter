@@ -18,7 +18,5 @@ func EvalStr(c a.Context, src a.Str) a.Value {
 // chains up to the UserDomain Context for special forms
 func NewEvalContext() a.Context {
 	ns := a.GetNamespace(a.UserDomain)
-	c := a.ChildContext(ns)
-	c.Put(a.ContextDomain, ns)
-	return c
+	return a.ChildLocals(ns)
 }

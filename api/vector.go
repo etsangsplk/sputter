@@ -25,7 +25,7 @@ func NewVector(v ...Value) Vector {
 }
 
 // VectorType identifies this Value as a Vector
-func (v Values) VectorType() {}
+func (Values) VectorType() {}
 
 // Count returns the number of elements in the Value array
 func (v Values) Count() int {

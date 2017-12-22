@@ -17,7 +17,7 @@ func TestNames(t *testing.T) {
 func TestBool(t *testing.T) {
 	as := assert.New(t)
 
-	c := a.NewContext()
+	c := a.Variables{}
 	as.True(a.True.Apply(c, a.NewVector(a.True, a.True, a.True)))
 	as.False(a.True.Apply(c, a.NewVector(a.True, a.False, a.True)))
 	as.True(a.False.Apply(c, a.NewVector(a.False, a.False, a.False)))
@@ -38,7 +38,7 @@ func TestTruthy(t *testing.T) {
 func TestNil(t *testing.T) {
 	as := assert.New(t)
 
-	c := a.NewContext()
+	c := a.Variables{}
 	as.True(a.Nil.Apply(c, a.NewVector(a.Nil, a.Nil, a.Nil)))
 	as.False(a.Nil.Apply(c, a.NewVector(a.Nil, a.False, a.Nil)))
 }

@@ -23,7 +23,7 @@ func NewKeyword(n Name) Keyword {
 	}).(Keyword)
 }
 
-func (k *keyword) KeywordType() {}
+func (*keyword) KeywordType() {}
 
 func (k *keyword) Name() Name {
 	return k.name

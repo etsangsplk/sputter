@@ -1,7 +1,5 @@
 package api
 
-const defaultContextEntries = 16
-
 type (
 	// Context represents a mutable variable scope
 	Context interface {
@@ -18,21 +16,6 @@ type (
 	}
 )
 
-// NewContext creates a new independent Context instance
-func NewContext() Context {
-	return &WriteOnceVariables{
-		Variables: make(Variables, defaultContextEntries),
-	}
-}
-
-// ChildContext creates a new child Context of the provided parent
-func ChildContext(parent Context) Context {
-	return &childContext{
-		Context: NewContext(),
-		parent:  parent,
-	}
-}
-
 // ChildLocals creates a new child Context for local variables
 func ChildLocals(parent Context) Context {
 	return &childContext{
@@ -41,10 +24,10 @@ func ChildLocals(parent Context) Context {
 	}
 }
 
-// ChildVariables creates a new child Context with Variables
-func ChildVariables(parent Context, vars Variables) Context {
+// ChildContext creates a parent-child chained lookup Context
+func ChildContext(parent Context, child Context) Context {
 	return &childContext{
-		Context: vars,
+		Context: child,
 		parent:  parent,
 	}
 }

@@ -19,23 +19,17 @@ func assertMissing(as *assert.Wrapper, c a.Context, n a.Name) {
 	as.Equal(a.Nil, v)
 }
 
-func TestCreateContext(t *testing.T) {
-	as := assert.New(t)
-	c := a.NewContext()
-	as.NotNil(c)
-}
-
 func TestPopulateContext(t *testing.T) {
 	as := assert.New(t)
-	c := a.NewContext()
+	c := a.Variables{}
 	c.Put("hello", s("there"))
 	assertGet(as, c, "hello", s("there"))
 }
 
 func TestPopulateContextVars(t *testing.T) {
 	as := assert.New(t)
-	c1 := a.NewContext()
-	c2 := a.ChildVariables(c1, a.Variables{
+	c1 := a.Variables{}
+	c2 := a.ChildContext(c1, a.Variables{
 		"hello": s("there"),
 	})
 	assertGet(as, c2, "hello", s("there"))
@@ -44,7 +38,7 @@ func TestPopulateContextVars(t *testing.T) {
 func TestNestedContext(t *testing.T) {
 	as := assert.New(t)
 
-	c1 := a.NewContext()
+	c1 := a.Variables{}
 	c1.Put("hello", s("there"))
 	c1.Put("howdy", s("ho"))
 
@@ -52,7 +46,7 @@ func TestNestedContext(t *testing.T) {
 	assertGet(as, c1, "howdy", s("ho"))
 	assertMissing(as, c1, "foo")
 
-	c2 := a.ChildContext(c1)
+	c2 := a.ChildLocals(c1)
 	c2.Put("hello", s("you"))
 	c2.Put("foo", s("bar"))
 
@@ -71,14 +65,4 @@ func TestNestedContext(t *testing.T) {
 
 	_, ok = c2.Has("not there")
 	as.False(ok)
-}
-
-func TestRebind(t *testing.T) {
-	as := assert.New(t)
-
-	c := a.NewContext()
-	c.Put("hello", s("there"))
-
-	defer as.ExpectError(a.ErrStr(a.AlreadyBound, a.Name("hello")))
-	c.Put("hello", s("twice"))
 }

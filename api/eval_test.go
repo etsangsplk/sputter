@@ -20,8 +20,7 @@ func TestEvaluate(t *testing.T) {
 	as := assert.New(t)
 
 	l := a.NewList(helloName, s("World"))
-	c := a.NewContext()
-	r := a.Eval(c, l)
+	r := a.Eval(a.Variables{}, l)
 
 	as.String("Hello, World!", r)
 }
@@ -29,7 +28,7 @@ func TestEvaluate(t *testing.T) {
 func TestBlock(t *testing.T) {
 	as := assert.New(t)
 
-	c := a.NewContext()
+	c := a.Variables{}
 	c.Put("hello", helloName)
 	helloSym := a.NewLocalSymbol("hello")
 
@@ -49,7 +48,7 @@ func TestEvaluateBlock(t *testing.T) {
 	s2 := a.NewList(helloName, s("Foo"))
 	l := a.NewList(s1, s2)
 
-	c := a.NewContext()
+	c := a.Variables{}
 	r := a.MakeBlock(l).Eval(c)
 	as.String("Hello, Foo!", r)
 }

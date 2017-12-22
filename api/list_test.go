@@ -48,7 +48,7 @@ func TestList(t *testing.T) {
 	as.False(ok)
 	as.Equal(a.Nil, r)
 
-	c := a.NewContext()
+	c := a.Variables{}
 	as.Equal(f(12), l2.Apply(c, a.NewList(f(1))))
 }
 
@@ -84,7 +84,7 @@ func TestIterator(t *testing.T) {
 func TestListEval(t *testing.T) {
 	as := assert.New(t)
 
-	c := a.NewContext()
+	c := a.Variables{}
 	n := helloThere.Metadata().MustGet(a.NameKey).(a.Name)
 	c.Put(n, helloThere)
 
@@ -102,7 +102,7 @@ func testBrokenEval(t *testing.T, val a.Value, err error) {
 	as := assert.New(t)
 
 	defer as.ExpectError(err)
-	c := a.NewContext()
+	c := a.Variables{}
 	a.Eval(c, val)
 }
 
@@ -123,9 +123,9 @@ func TestListExplosion(t *testing.T) {
 	idx := f(3)
 	err := a.ErrStr(a.IndexNotFound, idx)
 
-	v := seq.Apply(a.NewContext(), a.NewVector(idx, s("default")))
+	v := seq.Apply(a.Variables{}, a.NewVector(idx, s("default")))
 	as.String("default", v)
 
 	defer as.ExpectError(err)
-	seq.Apply(a.NewContext(), a.NewVector(idx))
+	seq.Apply(a.Variables{}, a.NewVector(idx))
 }

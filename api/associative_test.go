@@ -13,8 +13,7 @@ func getTestMap() a.Associative {
 		a.NewVector(a.NewKeyword("age"), f(99)),
 		a.NewVector(s("string"), s("value")),
 	)
-	c := a.NewContext()
-	return a.Eval(c, r).(a.Associative)
+	return a.Eval(a.Variables{}, r).(a.Associative)
 }
 
 func TestAssociative(t *testing.T) {
@@ -43,7 +42,7 @@ func TestAssociative(t *testing.T) {
 	as.False(ok)
 	as.Equal(a.Nil, r)
 
-	c := a.NewContext()
+	c := a.Variables{}
 	as.String("Sputter", m1.Apply(c, a.NewList(nameKey)))
 }
 
@@ -77,7 +76,7 @@ func TestAssociativePrepend(t *testing.T) {
 	as.True(ok)
 	as.String("bar", r)
 
-	if e2, ok := a.Eval(a.NewContext(), m2).(a.Associative); ok {
+	if e2, ok := a.Eval(a.Variables{}, m2).(a.Associative); ok {
 		as.True(&e2 != &m2)
 	} else {
 		as.Fail("map.Eval() didn't return an Associative")
@@ -117,7 +116,7 @@ func TestAssociativeApply(t *testing.T) {
 	as := assert.New(t)
 	m1 := getTestMap()
 
-	c := a.NewContext()
+	c := a.Variables{}
 	nameKey := a.NewKeyword("name")
 	args := a.NewList(nameKey)
 	as.String("Sputter", m1.Apply(c, args))
@@ -136,7 +135,7 @@ func TestAssociativeLookup(t *testing.T) {
 	m1 := getTestMap()
 
 	nameKey := a.NewKeyword("name")
-	c := a.NewContext()
+	c := a.Variables{}
 	args := a.NewList(m1)
 	as.String("Sputter", nameKey.Apply(c, args))
 
@@ -149,7 +148,7 @@ func TestAssociativeMiss(t *testing.T) {
 	m1 := getTestMap()
 
 	nameKey := a.NewKeyword("miss")
-	c := a.NewContext()
+	c := a.Variables{}
 
 	defer as.ExpectError(a.ErrStr(a.KeyNotFound, nameKey))
 	m1.Apply(c, a.NewList(nameKey))
@@ -160,7 +159,7 @@ func TestKeywordMiss(t *testing.T) {
 	m1 := getTestMap()
 
 	nameKey := a.NewKeyword("miss")
-	c := a.NewContext()
+	c := a.Variables{}
 
 	defer as.ExpectError(a.ErrStr(a.KeyNotFound, nameKey))
 	nameKey.Apply(c, a.NewList(m1))

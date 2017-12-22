@@ -15,7 +15,7 @@ func TestClosure(t *testing.T) {
 	ns.Delete("chain")
 	ns.Put("chain", s("hello"))
 
-	c1 := a.ChildContext(ns)
+	c1 := a.ChildContext(ns, a.Variables{})
 	c1.Put("foo", s("foo_val"))
 	c1.Put("bar", s("bar_val"))
 	c1.Put("baz", s("baz_val"))

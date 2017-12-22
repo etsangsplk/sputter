@@ -20,7 +20,7 @@ func TestReflectFunc(t *testing.T) {
 	as := assert.New(t)
 
 	n1 := n.New(someTestFunc).(a.Applicable)
-	c := a.NewContext()
+	c := a.Variables{}
 	r1 := n1.Apply(c, a.NewVector(a.NewFloat(20), a.NewFloat(30), a.True))
 
 	v1, ok := r1.(a.Vector)
@@ -40,7 +40,7 @@ func TestValuesFunc(t *testing.T) {
 	as := assert.New(t)
 
 	n1 := n.New(withValuesFunc).(a.Applicable)
-	c := a.NewContext()
+	c := a.Variables{}
 	r1 := n1.Apply(c, a.NewVector(a.Str("hello"), a.True))
 
 	v1, ok := r1.(a.Vector)

@@ -20,7 +20,7 @@ func f(f float64) a.Number {
 func TestCreateReader(t *testing.T) {
 	as := assert.New(t)
 	l := e.Scan("99")
-	c := a.NewContext()
+	c := a.Variables{}
 	tr := e.Read(c, l)
 	as.NotNil(tr)
 }
@@ -28,7 +28,7 @@ func TestCreateReader(t *testing.T) {
 func TestReadInteger(t *testing.T) {
 	as := assert.New(t)
 	l := e.Scan("99")
-	c := a.NewContext()
+	c := a.Variables{}
 	tr := e.Read(c, l)
 	v := tr.First()
 	n, ok := v.(a.Number)
@@ -39,7 +39,7 @@ func TestReadInteger(t *testing.T) {
 func TestReadList(t *testing.T) {
 	as := assert.New(t)
 	l := e.Scan(`(99 "hello" 55.12)`)
-	c := a.NewContext()
+	c := a.Variables{}
 	tr := e.Read(c, l)
 	v := tr.First()
 	list, ok := v.(a.List)
@@ -65,7 +65,7 @@ func TestReadList(t *testing.T) {
 func TestReadVector(t *testing.T) {
 	as := assert.New(t)
 	l := e.Scan(`[99 "hello" 55.12]`)
-	c := a.NewContext()
+	c := a.Variables{}
 	tr := e.Read(c, l)
 	v := tr.First()
 	vector, ok := v.(a.Vector)
@@ -87,7 +87,7 @@ func TestReadVector(t *testing.T) {
 func TestReadMap(t *testing.T) {
 	as := assert.New(t)
 	l := e.Scan(`{:name "blah" :age 99}`)
-	c := a.NewContext()
+	c := a.Variables{}
 	tr := e.Read(c, l)
 	v := tr.First()
 	m, ok := v.(a.Associative)
@@ -98,7 +98,7 @@ func TestReadMap(t *testing.T) {
 func TestReadNestedList(t *testing.T) {
 	as := assert.New(t)
 	l := e.Scan(`(99 ("hello" "there") 55.12)`)
-	c := a.NewContext()
+	c := a.Variables{}
 	tr := e.Read(c, l)
 	v := tr.First()
 	list, ok := v.(a.List)
@@ -177,7 +177,7 @@ func TestBuiltIns(t *testing.T) {
 
 	l := e.Scan(`(hello)`)
 	tr := e.Read(b, l)
-	c := a.ChildContext(b)
+	c := a.ChildLocals(b)
 	as.String("there", a.Eval(c, tr))
 }
 
@@ -186,7 +186,7 @@ func testReaderError(t *testing.T, src string, err error) {
 
 	defer as.ExpectError(err)
 
-	c := a.NewContext()
+	c := a.Variables{}
 	l := e.Scan(s(src))
 	tr := e.Read(c, l)
 	a.Eval(c, tr)
