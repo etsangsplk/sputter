@@ -11,7 +11,7 @@ const (
 	subName    = "-"
 	mulName    = "*"
 	divName    = "/"
-	modName    = "%"
+	modName    = "mod"
 	eqName     = "="
 	neqName    = "!="
 	gtName     = ">"

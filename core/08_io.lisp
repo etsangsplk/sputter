@@ -32,7 +32,7 @@
 (defn paired-vector?
   {:private true}
   [val]
-  (and (is-vector val) (= (% (len val) 2) 0)))
+  (and (is-vector val) (= (mod (len val) 2) 0)))
 
 (defmacro with-open [bindings & body]
   (assert-args

@@ -1,7 +1,7 @@
 ;;;; sputter core: predicates
 
-(defn is-even [value] (= (% value 2) 0))
-(defn is-odd [value] (= (% value 2) 1))
+(defn is-even [value] (= (mod value 2) 0))
+(defn is-odd [value] (= (mod value 2) 1))
 
 (defn predicate-lazy-seq
   {:private true}

@@ -17,8 +17,8 @@ func TestBasicNumber(t *testing.T) {
 	testCode(t, `(- 10 4 2)`, f(4.0))
 	testCode(t, `(/ 10 2)`, f(5.0))
 	testCode(t, `(/ 10 2 5)`, f(1.0))
-	testCode(t, `(% 10 3)`, f(1.0))
-	testCode(t, `(% 100 8 7)`, f(4.0))
+	testCode(t, `(mod 10 3)`, f(1.0))
+	testCode(t, `(mod 100 8 7)`, f(4.0))
 }
 
 func TestNestedNumber(t *testing.T) {

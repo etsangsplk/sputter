@@ -48,7 +48,7 @@ func (s Str) IsSequence() bool {
 // is a single character, the resulting Str will be retained in native
 // form, otherwise a List is returned.
 func (s Str) Prepend(v Value) Sequence {
-	if e, ok := v.(Str); ok && e.Count() == 1 {
+	if e, ok := v.(Str); ok && len(e) == 1 {
 		return Str(e + s)
 	}
 	return s.list().Prepend(v)
@@ -67,7 +67,7 @@ func (s Str) list() List {
 // single character, the resulting Str will be retained in native
 // form, otherwise a Vector is returned.
 func (s Str) Conjoin(v Value) Sequence {
-	if e, ok := v.(Str); ok && e.Count() == 1 {
+	if e, ok := v.(Str); ok && len(e) == 1 {
 		return Str(s + e)
 	}
 	return s.vector().Conjoin(v)
@@ -122,7 +122,7 @@ func (s Str) Str() Str {
 
 // MakeDumpStr takes a Value and attempts to spit out a bunch of info
 func MakeDumpStr(v Value) Str {
-	p := Str(fmt.Sprintf("%p", &v))
+	p := Str(fmt.Sprintf("%p", v))
 	m := Object(Properties{InstanceKey: p})
 	if t, ok := v.(Typed); ok {
 		m = m.Child(Properties{TypeKey: t.Type()})

@@ -79,7 +79,7 @@
 (def-builtin -   :doc "subtracts a set of numbers")
 (def-builtin *   :doc "multiplies a set of numbers")
 (def-builtin /   :doc "divides a set of numbers")
-(def-builtin %   :doc "produces the remainder for a divided set of numbers")
+(def-builtin mod :doc "produces the remainder for a divided set of numbers")
 
 (def-builtin =  :doc "checks a set of numbers for equality")
 (def-builtin != :doc "checks a set of numbers for inequality")
