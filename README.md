@@ -37,7 +37,7 @@ change rapidly. The current built-in forms are:
 
   * Basics: `read` `eval` `do`
   * Branching: `if` `not` `unless` `when` `when-not` `cond` `and` `or`
-  * Numeric: `+` `-` `*` `/` `%` `=` `!=` `<` `>` `<=` `>=` `inf` `-inf` `inc` `dec` `range`
+  * Numeric: `+` `-` `*` `/` `mod` `=` `!=` `<` `>` `<=` `>=` `inf` `-inf` `inc` `dec` `range`
   * Numeric Predicates: `inf?` `-inf?` `nan?` `even?` `odd?`
   * Values: `def` `let` `if-let` `when-let` `put-ns` `ns` `with-ns`
   * Symbols and Keywords: `sym` `gensym` `sym?` `local?` `keyword?`
