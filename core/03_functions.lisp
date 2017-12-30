@@ -28,3 +28,10 @@
 (defmacro .
   [target method & args]
   `((get ~target ~method) ~@args))
+
+(defmacro juxt
+  [& funcs]
+  (let [r (gensym "res")]
+    `(fn [val#]
+      (let [~r val#]
+        [~@(map (lambda [f] (list f r)) funcs)]))))
