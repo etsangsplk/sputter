@@ -5,7 +5,7 @@ import a "github.com/kode4food/sputter/api"
 const (
 	chanName      = "chan"
 	promiseName   = "promise"
-	goName        = "make-go"
+	goName        = "go*"
 	isPromiseName = "is-promise"
 )
 

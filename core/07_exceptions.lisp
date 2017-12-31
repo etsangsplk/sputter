@@ -2,7 +2,7 @@
 
 (defmacro error
   [& clauses]
-  `(make-error (assoc ~@clauses)))
+  `(error* (assoc ~@clauses)))
 
 (defmacro panic
   [& clauses]
@@ -75,7 +75,7 @@
   [clauses err-sym]
   (assert-args
     (is-seq clauses) "catch branch not paired")
-  (make-lazy-seq
+  (lazy-seq*
     (let [clause (first clauses),
           var    ((clause 1) 0),
           expr   (rest (rest clause))]
@@ -88,7 +88,7 @@
 (defn try-catch-clauses
   {:private true}
   [clauses err-sym]
-  (make-lazy-seq
+  (lazy-seq*
     (when (is-seq clauses)
       (let [clause (first clauses),
             pred   ((clause 1) 1)]

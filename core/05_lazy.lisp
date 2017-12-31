@@ -17,16 +17,16 @@
 
 (defmacro range
   {:doc-asset "range"}
-  ([]             `(make-range 0 inf 1))
-  ([max]          `(make-range 0 ~max 1))
-  ([min max]      `(make-range ~min ~max 1))
-  ([min max step] `(make-range ~min ~max ~step)))
+  ([]             `(range* 0 inf 1))
+  ([max]          `(range* 0 ~max 1))
+  ([min max]      `(range* ~min ~max 1))
+  ([min max step] `(range* ~min ~max ~step)))
 
 (defmacro lazy-seq
   {:doc-asset "lazy-seq"}
   [& body]
   (list 'sputter:make-closure []
-    (cons 'sputter:make-lazy-seq body)))
+    (cons 'sputter:lazy-seq* body)))
 
 (defn take-while
   [pred coll]

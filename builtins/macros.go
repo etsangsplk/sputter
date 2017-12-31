@@ -23,11 +23,12 @@ var macroMetadata = a.Properties{
 }
 
 func (*defMacroFunction) Apply(c a.Context, args a.Sequence) a.Value {
+	ns := a.GetContextNamespace(c)
 	fd := parseNamedFunction(args)
 	n := a.NewLocalSymbol(fd.name)
 	fn := makeFunction(c, fd)
 	r := fn.WithMetadata(macroMetadata)
-	return new(defFunction).Apply(c, a.Values{n, r})
+	return new(namespacePutFunction).Apply(c, a.Values{ns, n, r})
 }
 
 func (*expand1Function) Apply(c a.Context, args a.Sequence) a.Value {

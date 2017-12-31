@@ -3,14 +3,14 @@ package builtins
 import a "github.com/kode4food/sputter/api"
 
 const (
-	lazySequenceName = "make-lazy-seq"
+	lazySequenceName = "lazy-seq*"
 	concatName       = "concat"
 	filterName       = "filter"
 	mapName          = "map"
 	reduceName       = "reduce"
 	takeName         = "take"
 	dropName         = "drop"
-	rangeName        = "make-range"
+	rangeName        = "range*"
 	forEachName      = "for-each"
 )
 

@@ -31,6 +31,6 @@
 
 (defmacro juxt
   [& funcs]
-  (let [val (gensym "val")]
-    `(fn [~val]
-      [~@(map (lambda [f] (list f val)) funcs)])))
+  (let [args (gensym "args")]
+    `(fn [& ~args]
+      [~@(map (lambda [f] (list 'apply f args)) funcs)])))

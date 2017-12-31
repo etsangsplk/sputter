@@ -6,22 +6,10 @@ const (
 	// ExpectedBindings is raised if a binding vector isn't an even number
 	ExpectedBindings = "expected bindings in the form: name value"
 
-	defName = "def"
-	letName = "let"
+	letName = "let*"
 )
 
-type (
-	defFunction struct{ BaseBuiltIn }
-	letFunction struct{ BaseBuiltIn }
-)
-
-var nsPut = new(namespacePutFunction)
-
-func (*defFunction) Apply(c a.Context, args a.Sequence) a.Value {
-	a.AssertArity(args, 2)
-	ns := a.GetContextNamespace(c)
-	return nsPut.Apply(c, args.Prepend(ns))
-}
+type letFunction struct{ BaseBuiltIn }
 
 func (*letFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	a.AssertMinimumArity(args, 2)
@@ -46,9 +34,7 @@ func (*letFunction) Apply(c a.Context, args a.Sequence) a.Value {
 }
 
 func init() {
-	var def *defFunction
 	var let *letFunction
 
-	RegisterBuiltIn(defName, def)
 	RegisterBuiltIn(letName, let)
 }

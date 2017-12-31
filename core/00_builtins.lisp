@@ -1,8 +1,8 @@
 ;;;; sputter core: builtins
 
 (def-builtin if    :doc-asset "if"  :special-form true)
-(def-builtin let   :doc-asset "let" :special-form true)
 (def-builtin do    :doc-asset "do"  :special-form true)
+(def-builtin let*  :special-form true)
 (def-builtin read  :doc-asset "read")
 (def-builtin eval  :doc-asset "eval")
 (def-builtin is-eq :doc-asset "is-eq")
@@ -96,34 +96,34 @@
 
 (def-builtin closure      :doc-asset "closure" :macro true :special-form true)
 (def-builtin lambda       :doc-asset "lambda"  :special-form true)
-(def-builtin apply        :doc-asset "apply")
 (def-builtin partial      :doc-asset "partial")
 (def-builtin make-closure :macro true)
+(def-builtin apply*)
 (def-builtin is-apply)
 (def-builtin is-special-form)
 
 ;; concurrency
 
-(def-builtin make-go    :special-form true)
-(def-builtin chan       :doc-asset "chan")
-(def-builtin promise    :doc-asset "promise")
+(def-builtin go*     :special-form true)
+(def-builtin chan    :doc-asset "chan")
+(def-builtin promise :doc-asset "promise")
 (def-builtin is-promise)
 
 ;; lazy sequences
 
-(def-builtin make-lazy-seq :special-form true)
-(def-builtin for-each      :special-form true)
-(def-builtin concat        :doc-asset "concat")
-(def-builtin filter        :doc-asset "filter")
-(def-builtin map           :doc-asset "map")
-(def-builtin reduce        :doc-asset "reduce")
-(def-builtin take          :doc-asset "take")
-(def-builtin drop          :doc-asset "drop")
-(def-builtin make-range)
+(def-builtin lazy-seq* :special-form true)
+(def-builtin for-each  :special-form true)
+(def-builtin concat    :doc-asset "concat")
+(def-builtin filter    :doc-asset "filter")
+(def-builtin map       :doc-asset "map")
+(def-builtin reduce    :doc-asset "reduce")
+(def-builtin take      :doc-asset "take")
+(def-builtin drop      :doc-asset "drop")
+(def-builtin range*)
 
 ;; raise and recover
 
-(def-builtin make-error)
+(def-builtin error*)
 (def-builtin raise)
 (def-builtin recover :special-form true)
 

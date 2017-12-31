@@ -10,13 +10,13 @@ func TestRange(t *testing.T) {
 	testCode(t, `
 		(reduce
 			(lambda [x y] (+ x y))
-			(make-range 1 5 1))
+			(range* 1 5 1))
 	`, f(10))
 
 	testCode(t, `
 		(reduce
 			(lambda [x y] (+ x y))
-			(make-range 5 1 -1))
+			(range* 5 1 -1))
 	`, f(14))
 }
 
@@ -79,8 +79,8 @@ func TestLazySeq(t *testing.T) {
 func TestForEachLoop(t *testing.T) {
 	testCode(t, `
 		(let [ch (chan) emit (:emit ch) close (:close ch) seq (:seq ch)]
-			(make-go
-				(for-each [i (make-range 1 5 1), j (make-range 1 10 2)]
+			(go*
+				(for-each [i (range* 1 5 1), j (range* 1 10 2)]
 					(emit (* i j)))
 				(close))
 			(reduce (lambda [x y] (+ x y)) seq))

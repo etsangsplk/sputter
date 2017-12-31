@@ -14,7 +14,7 @@ const (
 	ExpectedArguments = "expected arguments of the form: %s"
 
 	lambdaName        = "lambda"
-	applyName         = "apply"
+	applyName         = "apply*"
 	isApplyName       = "is-apply"
 	isSpecialFormName = "is-special-form"
 )

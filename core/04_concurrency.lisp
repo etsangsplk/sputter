@@ -4,7 +4,7 @@
   {:doc-asset "go"}
   [& body]
   (list 'sputter:make-closure []
-    (cons 'sputter:make-go body)))
+    (cons 'sputter:go* body)))
 
 (defmacro generate
   {:doc-asset "generate"}

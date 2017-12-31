@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	errorName   = "make-error"
+	errorName   = "error*"
 	raiseName   = "raise"
 	recoverName = "recover"
 	doName      = "do"
