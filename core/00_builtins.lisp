@@ -98,9 +98,10 @@
 (def-builtin lambda       :doc-asset "lambda"  :special-form true)
 (def-builtin partial      :doc-asset "partial")
 (def-builtin make-closure :macro true)
-(def-builtin apply*)
-(def-builtin is-apply)
 (def-builtin is-special-form)
+
+(def-builtin apply :doc-asset "apply")
+(def-builtin is-apply)
 
 ;; concurrency
 

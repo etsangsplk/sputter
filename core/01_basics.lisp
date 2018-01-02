@@ -13,18 +13,6 @@
   [value & comps]
   `(not (is-eq ~value ~@comps)))
 
-(defmacro cons-many
-  {:private true}
-  ([]     ())
-  ([args] args)
-  ([arg & args]
-    `(cons ~arg (cons-many ~@args))))
-
-(defmacro apply
-  {:doc-asset "apply"}
-  [func & args]
-  `(apply* ~func (cons-many ~@args)))
-
 (defmacro let
   {:doc-asset "let"}
   [bindings & forms]

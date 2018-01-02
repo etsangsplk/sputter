@@ -14,15 +14,11 @@ const (
 	ExpectedArguments = "expected arguments of the form: %s"
 
 	lambdaName        = "lambda"
-	applyName         = "apply*"
-	isApplyName       = "is-apply"
 	isSpecialFormName = "is-special-form"
 )
 
 type (
 	lambdaFunction        struct{ BaseBuiltIn }
-	applyFunction         struct{ BaseBuiltIn }
-	isApplyFunction       struct{ BaseBuiltIn }
 	isSpecialFormFunction struct{ BaseBuiltIn }
 
 	argProcessor func(a.Context, a.Sequence) (a.Context, bool)
@@ -286,21 +282,6 @@ func (*lambdaFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	return makeFunction(c, fd)
 }
 
-func (*applyFunction) Apply(c a.Context, args a.Sequence) a.Value {
-	a.AssertArity(args, 2)
-	f, r, _ := args.Split()
-	fn := f.(a.Applicable)
-	s := r.First().(a.Sequence)
-	return fn.Apply(c, s)
-}
-
-func (*isApplyFunction) Apply(_ a.Context, args a.Sequence) a.Value {
-	if _, ok := args.First().(a.Applicable); ok {
-		return a.True
-	}
-	return a.False
-}
-
 func (*isSpecialFormFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	if ap, ok := args.First().(a.Applicable); ok && a.IsSpecialForm(ap) {
 		return a.True
@@ -310,12 +291,8 @@ func (*isSpecialFormFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 
 func init() {
 	var lambda *lambdaFunction
-	var apply *applyFunction
-	var isApply *isApplyFunction
 	var isSpecialForm *isSpecialFormFunction
 
 	RegisterBuiltIn(lambdaName, lambda)
-	RegisterBuiltIn(applyName, apply)
-	RegisterBuiltIn(isApplyName, isApply)
 	RegisterBuiltIn(isSpecialFormName, isSpecialForm)
 }
