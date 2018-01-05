@@ -23,9 +23,9 @@ type (
 // BoundArgsKey is the Metadata key for a Function's bound count
 var BoundArgsKey = a.NewKeyword("bound-args")
 
-func applyArguments(args a.Sequence) a.Sequence {
+func prependApplyArguments(args a.Sequence) a.Sequence {
 	if f, r, ok := args.Split(); ok {
-		if rs := applyArguments(r); rs != nil {
+		if rs := prependApplyArguments(r); rs != nil {
 			return rs.Prepend(f)
 		}
 		return f.(a.Sequence)
@@ -40,7 +40,7 @@ func (*applyFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	if ac == 2 {
 		return fn.Apply(c, r.First().(a.Sequence))
 	}
-	return fn.Apply(c, applyArguments(r))
+	return fn.Apply(c, prependApplyArguments(r))
 }
 
 func (*partialFunction) Apply(_ a.Context, args a.Sequence) a.Value {
