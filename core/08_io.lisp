@@ -34,6 +34,12 @@
   [val]
   (and (is-vector val) (= (mod (len val) 2) 0)))
 
+(defn with-open-close
+  {:private true}
+  [val]
+  (let [c (:close val)]
+    (if (is-apply c) c no-op)))
+
 (defmacro with-open [bindings & body]
   (assert-args
     (paired-vector? bindings) "with-open bindings must be a key-value vector")
@@ -42,8 +48,7 @@
       `(do ~@body)
     (>= (len bindings) 2)
       `(let [~(bindings 0) ~(bindings 1),
-             close# (get ~(bindings 0) :close nil)]
+             close# (with-open-close ~(bindings 0))]
         (try
           (with-open [~@(rest (rest bindings))] ~@body)
-          (finally
-            (when (is-apply close#) (close#)))))))
+          (finally (close#))))))

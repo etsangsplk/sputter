@@ -34,3 +34,17 @@
   (let [args (gensym "args")]
     `(fn [& ~args]
       [~@(map (lambda [f] (list 'apply f args)) funcs)])))
+
+(defn no-op
+  {:doc "a function that does absolutely nothing"}
+  [])
+
+(defn identity
+  {:doc "a function that returns its single argument"}
+  [val]
+  val)
+
+(defn constantly
+  {:doc "returns a function that always returns the provided value"}
+  [val]
+  (fn [] val))
