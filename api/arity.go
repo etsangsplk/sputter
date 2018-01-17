@@ -11,7 +11,7 @@ const (
 	BadArityRange = "expected between %d and %d arguments, got %d"
 )
 
-// ArityChecker is a ReflectedFunction that validates the arity of arguments
+// ArityChecker is a function that validates the arity of arguments
 type ArityChecker func(Sequence) (int, bool)
 
 func countUpTo(args Sequence, max int) int {

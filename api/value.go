@@ -20,7 +20,7 @@ type (
 		Str() Str
 	}
 
-	// ValueProcessor is the standard ReflectedFunction interface for a func
+	// ValueProcessor is the standard function interface for a func
 	// that processes a Value against a Context (example: Emit)
 	ValueProcessor func(Context, Value) Value
 

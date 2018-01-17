@@ -9,7 +9,7 @@ import (
 const IndexNotFound = "index not found: %s"
 
 type (
-	// SequenceProcessor is the standard signature for a ReflectedFunction that is
+	// SequenceProcessor is the standard signature for a function that is
 	// capable of transforming or validating a Sequence
 	SequenceProcessor func(Context, Sequence) Value
 
