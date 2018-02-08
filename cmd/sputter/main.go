@@ -4,17 +4,16 @@ import (
 	"os"
 
 	_ "github.com/kode4food/sputter/builtins"
-	c "github.com/kode4food/sputter/cli"
 	_ "github.com/kode4food/sputter/core"
 )
 
 func main() {
 	if isStdInPiped() {
-		c.EvaluateStdIn()
+		EvaluateStdIn()
 	} else if len(os.Args) < 2 {
-		c.NewREPL().Run()
+		NewREPL().Run()
 	} else {
-		c.EvaluateFile()
+		EvaluateFile()
 	}
 }
 

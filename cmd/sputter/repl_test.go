@@ -1,4 +1,4 @@
-package cli_test
+package main_test
 
 import (
 	"testing"
@@ -6,7 +6,7 @@ import (
 	a "github.com/kode4food/sputter/api"
 	"github.com/kode4food/sputter/assert"
 	_ "github.com/kode4food/sputter/builtins"
-	c "github.com/kode4food/sputter/cli"
+	c "github.com/kode4food/sputter/cmd/sputter"
 	e "github.com/kode4food/sputter/evaluator"
 )
 

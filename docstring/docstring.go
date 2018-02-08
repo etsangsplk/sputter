@@ -2,7 +2,7 @@ package docstring
 
 import "github.com/kode4food/sputter/assets"
 
-// Get resolves documentation using assets produced by go-bindata
+// Get resolves documentation using snapshot assets
 func Get(n string) string {
 	return string(assets.MustGet(filename(n)))
 }

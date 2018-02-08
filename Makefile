@@ -1,7 +1,7 @@
 all: main
 
 main: assets
-	go build
+	go build github.com/kode4food/sputter/cmd/sputter
 
 test: main glide
 	golint `glide novendor`
@@ -24,7 +24,7 @@ init: glide assets lint
 	glide install
 
 install: init main test
-	go install
+	go install github.com/kode4food/sputter/cmd/sputter
 
 upgrade-deps:
 	go get -u github.com/Masterminds/glide
