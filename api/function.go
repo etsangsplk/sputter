@@ -133,13 +133,13 @@ func (f *blockFunction) WithMetadata(md Object) AnnotatedValue {
 	}
 }
 
-// IsMacro tests an Applicable as being marked a Macro and is a special form
-func IsMacro(a Applicable) (bool, bool) {
+// IsMacro tests an Applicable as being marked a Macro
+func IsMacro(a Applicable) bool {
 	if an, ok := a.(Annotated); ok {
 		md := an.Metadata()
-		return IsTrue(md, MacroKey), IsTrue(md, SpecialKey)
+		return IsTrue(md, MacroKey)
 	}
-	return false, false
+	return false
 }
 
 // IsSpecialForm tests an Applicable as being marked a special form

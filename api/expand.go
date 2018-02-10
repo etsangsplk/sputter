@@ -21,7 +21,7 @@ func MacroExpand1(c Context, v Value) (Value, bool) {
 			if s, ok := f.(Symbol); ok {
 				if sr, ok := s.Resolve(c); ok {
 					if a, ok := sr.(Applicable); ok {
-						if ok, sp := IsMacro(a); ok && !sp {
+						if IsMacro(a) && !IsSpecialForm(a) {
 							return a.Apply(c, r), true
 						}
 					}

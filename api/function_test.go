@@ -54,15 +54,15 @@ func TestMacro(t *testing.T) {
 		a.NameKey:  a.Name("orig"),
 	}).(a.Function)
 
-	ok, _ := a.IsMacro(m1)
+	ok := a.IsMacro(m1)
 	as.True(ok)
 
-	ok, _ = a.IsMacro(a.NewExecFunction(nil))
+	ok = a.IsMacro(a.NewExecFunction(nil))
 	as.False(ok)
 
 	k1 := a.NewKeyword("some_keyword")
 
-	ok, _ = a.IsMacro(k1)
+	ok = a.IsMacro(k1)
 	as.False(ok)
 
 	ok = a.IsSpecialForm(k1)

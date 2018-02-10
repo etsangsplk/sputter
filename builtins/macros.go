@@ -50,7 +50,7 @@ func (*expandAllFunction) Apply(c a.Context, args a.Sequence) a.Value {
 
 func (*isMacroFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	if ap, ok := args.First().(a.Applicable); ok {
-		if ok, _ = a.IsMacro(ap); ok {
+		if a.IsMacro(ap) {
 			return a.True
 		}
 	}
