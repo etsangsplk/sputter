@@ -21,11 +21,12 @@ var envPairRegex = regexp.MustCompile("^(?P<Key>[^=]+)=(?P<Value>.*)$")
 func env() a.Value {
 	var r []a.Vector
 	for _, v := range os.Environ() {
-		e := envPairRegex.FindStringSubmatch(v)
-		r = append(r, a.Values{
-			a.NewKeyword(a.Name(e[1])),
-			a.Str(e[2]),
-		})
+		if e := envPairRegex.FindStringSubmatch(v); len(e) == 3 {
+			r = append(r, a.Values{
+				a.NewKeyword(a.Name(e[1])),
+				a.Str(e[2]),
+			})
+		}
 	}
 	return a.NewAssociative(r...)
 }
