@@ -51,5 +51,5 @@ const (
 const (
 	Context uint = iota
 	Args
-	Locals
+	Vars
 )

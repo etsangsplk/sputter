@@ -11,46 +11,46 @@ var fib *vm.Module
 func init() {
 	inst := c.RemoveLabels([]vm.Instruction{
 		// (defn fib [i] ...)
-		vm.MakeInst(vm.First, vm.Args, vm.Locals+0),
+		vm.MakeInst(vm.First, vm.Args, vm.Vars+0),
 		// (cond (= i 0) 0)
-		vm.MakeInst(vm.Zero, vm.Locals+1),
-		vm.MakeInst(vm.Eq, vm.Locals+0, vm.Locals+1, vm.Locals+1),
-		vm.MakeInst(vm.CondJumpLabel, 0, vm.Locals+1), // goto return 0
+		vm.MakeInst(vm.Zero, vm.Vars+1),
+		vm.MakeInst(vm.Eq, vm.Vars+0, vm.Vars+1, vm.Vars+1),
+		vm.MakeInst(vm.CondJumpLabel, 0, vm.Vars+1), // goto return 0
 		// (cond (= i 1) 1)
-		vm.MakeInst(vm.One, vm.Locals+1),
-		vm.MakeInst(vm.Eq, vm.Locals+0, vm.Locals+1, vm.Locals+1),
-		vm.MakeInst(vm.CondJumpLabel, 1, vm.Locals+1), // goto return 1
+		vm.MakeInst(vm.One, vm.Vars+1),
+		vm.MakeInst(vm.Eq, vm.Vars+0, vm.Vars+1, vm.Vars+1),
+		vm.MakeInst(vm.CondJumpLabel, 1, vm.Vars+1), // goto return 1
 		// (cond (= i 2) 1)
-		vm.MakeInst(vm.Const, 1, vm.Locals+2), // 2
-		vm.MakeInst(vm.Eq, vm.Locals+0, vm.Locals+2, vm.Locals+1),
-		vm.MakeInst(vm.CondJumpLabel, 1, vm.Locals+1), // goto return 1
+		vm.MakeInst(vm.Const, 1, vm.Vars+2), // 2
+		vm.MakeInst(vm.Eq, vm.Vars+0, vm.Vars+2, vm.Vars+1),
+		vm.MakeInst(vm.CondJumpLabel, 1, vm.Vars+1), // goto return 1
 		// (cond :else)
-		vm.MakeInst(vm.Const, 0, vm.Locals+3), // fib
+		vm.MakeInst(vm.Const, 0, vm.Vars+3), // fib
 		// (fib (- i 1))
-		vm.MakeInst(vm.One, vm.Locals+1),
-		vm.MakeInst(vm.Sub, vm.Locals+0, vm.Locals+1, vm.Locals+1),
-		vm.MakeInst(vm.Vector, vm.Locals+1, vm.Locals+2, vm.Locals+1),
-		vm.MakeInst(vm.Apply, vm.Locals+1, vm.Locals+3, vm.Locals+1),
+		vm.MakeInst(vm.One, vm.Vars+1),
+		vm.MakeInst(vm.Sub, vm.Vars+0, vm.Vars+1, vm.Vars+1),
+		vm.MakeInst(vm.Vector, vm.Vars+1, vm.Vars+2, vm.Vars+1),
+		vm.MakeInst(vm.Apply, vm.Vars+1, vm.Vars+3, vm.Vars+1),
 		// (fib (- i 2))
-		vm.MakeInst(vm.Sub, vm.Locals+0, vm.Locals+2, vm.Locals+2),
-		vm.MakeInst(vm.Vector, vm.Locals+2, vm.Locals+3, vm.Locals+2),
-		vm.MakeInst(vm.Apply, vm.Locals+2, vm.Locals+3, vm.Locals+2),
+		vm.MakeInst(vm.Sub, vm.Vars+0, vm.Vars+2, vm.Vars+2),
+		vm.MakeInst(vm.Vector, vm.Vars+2, vm.Vars+3, vm.Vars+2),
+		vm.MakeInst(vm.Apply, vm.Vars+2, vm.Vars+3, vm.Vars+2),
 		// (+ (fib (- i 1)) (fib (- i 2)))
-		vm.MakeInst(vm.Add, vm.Locals+1, vm.Locals+2, vm.Locals+2),
-		vm.MakeInst(vm.Return, vm.Locals+2),
+		vm.MakeInst(vm.Add, vm.Vars+1, vm.Vars+2, vm.Vars+2),
+		vm.MakeInst(vm.Return, vm.Vars+2),
 		// return 0
 		vm.MakeInst(vm.Label, 0),
-		vm.MakeInst(vm.Zero, vm.Locals+0),
-		vm.MakeInst(vm.Return, vm.Locals+0),
+		vm.MakeInst(vm.Zero, vm.Vars+0),
+		vm.MakeInst(vm.Return, vm.Vars+0),
 		// return 1
 		vm.MakeInst(vm.Label, 1),
-		vm.MakeInst(vm.One, vm.Locals+0),
-		vm.MakeInst(vm.Return, vm.Locals+0),
+		vm.MakeInst(vm.One, vm.Vars+0),
+		vm.MakeInst(vm.Return, vm.Vars+0),
 	})
 
 	fib = &vm.Module{
 		BaseFunction: a.DefaultBaseFunction,
-		LocalsSize:   8,
+		VarsCount:    8,
 		Data:         nil,
 		Instructions: inst,
 	}
