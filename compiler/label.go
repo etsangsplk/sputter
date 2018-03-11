@@ -55,18 +55,22 @@ func stripLabels(inst vm.Instructions, m labelMap) vm.Instructions {
 
 func rewriteJumps(inst vm.Instructions, m labelMap) vm.Instructions {
 	r := make(vm.Instructions, len(inst))
-	for i, e := range inst {
-		if e.OpCode == vm.Jump || e.OpCode == vm.CondJump {
-			if addr, ok := m[e.Op1]; ok {
-				e = vm.Instruction{
-					OpCode: e.OpCode,
-					Op1:    addr,
+	for i, elem := range inst {
+		if elem.OpCode == vm.JumpLabel || elem.OpCode == vm.CondJumpLabel {
+			if addr, ok := m[elem.Op1]; ok {
+				e2 := elem
+				if elem.OpCode == vm.JumpLabel {
+					e2.OpCode = vm.Jump
+				} else {
+					e2.OpCode = vm.CondJump
 				}
+				e2.Op1 = addr
+				elem = e2
 			} else {
-				panic(a.ErrStr(UnknownLabel, e.Op1))
+				panic(a.ErrStr(UnknownLabel, elem.Op1))
 			}
 		}
-		r[i] = e
+		r[i] = elem
 	}
 	return r
 }

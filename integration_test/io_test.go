@@ -9,7 +9,7 @@ import (
 	b "github.com/kode4food/sputter/builtins"
 )
 
-const stdoutName = "*stdout*"
+const stdoutName = "*out*"
 
 func bindWrite(w a.Writer) a.Function {
 	return a.NewExecFunction(func(_ a.Context, args a.Sequence) a.Value {

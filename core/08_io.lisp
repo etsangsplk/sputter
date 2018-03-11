@@ -10,24 +10,24 @@
 (defn pr [& forms]
   (let [seq (pr-map-with-nil str! forms)]
     (if (is-seq seq)
-      (. sputter:*stdout* :write (first seq)))
+      (. sputter:*out* :write (first seq)))
     (for-each [elem (rest seq)]
-      (. sputter:*stdout* :write *space* elem))))
+      (. sputter:*out* :write *space* elem))))
 
 (defn prn [& forms]
   (apply pr forms)
-  (. sputter:*stdout* :write *newline*))
+  (. sputter:*out* :write *newline*))
 
 (defn print [& forms]
   (let [seq (pr-map-with-nil str forms)]
     (if (is-seq seq)
-      (. sputter:*stdout* :write (first seq)))
+      (. sputter:*out* :write (first seq)))
     (for-each [elem (rest seq)]
-      (. sputter:*stdout* :write *space* elem))))
+      (. sputter:*out* :write *space* elem))))
 
 (defn println [& forms]
   (apply print forms)
-  (. sputter:*stdout* :write *newline*))
+  (. sputter:*out* :write *newline*))
 
 (defn paired-vector?
   {:private true}

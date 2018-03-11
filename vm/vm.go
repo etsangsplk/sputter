@@ -5,24 +5,10 @@ package vm
 import a "github.com/kode4food/sputter/api"
 
 type (
-	// Data represents the data segment of a Module
-	Data a.Values
-
-	// Instruction represents a decoded VM instruction
-	Instruction struct {
-		OpCode OpCode
-		Op1    uint
-		Op2    uint
-	}
-
-	// Instructions represents multiple VM instructions
-	Instructions []Instruction
-
 	// Module is the basic translation unit for the VM
 	Module struct {
 		a.BaseFunction
 		LocalsSize   uint
-		StackSize    uint
 		Data         a.Values
 		Instructions Instructions
 	}
@@ -34,236 +20,206 @@ var negOne = a.Zero.Sub(a.One)
 func (m *Module) Apply(c a.Context, args a.Sequence) a.Value {
 	// Registers
 	var PC uint
-	var SP uint
+	DATA := m.Data
+	INST := m.Instructions
 
+	// Note: Heap allocated locals slow (fib-vm 30) down by at least 20%
 	LOCALS := make(a.Values, m.LocalsSize)
 	LOCALS[Context] = c
 	LOCALS[Args] = args
 
-	STACK := make(a.Values, m.StackSize)
-	SP = m.StackSize - 1
-
-	DATA := m.Data
-	INST := m.Instructions
-
-	push := func(v a.Value) {
-		STACK[SP] = v
-		SP--
-	}
-
-	pop := func() a.Value {
-		// TODO: require a clean way to clear cells to avoid leaking
-		SP++
-		return STACK[SP]
-	}
-
 	for {
-		switch INST[PC].OpCode {
-		case NoOp:
-			// Do Nothing
-
-		case Pop:
-			pop()
-
-		case Load:
-			push(LOCALS[INST[PC].Op1])
-
-		case Store:
-			LOCALS[INST[PC].Op1] = pop()
-
-		case StoreConst:
-			LOCALS[INST[PC].Op2] = DATA[INST[PC].Op1]
-
-		case Clear:
-			LOCALS[INST[PC].Op1] = a.Nil
+		inst := &INST[PC]
+		switch inst.OpCode {
+		case Const:
+			LOCALS[inst.Op2] = DATA[inst.Op1]
 
 		case Dup:
-			STACK[SP] = STACK[SP+1]
-			SP--
-
-		case Swap:
-			u1 := SP + 1
-			u2 := SP + 2
-			r1 := STACK[u1]
-			STACK[u1] = STACK[u2]
-			STACK[u2] = r1
+			LOCALS[inst.Op2] = LOCALS[inst.Op1]
 
 		case Nil:
-			push(a.Nil)
+			LOCALS[inst.Op1] = a.Nil
 
 		case EmptyList:
-			push(a.EmptyList)
+			LOCALS[inst.Op1] = a.EmptyList
 
 		case True:
-			push(a.True)
+			LOCALS[inst.Op1] = a.True
 
 		case False:
-			push(a.False)
+			LOCALS[inst.Op1] = a.False
 
 		case Zero:
-			push(a.Zero)
+			LOCALS[inst.Op1] = a.Zero
 
 		case One:
-			push(a.One)
+			LOCALS[inst.Op1] = a.One
 
 		case NegOne:
-			push(negOne)
-
-		case Const:
-			push(DATA[INST[PC].Op1])
+			LOCALS[inst.Op1] = negOne
 
 		case NamespacePut:
-			r1 := pop()
-			n1 := pop().(a.LocalSymbol).Name()
-			pop().(a.Namespace).Put(n1, r1)
+			LOCALS[inst.Op3].(a.Namespace).Put(
+				LOCALS[inst.Op2].(a.LocalSymbol).Name(),
+				LOCALS[inst.Op1])
 
 		case Let:
-			c1 := LOCALS[INST[PC].Op1].(a.Context)
-			r1 := pop()
-			c1.Put(pop().(a.LocalSymbol).Name(), r1)
+			LOCALS[inst.Op3].(a.Context).Put(
+				LOCALS[inst.Op2].(a.LocalSymbol).Name(),
+				LOCALS[inst.Op1])
 
 		case Eval:
-			r1, _ := a.MacroExpand(c, pop())
-			if e1, b1 := r1.(a.Evaluable); b1 {
-				push(e1.Eval(c))
+			v1, _ := a.MacroExpand(c, LOCALS[inst.Op1])
+			if e1, b1 := v1.(a.Evaluable); b1 {
+				LOCALS[inst.Op2] = e1.Eval(c)
 			} else {
-				push(r1)
+				LOCALS[inst.Op2] = v1
 			}
 
 		case Apply:
-			s1 := pop().(a.Sequence)
-			f1 := pop().(a.Applicable)
-			push(f1.Apply(c, s1))
-
-		case Call:
-			u1 := INST[PC].Op1
-			u2 := SP + u1 + 1
-			v1 := make(a.Values, u1)
-			copy(v1, STACK[SP+1:u2])
-			STACK[u2] = STACK[u2].(a.Applicable).Apply(c, v1)
-			SP = u2 - 1
+			LOCALS[inst.Op3] =
+				LOCALS[inst.Op2].(a.Applicable).
+					Apply(c, LOCALS[inst.Op1].(a.Sequence))
 
 		case Vector:
-			u1 := INST[PC].Op1
-			u2 := SP + u1
-			v1 := make(a.Values, u1)
-			copy(v1, STACK[SP+1:u2+1])
-			STACK[u2] = v1
-			SP = u2 - 1
+			s1 := inst.Op1
+			e1 := inst.Op2
+			v1 := make(a.Values, e1-s1)
+			copy(v1, LOCALS[s1:e1])
+			LOCALS[inst.Op3] = v1
 
 		case IsSeq:
-			if s1, b1 := pop().(a.Sequence); b1 && s1.IsSequence() {
-				push(a.True)
+			v1 := LOCALS[inst.Op1]
+			if s1, b1 := v1.(a.Sequence); b1 && s1.IsSequence() {
+				LOCALS[inst.Op2] = a.True
 			} else {
-				push(a.False)
+				LOCALS[inst.Op2] = a.False
 			}
 
 		case First:
-			push(pop().(a.Sequence).First())
+			LOCALS[inst.Op2] = LOCALS[inst.Op1].(a.Sequence).First()
 
 		case Rest:
-			push(pop().(a.Sequence).Rest())
+			LOCALS[inst.Op2] = LOCALS[inst.Op1].(a.Sequence).Rest()
 
 		case Split:
-			var r1 a.Value
-			if s1, b1 := pop().(a.Sequence); b1 {
-				if r1, s1, b1 = s1.Split(); b1 {
-					push(s1)
-					push(r1)
-					push(a.True)
-					PC++
-					continue
+			if s1, b1 := LOCALS[inst.Op1].(a.Sequence); b1 {
+				if f1, r1, b2 := s1.Split(); b2 {
+					LOCALS[inst.Op2] = a.True
+					LOCALS[inst.Op3] = f1
+					LOCALS[inst.Op4] = r1
+					break
 				}
 			}
-			push(a.False)
+			LOCALS[inst.Op2] = a.False
 
 		case Prepend:
-			r1 := pop()
-			push(pop().(a.Sequence).Prepend(r1))
+			LOCALS[inst.Op3] =
+				LOCALS[inst.Op2].(a.Sequence).Prepend(LOCALS[inst.Op1])
 
 		case Inc:
-			u1 := SP + 1
-			STACK[u1] = STACK[u1].(a.Number).Add(a.One)
+			LOCALS[inst.Op2] = LOCALS[inst.Op1].(a.Number).Add(a.One)
 
 		case Dec:
-			u1 := SP + 1
-			STACK[u1] = STACK[u1].(a.Number).Sub(a.One)
+			LOCALS[inst.Op2] = LOCALS[inst.Op1].(a.Number).Sub(a.One)
 
 		case Add:
-			push(pop().(a.Number).Add(pop().(a.Number)))
+			LOCALS[inst.Op3] =
+				LOCALS[inst.Op1].(a.Number).
+					Add(LOCALS[inst.Op2].(a.Number))
 
 		case Sub:
-			push(pop().(a.Number).Sub(pop().(a.Number)))
+			LOCALS[inst.Op3] =
+				LOCALS[inst.Op1].(a.Number).
+					Sub(LOCALS[inst.Op2].(a.Number))
 
 		case Mul:
-			push(pop().(a.Number).Mul(pop().(a.Number)))
+			LOCALS[inst.Op3] =
+				LOCALS[inst.Op1].(a.Number).
+					Mul(LOCALS[inst.Op2].(a.Number))
 
 		case Div:
-			push(pop().(a.Number).Div(pop().(a.Number)))
+			LOCALS[inst.Op3] =
+				LOCALS[inst.Op1].(a.Number).
+					Div(LOCALS[inst.Op2].(a.Number))
 
 		case Mod:
-			push(pop().(a.Number).Mod(pop().(a.Number)))
+			LOCALS[inst.Op3] =
+				LOCALS[inst.Op1].(a.Number).
+					Mod(LOCALS[inst.Op2].(a.Number))
 
 		case Eq:
-			if pop().(a.Number).Cmp(pop().(a.Number)) == a.EqualTo {
-				push(a.True)
+			n1 := LOCALS[inst.Op1].(a.Number)
+			n2 := LOCALS[inst.Op2].(a.Number)
+			if n1.Cmp(n2) == a.EqualTo {
+				LOCALS[inst.Op3] = a.True
 			} else {
-				push(a.False)
+				LOCALS[inst.Op3] = a.False
 			}
 
 		case Neq:
-			if pop().(a.Number).Cmp(pop().(a.Number)) != a.EqualTo {
-				push(a.True)
+			n1 := LOCALS[inst.Op1].(a.Number)
+			n2 := LOCALS[inst.Op2].(a.Number)
+			if n1.Cmp(n2) != a.EqualTo {
+				LOCALS[inst.Op3] = a.True
 			} else {
-				push(a.False)
+				LOCALS[inst.Op3] = a.False
 			}
 
 		case Gt:
-			if pop().(a.Number).Cmp(pop().(a.Number)) == a.GreaterThan {
-				push(a.True)
+			n1 := LOCALS[inst.Op1].(a.Number)
+			n2 := LOCALS[inst.Op2].(a.Number)
+			if n1.Cmp(n2) == a.GreaterThan {
+				LOCALS[inst.Op3] = a.True
 			} else {
-				push(a.False)
+				LOCALS[inst.Op3] = a.False
 			}
 
 		case Gte:
-			cmp := pop().(a.Number).Cmp(pop().(a.Number))
+			n1 := LOCALS[inst.Op1].(a.Number)
+			n2 := LOCALS[inst.Op2].(a.Number)
+			cmp := n1.Cmp(n2)
 			if cmp == a.GreaterThan || cmp == a.EqualTo {
-				push(a.True)
+				LOCALS[inst.Op3] = a.True
 			} else {
-				push(a.False)
+				LOCALS[inst.Op3] = a.False
 			}
 
 		case Lt:
-			if pop().(a.Number).Cmp(pop().(a.Number)) == a.LessThan {
-				push(a.True)
+			n1 := LOCALS[inst.Op1].(a.Number)
+			n2 := LOCALS[inst.Op2].(a.Number)
+			if n1.Cmp(n2) == a.LessThan {
+				LOCALS[inst.Op3] = a.True
 			} else {
-				push(a.False)
+				LOCALS[inst.Op3] = a.False
 			}
 
 		case Lte:
-			cmp := pop().(a.Number).Cmp(pop().(a.Number))
+			n1 := LOCALS[inst.Op1].(a.Number)
+			n2 := LOCALS[inst.Op2].(a.Number)
+			cmp := n1.Cmp(n2)
 			if cmp == a.LessThan || cmp == a.EqualTo {
-				push(a.True)
+				LOCALS[inst.Op3] = a.True
 			} else {
-				push(a.False)
+				LOCALS[inst.Op3] = a.False
 			}
 
 		case CondJump:
-			r1 := pop()
-			if r1 != a.False && r1 != a.Nil {
-				PC = INST[PC].Op1
+			v1 := LOCALS[inst.Op2]
+			if v1 != a.False && v1 != a.Nil {
+				PC = inst.Op1
 				continue
 			}
 
 		case Jump:
-			PC = INST[PC].Op1
+			PC = inst.Op1
 			continue
 
 		case Return:
-			return pop()
+			return LOCALS[inst.Op1]
 
 		case Panic:
-			panic(pop())
+			panic(LOCALS[inst.Op1])
 
 		default:
 			panic("how did we get here?")
@@ -277,7 +233,6 @@ func (m *Module) WithMetadata(md a.Object) a.AnnotatedValue {
 	return &Module{
 		BaseFunction: m.Extend(md),
 		LocalsSize:   m.LocalsSize,
-		StackSize:    m.StackSize,
 		Data:         m.Data,
 		Instructions: m.Instructions,
 	}

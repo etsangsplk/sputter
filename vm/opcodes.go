@@ -5,14 +5,8 @@ type OpCode uint
 
 // These are the OpCodes recognized by the Virtual Machine
 const (
-	NoOp OpCode = iota
-	Pop
-	Load
-	Store
-	StoreConst
-	Clear
+	Const OpCode = iota
 	Dup
-	Swap
 	Nil
 	EmptyList
 	True
@@ -20,12 +14,10 @@ const (
 	Zero
 	One
 	NegOne
-	Const
 	NamespacePut
 	Let
 	Eval
 	Apply
-	Call
 	Vector
 	IsSeq
 	First
@@ -49,12 +41,15 @@ const (
 	Jump
 	Return
 	Panic
+	// Should never reach the VM
 	Label
+	CondJumpLabel
+	JumpLabel
 )
 
-// These are the default positions for certain locals
+// These are the default positions for certain registers
 const (
 	Context uint = iota
 	Args
-	Variables
+	Locals
 )

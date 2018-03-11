@@ -10,9 +10,9 @@ import (
 const (
 	newlineName = "*newline*"
 	spaceName   = "*space*"
-	stdinName   = "*stdin*"
-	stdoutName  = "*stdout*"
-	stderrName  = "*stderr*"
+	stdinName   = "*in*"
+	stdoutName  = "*out*"
+	stderrName  = "*err*"
 
 	newLine = a.Str("\n")
 	space   = a.Str(" ")

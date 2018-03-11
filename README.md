@@ -60,7 +60,7 @@ change rapidly. The current built-in forms are:
   * Concurrency: `go` `chan` `generate` `future` `promise` `promise?`
   * Strings: `str` `str!` `str?`
   * I/O: `print` `println` `pr` `prn` `with-open`
-  * Operating System: `time` `*env*` `*args*` `*stdout*` `*stderr*` `*stdin*`
+  * Operating System: `time` `*env*` `*args*` `*out*` `*err*` `*in*`
 
 Documentation for most of these forms may be viewed in the REPL using the
 `doc` function.

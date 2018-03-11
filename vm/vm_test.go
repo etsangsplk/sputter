@@ -41,7 +41,6 @@ func testInstructions(t *testing.T, inst []vm.Instruction, expect a.Value) {
 	m1 := &vm.Module{
 		BaseFunction: a.DefaultBaseFunction,
 		LocalsSize:   16,
-		StackSize:    32,
 		Data:         vmTestData,
 		Instructions: inst,
 	}
@@ -58,17 +57,17 @@ func testInstructions(t *testing.T, inst []vm.Instruction, expect a.Value) {
 
 func testMapped(t *testing.T, o vm.OpCode, expect a.Value) {
 	testInstructions(t, []vm.Instruction{
-		{OpCode: o},
-		{OpCode: vm.Return},
+		vm.MakeInst(o, vm.Locals+0),
+		vm.MakeInst(vm.Return, vm.Locals+0),
 	}, expect)
 }
 
 func testBinary(t *testing.T, o vm.OpCode, expect a.Value) {
 	testInstructions(t, []vm.Instruction{
-		{OpCode: vm.Const, Op1: 8},
-		{OpCode: vm.Const, Op1: 7},
-		{OpCode: o},
-		{OpCode: vm.Return},
+		vm.MakeInst(vm.Const, 7, vm.Locals+0),
+		vm.MakeInst(vm.Const, 8, vm.Locals+1),
+		vm.MakeInst(o, vm.Locals+0, vm.Locals+1, vm.Locals+0),
+		vm.MakeInst(vm.Return, vm.Locals+0),
 	}, expect)
 }
 
@@ -99,201 +98,160 @@ func TestBinaryMath(t *testing.T) {
 
 func TestConst(t *testing.T) {
 	testInstructions(t, []vm.Instruction{
-		{OpCode: vm.Const, Op1: 3},
-		{OpCode: vm.Return},
+		vm.MakeInst(vm.Const, 3, vm.Locals+0),
+		vm.MakeInst(vm.Return, vm.Locals+0),
 	}, a.True)
 
 	testInstructions(t, []vm.Instruction{
-		{OpCode: vm.StoreConst, Op1: 1, Op2: vm.Variables + 0},
-		{OpCode: vm.Load, Op1: vm.Variables + 0},
-		{OpCode: vm.Return},
-	}, s("Hello there!"))
-}
-
-func TestSwap(t *testing.T) {
-	testInstructions(t, []vm.Instruction{
-		{OpCode: vm.Const, Op1: 0},
-		{OpCode: vm.Const, Op1: 1},
-		{OpCode: vm.Swap},
-		{OpCode: vm.Return},
-	}, s("The first bit of data"))
-}
-
-func TestReturn(t *testing.T) {
-	testInstructions(t, []vm.Instruction{
-		{OpCode: vm.Const, Op1: 1},
-		{OpCode: vm.Return},
+		vm.MakeInst(vm.Const, 1, vm.Locals+0),
+		vm.MakeInst(vm.Return, vm.Locals+0),
 	}, s("Hello there!"))
 }
 
 func TestSequences(t *testing.T) {
 	testInstructions(t, []vm.Instruction{
-		{OpCode: vm.Load, Op1: vm.Args},
-		{OpCode: vm.IsSeq},
-		{OpCode: vm.Return},
+		vm.MakeInst(vm.IsSeq, vm.Args, vm.Locals+0),
+		vm.MakeInst(vm.Return, vm.Locals+0),
 	}, a.True)
 
 	testInstructions(t, []vm.Instruction{
-		{OpCode: vm.Const, Op1: 3},
-		{OpCode: vm.IsSeq},
-		{OpCode: vm.Return},
+		vm.MakeInst(vm.Const, 3),
+		vm.MakeInst(vm.IsSeq),
+		vm.MakeInst(vm.Return),
 	}, a.False)
 
 	testInstructions(t, []vm.Instruction{
-		{OpCode: vm.Load, Op1: vm.Args},
-		{OpCode: vm.First},
-		{OpCode: vm.Return},
+		vm.MakeInst(vm.First, vm.Args, vm.Locals+0),
+		vm.MakeInst(vm.Return, vm.Locals+0),
 	}, s("first"))
 
 	testInstructions(t, []vm.Instruction{
-		{OpCode: vm.Load, Op1: vm.Args},
-		{OpCode: vm.Rest},
-		{OpCode: vm.Return},
+		vm.MakeInst(vm.Rest, vm.Args, vm.Locals+0),
+		vm.MakeInst(vm.Return, vm.Locals+0),
 	}, s(`("second" "third")`))
 
 	testInstructions(t, []vm.Instruction{
-		{OpCode: vm.Load, Op1: vm.Args},
-		{OpCode: vm.Const, Op1: 1},
-		{OpCode: vm.Prepend},
-		{OpCode: vm.Return},
+		vm.MakeInst(vm.Const, 1, vm.Locals+0),
+		vm.MakeInst(vm.Prepend, vm.Locals+0, vm.Args, vm.Locals+0),
+		vm.MakeInst(vm.Return, vm.Locals+0),
 	}, s(`("Hello there!" "first" "second" "third")`))
 }
 
 func TestSequenceSplit(t *testing.T) {
 	testInstructions(t, []vm.Instruction{
-		{OpCode: vm.Const, Op1: 3}, // boolean
-		{OpCode: vm.Split},
-		{OpCode: vm.Return},
+		vm.MakeInst(vm.Const, 3, vm.Locals+0), // boolean
+		vm.MakeInst(vm.Split, vm.Locals+0, vm.Locals+0, vm.Locals+1, vm.Locals+2),
+		vm.MakeInst(vm.Return, vm.Locals+0),
 	}, a.False)
 
 	testInstructions(t, []vm.Instruction{
-		{OpCode: vm.Const, Op1: 5}, // empty list
-		{OpCode: vm.Split},
-		{OpCode: vm.Return},
+		vm.MakeInst(vm.Const, 5, vm.Locals+0), // empty list
+		vm.MakeInst(vm.Split, vm.Locals+0, vm.Locals+0, vm.Locals+1, vm.Locals+2),
+		vm.MakeInst(vm.Return, vm.Locals+0),
 	}, a.False)
 
 	testInstructions(t, []vm.Instruction{
-		{OpCode: vm.Load, Op1: vm.Args}, // list
-		{OpCode: vm.Split},
-		{OpCode: vm.Return},
+		vm.MakeInst(vm.Split, vm.Args, vm.Locals+0, vm.Locals+1, vm.Locals+2),
+		vm.MakeInst(vm.Return, vm.Locals+0),
 	}, a.True)
 
 	testInstructions(t, []vm.Instruction{
-		{OpCode: vm.Load, Op1: vm.Args}, // list
-		{OpCode: vm.Split},
-		{OpCode: vm.CondJump, Op1: 5},
-		{OpCode: vm.Const, Op1: 2}, // error
-		{OpCode: vm.Panic},
-		{OpCode: vm.Return},
+		vm.MakeInst(vm.Split, vm.Args, vm.Locals+0, vm.Locals+1, vm.Locals+2),
+		vm.MakeInst(vm.CondJump, 4, vm.Locals+0),
+		vm.MakeInst(vm.Const, 2, vm.Locals+0), // error
+		vm.MakeInst(vm.Panic, vm.Locals+0),
+		vm.MakeInst(vm.Return, vm.Locals+1),
 	}, s("first"))
 
 	testInstructions(t, []vm.Instruction{
-		{OpCode: vm.Load, Op1: vm.Args}, // list
-		{OpCode: vm.Split},
-		{OpCode: vm.CondJump, Op1: 5},
-		{OpCode: vm.Const, Op1: 2}, // error
-		{OpCode: vm.Panic},
-		{OpCode: vm.Pop},
-		{OpCode: vm.Return},
+		vm.MakeInst(vm.Split, vm.Args, vm.Locals+0, vm.Locals+1, vm.Locals+2),
+		vm.MakeInst(vm.CondJump, 4, vm.Locals+0),
+		vm.MakeInst(vm.Const, 2, vm.Locals+0), // error
+		vm.MakeInst(vm.Panic, vm.Locals+0),
+		vm.MakeInst(vm.Return, vm.Locals+2),
 	}, s(`("second" "third")`))
 }
 
 func TestDup(t *testing.T) {
 	testInstructions(t, []vm.Instruction{
-		{OpCode: vm.Load, Op1: vm.Args},
-		{OpCode: vm.Dup},
-		{OpCode: vm.First},
-		{OpCode: vm.Dup},
-		{OpCode: vm.Store, Op1: vm.Variables + 0},
-		{OpCode: vm.Prepend},
-		{OpCode: vm.Load, Op1: vm.Variables + 0},
-		{OpCode: vm.Prepend},
-		{OpCode: vm.Return},
-	}, s(`("first" "first" "first" "second" "third")`))
+		vm.MakeInst(vm.Dup, vm.Args, vm.Locals+0),
+		vm.MakeInst(vm.First, vm.Locals+0),
+		vm.MakeInst(vm.Return, vm.Locals+0),
+	}, s(`("first" "second" "third")`))
 }
 
 func TestIncDec(t *testing.T) {
 	testInstructions(t, []vm.Instruction{
-		{OpCode: vm.One},
-		{OpCode: vm.Inc},
-		{OpCode: vm.Return},
+		vm.MakeInst(vm.One, vm.Locals+0),
+		vm.MakeInst(vm.Inc, vm.Locals+0, vm.Locals+0),
+		vm.MakeInst(vm.Return, vm.Locals+0),
 	}, f(2))
 
 	testInstructions(t, []vm.Instruction{
-		{OpCode: vm.One},
-		{OpCode: vm.Dec},
-		{OpCode: vm.Return},
+		vm.MakeInst(vm.One, vm.Locals+0),
+		vm.MakeInst(vm.Dec, vm.Locals+0, vm.Locals+0),
+		vm.MakeInst(vm.Return, vm.Locals+0),
 	}, a.Zero)
 }
 
-func TestClear(t *testing.T) {
+func TestNil(t *testing.T) {
 	testInstructions(t, []vm.Instruction{
-		{OpCode: vm.Clear, Op1: vm.Args},
-		{OpCode: vm.Load, Op1: vm.Args},
-		{OpCode: vm.Return},
+		vm.MakeInst(vm.Nil, vm.Args),
+		vm.MakeInst(vm.Return, vm.Args),
 	}, a.Nil)
 }
 
 func TestJump(t *testing.T) {
 	testInstructions(t, []vm.Instruction{
-		{OpCode: vm.Const, Op1: 1},
-		{OpCode: vm.Jump, Op1: 3},
-		{OpCode: vm.Const, Op1: 0},
-		{OpCode: vm.Return},
+		vm.MakeInst(vm.Const, 1, vm.Locals+0),
+		vm.MakeInst(vm.Jump, 3),
+		vm.MakeInst(vm.Const, 0, vm.Locals+0),
+		vm.MakeInst(vm.Return, vm.Locals+0),
 	}, s("Hello there!"))
 }
 
 func TestCondJump(t *testing.T) {
 	testInstructions(t, []vm.Instruction{
-		{OpCode: vm.Const, Op1: 3},
-		{OpCode: vm.NoOp},
-		{OpCode: vm.CondJump, Op1: 5},
-		{OpCode: vm.Const, Op1: 0},
-		{OpCode: vm.Return},
-		{OpCode: vm.Const, Op1: 1},
-		{OpCode: vm.Return},
+		vm.MakeInst(vm.Const, 3, vm.Locals+0),
+		vm.MakeInst(vm.CondJump, 4),
+		vm.MakeInst(vm.Const, 0, vm.Locals+0),
+		vm.MakeInst(vm.Return, vm.Locals+0),
+		vm.MakeInst(vm.Const, 1, vm.Locals+0),
+		vm.MakeInst(vm.Return, vm.Locals+0),
 	}, s("Hello there!"))
 
 	testInstructions(t, []vm.Instruction{
-		{OpCode: vm.Const, Op1: 4},
-		{OpCode: vm.CondJump, Op1: 4},
-		{OpCode: vm.Const, Op1: 0},
-		{OpCode: vm.Return},
-		{OpCode: vm.Const, Op1: 1},
-		{OpCode: vm.Return},
+		vm.MakeInst(vm.Const, 4, vm.Locals+0),
+		vm.MakeInst(vm.CondJump, 4, vm.Locals+0),
+		vm.MakeInst(vm.Const, 0, vm.Locals+0),
+		vm.MakeInst(vm.Return, vm.Locals+0),
+		vm.MakeInst(vm.Const, 1, vm.Locals+0),
+		vm.MakeInst(vm.Return, vm.Locals+0),
 	}, s("The first bit of data"))
 }
 
 func TestEval(t *testing.T) {
 	testInstructions(t, []vm.Instruction{
-		{OpCode: vm.Const, Op1: 0}, // string
-		{OpCode: vm.Eval},
-		{OpCode: vm.Return},
+		vm.MakeInst(vm.Const, 0, vm.Locals+0), // string
+		vm.MakeInst(vm.Eval, vm.Locals+0, vm.Locals+0),
+		vm.MakeInst(vm.Return, vm.Locals+0),
 	}, s("The first bit of data"))
 
 	testInstructions(t, []vm.Instruction{
-		{OpCode: vm.Const, Op1: 5}, // empty list
-		{OpCode: vm.Eval},
-		{OpCode: vm.Return},
+		vm.MakeInst(vm.Const, 5, vm.Locals+0), // empty list
+		vm.MakeInst(vm.Eval, vm.Locals+0, vm.Locals+0),
+		vm.MakeInst(vm.Return, vm.Locals+0),
 	}, a.EmptyList)
 }
 
 func TestCallAndApply(t *testing.T) {
 	testInstructions(t, []vm.Instruction{
-		{OpCode: vm.Const, Op1: 6}, // func
-		{OpCode: vm.Const, Op1: 1}, // string
-		{OpCode: vm.Const, Op1: 0}, // string
-		{OpCode: vm.Call, Op1: 2},
-		{OpCode: vm.Return},
-	}, s("The first bit of dataHello there!"))
-
-	testInstructions(t, []vm.Instruction{
-		{OpCode: vm.Const, Op1: 6}, // func
-		{OpCode: vm.Const, Op1: 1}, // string
-		{OpCode: vm.Const, Op1: 0}, // string
-		{OpCode: vm.Vector, Op1: 2},
-		{OpCode: vm.Apply},
-		{OpCode: vm.Return},
+		vm.MakeInst(vm.Const, 6, vm.Locals+0), // func
+		vm.MakeInst(vm.Const, 0, vm.Locals+1), // string
+		vm.MakeInst(vm.Const, 1, vm.Locals+2), // string
+		vm.MakeInst(vm.Vector, vm.Locals+1, vm.Locals+3, vm.Locals+1),
+		vm.MakeInst(vm.Apply, vm.Locals+1, vm.Locals+0, vm.Locals+0),
+		vm.MakeInst(vm.Return, vm.Locals+0),
 	}, s("The first bit of dataHello there!"))
 }
 
@@ -303,7 +261,7 @@ func TestPanic(t *testing.T) {
 	defer as.ExpectError(a.ErrStr("i blew up!"))
 
 	testInstructions(t, []vm.Instruction{
-		{OpCode: vm.Const, Op1: 2},
-		{OpCode: vm.Panic},
+		vm.MakeInst(vm.Const, 2, vm.Locals+0),
+		vm.MakeInst(vm.Panic, vm.Locals+0),
 	}, a.Nil)
 }
