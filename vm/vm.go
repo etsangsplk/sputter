@@ -8,7 +8,7 @@ type (
 	// Module is the basic translation unit for the VM
 	Module struct {
 		a.BaseFunction
-		VarsCount    uint
+		VarCount     uint
 		Data         a.Values
 		Instructions Instructions
 	}
@@ -24,7 +24,7 @@ func (m *Module) Apply(c a.Context, args a.Sequence) a.Value {
 	INST := m.Instructions
 
 	// Note: Heap allocated vars slow (fib-vm 30) down by at least 20%
-	VARS := make(a.Values, m.VarsCount)
+	VARS := make(a.Values, m.VarCount)
 	VARS[Context] = c
 	VARS[Args] = args
 
@@ -218,7 +218,7 @@ func (m *Module) Apply(c a.Context, args a.Sequence) a.Value {
 func (m *Module) WithMetadata(md a.Object) a.AnnotatedValue {
 	return &Module{
 		BaseFunction: m.Extend(md),
-		VarsCount:    m.VarsCount,
+		VarCount:     m.VarCount,
 		Data:         m.Data,
 		Instructions: m.Instructions,
 	}

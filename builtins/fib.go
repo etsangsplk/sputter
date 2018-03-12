@@ -50,7 +50,7 @@ func init() {
 
 	fib = &vm.Module{
 		BaseFunction: a.DefaultBaseFunction,
-		VarsCount:    8,
+		VarCount:     8,
 		Data:         nil,
 		Instructions: inst,
 	}
