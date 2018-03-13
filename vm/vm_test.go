@@ -40,7 +40,6 @@ func testInstructions(t *testing.T, inst []vm.Instruction, expect a.Value) {
 
 	m1 := &vm.Module{
 		BaseFunction: a.DefaultBaseFunction,
-		VarCount:     16,
 		Data:         vmTestData,
 		Instructions: inst,
 	}
