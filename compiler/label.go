@@ -19,7 +19,7 @@ type labelMap map[uint]uint
 func RemoveLabels(inst vm.Instructions) vm.Instructions {
 	if m, ok := gatherLabels(inst); ok {
 		inst = stripLabels(inst, m)
-		return rewriteJumps(inst, m)
+		return rewriteLabeledJumps(inst, m)
 	}
 	return inst
 }
@@ -53,7 +53,7 @@ func stripLabels(inst vm.Instructions, m labelMap) vm.Instructions {
 	return r
 }
 
-func rewriteJumps(inst vm.Instructions, m labelMap) vm.Instructions {
+func rewriteLabeledJumps(inst vm.Instructions, m labelMap) vm.Instructions {
 	r := make(vm.Instructions, len(inst))
 	for i, elem := range inst {
 		if elem.OpCode == vm.JumpLabel || elem.OpCode == vm.CondJumpLabel {
