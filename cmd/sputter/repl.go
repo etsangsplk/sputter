@@ -23,12 +23,11 @@ const (
 
 	domain = cyan + "%s" + reset + " "
 	prompt = domain + "[%d]> " + code
-	cont   = domain + "[%d]" + dgray + "␤   " + code
+	cont   = domain + "[%d]" + dgray + nlMarker + "   " + code
 
 	output = bold + "%s" + reset
 	good   = domain + result + "[%d]= " + output
 	bad    = domain + red + "[%d]! " + output
-	paired = esc + "7m"
 )
 
 type (
@@ -191,29 +190,6 @@ func (r *REPL) outputError(err error) {
 	msg := err.Error()
 	res := fmt.Sprintf(bad, r.nsSpace(), r.idx, msg)
 	fmt.Println(res)
-}
-
-// Paint implements the Painter interface
-func (r *REPL) Paint(line []rune, pos int) []rune {
-	if line == nil || len(line) == 0 {
-		return line
-	}
-
-	l := len(line)
-	npos := pos
-	if npos < 0 {
-		npos = 0
-	}
-	if npos >= l {
-		npos = l - 1
-	}
-	k := line[npos]
-	if _, ok := openers[k]; ok {
-		return markOpener(line, npos, k)
-	} else if _, ok := closers[k]; ok {
-		return markCloser(line, npos, k)
-	}
-	return line
 }
 
 func (s *sentinel) Str() a.Str {

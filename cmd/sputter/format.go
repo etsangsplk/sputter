@@ -6,35 +6,6 @@ import (
 	"strings"
 )
 
-const (
-	esc      = "\033["
-	black    = esc + "30m"
-	red      = esc + "31m"
-	green    = esc + "32m"
-	yellow   = esc + "33m"
-	blue     = esc + "34m"
-	magenta  = esc + "35m"
-	cyan     = esc + "36m"
-	lgray    = esc + "37m"
-	dgray    = esc + "90m"
-	lred     = esc + "91m"
-	lgreen   = esc + "92m"
-	lyellow  = esc + "93m"
-	lblue    = esc + "94m"
-	lmagenta = esc + "95m"
-	lcyan    = esc + "96m"
-	white    = esc + "97m"
-	bold     = esc + "1m"
-	italic   = esc + "3m"
-	reset    = esc + "0m"
-	clear    = esc + "2J" + esc + "f"
-
-	h1     = lyellow
-	h2     = yellow
-	code   = lblue
-	result = green
-)
-
 // This is *not* a full-featured markdown formatter, or even a compliant
 // one for that matter. It only supports the productions that are
 // currently used by documentation strings and will likely not evolve
