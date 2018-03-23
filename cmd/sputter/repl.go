@@ -49,22 +49,6 @@ var (
 
 	nothing = new(sentinel)
 
-	farewells = []string{
-		"¡Adiós!",
-		"Au revoir!",
-		"Bye for now!",
-		"Ciao!",
-		"Tchau!",
-		"Tschüss!",
-		"Hoşçakal!",
-		"Αντίο!",
-		"До свидания!",
-		"अलविदा!",
-		"안녕!",
-		"再见!",
-		"じゃあね",
-	}
-
 	openers = map[rune]rune{')': '(', ']': '[', '}': '{'}
 	closers = map[rune]rune{'(': ')', '[': ']', '{': '}'}
 )

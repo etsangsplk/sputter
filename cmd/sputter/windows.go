@@ -33,6 +33,18 @@ const (
 	result = green
 )
 
+var farewells = []string{
+	"¡Adiós!",
+	"Au revoir!",
+	"Bye for now!",
+	"Ciao!",
+	"Tchau!",
+	"Tschüss!",
+	"Hoşçakal!",
+	"Αντίο!",
+	"До свидания!",
+}
+
 // Paint implements the Painter interface
 func (r *REPL) Paint(line []rune, pos int) []rune {
 	return line
