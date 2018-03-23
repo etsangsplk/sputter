@@ -3,23 +3,13 @@
 package main
 
 const (
-	esc      = ""
-	black    = ""
 	red      = ""
 	green    = ""
 	yellow   = ""
-	blue     = ""
-	magenta  = ""
 	cyan     = ""
-	lgray    = ""
 	dgray    = ""
-	lred     = ""
-	lgreen   = ""
 	lyellow  = ""
 	lblue    = ""
-	lmagenta = ""
-	lcyan    = ""
-	white    = ""
 	bold     = ""
 	italic   = ""
 	reset    = ""
@@ -41,8 +31,6 @@ var farewells = []string{
 	"Tchau!",
 	"Tschüss!",
 	"Hoşçakal!",
-	"Αντίο!",
-	"До свидания!",
 }
 
 // Paint implements the Painter interface
