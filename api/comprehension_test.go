@@ -38,6 +38,27 @@ func TestMap(t *testing.T) {
 	as.String("also not mapped", p2.First())
 }
 
+func TestMapParallel(t *testing.T) {
+	as := assert.New(t)
+
+	add := a.NewExecFunction(func(_ a.Context, args a.Sequence) a.Value {
+		return args.First().(a.Number).Add(args.Rest().First().(a.Number))
+	})
+
+	s1 := a.NewList(f(1), f(2), f(3), f(4))
+	s2 := a.NewVector(f(5), f(10), f(15), f(20), f(30))
+
+	w := a.MapParallel(nil, a.Values{s1, s2}, add)
+
+	as.Number(6, w.First())
+	as.Number(12, w.Rest().First())
+	as.Number(18, w.Rest().Rest().First())
+	as.Number(24, w.Rest().Rest().Rest().First())
+
+	s3 := w.Rest().Rest().Rest().Rest()
+	as.False(s3.IsSequence())
+}
+
 func TestFilter(t *testing.T) {
 	as := assert.New(t)
 

@@ -52,42 +52,50 @@ func (*concatFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 }
 
 func (*filterFunction) Apply(c a.Context, args a.Sequence) a.Value {
-	a.AssertMinimumArity(args, 2)
+	a.AssertArity(args, 2)
 	f, r, _ := args.Split()
 	fn := f.(a.Applicable)
-	s := a.Concat(r)
+	s := r.First().(a.Sequence)
 	return a.Filter(c, s, fn)
 }
 
 func (*mapFunction) Apply(c a.Context, args a.Sequence) a.Value {
-	a.AssertMinimumArity(args, 2)
+	cnt := a.AssertMinimumArity(args, 2)
 	f, r, _ := args.Split()
 	fn := f.(a.Applicable)
-	s := a.Concat(r)
-	return a.Map(c, s, fn)
+	if cnt == 2 {
+		s := r.First().(a.Sequence)
+		return a.Map(c, s, fn)
+	}
+	return a.MapParallel(c, r, fn)
 }
 
 func (*reduceFunction) Apply(c a.Context, args a.Sequence) a.Value {
-	a.AssertMinimumArity(args, 2)
+	cnt := a.AssertArityRange(args, 2, 3)
 	f, r, _ := args.Split()
 	fn := f.(a.Applicable)
-	s := a.Concat(r)
+	if cnt == 2 {
+		s := r.First().(a.Sequence)
+		return a.Reduce(c, s, fn)
+	}
+	f, r, _ = r.Split()
+	s := r.First().(a.Sequence).Prepend(f)
 	return a.Reduce(c, s, fn)
 }
 
 func (*takeFunction) Apply(_ a.Context, args a.Sequence) a.Value {
-	a.AssertMinimumArity(args, 2)
+	a.AssertArity(args, 2)
 	f, r, _ := args.Split()
 	n := a.AssertInteger(f)
-	s := a.Concat(r)
+	s := r.First().(a.Sequence)
 	return a.Take(s, n)
 }
 
 func (*dropFunction) Apply(_ a.Context, args a.Sequence) a.Value {
-	a.AssertMinimumArity(args, 2)
+	a.AssertArity(args, 2)
 	f, r, _ := args.Split()
 	n := a.AssertInteger(f)
-	s := a.Concat(r)
+	s := r.First().(a.Sequence)
 	return a.Drop(s, n)
 }
 

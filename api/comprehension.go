@@ -1,5 +1,10 @@
 package api
 
+import (
+	"sync"
+	"sync/atomic"
+)
+
 // Map creates a new mapped Sequence
 func Map(c Context, s Sequence, mapper Applicable) Sequence {
 	var res LazyResolver
@@ -12,6 +17,45 @@ func Map(c Context, s Sequence, mapper Applicable) Sequence {
 			return m, NewLazySequence(res), true
 		}
 		return Nil, EmptyList, false
+	}
+	return NewLazySequence(res)
+}
+
+// MapParallel creates a new mapped Sequence from a Sequence of Sequences
+// that are used to provide multiple arguments to the mapper function
+func MapParallel(c Context, s Sequence, mapper Applicable) Sequence {
+	var res LazyResolver
+	next := make([]Sequence, 0)
+	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
+		next = append(next, f.(Sequence))
+	}
+	nextLen := len(next)
+
+	res = func() (Value, Sequence, bool) {
+		var exhausted int32
+		args := make(Values, nextLen)
+
+		var wg sync.WaitGroup
+		wg.Add(nextLen)
+
+		for i, s := range next {
+			go func(i int, s Sequence) {
+				if f, r, ok := s.Split(); ok {
+					args[i] = f
+					next[i] = r
+				} else {
+					atomic.StoreInt32(&exhausted, 1)
+				}
+				wg.Done()
+			}(i, s)
+		}
+		wg.Wait()
+
+		if exhausted > 0 {
+			return Nil, EmptyList, false
+		}
+		m := mapper.Apply(c, args)
+		return m, NewLazySequence(res), true
 	}
 	return NewLazySequence(res)
 }
