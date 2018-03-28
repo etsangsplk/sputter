@@ -31,8 +31,8 @@ func TestSequenceConversions(t *testing.T) {
 	as.Identical(s1, s2)
 }
 
-var identity = a.NewExecFunction(func(_ a.Context, args a.Sequence) a.Value {
-	return args.First()
+var identity = a.NewExecFunction(func(_ a.Context, args a.Values) a.Value {
+	return args[0]
 })
 
 func TestUncountedConversions(t *testing.T) {

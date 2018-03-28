@@ -11,12 +11,11 @@ const (
 
 type letFunction struct{ BaseBuiltIn }
 
-func (*letFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (*letFunction) Apply(c a.Context, args a.Values) a.Value {
 	a.AssertMinimumArity(args, 2)
 	l := a.ChildLocals(c)
 
-	f, r, _ := args.Split()
-	b := f.(a.Vector)
+	b := args[0].(a.Vector)
 	bc := b.Count()
 	if bc%2 != 0 {
 		panic(a.ErrStr(ExpectedBindings))
@@ -30,7 +29,7 @@ func (*letFunction) Apply(c a.Context, args a.Sequence) a.Value {
 		l.Put(n, a.Eval(l, v))
 	}
 
-	return a.MakeBlock(r).Eval(l)
+	return a.MakeBlock(args[1:]).Eval(l)
 }
 
 func init() {

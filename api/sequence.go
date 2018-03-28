@@ -9,9 +9,8 @@ import (
 const IndexNotFound = "index not found: %s"
 
 type (
-	// SequenceProcessor is the standard signature for a function that is
-	// capable of transforming or validating a Sequence
-	SequenceProcessor func(Context, Sequence) Value
+	// Invoker is the standard signature for a function that can be invoked
+	Invoker func(Context, Values) Value
 
 	// Sequence interfaces expose a lazily resolved sequence of Values
 	Sequence interface {
@@ -49,14 +48,14 @@ type (
 )
 
 // IndexedApply provides 'nth' behavior for Indexed Sequences
-func IndexedApply(s Indexed, args Sequence) Value {
+func IndexedApply(s Indexed, args Values) Value {
 	i := AssertArityRange(args, 1, 2)
-	idx := AssertInteger(args.First())
+	idx := AssertInteger(args[0])
 	if r, ok := s.ElementAt(idx); ok {
 		return r
 	}
 	if i == 2 {
-		return args.Rest().First()
+		return args[1]
 	}
 	panic(ErrStr(IndexNotFound, strconv.Itoa(idx)))
 }

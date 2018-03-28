@@ -82,11 +82,10 @@ func visitSequence(s a.Sequence) a.Names {
 	return res
 }
 
-func (*makeClosureFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (*makeClosureFunction) Apply(c a.Context, args a.Values) a.Value {
 	a.AssertMinimumArity(args, 1)
-	f, r, _ := args.Split()
-	ex := assertUnqualifiedNames(f.(a.Vector))
-	cb := a.MacroExpandAll(c, r)
+	ex := assertUnqualifiedNames(args[0].(a.Vector))
+	cb := a.MacroExpandAll(c, args[1:])
 	nm := consolidateNames(visitValue(cb), ex)
 	return a.NewList(closureSym, makeLocalSymbolVector(nm), cb)
 }
@@ -99,11 +98,10 @@ func isClosure(v a.Value) (a.Names, bool) {
 	return emptyNames, false
 }
 
-func (*closureFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (*closureFunction) Apply(c a.Context, args a.Values) a.Value {
 	a.AssertArity(args, 2)
-	f, r, _ := args.Split()
-	v := f.(a.Values)
-	s := r.First().(a.Sequence)
+	v := args[0].(a.Values)
+	s := args[1].(a.Sequence)
 	bl := a.MakeBlock(s)
 	return closureFromValues(c, v, bl)
 }

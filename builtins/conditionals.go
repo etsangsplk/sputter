@@ -6,14 +6,13 @@ const ifName = "if"
 
 type ifFunction struct{ BaseBuiltIn }
 
-func (*ifFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (*ifFunction) Apply(c a.Context, args a.Values) a.Value {
 	i := a.AssertArityRange(args, 2, 3)
-	f, r, _ := args.Split()
-	if a.Truthy(a.Eval(c, f)) {
-		return a.Eval(c, r.First())
+	if a.Truthy(a.Eval(c, args[0])) {
+		return a.Eval(c, args[1])
 	}
 	if i == 3 {
-		return a.Eval(c, r.Rest().First())
+		return a.Eval(c, args[2])
 	}
 	return a.Nil
 }

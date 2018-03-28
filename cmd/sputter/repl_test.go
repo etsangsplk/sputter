@@ -72,7 +72,7 @@ func TestBuiltInUse(t *testing.T) {
 	as.NotNil(v)
 	ap := asApplicable(as, v)
 	nsName := a.NewLocalSymbol(a.Name("test-ns"))
-	ns, ok := ap.Apply(ec, a.NewVector(nsName)).(a.Namespace)
+	ns, ok := ap.Apply(ec, a.Values{nsName}).(a.Namespace)
 	as.True(ok)
 	as.String("test-ns", ns.Domain())
 

@@ -24,8 +24,8 @@ func v(e ...a.Value) a.Vector {
 	return a.NewVector(e...)
 }
 
-func args(e ...a.Value) a.Vector {
-	return v(e...)
+func args(e ...a.Value) a.Values {
+	return v(e...).(a.Values)
 }
 
 func s(v string) a.Str {

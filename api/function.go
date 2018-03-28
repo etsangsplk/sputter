@@ -24,9 +24,9 @@ type (
 		meta Object
 	}
 
-	execFunction struct {
+	invokerFunction struct {
 		BaseFunction
-		exec SequenceProcessor
+		invoke Invoker
 	}
 
 	blockFunction struct {
@@ -60,16 +60,16 @@ func NewBaseFunction(md Object) BaseFunction {
 	}
 }
 
-// NewExecFunction creates a Function instance from a SequenceProcessor
-func NewExecFunction(e SequenceProcessor) Function {
-	return &execFunction{
+// NewExecFunction creates a Function instance from a Invoker
+func NewExecFunction(e Invoker) Function {
+	return &invokerFunction{
 		BaseFunction: DefaultBaseFunction,
-		exec:         e,
+		invoke:       e,
 	}
 }
 
 // NewBlockFunction creates a new simple Function based on a Block
-func NewBlockFunction(args Sequence) Function {
+func NewBlockFunction(args Values) Function {
 	return &blockFunction{
 		BaseFunction: DefaultBaseFunction,
 		body:         MakeBlock(args),
@@ -111,18 +111,18 @@ func (f *BaseFunction) Str() Str {
 	return MakeDumpStr(f)
 }
 
-func (f *execFunction) WithMetadata(md Object) AnnotatedValue {
-	return &execFunction{
+func (f *invokerFunction) WithMetadata(md Object) AnnotatedValue {
+	return &invokerFunction{
 		BaseFunction: f.Extend(md),
-		exec:         f.exec,
+		invoke:       f.invoke,
 	}
 }
 
-func (f *execFunction) Apply(c Context, args Sequence) Value {
-	return f.exec(c, args)
+func (f *invokerFunction) Apply(c Context, args Values) Value {
+	return f.invoke(c, args)
 }
 
-func (f *blockFunction) Apply(c Context, _ Sequence) Value {
+func (f *blockFunction) Apply(c Context, _ Values) Value {
 	return f.body.Eval(c)
 }
 

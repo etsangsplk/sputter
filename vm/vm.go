@@ -20,7 +20,7 @@ type (
 var negOne = a.Zero.Sub(a.One)
 
 // Apply makes Module applicable
-func (m *Module) Apply(c a.Context, args a.Sequence) a.Value {
+func (m *Module) Apply(c a.Context, args a.Values) a.Value {
 	// Registers
 	var PC uint
 	INST := m.Instructions
@@ -102,16 +102,26 @@ main:
 
 	case Apply:
 		VAL[i.Op3] = VAL[i.Op2].(a.Applicable).
-			Apply(c, VAL[i.Op1].(a.Sequence))
+			Apply(c, VAL[i.Op1].(a.Values))
 		PC++
 		goto main
 
-	case Vector:
+	case Values:
 		s1 := i.Op1
 		e1 := i.Op2
 		v1 := make(a.Values, e1-s1)
 		copy(v1, VAL[s1:e1])
 		VAL[i.Op3] = v1
+		PC++
+		goto main
+
+	case GetValue:
+		VAL[i.Op3] = VAL[i.Op1].(a.Values)[a.AssertInteger(VAL[i.Op2])]
+		PC++
+		goto main
+
+	case GetArg:
+		VAL[i.Op2] = args[i.Op1]
 		PC++
 		goto main
 

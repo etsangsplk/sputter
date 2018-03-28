@@ -24,7 +24,7 @@ var (
 		f(3),
 	}
 
-	vmTestArgs = a.NewList(s("first"), s("second"), s("third"))
+	vmTestArgs = a.Values{s("first"), s("second"), s("third")}
 )
 
 func s(s string) a.Str {
@@ -127,13 +127,13 @@ func TestSequences(t *testing.T) {
 	testInstructions(t, []vm.Instruction{
 		vm.MakeInst(vm.Rest, vm.Args, vm.Vars+0),
 		vm.MakeInst(vm.Return, vm.Vars+0),
-	}, s(`("second" "third")`))
+	}, s(`["second" "third"]`))
 
 	testInstructions(t, []vm.Instruction{
 		vm.MakeInst(vm.Const, 1, vm.Vars+0),
 		vm.MakeInst(vm.Prepend, vm.Vars+0, vm.Args, vm.Vars+0),
 		vm.MakeInst(vm.Return, vm.Vars+0),
-	}, s(`("Hello there!" "first" "second" "third")`))
+	}, s(`["Hello there!" "first" "second" "third"]`))
 }
 
 func TestSequenceSplit(t *testing.T) {
@@ -168,7 +168,7 @@ func TestSequenceSplit(t *testing.T) {
 		vm.MakeInst(vm.Const, 2, vm.Vars+0), // error
 		vm.MakeInst(vm.Panic, vm.Vars+0),
 		vm.MakeInst(vm.Return, vm.Vars+2),
-	}, s(`("second" "third")`))
+	}, s(`["second" "third"]`))
 }
 
 func TestDup(t *testing.T) {
@@ -176,7 +176,7 @@ func TestDup(t *testing.T) {
 		vm.MakeInst(vm.Dup, vm.Args, vm.Vars+0),
 		vm.MakeInst(vm.First, vm.Vars+0),
 		vm.MakeInst(vm.Return, vm.Vars+0),
-	}, s(`("first" "second" "third")`))
+	}, s(`["first" "second" "third"]`))
 }
 
 func TestIncDec(t *testing.T) {
@@ -248,7 +248,7 @@ func TestCallAndApply(t *testing.T) {
 		vm.MakeInst(vm.Const, 6, vm.Vars+0), // func
 		vm.MakeInst(vm.Const, 0, vm.Vars+1), // string
 		vm.MakeInst(vm.Const, 1, vm.Vars+2), // string
-		vm.MakeInst(vm.Vector, vm.Vars+1, vm.Vars+3, vm.Vars+1),
+		vm.MakeInst(vm.Values, vm.Vars+1, vm.Vars+3, vm.Vars+1),
 		vm.MakeInst(vm.Apply, vm.Vars+1, vm.Vars+0, vm.Vars+0),
 		vm.MakeInst(vm.Return, vm.Vars+0),
 	}, s("The first bit of dataHello there!"))

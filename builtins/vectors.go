@@ -12,12 +12,12 @@ type (
 	isVectorFunction struct{ BaseBuiltIn }
 )
 
-func (*vectorFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+func (*vectorFunction) Apply(_ a.Context, args a.Values) a.Value {
 	return a.SequenceToVector(args)
 }
 
-func (*isVectorFunction) Apply(_ a.Context, args a.Sequence) a.Value {
-	if _, ok := args.First().(a.Vector); ok {
+func (*isVectorFunction) Apply(_ a.Context, args a.Values) a.Value {
+	if _, ok := args[0].(a.Vector); ok {
 		return a.True
 	}
 	return a.False

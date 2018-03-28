@@ -12,30 +12,18 @@ const (
 )
 
 // ArityChecker is a function that validates the arity of arguments
-type ArityChecker func(Sequence) (int, bool)
-
-func countUpTo(args Sequence, max int) int {
-	if cnt, ok := args.(Counted); ok {
-		return cnt.Count()
-	}
-	c := 0
-	for _, r, ok := args.Split(); ok && c < max; _, r, ok = r.Split() {
-		c++
-	}
-	return c
-}
+type ArityChecker func(Values) (int, bool)
 
 // MakeArityChecker creates a fixed arity checker
 func MakeArityChecker(arity int) ArityChecker {
-	plusOne := arity + 1
-	return func(args Sequence) (int, bool) {
-		c := countUpTo(args, plusOne)
+	return func(args Values) (int, bool) {
+		c := len(args)
 		return c, c == arity
 	}
 }
 
 // AssertArity explodes if the arg count doesn't match provided arity
-func AssertArity(args Sequence, arity int) int {
+func AssertArity(args Values, arity int) int {
 	c, ok := MakeArityChecker(arity)(args)
 	if !ok {
 		panic(ErrStr(BadArity, arity, c))
@@ -45,14 +33,14 @@ func AssertArity(args Sequence, arity int) int {
 
 // MakeMinimumArityChecker creates a minimum arity checker
 func MakeMinimumArityChecker(arity int) ArityChecker {
-	return func(args Sequence) (int, bool) {
-		c := countUpTo(args, arity)
+	return func(args Values) (int, bool) {
+		c := len(args)
 		return c, c >= arity
 	}
 }
 
 // AssertMinimumArity explodes if the arg count isn't at least arity
-func AssertMinimumArity(args Sequence, arity int) int {
+func AssertMinimumArity(args Values, arity int) int {
 	c, ok := MakeMinimumArityChecker(arity)(args)
 	if !ok {
 		panic(ErrStr(BadMinimumArity, arity, c))
@@ -62,15 +50,14 @@ func AssertMinimumArity(args Sequence, arity int) int {
 
 // MakeArityRangeChecker creates a ranged arity checker
 func MakeArityRangeChecker(min int, max int) ArityChecker {
-	maxPlusOne := max + 1
-	return func(args Sequence) (int, bool) {
-		c := countUpTo(args, maxPlusOne)
+	return func(args Values) (int, bool) {
+		c := len(args)
 		return c, c >= min && c <= max
 	}
 }
 
 // AssertArityRange explodes if the arg count isn't in the arity range
-func AssertArityRange(args Sequence, min int, max int) int {
+func AssertArityRange(args Values, min int, max int) int {
 	c, ok := MakeArityRangeChecker(min, max)(args)
 	if !ok {
 		panic(ErrStr(BadArityRange, min, max, c))

@@ -17,7 +17,8 @@ type (
 	Values []Value
 )
 
-var emptyVector = Values{}
+// EmptyValues is an empty Vector... what?
+var EmptyValues = Values{}
 
 // NewVector instantiates a new Vector
 func NewVector(v ...Value) Vector {
@@ -42,7 +43,7 @@ func (v Values) ElementAt(index int) (Value, bool) {
 }
 
 // Apply makes Values Applicable
-func (v Values) Apply(_ Context, args Sequence) Value {
+func (v Values) Apply(_ Context, args Values) Value {
 	return IndexedApply(v, args)
 }
 
@@ -69,7 +70,7 @@ func (v Values) Rest() Sequence {
 	if len(v) > 1 {
 		return v[1:]
 	}
-	return emptyVector
+	return EmptyValues
 }
 
 // IsSequence returns whether or not this Value array has any elements
@@ -83,9 +84,9 @@ func (v Values) Split() (Value, Sequence, bool) {
 	if lv > 1 {
 		return v[0], v[1:], true
 	} else if lv == 1 {
-		return v[0], emptyVector, true
+		return v[0], EmptyValues, true
 	}
-	return Nil, emptyVector, false
+	return Nil, EmptyValues, false
 }
 
 // Prepend inserts an element at the beginning of the Value array

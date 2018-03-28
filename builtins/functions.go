@@ -21,7 +21,7 @@ type (
 	lambdaFunction        struct{ BaseBuiltIn }
 	isSpecialFormFunction struct{ BaseBuiltIn }
 
-	argProcessor func(a.Context, a.Sequence) (a.Context, bool)
+	argProcessor func(a.Context, a.Values) (a.Context, bool)
 
 	functionSignature struct {
 		args a.Vector
@@ -60,7 +60,7 @@ var (
 	restMarker    = a.Name("&")
 )
 
-func (f *singleFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (f *singleFunction) Apply(c a.Context, args a.Values) a.Value {
 	if l, ok := f.argProcessor(c, args); ok {
 		return f.body.Eval(l)
 	}
@@ -76,7 +76,7 @@ func (f *singleFunction) WithMetadata(md a.Object) a.AnnotatedValue {
 	}
 }
 
-func (f *multiFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (f *multiFunction) Apply(c a.Context, args a.Values) a.Value {
 	for _, m := range f.matchers {
 		if l, ok := m.args(c, args); ok {
 			return m.body.Eval(l)
@@ -119,18 +119,15 @@ func parseRestArg(s a.Sequence) a.Name {
 func makeRestArgProcessor(cl a.Context, an []a.Name, rn a.Name) argProcessor {
 	ac := a.MakeMinimumArityChecker(len(an))
 
-	return func(_ a.Context, args a.Sequence) (a.Context, bool) {
+	return func(_ a.Context, args a.Values) (a.Context, bool) {
 		if _, ok := ac(args); !ok {
 			return nil, false
 		}
 		l := a.ChildLocals(cl)
-		i := args
-		var t a.Value
-		for _, n := range an {
-			t, i, _ = i.Split()
-			l.Put(n, t)
+		for i, n := range an {
+			l.Put(n, args[i])
 		}
-		l.Put(rn, a.SequenceToList(i))
+		l.Put(rn, a.SequenceToList(args[len(an):]))
 		return l, true
 	}
 }
@@ -138,61 +135,56 @@ func makeRestArgProcessor(cl a.Context, an []a.Name, rn a.Name) argProcessor {
 func makeFixedArgProcessor(cl a.Context, an []a.Name) argProcessor {
 	ac := a.MakeArityChecker(len(an))
 
-	return func(_ a.Context, args a.Sequence) (a.Context, bool) {
+	return func(_ a.Context, args a.Values) (a.Context, bool) {
 		if _, ok := ac(args); !ok {
 			return nil, false
 		}
 		l := a.ChildLocals(cl)
-		i := args
-		var t a.Value
-		for _, n := range an {
-			t, i, _ = i.Split()
-			l.Put(n, t)
+		for i, n := range an {
+			l.Put(n, args[i])
 		}
 		return l, true
 	}
 }
 
-func optionalMetadata(args a.Sequence) (a.Object, a.Sequence) {
+func optionalMetadata(args a.Values) (a.Object, a.Values) {
 	r := args
 	var md a.Object
-	if s, ok := r.First().(a.Str); ok {
+	if s, ok := r[0].(a.Str); ok {
 		md = a.Properties{a.DocKey: s}
-		r = r.Rest()
+		r = r[1:]
 	} else {
 		md = emptyMetadata
 	}
 
-	if m, ok := r.First().(a.MappedSequence); ok {
+	if m, ok := r[0].(a.MappedSequence); ok {
 		md = md.Child(toProperties(m))
-		r = r.Rest()
+		r = r[1:]
 	}
 	return md, r
 }
 
-func optionalName(args a.Sequence) (a.Name, a.Sequence) {
-	f, r, _ := args.Split()
-	if s, ok := f.(a.Symbol); ok {
+func optionalName(args a.Values) (a.Name, a.Values) {
+	if s, ok := args[0].(a.Symbol); ok {
 		ls := s.(a.LocalSymbol)
-		return ls.Name(), r
+		return ls.Name(), args[1:]
 	}
 	return a.DefaultFunctionName, args
 }
 
-func parseNamedFunction(args a.Sequence) *functionDefinition {
+func parseNamedFunction(args a.Values) *functionDefinition {
 	a.AssertMinimumArity(args, 3)
-	f, r, _ := args.Split()
-	fn := f.(a.LocalSymbol).Name()
-	return parseFunctionRest(fn, r)
+	fn := args[0].(a.LocalSymbol).Name()
+	return parseFunctionRest(fn, args[1:])
 }
 
-func parseFunction(args a.Sequence) *functionDefinition {
+func parseFunction(args a.Values) *functionDefinition {
 	a.AssertMinimumArity(args, 2)
 	fn, r := optionalName(args)
 	return parseFunctionRest(fn, r)
 }
 
-func parseFunctionRest(fn a.Name, r a.Sequence) *functionDefinition {
+func parseFunctionRest(fn a.Name, r a.Values) *functionDefinition {
 	md, r := optionalMetadata(r)
 	sigs := parseFunctionSignatures(r)
 	md = md.Child(a.Properties{
@@ -277,13 +269,13 @@ func makeMultiFunction(c a.Context, d *functionDefinition) a.Function {
 	return f
 }
 
-func (*lambdaFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (*lambdaFunction) Apply(c a.Context, args a.Values) a.Value {
 	fd := parseFunction(args)
 	return makeFunction(c, fd)
 }
 
-func (*isSpecialFormFunction) Apply(_ a.Context, args a.Sequence) a.Value {
-	if ap, ok := args.First().(a.Applicable); ok && a.IsSpecialForm(ap) {
+func (*isSpecialFormFunction) Apply(_ a.Context, args a.Values) a.Value {
+	if ap, ok := args[0].(a.Applicable); ok && a.IsSpecialForm(ap) {
 		return a.True
 	}
 	return a.False

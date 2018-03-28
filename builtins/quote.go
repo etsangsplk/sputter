@@ -148,18 +148,18 @@ func isUnquoteSplicing(v a.Value) (a.Value, bool) {
 	return isWrapperCall(unquoteSplicingName, v)
 }
 
-func (*quoteFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+func (*quoteFunction) Apply(_ a.Context, args a.Values) a.Value {
 	a.AssertArity(args, 1)
-	return args.First()
+	return args[0]
 }
 
-func (*syntaxQuoteFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (*syntaxQuoteFunction) Apply(c a.Context, args a.Values) a.Value {
 	a.AssertArity(args, 1)
 	sc := &syntaxContext{
 		context: c,
 		genSyms: make(map[string]a.Symbol),
 	}
-	return sc.quote(args.First())
+	return sc.quote(args[0])
 }
 
 func init() {

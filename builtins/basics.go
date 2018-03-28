@@ -23,47 +23,47 @@ type (
 	evalFunction    struct{ BaseBuiltIn }
 )
 
-func (*errorFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+func (*errorFunction) Apply(_ a.Context, args a.Values) a.Value {
 	a.AssertArity(args, 1)
-	return a.Err(toProperties(args.First().(a.Associative)))
+	return a.Err(toProperties(args[0].(a.Associative)))
 }
 
-func (*raiseFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+func (*raiseFunction) Apply(_ a.Context, args a.Values) a.Value {
 	a.AssertArity(args, 1)
-	panic(args.First())
+	panic(args[0])
 }
 
-func (*recoverFunction) Apply(c a.Context, args a.Sequence) (res a.Value) {
+func (*recoverFunction) Apply(c a.Context, args a.Values) (res a.Value) {
 	a.AssertArity(args, 2)
 
 	defer func() {
 		if rec := recover(); rec != nil {
-			post := a.Eval(c, args.Rest().First()).(a.Applicable)
+			post := a.Eval(c, args[1]).(a.Applicable)
 			res = post.Apply(c, a.Values{rec.(a.Value)})
 		}
 	}()
 
-	return a.Eval(c, args.First())
+	return a.Eval(c, args[0])
 }
 
-func (*doFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (*doFunction) Apply(c a.Context, args a.Values) a.Value {
 	var res a.Value = a.Nil
-	for f, r, ok := args.Split(); ok; f, r, ok = r.Split() {
+	for _, f := range args {
 		res = a.Eval(c, f)
 	}
 	return res
 }
 
-func (*readFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (*readFunction) Apply(c a.Context, args a.Values) a.Value {
 	a.AssertArity(args, 1)
-	v := args.First()
+	v := args[0]
 	s := v.(a.Sequence)
 	return e.ReadStr(c, a.SequenceToStr(s))
 }
 
-func (*evalFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (*evalFunction) Apply(c a.Context, args a.Values) a.Value {
 	a.AssertArity(args, 1)
-	v := args.First()
+	v := args[0]
 	return a.Eval(c, v)
 }
 

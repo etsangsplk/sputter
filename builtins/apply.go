@@ -23,30 +23,22 @@ type (
 // BoundArgsKey is the Metadata key for a Function's bound count
 var BoundArgsKey = a.NewKeyword("bound-args")
 
-func prependApplyArguments(args a.Sequence) a.Sequence {
-	if f, r, ok := args.Split(); ok {
-		if rs := prependApplyArguments(r); rs != nil {
-			return rs.Prepend(f)
-		}
-		return f.(a.Sequence)
-	}
-	return nil
-}
-
-func (*applyFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (*applyFunction) Apply(c a.Context, args a.Values) a.Value {
 	ac := a.AssertMinimumArity(args, 2)
-	f, r, _ := args.Split()
-	fn := f.(a.Applicable)
+	fn := args[0].(a.Applicable)
 	if ac == 2 {
-		return fn.Apply(c, r.First().(a.Sequence))
+		return fn.Apply(c, a.SequenceToValues(args[1].(a.Sequence)))
 	}
-	return fn.Apply(c, prependApplyArguments(r))
+	last := len(args)-1
+	ls := a.SequenceToValues(args[last].(a.Sequence))
+	prependedArgs := append(args[1:last], ls...)
+	return fn.Apply(c, prependedArgs)
 }
 
-func (*partialFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+func (*partialFunction) Apply(_ a.Context, args a.Values) a.Value {
 	a.AssertMinimumArity(args, 1)
-	bound := args.First().(a.Applicable)
-	values := a.SequenceToValues(args.Rest())
+	bound := args[0].(a.Applicable)
+	values := args[1:]
 
 	if bf, ok := bound.(*boundFunction); ok {
 		return bf.rebind(values)
@@ -54,8 +46,8 @@ func (*partialFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	return bindFunction(bound, values)
 }
 
-func (*isApplyFunction) Apply(_ a.Context, args a.Sequence) a.Value {
-	if _, ok := args.First().(a.Applicable); ok {
+func (*isApplyFunction) Apply(_ a.Context, args a.Values) a.Value {
+	if _, ok := args[0].(a.Applicable); ok {
 		return a.True
 	}
 	return a.False
@@ -80,7 +72,7 @@ func bindFunction(bound a.Applicable, args a.Values) *boundFunction {
 	}
 }
 
-func (f *boundFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (f *boundFunction) Apply(c a.Context, args a.Values) a.Value {
 	fullArgs := f.args.Concat(a.SequenceToValues(args))
 	return f.bound.Apply(c, fullArgs)
 }

@@ -243,9 +243,9 @@ func NewPromise() Promise {
 	}
 }
 
-func (p *promise) Apply(_ Context, args Sequence) Value {
+func (p *promise) Apply(_ Context, args Values) Value {
 	if AssertArityRange(args, 0, 1) == 1 {
-		return p.Deliver(args.First())
+		return p.Deliver(args[0])
 	}
 	return p.Resolve()
 }

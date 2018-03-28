@@ -79,7 +79,7 @@ func (r *REPL) Run() {
 	defer r.rl.Close()
 
 	fmt.Println(a.Language, a.Version)
-	help(nil, a.EmptyList)
+	help(nil, a.EmptyValues)
 	r.setInitialPrompt()
 
 	for {
@@ -107,7 +107,7 @@ func (r *REPL) Run() {
 
 		r.reset()
 	}
-	shutdown(nil, a.EmptyList)
+	shutdown(nil, a.EmptyValues)
 }
 
 func (r *REPL) reset() {
@@ -250,16 +250,16 @@ func isRecoverable(err error) bool {
 		msg == e.MapNotClosed
 }
 
-func use(c a.Context, args a.Sequence) a.Value {
+func use(c a.Context, args a.Values) a.Value {
 	a.AssertArity(args, 1)
-	n := args.First().(a.LocalSymbol).Name()
+	n := args[0].(a.LocalSymbol).Name()
 	ns := a.GetNamespace(n)
 	c.Delete(a.ContextDomain)
 	c.Put(a.ContextDomain, ns)
 	return ns
 }
 
-func shutdown(_ a.Context, args a.Sequence) a.Value {
+func shutdown(_ a.Context, args a.Values) a.Value {
 	a.AssertArity(args, 0)
 	t := time.Now().UTC().UnixNano()
 	rs := rand.NewSource(t)
@@ -270,13 +270,13 @@ func shutdown(_ a.Context, args a.Sequence) a.Value {
 	return nothing
 }
 
-func debugInfo(_ a.Context, _ a.Sequence) a.Value {
+func debugInfo(_ a.Context, _ a.Values) a.Value {
 	runtime.GC()
 	fmt.Println("Number of goroutines: ", runtime.NumGoroutine())
 	return nothing
 }
 
-func cls(_ a.Context, args a.Sequence) a.Value {
+func cls(_ a.Context, args a.Values) a.Value {
 	a.AssertArity(args, 0)
 	fmt.Println(clear)
 	return nothing
@@ -298,16 +298,16 @@ func formatForREPL(s string) string {
 	return strings.Join(out, "\n")
 }
 
-func help(_ a.Context, args a.Sequence) a.Value {
+func help(_ a.Context, args a.Values) a.Value {
 	a.AssertArity(args, 0)
 	md := string(d.Get("repl-help"))
 	fmt.Println(formatForREPL(md))
 	return nothing
 }
 
-func doc(c a.Context, args a.Sequence) a.Value {
+func doc(c a.Context, args a.Values) a.Value {
 	a.AssertArity(args, 1)
-	sym := args.First().(a.LocalSymbol)
+	sym := args[0].(a.LocalSymbol)
 	if v, ok := c.Get(sym.Name()); ok {
 		if vd, ok := v.(a.Documented); ok {
 			docStr := vd.Documentation()

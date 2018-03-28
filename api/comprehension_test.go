@@ -11,8 +11,8 @@ func TestMap(t *testing.T) {
 	as := assert.New(t)
 
 	l := a.NewList(s("first"), s("middle"), s("last"))
-	fn := a.NewExecFunction(func(_ a.Context, args a.Sequence) a.Value {
-		return s("this is the " + string(args.First().(a.Str)))
+	fn := a.NewExecFunction(func(_ a.Context, args a.Values) a.Value {
+		return s("this is the " + string(args[0].(a.Str)))
 	})
 	w := a.Map(nil, l, fn)
 
@@ -41,8 +41,8 @@ func TestMap(t *testing.T) {
 func TestMapParallel(t *testing.T) {
 	as := assert.New(t)
 
-	add := a.NewExecFunction(func(_ a.Context, args a.Sequence) a.Value {
-		return args.First().(a.Number).Add(args.Rest().First().(a.Number))
+	add := a.NewExecFunction(func(_ a.Context, args a.Values) a.Value {
+		return args[0].(a.Number).Add(args[1].(a.Number))
 	})
 
 	s1 := a.NewList(f(1), f(2), f(3), f(4))
@@ -63,8 +63,8 @@ func TestFilter(t *testing.T) {
 	as := assert.New(t)
 
 	l := a.NewList(s("first"), s("filtered out"), s("last"))
-	fn := a.NewExecFunction(func(_ a.Context, args a.Sequence) a.Value {
-		if string(args.First().(a.Str)) != "filtered out" {
+	fn := a.NewExecFunction(func(_ a.Context, args a.Values) a.Value {
+		if string(args[0].(a.Str)) != "filtered out" {
 			return a.True
 		}
 		return a.False
@@ -91,16 +91,16 @@ func TestFilteredAndMapped(t *testing.T) {
 	as := assert.New(t)
 
 	l := a.NewList(s("first"), s("middle"), s("last"))
-	fn1 := a.NewExecFunction(func(_ a.Context, args a.Sequence) a.Value {
-		if string(args.First().(a.Str)) != "middle" {
+	fn1 := a.NewExecFunction(func(_ a.Context, args a.Values) a.Value {
+		if string(args[0].(a.Str)) != "middle" {
 			return a.True
 		}
 		return a.False
 	})
 	w1 := a.Filter(nil, l, fn1)
 
-	fn2 := a.NewExecFunction(func(_ a.Context, args a.Sequence) a.Value {
-		return s("this is the " + string(args.First().(a.Str)))
+	fn2 := a.NewExecFunction(func(_ a.Context, args a.Values) a.Value {
+		return s("this is the " + string(args[0].(a.Str)))
 	})
 	w2 := a.Map(nil, w1, fn2)
 
@@ -155,17 +155,13 @@ func TestConcat(t *testing.T) {
 func TestReduce(t *testing.T) {
 	as := assert.New(t)
 
-	add := a.NewExecFunction(func(_ a.Context, args a.Sequence) a.Value {
-		return args.First().(a.Number).Add(args.Rest().First().(a.Number))
+	add := a.NewExecFunction(func(_ a.Context, args a.Values) a.Value {
+		return args[0].(a.Number).Add(args[1].(a.Number))
 	})
 
 	as.Number(30, a.Reduce(nil, a.NewVector(f(10), f(20)), add))
 	as.Number(60, a.Reduce(nil, a.NewVector(f(10), f(20), f(30)), add))
 	as.Number(100, a.Reduce(nil, a.NewVector(f(10), f(20), f(30), f(40)), add))
-
-	err := a.ErrStr(a.BadMinimumArity, 2, 1)
-	defer as.ExpectError(err)
-	a.Reduce(nil, a.NewVector(f(10)), add)
 }
 
 func TestTakeDrop(t *testing.T) {

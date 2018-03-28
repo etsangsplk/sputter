@@ -139,10 +139,16 @@ func Drop(s Sequence, count int) Sequence {
 // Reduce performs a reduce operation over a Sequence, starting with the
 // first two elements of that sequence.
 func Reduce(c Context, s Sequence, reduce Applicable) Value {
-	AssertMinimumArity(s, 2)
-	f, r, ok := s.Split()
-	res := f
-	for f, r, ok = r.Split(); ok; f, r, ok = r.Split() {
+	arg1, r, ok := s.Split()
+	if !ok {
+		return reduce.Apply(c, EmptyValues)
+	}
+	arg2, r, ok := r.Split()
+	if !ok {
+		return reduce.Apply(c, Values{arg1})
+	}
+	res := reduce.Apply(c, Values{arg1, arg2})
+	for f, r, ok := r.Split(); ok; f, r, ok = r.Split() {
 		res = reduce.Apply(c, Values{res, f})
 	}
 	return res

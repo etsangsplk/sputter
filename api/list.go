@@ -81,7 +81,7 @@ func (l *list) ElementAt(index int) (Value, bool) {
 	return e.first, true
 }
 
-func (l *list) Apply(_ Context, args Sequence) Value {
+func (l *list) Apply(_ Context, args Values) Value {
 	return IndexedApply(l, args)
 }
 
@@ -93,9 +93,9 @@ func (l *list) Eval(c Context) Value {
 	t := l.first
 	a := Eval(c, t).(Applicable)
 	if IsSpecialForm(a) {
-		return a.Apply(c, l.rest)
+		return Apply(c, a, l.rest)
 	}
-	return a.Apply(c, l.evalArgs(c, l.rest))
+	return Apply(c, a, l.evalArgs(c, l.rest))
 }
 
 func (l *list) evalArgs(c Context, args *list) Vector {

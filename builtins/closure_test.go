@@ -26,5 +26,5 @@ func TestClosure(t *testing.T) {
 	ar := r1.(a.List).Rest()
 
 	defer as.ExpectError(a.ErrStr(a.UnknownSymbol, a.Name("ignore")))
-	closure.Apply(c, ar)
+	a.Apply(c, closure, ar)
 }
