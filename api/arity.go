@@ -14,52 +14,28 @@ const (
 // ArityChecker is a function that validates the arity of arguments
 type ArityChecker func(Values) (int, bool)
 
-// MakeArityChecker creates a fixed arity checker
-func MakeArityChecker(arity int) ArityChecker {
-	return func(args Values) (int, bool) {
-		c := len(args)
-		return c, c == arity
-	}
-}
-
 // AssertArity explodes if the arg count doesn't match provided arity
 func AssertArity(args Values, arity int) int {
-	c, ok := MakeArityChecker(arity)(args)
-	if !ok {
+	c := len(args)
+	if c != arity {
 		panic(ErrStr(BadArity, arity, c))
 	}
 	return c
 }
 
-// MakeMinimumArityChecker creates a minimum arity checker
-func MakeMinimumArityChecker(arity int) ArityChecker {
-	return func(args Values) (int, bool) {
-		c := len(args)
-		return c, c >= arity
-	}
-}
-
 // AssertMinimumArity explodes if the arg count isn't at least arity
 func AssertMinimumArity(args Values, arity int) int {
-	c, ok := MakeMinimumArityChecker(arity)(args)
-	if !ok {
+	c := len(args)
+	if c < arity {
 		panic(ErrStr(BadMinimumArity, arity, c))
 	}
 	return c
 }
 
-// MakeArityRangeChecker creates a ranged arity checker
-func MakeArityRangeChecker(min int, max int) ArityChecker {
-	return func(args Values) (int, bool) {
-		c := len(args)
-		return c, c >= min && c <= max
-	}
-}
-
 // AssertArityRange explodes if the arg count isn't in the arity range
 func AssertArityRange(args Values, min int, max int) int {
-	c, ok := MakeArityRangeChecker(min, max)(args)
-	if !ok {
+	c := len(args)
+	if c < min || c > max {
 		panic(ErrStr(BadArityRange, min, max, c))
 	}
 	return c

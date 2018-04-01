@@ -21,38 +21,33 @@ type (
 	lambdaFunction        struct{ BaseBuiltIn }
 	isSpecialFormFunction struct{ BaseBuiltIn }
 
-	argProcessor func(a.Context, a.Values) (a.Context, bool)
+	functionDefinition struct {
+		name       a.Name
+		signatures funcSignatures
+		meta       a.Object
+	}
 
-	functionSignature struct {
+	funcSignature struct {
 		args a.Vector
 		body a.Sequence
 	}
 
-	functionSignatures []*functionSignature
-
-	functionDefinition struct {
-		name a.Name
-		sigs functionSignatures
-		meta a.Object
-	}
-
-	argProcessorMatch struct {
-		args argProcessor
-		body a.Block
-	}
+	funcSignatures []funcSignature
 
 	singleFunction struct {
 		a.BaseFunction
-		args         string
-		argProcessor argProcessor
-		body         a.Block
+		args    string
+		variant funcVariant
 	}
 
 	multiFunction struct {
 		a.BaseFunction
 		args     string
-		matchers []argProcessorMatch
+		variants funcVariants
 	}
+
+	funcVariant  func(a.Context, a.Values) (a.Value, bool)
+	funcVariants []funcVariant
 )
 
 var (
@@ -61,8 +56,8 @@ var (
 )
 
 func (f *singleFunction) Apply(c a.Context, args a.Values) a.Value {
-	if l, ok := f.argProcessor(c, args); ok {
-		return f.body.Eval(l)
+	if r, ok := f.variant(c, args); ok {
+		return r
 	}
 	panic(a.ErrStr(ExpectedArguments, f.args))
 }
@@ -71,15 +66,14 @@ func (f *singleFunction) WithMetadata(md a.Object) a.AnnotatedValue {
 	return &singleFunction{
 		BaseFunction: f.Extend(md),
 		args:         f.args,
-		argProcessor: f.argProcessor,
-		body:         f.body,
+		variant:      f.variant,
 	}
 }
 
 func (f *multiFunction) Apply(c a.Context, args a.Values) a.Value {
-	for _, m := range f.matchers {
-		if l, ok := m.args(c, args); ok {
-			return m.body.Eval(l)
+	for _, p := range f.variants {
+		if r, ok := p(c, args); ok {
+			return r
 		}
 	}
 	panic(a.ErrStr(ExpectedArguments, f.args))
@@ -89,21 +83,21 @@ func (f *multiFunction) WithMetadata(md a.Object) a.AnnotatedValue {
 	return &multiFunction{
 		BaseFunction: f.Extend(md),
 		args:         f.args,
-		matchers:     f.matchers,
+		variants:     f.variants,
 	}
 }
 
-func makeArgProcessor(cl a.Context, s a.Sequence) argProcessor {
-	var an []a.Name
-	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
+func makeVariant(cl a.Context, s funcSignature) funcVariant {
+	var an a.Names
+	for f, r, ok := s.args.Split(); ok; f, r, ok = r.Split() {
 		n := f.(a.LocalSymbol).Name()
 		if n == restMarker {
 			rn := parseRestArg(r)
-			return makeRestArgProcessor(cl, an, rn)
+			return makeRestVariant(cl, s, append(an, rn))
 		}
 		an = append(an, n)
 	}
-	return makeFixedArgProcessor(cl, an)
+	return makeFixedVariant(cl, s, an)
 }
 
 func parseRestArg(s a.Sequence) a.Name {
@@ -116,34 +110,43 @@ func parseRestArg(s a.Sequence) a.Name {
 	panic(a.ErrStr(InvalidRestArgument, s))
 }
 
-func makeRestArgProcessor(cl a.Context, an []a.Name, rn a.Name) argProcessor {
-	ac := a.MakeMinimumArityChecker(len(an))
+func makeRestVariant(cl a.Context, s funcSignature, an a.Names) funcVariant {
+	ex := a.MacroExpandAll(cl, s.body).(a.Sequence)
+	body := a.MakeBlock(ex)
 
-	return func(_ a.Context, args a.Values) (a.Context, bool) {
-		if _, ok := ac(args); !ok {
+	nl := len(an)
+	al := nl - 1
+
+	rn := an[al]
+	an = an[0:al]
+
+	return func(_ a.Context, args a.Values) (a.Value, bool) {
+		if c := len(args); c < al {
 			return nil, false
 		}
-		l := a.ChildLocals(cl)
+		l := make(a.Variables, nl)
 		for i, n := range an {
-			l.Put(n, args[i])
+			l[n] = args[i]
 		}
-		l.Put(rn, a.SequenceToList(args[len(an):]))
-		return l, true
+		l[rn] = a.SequenceToList(args[len(an):])
+		return body.Eval(a.ChildContext(cl, l)), true
 	}
 }
 
-func makeFixedArgProcessor(cl a.Context, an []a.Name) argProcessor {
-	ac := a.MakeArityChecker(len(an))
+func makeFixedVariant(cl a.Context, s funcSignature, an a.Names) funcVariant {
+	ex := a.MacroExpandAll(cl, s.body).(a.Sequence)
+	body := a.MakeBlock(ex)
+	al := len(an)
 
-	return func(_ a.Context, args a.Values) (a.Context, bool) {
-		if _, ok := ac(args); !ok {
+	return func(_ a.Context, args a.Values) (a.Value, bool) {
+		if c := len(args); c != al {
 			return nil, false
 		}
-		l := a.ChildLocals(cl)
+		l := make(a.Variables, al)
 		for i, n := range an {
-			l.Put(n, args[i])
+			l[n] = args[i]
 		}
-		return l, true
+		return body.Eval(a.ChildContext(cl, l)), true
 	}
 }
 
@@ -186,29 +189,29 @@ func parseFunction(args a.Values) *functionDefinition {
 
 func parseFunctionRest(fn a.Name, r a.Values) *functionDefinition {
 	md, r := optionalMetadata(r)
-	sigs := parseFunctionSignatures(r)
+	s := parseFunctionSignatures(r)
 	md = md.Child(a.Properties{
 		a.NameKey: fn,
 	})
 
 	return &functionDefinition{
-		name: fn,
-		sigs: sigs,
-		meta: md,
+		name:       fn,
+		signatures: s,
+		meta:       md,
 	}
 }
 
-func parseFunctionSignatures(s a.Sequence) functionSignatures {
+func parseFunctionSignatures(s a.Sequence) funcSignatures {
 	f, r, ok := s.Split()
 	if ar, ok := f.(a.Vector); ok {
-		return functionSignatures{
+		return funcSignatures{
 			{args: ar, body: r},
 		}
 	}
-	res := functionSignatures{}
+	res := funcSignatures{}
 	for ; ok; f, r, ok = r.Split() {
 		lf, lr, _ := f.(a.List).Split()
-		res = append(res, &functionSignature{
+		res = append(res, funcSignature{
 			args: lf.(a.Vector),
 			body: lr,
 		})
@@ -217,54 +220,47 @@ func parseFunctionSignatures(s a.Sequence) functionSignatures {
 }
 
 func makeFunction(c a.Context, d *functionDefinition) a.Function {
-	if len(d.sigs) > 1 {
+	if len(d.signatures) > 1 {
 		return makeMultiFunction(c, d)
 	}
 	return makeSingleFunction(c, d)
 }
 
 func makeSingleFunction(c a.Context, d *functionDefinition) a.Function {
-	s := d.sigs[0]
+	s := d.signatures[0]
 
 	f := &singleFunction{
 		BaseFunction: a.DefaultBaseFunction.Extend(d.meta),
 		args:         string(s.args.Str()),
 	}
 
-	nc := a.ChildContext(c, a.Variables{
+	closure := a.ChildContext(c, a.Variables{
 		d.name: f,
 	})
 
-	ex := a.MacroExpandAll(nc, s.body).(a.Sequence)
-	f.argProcessor = makeArgProcessor(nc, s.args)
-	f.body = a.MakeBlock(ex)
+	f.variant = makeVariant(closure, s)
 	return f
 }
 
 func makeMultiFunction(c a.Context, d *functionDefinition) a.Function {
-	sigs := d.sigs
-	ls := len(sigs)
+	s := d.signatures
+	ls := len(s)
 
 	f := &multiFunction{
 		BaseFunction: a.DefaultBaseFunction.Extend(d.meta),
+		variants:     make(funcVariants, ls),
 	}
 
-	nc := a.ChildContext(c, a.Variables{
+	closure := a.ChildContext(c, a.Variables{
 		d.name: f,
 	})
 
-	matchers := make([]argProcessorMatch, ls)
 	ar := make([]string, ls)
-	for i, s := range sigs {
-		ex := a.MacroExpandAll(nc, s.body).(a.Sequence)
-		matchers[i] = argProcessorMatch{
-			args: makeArgProcessor(nc, s.args),
-			body: a.MakeBlock(ex),
-		}
+	for i, s := range s {
+		f.variants[i] = makeVariant(closure, s)
 		ar[i] = string(s.args.Str())
 	}
 
-	f.matchers = matchers
 	f.args = strings.Join(ar, " or ")
 	return f
 }
