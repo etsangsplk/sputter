@@ -7,7 +7,7 @@ import (
 	"github.com/kode4food/sputter/assert"
 )
 
-var helloThere = a.NewExecFunction(func(_ a.Context, _ a.Sequence) a.Value {
+var helloThere = a.NewExecFunction(func(_ a.Context, _ a.Values) a.Value {
 	return s("there")
 }).WithMetadata(a.Properties{
 	a.NameKey: a.Name("hello"),
@@ -49,7 +49,7 @@ func TestList(t *testing.T) {
 	as.Equal(a.Nil, r)
 
 	c := a.Variables{}
-	as.Equal(f(12), l2.Apply(c, a.NewList(f(1))))
+	as.Equal(f(12), a.Apply(c, l2, a.NewList(f(1))))
 }
 
 func TestIterator(t *testing.T) {
@@ -123,9 +123,9 @@ func TestListExplosion(t *testing.T) {
 	idx := f(3)
 	err := a.ErrStr(a.IndexNotFound, idx)
 
-	v := seq.Apply(a.Variables{}, a.NewVector(idx, s("default")))
+	v := seq.Apply(a.Variables{}, a.Values{idx, s("default")})
 	as.String("default", v)
 
 	defer as.ExpectError(err)
-	seq.Apply(a.Variables{}, a.NewVector(idx))
+	seq.Apply(a.Variables{}, a.Values{idx})
 }

@@ -16,10 +16,10 @@ type (
 	isKeywordFunction   struct{ BaseBuiltIn }
 )
 
-func (*isIdenticalFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+func (*isIdenticalFunction) Apply(_ a.Context, args a.Values) a.Value {
 	a.AssertMinimumArity(args, 2)
-	l := args.First()
-	for f, r, ok := args.Split(); ok; f, r, ok = r.Split() {
+	l := args[0]
+	for _, f := range args {
 		if l != f {
 			return a.False
 		}
@@ -27,22 +27,22 @@ func (*isIdenticalFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	return a.True
 }
 
-func (*isAtomFunction) Apply(_ a.Context, args a.Sequence) a.Value {
-	if _, ok := args.First().(a.Evaluable); !ok {
+func (*isAtomFunction) Apply(_ a.Context, args a.Values) a.Value {
+	if _, ok := args[0].(a.Evaluable); !ok {
 		return a.True
 	}
 	return a.False
 }
 
-func (*isNilFunction) Apply(_ a.Context, args a.Sequence) a.Value {
-	if args.First() == a.Nil {
+func (*isNilFunction) Apply(_ a.Context, args a.Values) a.Value {
+	if args[0] == a.Nil {
 		return a.True
 	}
 	return a.False
 }
 
-func (*isKeywordFunction) Apply(_ a.Context, args a.Sequence) a.Value {
-	if _, ok := args.First().(a.Keyword); ok {
+func (*isKeywordFunction) Apply(_ a.Context, args a.Values) a.Value {
+	if _, ok := args[0].(a.Keyword); ok {
 		return a.True
 	}
 	return a.False

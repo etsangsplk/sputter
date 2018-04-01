@@ -39,7 +39,7 @@ func args() a.Value {
 	return r
 }
 
-func (*currentTimeFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+func (*currentTimeFunction) Apply(_ a.Context, args a.Values) a.Value {
 	return a.NewFloat(float64(time.Now().UnixNano()))
 }
 

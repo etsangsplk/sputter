@@ -22,7 +22,7 @@ func MacroExpand1(c Context, v Value) (Value, bool) {
 				if sr, ok := s.Resolve(c); ok {
 					if a, ok := sr.(Applicable); ok {
 						if IsMacro(a) && !IsSpecialForm(a) {
-							return a.Apply(c, r), true
+							return Apply(c, a, r), true
 						}
 					}
 				}
@@ -128,9 +128,9 @@ func makeFormObject(l List, a Applicable) List {
 }
 
 func (s *specialForm) Eval(c Context) Value {
-	return s.fn.Apply(c, s.args)
+	return Apply(c, s.fn, s.args)
 }
 
 func (f *evaluatingForm) Eval(c Context) Value {
-	return f.fn.Apply(c, f.args.Eval(c).(Vector))
+	return Apply(c, f.fn, f.args.Eval(c).(Sequence))
 }

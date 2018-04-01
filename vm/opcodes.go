@@ -18,7 +18,9 @@ const (
 	Let
 	Eval
 	Apply
-	Vector
+	Values
+	GetValue
+	GetArg
 	IsSeq
 	First
 	Rest

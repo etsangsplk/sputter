@@ -83,8 +83,8 @@ func Scan(src a.Str) a.Sequence {
 	return a.Filter(nil, l, notWhitespace)
 }
 
-func (*notWhitespaceFunction) Apply(_ a.Context, args a.Sequence) a.Value {
-	t := args.First().(*Token)
+func (*notWhitespaceFunction) Apply(_ a.Context, args a.Values) a.Value {
+	t := args[0].(*Token)
 	if t.Type != Whitespace && t.Type != Comment {
 		return a.True
 	}

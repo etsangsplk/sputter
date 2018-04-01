@@ -20,27 +20,26 @@ type (
 
 var emptyString = a.Str("")
 
-func (*strFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+func (*strFunction) Apply(_ a.Context, args a.Values) a.Value {
 	return a.SequenceToStr(args)
 }
 
-func (*readerStrFunction) Apply(_ a.Context, args a.Sequence) a.Value {
-	f, r, ok := args.Split()
-	if !ok {
+func (*readerStrFunction) Apply(_ a.Context, args a.Values) a.Value {
+	if len(args) == 0 {
 		return emptyString
 	}
 
 	var b bytes.Buffer
-	b.WriteString(string(f.Str()))
-	for f, r, ok = r.Split(); ok; f, r, ok = r.Split() {
+	b.WriteString(string(args[0].Str()))
+	for _, f := range args[1:] {
 		b.WriteString(" ")
 		b.WriteString(string(f.Str()))
 	}
 	return a.Str(b.String())
 }
 
-func (*isStrFunction) Apply(_ a.Context, args a.Sequence) a.Value {
-	if _, ok := args.First().(a.Str); ok {
+func (*isStrFunction) Apply(_ a.Context, args a.Values) a.Value {
+	if _, ok := args[0].(a.Str); ok {
 		return a.True
 	}
 	return a.False

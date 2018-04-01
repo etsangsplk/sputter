@@ -31,7 +31,7 @@ var channelPrototype = a.Properties{
 	MetaChannel: a.True,
 }
 
-func (*chanFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+func (*chanFunction) Apply(_ a.Context, args a.Values) a.Value {
 	a.AssertArity(args, 0)
 	e, s := a.NewChannel()
 
@@ -42,23 +42,23 @@ func (*chanFunction) Apply(_ a.Context, args a.Sequence) a.Value {
 	})
 }
 
-func (*promiseFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+func (*promiseFunction) Apply(_ a.Context, args a.Values) a.Value {
 	if a.AssertArityRange(args, 0, 1) == 1 {
 		p := a.NewPromise()
-		p.Deliver(args.First())
+		p.Deliver(args[0])
 		return p
 	}
 	return a.NewPromise()
 }
 
-func (*isPromiseFunction) Apply(_ a.Context, args a.Sequence) a.Value {
-	if _, ok := args.First().(a.Promise); ok {
+func (*isPromiseFunction) Apply(_ a.Context, args a.Values) a.Value {
+	if _, ok := args[0].(a.Promise); ok {
 		return a.True
 	}
 	return a.False
 }
 
-func (*goFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (*goFunction) Apply(c a.Context, args a.Values) a.Value {
 	a.AssertMinimumArity(args, 1)
 	go a.MakeBlock(args).Eval(a.ChildLocals(c))
 	return a.Nil

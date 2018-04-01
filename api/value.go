@@ -88,8 +88,8 @@ func (n Name) Str() Str {
 }
 
 // Apply makes Bool Applicable
-func (b Bool) Apply(_ Context, args Sequence) Value {
-	for f, r, ok := args.Split(); ok; f, r, ok = r.Split() {
+func (b Bool) Apply(_ Context, args Values) Value {
+	for _, f := range args {
 		if f != b {
 			return False
 		}
@@ -105,8 +105,8 @@ func (b Bool) Str() Str {
 	return "false"
 }
 
-func (n *nilValue) Apply(_ Context, args Sequence) Value {
-	for f, r, ok := args.Split(); ok; f, r, ok = r.Split() {
+func (n *nilValue) Apply(_ Context, args Values) Value {
+	for _, f := range args {
 		if f != Nil {
 			return False
 		}

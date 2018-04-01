@@ -43,7 +43,7 @@ func TestAssociative(t *testing.T) {
 	as.Equal(a.Nil, r)
 
 	c := a.Variables{}
-	as.String("Sputter", m1.Apply(c, a.NewList(nameKey)))
+	as.String("Sputter", a.Apply(c, m1, a.NewList(nameKey)))
 }
 
 func TestAssociativeSequence(t *testing.T) {
@@ -119,15 +119,15 @@ func TestAssociativeApply(t *testing.T) {
 	c := a.Variables{}
 	nameKey := a.NewKeyword("name")
 	args := a.NewList(nameKey)
-	as.String("Sputter", m1.Apply(c, args))
+	as.String("Sputter", a.Apply(c, m1, args))
 
 	missKey := a.NewKeyword("miss")
 	args = a.NewList(missKey, s("you missed"))
-	as.String("you missed", m1.Apply(c, args))
+	as.String("you missed", a.Apply(c, m1, args))
 
 	defer as.ExpectError(a.ErrStr(a.KeyNotFound, missKey))
 	args = a.NewList(missKey)
-	m1.Apply(c, args)
+	a.Apply(c, m1, args)
 }
 
 func TestAssociativeLookup(t *testing.T) {
@@ -137,10 +137,10 @@ func TestAssociativeLookup(t *testing.T) {
 	nameKey := a.NewKeyword("name")
 	c := a.Variables{}
 	args := a.NewList(m1)
-	as.String("Sputter", nameKey.Apply(c, args))
+	as.String("Sputter", a.Apply(c, nameKey, args))
 
 	defer as.ExpectError(cvtErr("*api.dec", "api.Mapped", "Get"))
-	nameKey.Apply(c, a.NewList(f(99)))
+	a.Apply(c, nameKey, a.NewList(f(99)))
 }
 
 func TestAssociativeMiss(t *testing.T) {
@@ -151,7 +151,7 @@ func TestAssociativeMiss(t *testing.T) {
 	c := a.Variables{}
 
 	defer as.ExpectError(a.ErrStr(a.KeyNotFound, nameKey))
-	m1.Apply(c, a.NewList(nameKey))
+	a.Apply(c, m1, a.NewList(nameKey))
 }
 
 func TestKeywordMiss(t *testing.T) {
@@ -162,5 +162,5 @@ func TestKeywordMiss(t *testing.T) {
 	c := a.Variables{}
 
 	defer as.ExpectError(a.ErrStr(a.KeyNotFound, nameKey))
-	nameKey.Apply(c, a.NewList(m1))
+	a.Apply(c, nameKey, a.NewList(m1))
 }

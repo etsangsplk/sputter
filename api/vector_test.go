@@ -38,7 +38,7 @@ func TestVector(t *testing.T) {
 	as.String("are", r)
 
 	c := a.Variables{}
-	as.String("are", v1.Apply(c, a.NewList(f(2))))
+	as.String("are", a.Apply(c, v1, a.NewList(f(2))))
 }
 
 func TestEmptyVector(t *testing.T) {
@@ -111,5 +111,5 @@ func TestVectorExplosion(t *testing.T) {
 	defer as.ExpectError(err)
 
 	v := a.NewVector(s("foo"))
-	v.Apply(a.Variables{}, a.NewList(idx))
+	a.Apply(a.Variables{}, v, a.NewList(idx))
 }

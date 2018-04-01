@@ -11,7 +11,7 @@ import (
 func TestFunction(t *testing.T) {
 	as := assert.New(t)
 
-	f1 := a.NewExecFunction(func(_ a.Context, _ a.Sequence) a.Value {
+	f1 := a.NewExecFunction(func(_ a.Context, _ a.Values) a.Value {
 		return s("hello")
 	}).WithMetadata(a.Properties{
 		a.NameKey: a.Name("test-function"),
@@ -35,7 +35,7 @@ func TestFunction(t *testing.T) {
 	as.String("this is a test", f1.Documentation())
 
 	c := a.Variables{}
-	as.String("hello", f1.Apply(c, a.EmptyList))
+	as.String("hello", a.Apply(c, f1, a.EmptyList))
 
 	f4 := a.NewExecFunction(nil).WithMetadata(a.Properties{
 		a.TypeKey: f(99),
@@ -102,7 +102,7 @@ func TestGoodArity(t *testing.T) {
 		}
 	}()
 
-	v1 := a.NewVector(f(1), f(2), f(3))
+	v1 := a.Values{f(1), f(2), f(3)}
 	as.Number(3, a.AssertArity(v1, 3))
 	as.Number(3, a.AssertArityRange(v1, 2, 4))
 	as.Number(3, a.AssertArityRange(v1, 3, 3))
@@ -113,12 +113,13 @@ func TestGoodArity(t *testing.T) {
 		a.NewList(f(1)),
 		a.NewVector(f(2), f(3)),
 	))
-	as.Number(3, a.AssertArity(v2, 3))
+	v3 := a.SequenceToValues(v2)
+	as.Number(3, a.AssertArity(v3, 3))
 }
 
 func TestBadArity(t *testing.T) {
 	as := assert.New(t)
-	v := a.NewVector(f(1), f(2), f(3))
+	v := a.Values{f(1), f(2), f(3)}
 
 	defer as.ExpectError(a.ErrStr(a.BadArity, 4, 3))
 	a.AssertArity(v, 4)
@@ -126,7 +127,7 @@ func TestBadArity(t *testing.T) {
 
 func TestMinimumArity(t *testing.T) {
 	as := assert.New(t)
-	v := a.NewVector(f(1), f(2), f(3))
+	v := a.Values{f(1), f(2), f(3)}
 
 	defer as.ExpectError(a.ErrStr(a.BadMinimumArity, 4, 3))
 	a.AssertMinimumArity(v, 4)
@@ -134,7 +135,7 @@ func TestMinimumArity(t *testing.T) {
 
 func TestArityRange(t *testing.T) {
 	as := assert.New(t)
-	v := a.NewVector(f(1), f(2), f(3))
+	v := a.Values{f(1), f(2), f(3)}
 
 	defer as.ExpectError(a.ErrStr(fmt.Sprintf(a.BadArityRange, 4, 7, 3)))
 	a.AssertArityRange(v, 4, 7)

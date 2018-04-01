@@ -51,7 +51,7 @@ func (a associative) Get(key Value) (Value, bool) {
 	return Nil, false
 }
 
-func (a associative) Apply(_ Context, args Sequence) Value {
+func (a associative) Apply(_ Context, args Values) Value {
 	return MappedApply(a, args)
 }
 
@@ -124,14 +124,14 @@ func (a associative) Str() Str {
 }
 
 // MappedApply provides 'get' behavior for Mapped Values
-func MappedApply(s Mapped, args Sequence) Value {
+func MappedApply(s Mapped, args Values) Value {
 	i := AssertArityRange(args, 1, 2)
-	key := args.First()
+	key := args[0]
 	if r, ok := s.Get(key); ok {
 		return r
 	}
 	if i == 2 {
-		return args.Rest().First()
+		return args[1]
 	}
 	panic(ErrStr(KeyNotFound, key))
 }

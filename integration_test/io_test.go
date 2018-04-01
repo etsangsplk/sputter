@@ -12,8 +12,8 @@ import (
 const stdoutName = "*out*"
 
 func bindWrite(w a.Writer) a.Function {
-	return a.NewExecFunction(func(_ a.Context, args a.Sequence) a.Value {
-		for af, r, ok := args.Split(); ok; af, r, ok = r.Split() {
+	return a.NewExecFunction(func(_ a.Context, args a.Values) a.Value {
+		for _, af := range args {
 			w.Write(af)
 		}
 		return a.Nil

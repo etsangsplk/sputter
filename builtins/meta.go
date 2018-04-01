@@ -33,24 +33,24 @@ func fromMetadata(m a.Object) a.Value {
 	return a.NewAssociative(r...)
 }
 
-func (*withMetaFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+func (*withMetaFunction) Apply(_ a.Context, args a.Values) a.Value {
 	a.AssertMinimumArity(args, 2)
-	o := args.First().(a.AnnotatedValue)
-	for f, r, ok := args.Rest().Split(); ok; f, r, ok = r.Split() {
+	o := args[0].(a.AnnotatedValue)
+	for _, f := range args[1:] {
 		m := f.(a.MappedSequence)
 		o = o.WithMetadata(toProperties(m))
 	}
 	return o
 }
 
-func (*getMetaFunction) Apply(_ a.Context, args a.Sequence) a.Value {
+func (*getMetaFunction) Apply(_ a.Context, args a.Values) a.Value {
 	a.AssertArity(args, 1)
-	o := args.First().(a.Annotated)
+	o := args[0].(a.Annotated)
 	return fromMetadata(o.Metadata())
 }
 
-func (*isMetaFunction) Apply(_ a.Context, args a.Sequence) a.Value {
-	if _, ok := args.First().(a.Annotated); ok {
+func (*isMetaFunction) Apply(_ a.Context, args a.Values) a.Value {
+	if _, ok := args[0].(a.Annotated); ok {
 		return a.True
 	}
 	return a.False

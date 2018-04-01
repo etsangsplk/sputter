@@ -22,7 +22,7 @@ var macroMetadata = a.Properties{
 	a.MacroKey: a.True,
 }
 
-func (*defMacroFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (*defMacroFunction) Apply(c a.Context, args a.Values) a.Value {
 	ns := a.GetContextNamespace(c)
 	fd := parseNamedFunction(args)
 	n := a.NewLocalSymbol(fd.name)
@@ -31,25 +31,25 @@ func (*defMacroFunction) Apply(c a.Context, args a.Sequence) a.Value {
 	return new(namespacePutFunction).Apply(c, a.Values{ns, n, r})
 }
 
-func (*expand1Function) Apply(c a.Context, args a.Sequence) a.Value {
+func (*expand1Function) Apply(c a.Context, args a.Values) a.Value {
 	a.AssertMinimumArity(args, 1)
-	r, _ := a.MacroExpand1(c, args.First())
+	r, _ := a.MacroExpand1(c, args[0])
 	return r
 }
 
-func (*expandFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (*expandFunction) Apply(c a.Context, args a.Values) a.Value {
 	a.AssertMinimumArity(args, 1)
-	r, _ := a.MacroExpand(c, args.First())
+	r, _ := a.MacroExpand(c, args[0])
 	return r
 }
 
-func (*expandAllFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (*expandAllFunction) Apply(c a.Context, args a.Values) a.Value {
 	a.AssertMinimumArity(args, 1)
-	return a.MacroExpandAll(c, args.First())
+	return a.MacroExpandAll(c, args[0])
 }
 
-func (*isMacroFunction) Apply(_ a.Context, args a.Sequence) a.Value {
-	if ap, ok := args.First().(a.Applicable); ok {
+func (*isMacroFunction) Apply(_ a.Context, args a.Values) a.Value {
+	if ap, ok := args[0].(a.Applicable); ok {
 		if a.IsMacro(ap) {
 			return a.True
 		}

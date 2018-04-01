@@ -14,37 +14,34 @@ type (
 	namespacePutFunction  struct{ BaseBuiltIn }
 )
 
-func (*withNamespaceFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (*withNamespaceFunction) Apply(c a.Context, args a.Values) a.Value {
 	a.AssertMinimumArity(args, 2)
 
-	f, r, _ := args.Split()
-	n := f.(a.LocalSymbol).Name()
+	n := args[0].(a.LocalSymbol).Name()
 	ns := a.GetNamespace(n)
 
 	lc := a.ChildLocals(c)
 	sc := a.WithNamespace(lc, ns)
 	sc.Put(a.ContextDomain, ns)
-	return a.MakeBlock(r).Eval(sc)
+	return a.MakeBlock(args[1:]).Eval(sc)
 }
 
-func (*getNamespaceFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (*getNamespaceFunction) Apply(c a.Context, args a.Values) a.Value {
 	if a.AssertArityRange(args, 0, 1) == 0 {
 		return a.GetContextNamespace(c)
 	}
-	n := args.First().(a.LocalSymbol).Name()
+	n := args[0].(a.LocalSymbol).Name()
 	return a.GetNamespace(n)
 }
 
-func (*namespacePutFunction) Apply(c a.Context, args a.Sequence) a.Value {
+func (*namespacePutFunction) Apply(c a.Context, args a.Values) a.Value {
 	a.AssertArity(args, 3)
 
-	f, r, _ := args.Split()
-	ns := a.Eval(c, f).(a.Namespace)
+	ns := a.Eval(c, args[0]).(a.Namespace)
 
-	f, r, _ = r.Split()
-	n := f.(a.LocalSymbol).Name()
-	ns.Put(n, a.Eval(c, r.First()))
-	return f
+	n := args[1].(a.LocalSymbol).Name()
+	ns.Put(n, a.Eval(c, args[2]))
+	return n
 }
 
 func init() {

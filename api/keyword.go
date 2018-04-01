@@ -29,14 +29,14 @@ func (k *keyword) Name() Name {
 	return k.name
 }
 
-func (k *keyword) Apply(_ Context, args Sequence) Value {
+func (k *keyword) Apply(_ Context, args Values) Value {
 	i := AssertArityRange(args, 1, 2)
-	s := args.First().(Mapped)
+	s := args[0].(Mapped)
 	if r, ok := s.Get(k); ok {
 		return r
 	}
 	if i == 2 {
-		return args.Rest().First()
+		return args[1]
 	}
 	panic(ErrStr(KeyNotFound, k))
 }

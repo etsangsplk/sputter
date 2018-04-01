@@ -3,12 +3,6 @@ package api
 import "bytes"
 
 type (
-	// Applicable is the standard signature for any Value that can be applied
-	// to a sequence of arguments
-	Applicable interface {
-		Apply(Context, Sequence) Value
-	}
-
 	// Evaluable identifies a Value as being directly evaluable
 	Evaluable interface {
 		Eval(Context) Value
@@ -22,7 +16,7 @@ type (
 	}
 
 	block struct {
-		Sequence
+		Values
 	}
 )
 
@@ -41,7 +35,7 @@ func MakeBlock(s Sequence) Block {
 		return b
 	}
 	return &block{
-		Sequence: s,
+		Values: SequenceToValues(s),
 	}
 }
 
@@ -49,7 +43,7 @@ func (*block) BlockType() {}
 
 func (b *block) Eval(c Context) Value {
 	var res Value = Nil
-	for f, r, ok := b.Sequence.Split(); ok; f, r, ok = r.Split() {
+	for _, f := range b.Values {
 		res = Eval(c, f)
 	}
 	return res
@@ -57,7 +51,7 @@ func (b *block) Eval(c Context) Value {
 
 func (b *block) Str() Str {
 	var buf bytes.Buffer
-	for f, r, ok := b.Sequence.Split(); ok; f, r, ok = r.Split() {
+	for _, f := range b.Values {
 		buf.WriteString(string(f.Str()))
 	}
 	return Str(buf.String())
