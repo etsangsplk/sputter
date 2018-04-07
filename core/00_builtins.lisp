@@ -94,10 +94,8 @@
 
 ;; functions
 
-(def-builtin closure      :doc-asset "closure" :macro true :special-form true)
-(def-builtin lambda       :doc-asset "lambda"  :special-form true)
+(def-builtin fn           :doc-asset "fn"  :special-form true)
 (def-builtin partial      :doc-asset "partial")
-(def-builtin make-closure :macro true)
 (def-builtin is-special-form)
 
 (def-builtin apply :doc-asset "apply")

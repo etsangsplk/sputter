@@ -12,7 +12,7 @@ import (
 const stdoutName = "*out*"
 
 func bindWrite(w a.Writer) a.Function {
-	return a.NewExecFunction(func(_ a.Context, args a.Values) a.Value {
+	return a.NewExecFunction(func(_ a.Context, args a.Vector) a.Value {
 		for _, af := range args {
 			w.Write(af)
 		}

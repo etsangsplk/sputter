@@ -1,8 +1,6 @@
 package core
 
 import (
-	"fmt"
-	"os"
 	"strings"
 
 	a "github.com/kode4food/sputter/api"
@@ -16,18 +14,18 @@ const prefix = "core/"
 func init() {
 	var filename string
 
-	defer func() {
-		if rec := recover(); rec != nil {
-			fmt.Fprint(os.Stderr, "\nBootstrap Error\n\n")
-			if ev, ok := rec.(error); ok {
-				msg := ev.Error()
-				fmt.Fprintf(os.Stderr, "  %s: %s\n\n", filename, msg)
-			} else {
-				fmt.Fprintf(os.Stderr, "  %s: %s\n\n", filename, rec)
-			}
-			os.Exit(-1)
-		}
-	}()
+	//defer func() {
+	//	if rec := recover(); rec != nil {
+	//		fmt.Fprint(os.Stderr, "\nBootstrap Error\n\n")
+	//		if ev, ok := rec.(error); ok {
+	//			msg := ev.Error()
+	//			fmt.Fprintf(os.Stderr, "  %s: %s\n\n", filename, msg)
+	//		} else {
+	//			fmt.Fprintf(os.Stderr, "  %s: %s\n\n", filename, rec)
+	//		}
+	//		os.Exit(-1)
+	//	}
+	//}()
 
 	for _, filename = range assets.AssetNames() {
 		if !strings.HasPrefix(filename, prefix) {

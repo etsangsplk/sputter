@@ -6,12 +6,12 @@ import (
 )
 
 type (
-	// Reader is used to retrieve Values from a File
+	// Reader is used to retrieve Vector from a File
 	Reader interface {
 		Sequence
 	}
 
-	// Writer is used to emit Values to a File
+	// Writer is used to emit Vector to a File
 	Writer interface {
 		Value
 		Write(Value)
@@ -22,10 +22,10 @@ type (
 		Close()
 	}
 
-	// OutputFunc is a callback used to marshal Values to a Writer
+	// OutputFunc is a callback used to marshal Vector to a Writer
 	OutputFunc func(*bufio.Writer, Value)
 
-	// InputFunc is a callback used to unmarshal Values from a Reader
+	// InputFunc is a callback used to unmarshal Vector from a Reader
 	InputFunc func(*bufio.Reader) (Value, bool)
 
 	wrappedWriter struct {

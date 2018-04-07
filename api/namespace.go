@@ -21,7 +21,7 @@ const (
 )
 
 type (
-	// Namespace is a container where Qualified Symbols are mapped to Values
+	// Namespace is a container where Qualified Symbols are mapped to Vector
 	Namespace interface {
 		Context
 		Domain() Name

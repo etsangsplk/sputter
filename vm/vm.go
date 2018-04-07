@@ -12,7 +12,7 @@ type (
 	Module struct {
 		a.BaseFunction
 
-		Data         a.Values
+		Data         a.Vector
 		Instructions Instructions
 	}
 )
@@ -20,7 +20,7 @@ type (
 var negOne = a.Zero.Sub(a.One)
 
 // Apply makes Module applicable
-func (m *Module) Apply(c a.Context, args a.Values) a.Value {
+func (m *Module) Apply(c a.Context, args a.Vector) a.Value {
 	// Registers
 	var PC uint
 	INST := m.Instructions
@@ -90,7 +90,7 @@ main:
 		goto main
 
 	case Eval:
-		v1, _ := a.MacroExpand(c, VAL[i.Op1])
+		v1 := VAL[i.Op1]
 		if e1, b1 := v1.(a.Evaluable); b1 {
 			VAL[i.Op2] = e1.Eval(c)
 			PC++
@@ -102,21 +102,21 @@ main:
 
 	case Apply:
 		VAL[i.Op3] = VAL[i.Op2].(a.Applicable).
-			Apply(c, VAL[i.Op1].(a.Values))
+			Apply(c, VAL[i.Op1].(a.Vector))
 		PC++
 		goto main
 
-	case Values:
+	case Vector:
 		s1 := i.Op1
 		e1 := i.Op2
-		v1 := make(a.Values, e1-s1)
+		v1 := make(a.Vector, e1-s1)
 		copy(v1, VAL[s1:e1])
 		VAL[i.Op3] = v1
 		PC++
 		goto main
 
 	case GetValue:
-		VAL[i.Op3] = VAL[i.Op1].(a.Values)[a.AssertInteger(VAL[i.Op2])]
+		VAL[i.Op3] = VAL[i.Op1].(a.Vector)[a.AssertInteger(VAL[i.Op2])]
 		PC++
 		goto main
 

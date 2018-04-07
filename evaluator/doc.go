@@ -1,2 +1,2 @@
-// Package evaluator provides the Sputter Reader and Evaluator
+// Package evaluator provides the Sputter Evaluator
 package evaluator

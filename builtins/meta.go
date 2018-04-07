@@ -28,12 +28,12 @@ func toProperties(args a.MappedSequence) a.Properties {
 func fromMetadata(m a.Object) a.Value {
 	r := make([]a.Vector, 0)
 	for k, v := range m.Flatten() {
-		r = append(r, a.Values{k, v})
+		r = append(r, a.Vector{k, v})
 	}
 	return a.NewAssociative(r...)
 }
 
-func (*withMetaFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*withMetaFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	a.AssertMinimumArity(args, 2)
 	o := args[0].(a.AnnotatedValue)
 	for _, f := range args[1:] {
@@ -43,13 +43,13 @@ func (*withMetaFunction) Apply(_ a.Context, args a.Values) a.Value {
 	return o
 }
 
-func (*getMetaFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*getMetaFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	a.AssertArity(args, 1)
 	o := args[0].(a.Annotated)
 	return fromMetadata(o.Metadata())
 }
 
-func (*isMetaFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*isMetaFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	if _, ok := args[0].(a.Annotated); ok {
 		return a.True
 	}

@@ -9,13 +9,13 @@ import (
 func TestRange(t *testing.T) {
 	testCode(t, `
 		(reduce
-			(lambda [x y] (+ x y))
+			(fn [x y] (+ x y))
 			(range* 1 5 1))
 	`, f(10))
 
 	testCode(t, `
 		(reduce
-			(lambda [x y] (+ x y))
+			(fn [x y] (+ x y))
 			(range* 5 1 -1))
 	`, f(14))
 }
@@ -23,11 +23,11 @@ func TestRange(t *testing.T) {
 func TestMapAndFilter(t *testing.T) {
 	testCode(t, `
 		(reduce
-			(lambda [x y] (+ x y))
+			(fn [x y] (+ x y))
 			(map
-				(lambda [x] (* x 2))
+				(fn [x] (* x 2))
 				(filter
-					(lambda [x] (<= x 5))
+					(fn [x] (<= x 5))
 					[1 2 3 4 5 6 7 8 9 10])))
 	`, f(30))
 }
@@ -81,7 +81,7 @@ func TestTakeDrop(t *testing.T) {
 func TestLazySeq(t *testing.T) {
 	testCode(t, `
 		(reduce
-			(lambda [x y] (+ x y))
+			(fn [x y] (+ x y))
 			(lazy-seq (cons 1 (lazy-seq [2, 3]))))
 	`, f(6))
 
@@ -97,6 +97,6 @@ func TestForEachLoop(t *testing.T) {
 				(for-each [i (range* 1 5 1), j (range* 1 10 2)]
 					(emit (* i j)))
 				(close))
-			(reduce (lambda [x y] (+ x y)) seq))
+			(reduce (fn [x y] (+ x y)) seq))
 	`, f(250))
 }

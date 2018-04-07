@@ -14,7 +14,7 @@ type (
 	namespacePutFunction  struct{ BaseBuiltIn }
 )
 
-func (*withNamespaceFunction) Apply(c a.Context, args a.Values) a.Value {
+func (*withNamespaceFunction) Apply(c a.Context, args a.Vector) a.Value {
 	a.AssertMinimumArity(args, 2)
 
 	n := args[0].(a.LocalSymbol).Name()
@@ -23,10 +23,10 @@ func (*withNamespaceFunction) Apply(c a.Context, args a.Values) a.Value {
 	lc := a.ChildLocals(c)
 	sc := a.WithNamespace(lc, ns)
 	sc.Put(a.ContextDomain, ns)
-	return a.MakeBlock(args[1:]).Eval(sc)
+	return a.EvalVectorAsBlock(sc, args[1:])
 }
 
-func (*getNamespaceFunction) Apply(c a.Context, args a.Values) a.Value {
+func (*getNamespaceFunction) Apply(c a.Context, args a.Vector) a.Value {
 	if a.AssertArityRange(args, 0, 1) == 0 {
 		return a.GetContextNamespace(c)
 	}
@@ -34,7 +34,7 @@ func (*getNamespaceFunction) Apply(c a.Context, args a.Values) a.Value {
 	return a.GetNamespace(n)
 }
 
-func (*namespacePutFunction) Apply(c a.Context, args a.Values) a.Value {
+func (*namespacePutFunction) Apply(c a.Context, args a.Vector) a.Value {
 	a.AssertArity(args, 3)
 
 	ns := a.Eval(c, args[0]).(a.Namespace)

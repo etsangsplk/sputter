@@ -12,7 +12,7 @@ func Map(c Context, s Sequence, mapper Applicable) Sequence {
 
 	res = func() (Value, Sequence, bool) {
 		if f, r, ok := next.Split(); ok {
-			m := mapper.Apply(c, Values{f})
+			m := mapper.Apply(c, Vector{f})
 			next = r
 			return m, NewLazySequence(res), true
 		}
@@ -33,7 +33,7 @@ func MapParallel(c Context, s Sequence, mapper Applicable) Sequence {
 
 	res = func() (Value, Sequence, bool) {
 		var exhausted int32
-		args := make(Values, nextLen)
+		args := make(Vector, nextLen)
 
 		var wg sync.WaitGroup
 		wg.Add(nextLen)
@@ -68,7 +68,7 @@ func Filter(c Context, s Sequence, filter Applicable) Sequence {
 	res = func() (Value, Sequence, bool) {
 		for f, r, ok := next.Split(); ok; f, r, ok = r.Split() {
 			next = r
-			if Truthy(filter.Apply(c, Values{f})) {
+			if Truthy(filter.Apply(c, Vector{f})) {
 				return f, NewLazySequence(res), true
 			}
 		}
@@ -141,15 +141,15 @@ func Drop(s Sequence, count int) Sequence {
 func Reduce(c Context, s Sequence, reduce Applicable) Value {
 	arg1, r, ok := s.Split()
 	if !ok {
-		return reduce.Apply(c, EmptyValues)
+		return reduce.Apply(c, EmptyVector)
 	}
 	arg2, r, ok := r.Split()
 	if !ok {
-		return reduce.Apply(c, Values{arg1})
+		return reduce.Apply(c, Vector{arg1})
 	}
-	res := reduce.Apply(c, Values{arg1, arg2})
+	res := reduce.Apply(c, Vector{arg1, arg2})
 	for f, r, ok := r.Split(); ok; f, r, ok = r.Split() {
-		res = reduce.Apply(c, Values{res, f})
+		res = reduce.Apply(c, Vector{res, f})
 	}
 	return res
 }

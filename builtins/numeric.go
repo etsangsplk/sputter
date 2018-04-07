@@ -55,12 +55,12 @@ func reduceNum(s a.Sequence, v a.Number, fn reduceFunc) a.Value {
 	return res
 }
 
-func fetchFirstNumber(args a.Values) (a.Number, a.Sequence) {
+func fetchFirstNumber(args a.Vector) (a.Number, a.Sequence) {
 	a.AssertMinimumArity(args, 1)
 	return args[0].(a.Number), args[1:]
 }
 
-func compare(_ a.Context, s a.Values, fn compareFunc) a.Bool {
+func compare(_ a.Context, s a.Vector, fn compareFunc) a.Bool {
 	cur, rest := fetchFirstNumber(s)
 	for f, r, ok := rest.Split(); ok; f, r, ok = r.Split() {
 		v := f.(a.Number)
@@ -72,19 +72,19 @@ func compare(_ a.Context, s a.Values, fn compareFunc) a.Bool {
 	return a.True
 }
 
-func (*incFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*incFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	a.AssertArity(args, 1)
 	nv := args[0].(a.Number)
 	return nv.Add(a.One)
 }
 
-func (*decFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*decFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	a.AssertArity(args, 1)
 	nv := args[0].(a.Number)
 	return nv.Sub(a.One)
 }
 
-func (*addFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*addFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	if !args.IsSequence() {
 		return a.Zero
 	}
@@ -94,14 +94,14 @@ func (*addFunction) Apply(_ a.Context, args a.Values) a.Value {
 	})
 }
 
-func (*subFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*subFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	v, r := fetchFirstNumber(args)
 	return reduceNum(r, v, func(p a.Number, n a.Number) a.Number {
 		return p.Sub(n)
 	})
 }
 
-func (*mulFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*mulFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	if !args.IsSequence() {
 		return a.One
 	}
@@ -111,59 +111,59 @@ func (*mulFunction) Apply(_ a.Context, args a.Values) a.Value {
 	})
 }
 
-func (*divFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*divFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	v, r := fetchFirstNumber(args)
 	return reduceNum(r, v, func(p a.Number, n a.Number) a.Number {
 		return p.Div(n)
 	})
 }
 
-func (*modFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*modFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	v, r := fetchFirstNumber(args)
 	return reduceNum(r, v, func(p a.Number, n a.Number) a.Number {
 		return p.Mod(n)
 	})
 }
 
-func (*eqFunction) Apply(c a.Context, args a.Values) a.Value {
+func (*eqFunction) Apply(c a.Context, args a.Vector) a.Value {
 	return compare(c, args, func(p a.Number, n a.Number) bool {
 		return p.Cmp(n) == a.EqualTo
 	})
 }
 
-func (*neqFunction) Apply(c a.Context, args a.Values) a.Value {
+func (*neqFunction) Apply(c a.Context, args a.Vector) a.Value {
 	return !compare(c, args, func(p a.Number, n a.Number) bool {
 		return p.Cmp(n) == a.EqualTo
 	})
 }
 
-func (*gtFunction) Apply(c a.Context, args a.Values) a.Value {
+func (*gtFunction) Apply(c a.Context, args a.Vector) a.Value {
 	return compare(c, args, func(p a.Number, n a.Number) bool {
 		return p.Cmp(n) == a.GreaterThan
 	})
 }
 
-func (*gteFunction) Apply(c a.Context, args a.Values) a.Value {
+func (*gteFunction) Apply(c a.Context, args a.Vector) a.Value {
 	return compare(c, args, func(p a.Number, n a.Number) bool {
 		r := p.Cmp(n)
 		return r == a.EqualTo || r == a.GreaterThan
 	})
 }
 
-func (*ltFunction) Apply(c a.Context, args a.Values) a.Value {
+func (*ltFunction) Apply(c a.Context, args a.Vector) a.Value {
 	return compare(c, args, func(p a.Number, n a.Number) bool {
 		return p.Cmp(n) == a.LessThan
 	})
 }
 
-func (*lteFunction) Apply(c a.Context, args a.Values) a.Value {
+func (*lteFunction) Apply(c a.Context, args a.Vector) a.Value {
 	return compare(c, args, func(p a.Number, n a.Number) bool {
 		r := p.Cmp(n)
 		return r == a.EqualTo || r == a.LessThan
 	})
 }
 
-func (*isPosInfFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*isPosInfFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	if n, ok := args[0].(a.Number); ok {
 		if a.PosInfinity.Cmp(n) == a.EqualTo {
 			return a.True
@@ -172,7 +172,7 @@ func (*isPosInfFunction) Apply(_ a.Context, args a.Values) a.Value {
 	return a.False
 }
 
-func (*isNegInfFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*isNegInfFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	if n, ok := args[0].(a.Number); ok {
 		if a.NegInfinity.Cmp(n) == a.EqualTo {
 			return a.True
@@ -181,7 +181,7 @@ func (*isNegInfFunction) Apply(_ a.Context, args a.Values) a.Value {
 	return a.False
 }
 
-func (*isNaNFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*isNaNFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	if n, ok := args[0].(a.Number); ok {
 		if n.IsNaN() {
 			return a.True

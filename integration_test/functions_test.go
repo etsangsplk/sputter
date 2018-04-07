@@ -23,30 +23,30 @@ func TestLambda(t *testing.T) {
 	a.GetNamespace(a.UserDomain).Delete("call")
 
 	testCode(t, `
-		(def call (lambda [func] (func)))
+		(def call (fn [func] (func)))
 		(let [greeting "hello"]
-			(let [foo (lambda [] greeting)]
+			(let [foo (fn [] greeting)]
 				(call foo)))
 	`, s("hello"))
 }
 
 func TestBadLambda(t *testing.T) {
-	e := cvtErr("*api.dec", "api.List", "Apply")
-	testBadCode(t, `(lambda 99 "hello")`, e)
+	e := typeErr("*api.dec", "*api.List")
+	testBadCode(t, `(fn 99 "hello")`, e)
 
-	e = cvtErr("*api.qualifiedSymbol", "api.LocalSymbol", "LocalSymbolType")
-	testBadCode(t, `(lambda foo:bar [] "hello")`, e)
+	e = intfErr("*api.qualifiedSymbol", "api.LocalSymbol", "LocalSymbolType")
+	testBadCode(t, `(fn foo:bar [] "hello")`, e)
 }
 
 func TestApply(t *testing.T) {
 	testCode(t, `(apply + [1 2 3])`, f(6))
 	testCode(t, `
 		(apply
-			(lambda add {:test true} [x y z] (+ x y z))
+			(fn add {:test true} [x y z] (+ x y z))
 			[1 2 3])
 	`, f(6))
 
-	e := cvtErr("*api.dec", "api.Applicable", "Apply")
+	e := intfErr("*api.dec", "api.Applicable", "Apply")
 	testBadCode(t, `(apply 32 [1 2 3])`, e)
 }
 
@@ -55,19 +55,19 @@ func TestRestFunctions(t *testing.T) {
 	ns.Delete("test")
 
 	testCode(t, `
-		(def test (lambda [f & r] (apply vector (cons f r))))
+		(def test (fn [f & r] (apply vector (cons f r))))
 		(test 1 2 3 4 5 6 7)
 	`, a.Str("[1 2 3 4 5 6 7]"))
 
 	testBadCode(t, `
-		(lambda [x y &] "explode")
+		(fn [x y &] "explode")
 	`, a.ErrStr(builtins.InvalidRestArgument, "[]"))
 
 	testBadCode(t, `
-		(lambda [x y & z g] "explode")
+		(fn [x y & z g] "explode")
 	`, a.ErrStr(builtins.InvalidRestArgument, "[z g]"))
 
 	testBadCode(t, `
-		(lambda [x y & & z] "explode")
+		(fn [x y & & z] "explode")
 	`, a.ErrStr(builtins.InvalidRestArgument, "[& z]"))
 }

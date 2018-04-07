@@ -11,9 +11,8 @@ const (
 
 type letFunction struct{ BaseBuiltIn }
 
-func (*letFunction) Apply(c a.Context, args a.Values) a.Value {
+func (l *letFunction) Apply(c a.Context, args a.Vector) a.Value {
 	a.AssertMinimumArity(args, 2)
-	l := a.ChildLocals(c)
 
 	b := args[0].(a.Vector)
 	bc := b.Count()
@@ -21,15 +20,16 @@ func (*letFunction) Apply(c a.Context, args a.Values) a.Value {
 		panic(a.ErrStr(ExpectedBindings))
 	}
 
+	v := make(a.Variables, bc/2)
+	lc := a.ChildContext(c, v)
 	for i := 0; i < bc; i++ {
-		s, _ := b.ElementAt(i)
+		s := b[i]
 		n := s.(a.LocalSymbol).Name()
 		i++
-		v, _ := b.ElementAt(i)
-		l.Put(n, a.Eval(l, v))
+		val := b[i]
+		v[n] = a.Eval(lc, val)
 	}
-
-	return a.MakeBlock(args[1:]).Eval(l)
+	return a.EvalVectorAsBlock(lc, args[1:])
 }
 
 func init() {

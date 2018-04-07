@@ -18,26 +18,26 @@ type (
 
 var anonName = a.Name("anon")
 
-func (*symFunction) Apply(c a.Context, args a.Values) a.Value {
+func (*symFunction) Apply(c a.Context, args a.Vector) a.Value {
 	a.AssertArity(args, 1)
 	return a.ParseSymbol(a.Name(args[0].(a.Str)))
 }
 
-func (*genSymFunction) Apply(c a.Context, args a.Values) a.Value {
+func (*genSymFunction) Apply(c a.Context, args a.Vector) a.Value {
 	if a.AssertArityRange(args, 0, 1) == 1 {
 		return a.NewGeneratedSymbol(a.Name(args[0].(a.Str)))
 	}
 	return a.NewGeneratedSymbol(anonName)
 }
 
-func (*isSymbolFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*isSymbolFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	if _, ok := args[0].(a.Symbol); ok {
 		return a.True
 	}
 	return a.False
 }
 
-func (*isLocalFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*isLocalFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	if _, ok := args[0].(a.LocalSymbol); ok {
 		return a.True
 	}

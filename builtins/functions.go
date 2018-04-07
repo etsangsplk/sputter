@@ -13,7 +13,7 @@ const (
 	// ExpectedArguments is thrown if argument patterns don't match
 	ExpectedArguments = "expected arguments of the form: %s"
 
-	lambdaName        = "lambda"
+	lambdaName        = "fn"
 	isSpecialFormName = "is-special-form"
 )
 
@@ -46,7 +46,7 @@ type (
 		variants funcVariants
 	}
 
-	funcVariant  func(a.Context, a.Values) (a.Value, bool)
+	funcVariant  func(a.Context, a.Vector) (a.Value, bool)
 	funcVariants []funcVariant
 )
 
@@ -55,7 +55,7 @@ var (
 	restMarker    = a.Name("&")
 )
 
-func (f *singleFunction) Apply(c a.Context, args a.Values) a.Value {
+func (f *singleFunction) Apply(c a.Context, args a.Vector) a.Value {
 	if r, ok := f.variant(c, args); ok {
 		return r
 	}
@@ -70,7 +70,7 @@ func (f *singleFunction) WithMetadata(md a.Object) a.AnnotatedValue {
 	}
 }
 
-func (f *multiFunction) Apply(c a.Context, args a.Values) a.Value {
+func (f *multiFunction) Apply(c a.Context, args a.Vector) a.Value {
 	for _, p := range f.variants {
 		if r, ok := p(c, args); ok {
 			return r
@@ -120,7 +120,7 @@ func makeRestVariant(cl a.Context, s funcSignature, an a.Names) funcVariant {
 	rn := an[al]
 	an = an[0:al]
 
-	return func(_ a.Context, args a.Values) (a.Value, bool) {
+	return func(_ a.Context, args a.Vector) (a.Value, bool) {
 		if c := len(args); c < al {
 			return nil, false
 		}
@@ -128,7 +128,8 @@ func makeRestVariant(cl a.Context, s funcSignature, an a.Names) funcVariant {
 		for i, n := range an {
 			l[n] = args[i]
 		}
-		l[rn] = a.SequenceToList(args[len(an):])
+		// TODO: Investigate why we need a List
+		l[rn] = a.NewList(args[len(an):]...)
 		return body.Eval(a.ChildContext(cl, l)), true
 	}
 }
@@ -138,7 +139,7 @@ func makeFixedVariant(cl a.Context, s funcSignature, an a.Names) funcVariant {
 	body := a.MakeBlock(ex)
 	al := len(an)
 
-	return func(_ a.Context, args a.Values) (a.Value, bool) {
+	return func(_ a.Context, args a.Vector) (a.Value, bool) {
 		if c := len(args); c != al {
 			return nil, false
 		}
@@ -150,7 +151,7 @@ func makeFixedVariant(cl a.Context, s funcSignature, an a.Names) funcVariant {
 	}
 }
 
-func optionalMetadata(args a.Values) (a.Object, a.Values) {
+func optionalMetadata(args a.Vector) (a.Object, a.Vector) {
 	r := args
 	var md a.Object
 	if s, ok := r[0].(a.Str); ok {
@@ -167,7 +168,7 @@ func optionalMetadata(args a.Values) (a.Object, a.Values) {
 	return md, r
 }
 
-func optionalName(args a.Values) (a.Name, a.Values) {
+func optionalName(args a.Vector) (a.Name, a.Vector) {
 	if s, ok := args[0].(a.Symbol); ok {
 		ls := s.(a.LocalSymbol)
 		return ls.Name(), args[1:]
@@ -175,19 +176,19 @@ func optionalName(args a.Values) (a.Name, a.Values) {
 	return a.DefaultFunctionName, args
 }
 
-func parseNamedFunction(args a.Values) *functionDefinition {
+func parseNamedFunction(args a.Vector) *functionDefinition {
 	a.AssertMinimumArity(args, 3)
 	fn := args[0].(a.LocalSymbol).Name()
 	return parseFunctionRest(fn, args[1:])
 }
 
-func parseFunction(args a.Values) *functionDefinition {
+func parseFunction(args a.Vector) *functionDefinition {
 	a.AssertMinimumArity(args, 2)
 	fn, r := optionalName(args)
 	return parseFunctionRest(fn, r)
 }
 
-func parseFunctionRest(fn a.Name, r a.Values) *functionDefinition {
+func parseFunctionRest(fn a.Name, r a.Vector) *functionDefinition {
 	md, r := optionalMetadata(r)
 	s := parseFunctionSignatures(r)
 	md = md.Child(a.Properties{
@@ -210,7 +211,7 @@ func parseFunctionSignatures(s a.Sequence) funcSignatures {
 	}
 	res := funcSignatures{}
 	for ; ok; f, r, ok = r.Split() {
-		lf, lr, _ := f.(a.List).Split()
+		lf, lr, _ := f.(*a.List).Split()
 		res = append(res, funcSignature{
 			args: lf.(a.Vector),
 			body: lr,
@@ -265,12 +266,12 @@ func makeMultiFunction(c a.Context, d *functionDefinition) a.Function {
 	return f
 }
 
-func (*lambdaFunction) Apply(c a.Context, args a.Values) a.Value {
+func (*lambdaFunction) Apply(c a.Context, args a.Vector) a.Value {
 	fd := parseFunction(args)
 	return makeFunction(c, fd)
 }
 
-func (*isSpecialFormFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*isSpecialFormFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	if ap, ok := args[0].(a.Applicable); ok && a.IsSpecialForm(ap) {
 		return a.True
 	}

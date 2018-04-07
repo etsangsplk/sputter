@@ -28,7 +28,7 @@ type (
 
 func makeLazyResolver(c a.Context, f a.Applicable) a.LazyResolver {
 	return func() (a.Value, a.Sequence, bool) {
-		r := f.Apply(c, a.EmptyValues)
+		r := f.Apply(c, a.EmptyVector)
 		if r != a.Nil {
 			s := r.(a.Sequence)
 			if sf, sr, ok := s.Split(); ok {
@@ -39,26 +39,26 @@ func makeLazyResolver(c a.Context, f a.Applicable) a.LazyResolver {
 	}
 }
 
-func (*lazySequenceFunction) Apply(c a.Context, args a.Values) a.Value {
+func (*lazySequenceFunction) Apply(c a.Context, args a.Vector) a.Value {
 	fn := a.NewBlockFunction(args)
 	return a.NewLazySequence(makeLazyResolver(c, fn))
 }
 
-func (*concatFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*concatFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	if a.AssertMinimumArity(args, 1) == 1 {
 		return args[0].(a.Sequence)
 	}
 	return a.Concat(args)
 }
 
-func (*filterFunction) Apply(c a.Context, args a.Values) a.Value {
+func (*filterFunction) Apply(c a.Context, args a.Vector) a.Value {
 	a.AssertArity(args, 2)
 	fn := args[0].(a.Applicable)
 	s := args[1].(a.Sequence)
 	return a.Filter(c, s, fn)
 }
 
-func (*mapFunction) Apply(c a.Context, args a.Values) a.Value {
+func (*mapFunction) Apply(c a.Context, args a.Vector) a.Value {
 	cnt := a.AssertMinimumArity(args, 2)
 	fn := args[0].(a.Applicable)
 	if cnt == 2 {
@@ -68,7 +68,7 @@ func (*mapFunction) Apply(c a.Context, args a.Values) a.Value {
 	return a.MapParallel(c, args[1:], fn)
 }
 
-func (*reduceFunction) Apply(c a.Context, args a.Values) a.Value {
+func (*reduceFunction) Apply(c a.Context, args a.Vector) a.Value {
 	cnt := a.AssertArityRange(args, 2, 3)
 	fn := args[0].(a.Applicable)
 	if cnt == 2 {
@@ -79,21 +79,21 @@ func (*reduceFunction) Apply(c a.Context, args a.Values) a.Value {
 	return a.Reduce(c, s, fn)
 }
 
-func (*takeFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*takeFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	a.AssertArity(args, 2)
 	n := a.AssertInteger(args[0])
 	s := args[1].(a.Sequence)
 	return a.Take(s, n)
 }
 
-func (*dropFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*dropFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	a.AssertArity(args, 2)
 	n := a.AssertInteger(args[0])
 	s := args[1].(a.Sequence)
 	return a.Drop(s, n)
 }
 
-func (*rangeFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*rangeFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	a.AssertArity(args, 3)
 	low := args[0].(a.Number)
 	high := args[1].(a.Number)
@@ -101,7 +101,7 @@ func (*rangeFunction) Apply(_ a.Context, args a.Values) a.Value {
 	return a.NewRange(low, high, step)
 }
 
-func (*forEachFunction) Apply(c a.Context, args a.Values) a.Value {
+func (*forEachFunction) Apply(c a.Context, args a.Vector) a.Value {
 	a.AssertMinimumArity(args, 2)
 	b := args[0].(a.Vector)
 	bc := b.Count()

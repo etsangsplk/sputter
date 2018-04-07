@@ -12,7 +12,7 @@ import (
 var (
 	str, _ = b.GetFunction("str")
 
-	vmTestData = a.Values{
+	vmTestData = a.Vector{
 		s("The first bit of data"),
 		s("Hello there!"),
 		a.ErrStr("i blew up!"),
@@ -24,7 +24,7 @@ var (
 		f(3),
 	}
 
-	vmTestArgs = a.Values{s("first"), s("second"), s("third")}
+	vmTestArgs = a.Vector{s("first"), s("second"), s("third")}
 )
 
 func s(s string) a.Str {
@@ -248,7 +248,7 @@ func TestCallAndApply(t *testing.T) {
 		vm.MakeInst(vm.Const, 6, vm.Vars+0), // func
 		vm.MakeInst(vm.Const, 0, vm.Vars+1), // string
 		vm.MakeInst(vm.Const, 1, vm.Vars+2), // string
-		vm.MakeInst(vm.Values, vm.Vars+1, vm.Vars+3, vm.Vars+1),
+		vm.MakeInst(vm.Vector, vm.Vars+1, vm.Vars+3, vm.Vars+1),
 		vm.MakeInst(vm.Apply, vm.Vars+1, vm.Vars+0, vm.Vars+0),
 		vm.MakeInst(vm.Return, vm.Vars+0),
 	}, s("The first bit of dataHello there!"))

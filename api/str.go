@@ -54,11 +54,11 @@ func (s Str) Prepend(v Value) Sequence {
 	return s.list().Prepend(v)
 }
 
-func (s Str) list() List {
+func (s Str) list() *List {
 	c := []rune(string(s))
 	r := EmptyList
 	for i := len(c) - 1; i >= 0; i-- {
-		r = r.Prepend(Str(c[i])).(List)
+		r = r.Prepend(Str(c[i])).(*List)
 	}
 	return r
 }
@@ -75,7 +75,7 @@ func (s Str) Conjoin(v Value) Sequence {
 
 func (s Str) vector() Vector {
 	c := []rune(string(s))
-	r := make(Values, len(c))
+	r := make(Vector, len(c))
 	for i := 0; i < len(c); i++ {
 		r[i] = Str(c[i])
 	}
@@ -108,7 +108,7 @@ func (s Str) ElementAt(index int) (Value, bool) {
 }
 
 // Apply makes Str applicable
-func (s Str) Apply(_ Context, args Values) Value {
+func (s Str) Apply(_ Context, args Vector) Value {
 	return IndexedApply(s, args)
 }
 

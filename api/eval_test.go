@@ -7,7 +7,7 @@ import (
 	"github.com/kode4food/sputter/assert"
 )
 
-var helloName = a.NewExecFunction(func(c a.Context, args a.Values) a.Value {
+var helloName = a.NewExecFunction(func(c a.Context, args a.Vector) a.Value {
 	v := a.Eval(c, args[0])
 	return s("Hello, " + string(v.(a.Str)) + "!")
 }).WithMetadata(a.Properties{

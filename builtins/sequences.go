@@ -34,7 +34,7 @@ type (
 	forProc func(a.Context)
 )
 
-func (*seqFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*seqFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	a.AssertArity(args, 1)
 	if s, ok := args[0].(a.Sequence); ok {
 		return s
@@ -42,20 +42,20 @@ func (*seqFunction) Apply(_ a.Context, args a.Values) a.Value {
 	return a.Nil
 }
 
-func fetchSequence(args a.Values) a.Sequence {
+func fetchSequence(args a.Vector) a.Sequence {
 	a.AssertArity(args, 1)
 	return args[0].(a.Sequence)
 }
 
-func (*firstFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*firstFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	return fetchSequence(args).First()
 }
 
-func (*restFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*restFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	return fetchSequence(args).Rest()
 }
 
-func (*lastFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*lastFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	var l a.Value = a.Nil
 	for f, r, ok := fetchSequence(args).Split(); ok; f, r, ok = r.Split() {
 		l = f
@@ -63,14 +63,14 @@ func (*lastFunction) Apply(_ a.Context, args a.Values) a.Value {
 	return l
 }
 
-func (*consFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*consFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	a.AssertArity(args, 2)
 	h := args[0]
 	r := args[1]
 	return r.(a.Sequence).Prepend(h)
 }
 
-func (*conjFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*conjFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	a.AssertMinimumArity(args, 2)
 	s := args[0].(a.Conjoiner)
 	for _, f := range args[1:] {
@@ -79,39 +79,39 @@ func (*conjFunction) Apply(_ a.Context, args a.Values) a.Value {
 	return s
 }
 
-func (*lenFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*lenFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	s := fetchSequence(args)
 	l := a.Count(s)
 	return a.NewFloat(float64(l))
 }
 
-func (*nthFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*nthFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	a.AssertMinimumArity(args, 1)
 	s := args[0].(a.Indexed)
 	return a.IndexedApply(s, args[1:])
 }
 
-func (*getFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*getFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	a.AssertMinimumArity(args, 1)
 	s := args[0].(a.Mapped)
 	return a.MappedApply(s, args[1:])
 }
 
-func (*isSeqFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*isSeqFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	if s, ok := args[0].(a.Sequence); ok && s.IsSequence() {
 		return a.True
 	}
 	return a.False
 }
 
-func (*isLenFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*isLenFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	if _, ok := args[0].(a.CountedSequence); ok {
 		return a.True
 	}
 	return a.False
 }
 
-func (*isIndexedFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*isIndexedFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	if _, ok := args[0].(a.IndexedSequence); ok {
 		return a.True
 	}

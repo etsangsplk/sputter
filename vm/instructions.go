@@ -50,7 +50,7 @@ var InstructionTypes = []InstructionType{
 	MakeInstType(Let, Read, Read, Write),
 	MakeInstType(Eval, Read, Write),
 	MakeInstType(Apply, Read, Read, Write),
-	MakeInstType(Values, Read, Read, Write),
+	MakeInstType(Vector, Read, Read, Write),
 	MakeInstType(GetValue, Read, Read, Write),
 	MakeInstType(GetArg, Index, Write),
 	MakeInstType(IsSeq, Read, Write),

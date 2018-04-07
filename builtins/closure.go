@@ -30,7 +30,7 @@ func assertUnqualifiedNames(s a.Sequence) a.Names {
 
 func makeLocalSymbolVector(names a.Names) a.Vector {
 	nl := len(names)
-	nv := make(a.Values, nl)
+	nv := make(a.Vector, nl)
 	for i := 0; i < nl; i++ {
 		nv[i] = a.NewLocalSymbol(names[i])
 	}
@@ -82,10 +82,10 @@ func visitSequence(s a.Sequence) a.Names {
 	return res
 }
 
-func (*makeClosureFunction) Apply(c a.Context, args a.Values) a.Value {
+func (*makeClosureFunction) Apply(c a.Context, args a.Vector) a.Value {
 	a.AssertMinimumArity(args, 1)
 	ex := assertUnqualifiedNames(args[0].(a.Vector))
-	cb := a.MacroExpandAll(c, args[1:])
+	cb := args[1:]
 	nm := consolidateNames(visitValue(cb), ex)
 	return a.NewList(closureSym, makeLocalSymbolVector(nm), cb)
 }
@@ -98,15 +98,15 @@ func isClosure(v a.Value) (a.Names, bool) {
 	return emptyNames, false
 }
 
-func (*closureFunction) Apply(c a.Context, args a.Values) a.Value {
+func (*closureFunction) Apply(c a.Context, args a.Vector) a.Value {
 	a.AssertArity(args, 2)
-	v := args[0].(a.Values)
+	v := args[0].(a.Vector)
 	s := args[1].(a.Sequence)
 	bl := a.MakeBlock(s)
-	return closureFromValues(c, v, bl)
+	return closureFromVector(c, v, bl)
 }
 
-func closureFromValues(c a.Context, v a.Values, bl a.Block) a.Value {
+func closureFromVector(c a.Context, v a.Vector, bl a.Block) a.Value {
 	names := make(a.Names, len(v))
 	for i, n := range v {
 		names[i] = n.(a.LocalSymbol).Name()

@@ -6,7 +6,8 @@ import (
 	"os"
 
 	a "github.com/kode4food/sputter/api"
-	e "github.com/kode4food/sputter/evaluator"
+	"github.com/kode4food/sputter/evaluator"
+	"github.com/kode4food/sputter/reader"
 )
 
 const fileNotFound = "file not found: %s"
@@ -32,15 +33,14 @@ func EvaluateFile() {
 	}
 }
 
-func readSource(c a.Context, src a.Str) a.Sequence {
-	l := e.Scan(src)
-	return e.Read(c, l)
-}
-
 func evalBuffer(src []byte) a.Value {
-	c := e.NewEvalContext()
-	r := readSource(c, a.Str(src))
-	return a.Eval(c, r)
+	ctx := evaluator.NewEvalContext()
+	r := reader.ReadStr(a.Str(src))
+	e := evaluator.Evaluate(ctx, r)
+	if v, ok := a.Last(e); ok {
+		return v
+	}
+	return a.Nil
 }
 
 func exitWithError() {

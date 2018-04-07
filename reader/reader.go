@@ -1,4 +1,4 @@
-package evaluator
+package reader
 
 import (
 	"regexp"
@@ -33,8 +33,7 @@ const (
 )
 
 type reader struct {
-	context a.Context
-	iter    *a.Iterator
+	iter *a.Iterator
 }
 
 var (
@@ -52,18 +51,31 @@ var (
 	}
 )
 
-// Read completely consumes a Lexer before returning a Value Sequence
-func Read(context a.Context, lexer a.Sequence) a.Sequence {
-	r := a.Values{}
-	iter := a.Iterate(lexer)
-	ri := &reader{
-		context: context,
-		iter:    iter,
+// ReadStr converts the raw source into unexpanded data structures
+func ReadStr(src a.Str) a.Sequence {
+	l := Scan(src)
+	return Read(l)
+}
+
+// Read returns a Lazy Sequence of scanned data structures
+func Read(lexer a.Sequence) a.Sequence {
+	var res a.LazyResolver
+	r := newReader(lexer)
+
+	res = func() (a.Value, a.Sequence, bool) {
+		if f, ok := r.nextValue(); ok {
+			return f, a.NewLazySequence(res), true
+		}
+		return a.Nil, a.EmptyList, false
 	}
-	for f, ok := ri.nextValue(); ok; f, ok = ri.nextValue() {
-		r = append(r, f)
+
+	return a.NewLazySequence(res)
+}
+
+func newReader(lexer a.Sequence) *reader {
+	return &reader{
+		iter: a.Iterate(lexer),
 	}
-	return a.MakeBlock(r)
 }
 
 func (r *reader) nextToken() (*Token, bool) {
@@ -117,21 +129,21 @@ func (r *reader) prefixed(s a.Symbol) a.Value {
 }
 
 func (r *reader) list() a.Value {
-	var handle func(t *Token) a.List
-	var rest func() a.List
+	var handle func(t *Token) *a.List
+	var rest func() *a.List
 
-	handle = func(t *Token) a.List {
+	handle = func(t *Token) *a.List {
 		switch t.Type {
 		case ListEnd:
 			return a.EmptyList
 		default:
 			v := r.value(t)
 			l := rest()
-			return l.Prepend(v).(a.List)
+			return l.Prepend(v).(*a.List)
 		}
 	}
 
-	rest = func() a.List {
+	rest = func() *a.List {
 		if t, ok := r.nextToken(); ok {
 			return handle(t)
 		}
@@ -142,7 +154,7 @@ func (r *reader) list() a.Value {
 }
 
 func (r *reader) vector() a.Value {
-	res := make(a.Values, 0)
+	res := make(a.Vector, 0)
 
 	for {
 		if t, ok := r.nextToken(); ok {
@@ -161,7 +173,7 @@ func (r *reader) vector() a.Value {
 
 func (r *reader) associative() a.Value {
 	res := make([]a.Vector, 0)
-	mp := make(a.Values, 2)
+	mp := make(a.Vector, 2)
 
 	for idx := 0; ; idx++ {
 		if t, ok := r.nextToken(); ok {
@@ -178,7 +190,7 @@ func (r *reader) associative() a.Value {
 				} else {
 					mp[1] = e
 					res = append(res, mp)
-					mp = make(a.Values, 2)
+					mp = make(a.Vector, 2)
 				}
 			}
 		} else {

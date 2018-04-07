@@ -18,7 +18,7 @@ func TestDefinitions(t *testing.T) {
 	`, s("bar"))
 
 	testCode(t, `
-		(def return-local (lambda []
+		(def return-local (fn []
 			(let [foo "local"] foo)))
 		(return-local)
 	`, s("local"))
@@ -34,7 +34,7 @@ func TestLetBindings(t *testing.T) {
 
 	testBadCode(t, `
 		(let 99 "hello")
-	`, cvtErr("*api.dec", "api.Vector", "Apply"))
+	`, typeErr("*api.dec", "api.Vector"))
 
 	testBadCode(t, `
 		(let [a blah b] "hello")

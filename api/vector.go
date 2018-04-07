@@ -2,39 +2,24 @@ package api
 
 import "bytes"
 
-type (
-	// Vector is a fixed-length array of Values
-	Vector interface {
-		Conjoiner
-		Indexed
-		Counted
-		Applicable
-		Evaluable
-		VectorType()
-	}
+// Vector is a fixed-length array of Vector
+type Vector []Value
 
-	// Values is the concrete implementation of a Vector
-	Values []Value
-)
-
-// EmptyValues is an empty Vector... what?
-var EmptyValues = Values{}
+// EmptyVector is an empty Vector
+var EmptyVector = Vector{}
 
 // NewVector instantiates a new Vector
 func NewVector(v ...Value) Vector {
-	return Values(v)
+	return Vector(v)
 }
 
-// VectorType identifies this Value as a Vector
-func (Values) VectorType() {}
-
-// Count returns the number of elements in the Value array
-func (v Values) Count() int {
+// Count returns the number of elements in the Vector
+func (v Vector) Count() int {
 	return len(v)
 }
 
-// ElementAt returns a specific element of the Value array
-func (v Values) ElementAt(index int) (Value, bool) {
+// ElementAt returns a specific element of the Vector
+func (v Vector) ElementAt(index int) (Value, bool) {
 	vals := v
 	if index >= 0 && index < len(vals) {
 		return vals[index], true
@@ -42,70 +27,70 @@ func (v Values) ElementAt(index int) (Value, bool) {
 	return Nil, false
 }
 
-// Apply makes Values Applicable
-func (v Values) Apply(_ Context, args Values) Value {
+// Apply makes Vector Applicable
+func (v Vector) Apply(_ Context, args Vector) Value {
 	return IndexedApply(v, args)
 }
 
-// Eval evaluates its elements, returning a new Value array
-func (v Values) Eval(c Context) Value {
+// Eval evaluates its elements, returning a new Vector
+func (v Vector) Eval(c Context) Value {
 	l := len(v)
-	r := make(Values, l)
+	r := make(Vector, l)
 	for i := 0; i < l; i++ {
 		r[i] = Eval(c, v[i])
 	}
 	return r
 }
 
-// First returns the first element of the Value array
-func (v Values) First() Value {
+// First returns the first element of the Vector
+func (v Vector) First() Value {
 	if len(v) > 0 {
 		return v[0]
 	}
 	return Nil
 }
 
-// Rest returns the elements of the Value array that follow the first
-func (v Values) Rest() Sequence {
+// Rest returns the elements of the Vector that follow the first
+func (v Vector) Rest() Sequence {
 	if len(v) > 1 {
 		return v[1:]
 	}
-	return EmptyValues
+	return EmptyVector
 }
 
-// IsSequence returns whether or not this Value array has any elements
-func (v Values) IsSequence() bool {
+// IsSequence returns whether or not this Vector has any elements
+func (v Vector) IsSequence() bool {
 	return len(v) > 0
 }
 
-// Split breaks the Value array into its components (first, rest, isSequence)
-func (v Values) Split() (Value, Sequence, bool) {
+// Split breaks the Vector into its components (first, rest, isSequence)
+func (v Vector) Split() (Value, Sequence, bool) {
 	lv := len(v)
 	if lv > 1 {
 		return v[0], v[1:], true
 	} else if lv == 1 {
-		return v[0], EmptyValues, true
+		return v[0], EmptyVector, true
 	}
-	return Nil, EmptyValues, false
+	return Nil, EmptyVector, false
 }
 
-// Prepend inserts an element at the beginning of the Value array
-func (v Values) Prepend(p Value) Sequence {
-	return append(Values{p}, v...)
+// Prepend inserts an element at the beginning of the Vector
+func (v Vector) Prepend(p Value) Sequence {
+	return append(Vector{p}, v...)
 }
 
-// Conjoin appends an element to the end of the Value array
-func (v Values) Conjoin(a Value) Sequence {
+// Conjoin appends an element to the end of the Vector
+func (v Vector) Conjoin(a Value) Sequence {
 	return append(v, a)
 }
 
 // Concat concatenates two Value arrays
-func (v Values) Concat(a Values) Values {
-	return append(v, SequenceToValues(a)...)
+func (v Vector) Concat(a Vector) Vector {
+	return append(v, SequenceToVector(a)...)
 }
 
-// Str converts this Value array to a Str
-func (v Values) Str() Str {
+// Str converts this Vector to a Str
+func (v Vector) Str() Str {
 	var b bytes.Buffer
 	l := len(v)
 

@@ -1,4 +1,4 @@
-package evaluator
+package reader
 
 import (
 	"regexp"
@@ -83,7 +83,7 @@ func Scan(src a.Str) a.Sequence {
 	return a.Filter(nil, l, notWhitespace)
 }
 
-func (*notWhitespaceFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*notWhitespaceFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	t := args[0].(*Token)
 	if t.Type != Whitespace && t.Type != Comment {
 		return a.True
@@ -106,7 +106,7 @@ func matchToken(src string) (*Token, string) {
 
 // Str converts this Value into a Str
 func (t *Token) Str() a.Str {
-	return a.Values{a.NewFloat(float64(t.Type)), t.Value}.Str()
+	return a.Vector{a.NewFloat(float64(t.Type)), t.Value}.Str()
 }
 
 func makeToken(t TokenType, v a.Value) *Token {

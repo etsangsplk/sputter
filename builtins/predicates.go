@@ -16,7 +16,7 @@ type (
 	isKeywordFunction   struct{ BaseBuiltIn }
 )
 
-func (*isIdenticalFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*isIdenticalFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	a.AssertMinimumArity(args, 2)
 	l := args[0]
 	for _, f := range args {
@@ -27,21 +27,21 @@ func (*isIdenticalFunction) Apply(_ a.Context, args a.Values) a.Value {
 	return a.True
 }
 
-func (*isAtomFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*isAtomFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	if _, ok := args[0].(a.Evaluable); !ok {
 		return a.True
 	}
 	return a.False
 }
 
-func (*isNilFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*isNilFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	if args[0] == a.Nil {
 		return a.True
 	}
 	return a.False
 }
 
-func (*isKeywordFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*isKeywordFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	if _, ok := args[0].(a.Keyword); ok {
 		return a.True
 	}

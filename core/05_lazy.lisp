@@ -25,8 +25,7 @@
 (defmacro lazy-seq
   {:doc-asset "lazy-seq"}
   [& body]
-  (list 'sputter:make-closure []
-    (cons 'sputter:lazy-seq* body)))
+  (cons 'sputter:lazy-seq* body))
 
 (defn take-while
   [pred coll]

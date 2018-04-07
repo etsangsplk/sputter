@@ -12,12 +12,12 @@ type (
 	isListFunction struct{ BaseBuiltIn }
 )
 
-func (*listFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*listFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	return a.SequenceToList(args)
 }
 
-func (*isListFunction) Apply(_ a.Context, args a.Values) a.Value {
-	if _, ok := args[0].(a.List); ok {
+func (*isListFunction) Apply(_ a.Context, args a.Vector) a.Value {
+	if _, ok := args[0].(*a.List); ok {
 		return a.True
 	}
 	return a.False

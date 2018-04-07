@@ -22,7 +22,7 @@ func env() a.Value {
 	var r []a.Vector
 	for _, v := range os.Environ() {
 		if e := envPairRegex.FindStringSubmatch(v); len(e) == 3 {
-			r = append(r, a.Values{
+			r = append(r, a.Vector{
 				a.NewKeyword(a.Name(e[1])),
 				a.Str(e[2]),
 			})
@@ -32,14 +32,14 @@ func env() a.Value {
 }
 
 func args() a.Value {
-	r := a.Values{}
+	r := a.Vector{}
 	for _, v := range os.Args {
 		r = append(r, a.Str(v))
 	}
 	return r
 }
 
-func (*currentTimeFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*currentTimeFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	return a.NewFloat(float64(time.Now().UnixNano()))
 }
 

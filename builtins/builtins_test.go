@@ -21,11 +21,11 @@ func f(n float64) a.Number {
 }
 
 func v(e ...a.Value) a.Vector {
-	return a.NewVector(e...)
+	return a.Vector(e)
 }
 
-func args(e ...a.Value) a.Values {
-	return v(e...).(a.Values)
+func args(e ...a.Value) a.Vector {
+	return a.Vector(e)
 }
 
 func s(v string) a.Str {

@@ -18,7 +18,7 @@ const (
 	Let
 	Eval
 	Apply
-	Values
+	Vector
 	GetValue
 	GetArg
 	IsSeq

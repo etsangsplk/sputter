@@ -55,7 +55,7 @@ func makeWriter(w io.Writer, o a.OutputFunc) a.Object {
 }
 
 func bindWriter(w a.Writer) a.Function {
-	return a.NewExecFunction(func(_ a.Context, args a.Values) a.Value {
+	return a.NewExecFunction(func(_ a.Context, args a.Vector) a.Value {
 		a.AssertMinimumArity(args, 1)
 		for _, f := range args {
 			w.Write(f)
@@ -65,7 +65,7 @@ func bindWriter(w a.Writer) a.Function {
 }
 
 func bindCloser(c a.Closer) a.Function {
-	return a.NewExecFunction(func(_ a.Context, args a.Values) a.Value {
+	return a.NewExecFunction(func(_ a.Context, args a.Vector) a.Value {
 		a.AssertArity(args, 0)
 		c.Close()
 		return a.Nil

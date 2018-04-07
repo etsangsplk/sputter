@@ -69,7 +69,7 @@ func NewExecFunction(e Invoker) Function {
 }
 
 // NewBlockFunction creates a new simple Function based on a Block
-func NewBlockFunction(args Values) Function {
+func NewBlockFunction(args Vector) Function {
 	return &blockFunction{
 		BaseFunction: DefaultBaseFunction,
 		body:         MakeBlock(args),
@@ -118,11 +118,11 @@ func (f *invokerFunction) WithMetadata(md Object) AnnotatedValue {
 	}
 }
 
-func (f *invokerFunction) Apply(c Context, args Values) Value {
+func (f *invokerFunction) Apply(c Context, args Vector) Value {
 	return f.invoke(c, args)
 }
 
-func (f *blockFunction) Apply(c Context, _ Values) Value {
+func (f *blockFunction) Apply(c Context, _ Vector) Value {
 	return f.body.Eval(c)
 }
 

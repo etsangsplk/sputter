@@ -23,7 +23,7 @@ func TestClosure(t *testing.T) {
 	closure := getBuiltIn("closure")
 	c.Put("ignore", f(99))
 	c.Put("name", s("Bob"))
-	ar := r1.(a.List).Rest()
+	ar := r1.(*a.List).Rest()
 
 	defer as.ExpectError(a.ErrStr(a.UnknownSymbol, a.Name("ignore")))
 	a.Apply(c, closure, ar)

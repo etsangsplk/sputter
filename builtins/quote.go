@@ -93,7 +93,7 @@ func (sc *syntaxContext) quoteSequence(s a.Sequence) a.Value {
 	if st, ok := s.(a.Str); ok {
 		return st
 	}
-	if l, ok := s.(a.List); ok {
+	if l, ok := s.(*a.List); ok {
 		return a.NewList(applySym, listSym, sc.quoteElements(l))
 	}
 	if v, ok := s.(a.Vector); ok {
@@ -106,7 +106,7 @@ func (sc *syntaxContext) quoteSequence(s a.Sequence) a.Value {
 }
 
 func (sc *syntaxContext) quoteAssociative(as a.Associative) a.Value {
-	res := a.Values{}
+	res := a.Vector{}
 	for f, r, ok := as.Split(); ok; f, r, ok = r.Split() {
 		p := f.(a.Vector)
 		k, _ := p.ElementAt(0)
@@ -118,7 +118,7 @@ func (sc *syntaxContext) quoteAssociative(as a.Associative) a.Value {
 }
 
 func (sc *syntaxContext) quoteElements(s a.Sequence) a.Value {
-	res := a.Values{}
+	res := a.Vector{}
 	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
 		if v, ok := isUnquoteSplicing(f); ok {
 			res = append(res, v)
@@ -148,12 +148,12 @@ func isUnquoteSplicing(v a.Value) (a.Value, bool) {
 	return isWrapperCall(unquoteSplicingName, v)
 }
 
-func (*quoteFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*quoteFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	a.AssertArity(args, 1)
 	return args[0]
 }
 
-func (*syntaxQuoteFunction) Apply(c a.Context, args a.Values) a.Value {
+func (*syntaxQuoteFunction) Apply(c a.Context, args a.Vector) a.Value {
 	a.AssertArity(args, 1)
 	sc := &syntaxContext{
 		context: c,

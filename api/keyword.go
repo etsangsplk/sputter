@@ -29,7 +29,7 @@ func (k *keyword) Name() Name {
 	return k.name
 }
 
-func (k *keyword) Apply(_ Context, args Values) Value {
+func (k *keyword) Apply(_ Context, args Vector) Value {
 	i := AssertArityRange(args, 1, 2)
 	s := args[0].(Mapped)
 	if r, ok := s.Get(k); ok {

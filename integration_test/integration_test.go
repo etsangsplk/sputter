@@ -31,9 +31,14 @@ func local(n a.Name) a.Symbol {
 	return a.NewLocalSymbol(n)
 }
 
-func cvtErr(concrete, intf, method string) a.Error {
+func intfErr(concrete, intf, method string) a.Error {
 	err := "interface conversion: %s is not %s: missing method %s"
 	return a.ErrStr(fmt.Sprintf(err, concrete, intf, method))
+}
+
+func typeErr(concrete, expected string) a.Error {
+	err := "interface conversion: api.Value is %s, not %s"
+	return a.ErrStr(fmt.Sprintf(err, concrete, expected))
 }
 
 func runCode(src string) a.Value {

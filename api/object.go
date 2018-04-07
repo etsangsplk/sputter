@@ -15,7 +15,7 @@ type (
 		Flatten() Properties
 	}
 
-	// Properties maps Values to Values for UDP Objects
+	// Properties maps Vector to Vector for UDP Objects
 	Properties map[Value]Value
 
 	object struct {

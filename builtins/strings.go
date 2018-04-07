@@ -20,11 +20,11 @@ type (
 
 var emptyString = a.Str("")
 
-func (*strFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*strFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	return a.SequenceToStr(args)
 }
 
-func (*readerStrFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*readerStrFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	if len(args) == 0 {
 		return emptyString
 	}
@@ -38,7 +38,7 @@ func (*readerStrFunction) Apply(_ a.Context, args a.Values) a.Value {
 	return a.Str(b.String())
 }
 
-func (*isStrFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*isStrFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	if _, ok := args[0].(a.Str); ok {
 		return a.True
 	}

@@ -16,26 +16,26 @@ type (
 	boundFunction struct {
 		a.BaseFunction
 		bound a.Applicable
-		args  a.Values
+		args  a.Vector
 	}
 )
 
 // BoundArgsKey is the Metadata key for a Function's bound count
 var BoundArgsKey = a.NewKeyword("bound-args")
 
-func (*applyFunction) Apply(c a.Context, args a.Values) a.Value {
+func (*applyFunction) Apply(c a.Context, args a.Vector) a.Value {
 	ac := a.AssertMinimumArity(args, 2)
 	fn := args[0].(a.Applicable)
 	if ac == 2 {
-		return fn.Apply(c, a.SequenceToValues(args[1].(a.Sequence)))
+		return fn.Apply(c, a.SequenceToVector(args[1].(a.Sequence)))
 	}
-	last := len(args)-1
-	ls := a.SequenceToValues(args[last].(a.Sequence))
+	last := len(args) - 1
+	ls := a.SequenceToVector(args[last].(a.Sequence))
 	prependedArgs := append(args[1:last], ls...)
 	return fn.Apply(c, prependedArgs)
 }
 
-func (*partialFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*partialFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	a.AssertMinimumArity(args, 1)
 	bound := args[0].(a.Applicable)
 	values := args[1:]
@@ -46,14 +46,14 @@ func (*partialFunction) Apply(_ a.Context, args a.Values) a.Value {
 	return bindFunction(bound, values)
 }
 
-func (*isApplyFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*isApplyFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	if _, ok := args[0].(a.Applicable); ok {
 		return a.True
 	}
 	return a.False
 }
 
-func bindFunction(bound a.Applicable, args a.Values) *boundFunction {
+func bindFunction(bound a.Applicable, args a.Vector) *boundFunction {
 	var md a.Object
 	if an, ok := bound.(a.Annotated); ok {
 		md = an.Metadata()
@@ -72,12 +72,12 @@ func bindFunction(bound a.Applicable, args a.Values) *boundFunction {
 	}
 }
 
-func (f *boundFunction) Apply(c a.Context, args a.Values) a.Value {
-	fullArgs := f.args.Concat(a.SequenceToValues(args))
+func (f *boundFunction) Apply(c a.Context, args a.Vector) a.Value {
+	fullArgs := f.args.Concat(a.SequenceToVector(args))
 	return f.bound.Apply(c, fullArgs)
 }
 
-func (f *boundFunction) rebind(args a.Values) *boundFunction {
+func (f *boundFunction) rebind(args a.Vector) *boundFunction {
 	newArgs := f.args.Concat(args)
 	md := a.Properties{
 		BoundArgsKey: a.NewFloat(float64(len(newArgs))),

@@ -15,7 +15,7 @@ type (
 	// Bool represents the values True or False
 	Bool bool
 
-	// Value is the generic interface for all 'Values'
+	// Value is the generic interface for all 'Vector'
 	Value interface {
 		Str() Str
 	}
@@ -38,12 +38,12 @@ type (
 	// Names represents a set of Names
 	Names []Name
 
-	// Typed is the generic interface for Values that are typed
+	// Typed is the generic interface for Vector that are typed
 	Typed interface {
 		Type() Name
 	}
 
-	// Documented is the generic interface for Values that are documented
+	// Documented is the generic interface for Vector that are documented
 	Documented interface {
 		Documentation() Str
 	}
@@ -53,12 +53,12 @@ type (
 		Count() int
 	}
 
-	// Mapped is the interface for Values that have retrievable Properties
+	// Mapped is the interface for Vector that have retrievable Properties
 	Mapped interface {
 		Get(Value) (Value, bool)
 	}
 
-	// Indexed is the interface for Values that have indexed elements
+	// Indexed is the interface for Vector that have indexed elements
 	Indexed interface {
 		ElementAt(int) (Value, bool)
 	}
@@ -88,7 +88,7 @@ func (n Name) Str() Str {
 }
 
 // Apply makes Bool Applicable
-func (b Bool) Apply(_ Context, args Values) Value {
+func (b Bool) Apply(_ Context, args Vector) Value {
 	for _, f := range args {
 		if f != b {
 			return False
@@ -105,7 +105,7 @@ func (b Bool) Str() Str {
 	return "false"
 }
 
-func (n *nilValue) Apply(_ Context, args Values) Value {
+func (n *nilValue) Apply(_ Context, args Vector) Value {
 	for _, f := range args {
 		if f != Nil {
 			return False

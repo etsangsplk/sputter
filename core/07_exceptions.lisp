@@ -100,7 +100,7 @@
   {:private true}
   [clauses]
   (let [err (gensym "err")]
-    `(lambda [~err]
+    `(fn [~err]
       (cond
         ~@(apply list (try-catch-clauses clauses err))
         :else [true ~err]))))
@@ -109,7 +109,7 @@
   {:private true}
   [clauses]
   (map
-    (lambda [clause] (first (rest clause)))
+    (fn [clause] (first (rest clause)))
     clauses))
 
 (defmacro try

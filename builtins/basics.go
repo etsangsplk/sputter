@@ -2,7 +2,8 @@ package builtins
 
 import (
 	a "github.com/kode4food/sputter/api"
-	e "github.com/kode4food/sputter/evaluator"
+	"github.com/kode4food/sputter/evaluator"
+	r "github.com/kode4food/sputter/reader"
 )
 
 const (
@@ -23,30 +24,30 @@ type (
 	evalFunction    struct{ BaseBuiltIn }
 )
 
-func (*errorFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*errorFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	a.AssertArity(args, 1)
 	return a.Err(toProperties(args[0].(a.Associative)))
 }
 
-func (*raiseFunction) Apply(_ a.Context, args a.Values) a.Value {
+func (*raiseFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	a.AssertArity(args, 1)
 	panic(args[0])
 }
 
-func (*recoverFunction) Apply(c a.Context, args a.Values) (res a.Value) {
+func (*recoverFunction) Apply(c a.Context, args a.Vector) (res a.Value) {
 	a.AssertArity(args, 2)
 
 	defer func() {
 		if rec := recover(); rec != nil {
 			post := a.Eval(c, args[1]).(a.Applicable)
-			res = post.Apply(c, a.Values{rec.(a.Value)})
+			res = post.Apply(c, a.Vector{rec.(a.Value)})
 		}
 	}()
 
 	return a.Eval(c, args[0])
 }
 
-func (*doFunction) Apply(c a.Context, args a.Values) a.Value {
+func (*doFunction) Apply(c a.Context, args a.Vector) a.Value {
 	var res a.Value = a.Nil
 	for _, f := range args {
 		res = a.Eval(c, f)
@@ -54,17 +55,22 @@ func (*doFunction) Apply(c a.Context, args a.Values) a.Value {
 	return res
 }
 
-func (*readFunction) Apply(c a.Context, args a.Values) a.Value {
+func (*readFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	a.AssertArity(args, 1)
 	v := args[0]
 	s := v.(a.Sequence)
-	return e.ReadStr(c, a.SequenceToStr(s))
+	if v, ok := a.Last(r.ReadStr(a.SequenceToStr(s))); ok {
+		return v
+	}
+	return a.Nil
 }
 
-func (*evalFunction) Apply(c a.Context, args a.Values) a.Value {
+func (*evalFunction) Apply(c a.Context, args a.Vector) a.Value {
 	a.AssertArity(args, 1)
-	v := args[0]
-	return a.Eval(c, v)
+	if v, ok := a.Last(evaluator.Evaluate(c, args)); ok {
+		return v
+	}
+	return a.Nil
 }
 
 func init() {

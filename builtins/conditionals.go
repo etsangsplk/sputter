@@ -6,7 +6,7 @@ const ifName = "if"
 
 type ifFunction struct{ BaseBuiltIn }
 
-func (*ifFunction) Apply(c a.Context, args a.Values) a.Value {
+func (*ifFunction) Apply(c a.Context, args a.Vector) a.Value {
 	i := a.AssertArityRange(args, 2, 3)
 	if a.Truthy(a.Eval(c, args[0])) {
 		return a.Eval(c, args[1])

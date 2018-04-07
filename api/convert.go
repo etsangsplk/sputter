@@ -3,12 +3,12 @@ package api
 import "bytes"
 
 // SequenceToList takes any sequence and converts it to a List
-func SequenceToList(s Sequence) List {
-	if l, ok := s.(List); ok {
+func SequenceToList(s Sequence) *List {
+	if l, ok := s.(*List); ok {
 		return l
 	}
 	if c, ok := s.(Counted); ok {
-		res := make(Values, c.Count())
+		res := make(Vector, c.Count())
 		idx := 0
 		for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
 			res[idx] = f
@@ -19,25 +19,17 @@ func SequenceToList(s Sequence) List {
 	return uncountedToList(s)
 }
 
-func uncountedToList(s Sequence) List {
-	return NewList(uncountedToValues(s)...)
+func uncountedToList(s Sequence) *List {
+	return NewList(uncountedToVector(s)...)
 }
 
-// SequenceToVector takes any sequence and converts it to a Vector
+// SequenceToVector takes any sequence and converts it to a Value array
 func SequenceToVector(s Sequence) Vector {
 	if v, ok := s.(Vector); ok {
 		return v
 	}
-	return SequenceToValues(s)
-}
-
-// SequenceToValues takes any sequence and converts it to a Value array
-func SequenceToValues(s Sequence) Values {
-	if v, ok := s.(Values); ok {
-		return v
-	}
 	if c, ok := s.(Counted); ok {
-		res := make(Values, c.Count())
+		res := make(Vector, c.Count())
 		idx := 0
 		for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
 			res[idx] = f
@@ -45,18 +37,18 @@ func SequenceToValues(s Sequence) Values {
 		}
 		return res
 	}
-	return uncountedToValues(s)
+	return uncountedToVector(s)
 }
 
-func uncountedToValues(s Sequence) Values {
-	res := Values{}
+func uncountedToVector(s Sequence) Vector {
+	res := Vector{}
 	for f, r, ok := s.Split(); ok; f, r, ok = r.Split() {
 		res = append(res, f)
 	}
 	return res
 }
 
-// SequenceToAssociative takes any sequence and converts it to an associative
+// SequenceToAssociative takes any sequence and converts it to an Associative
 func SequenceToAssociative(s Sequence) Associative {
 	if a, ok := s.(Associative); ok {
 		return a
@@ -75,7 +67,7 @@ func SequenceToAssociative(s Sequence) Associative {
 			v, i, _ = i.Split()
 			r[idx] = NewVector(k, v)
 		}
-		return associative(r)
+		return Associative(r)
 	}
 	return uncountedToAssociative(s)
 }
@@ -90,7 +82,7 @@ func uncountedToAssociative(s Sequence) Associative {
 			panic(ErrStr(ExpectedPair))
 		}
 	}
-	return associative(res)
+	return Associative(res)
 }
 
 // MakeStr converts a Value to a Str if it's not already one

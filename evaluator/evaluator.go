@@ -1,17 +1,27 @@
 package evaluator
 
-import a "github.com/kode4food/sputter/api"
+import (
+	a "github.com/kode4food/sputter/api"
+	"github.com/kode4food/sputter/compiler"
+	"github.com/kode4food/sputter/reader"
+)
 
-// ReadStr converts the raw source into unexpanded data structures
-func ReadStr(c a.Context, src a.Str) a.Sequence {
-	l := Scan(src)
-	return Read(c, l)
+type evaluatorFunc struct{}
+
+var evaluator = &evaluatorFunc{}
+
+// Evaluate a Sequence of Values that a call to Read might produce
+func Evaluate(c a.Context, s a.Sequence) a.Sequence {
+	return a.Map(c, compiler.Compile(c, s), evaluator)
 }
 
 // EvalStr evaluates the specified raw Source
 func EvalStr(c a.Context, src a.Str) a.Value {
-	r := ReadStr(c, src)
-	return a.Eval(c, r)
+	r := reader.ReadStr(src)
+	if v, ok := a.Last(Evaluate(c, r)); ok {
+		return v
+	}
+	return a.Nil
 }
 
 // NewEvalContext creates a new Context instance that
@@ -19,4 +29,8 @@ func EvalStr(c a.Context, src a.Str) a.Value {
 func NewEvalContext() a.Context {
 	ns := a.GetNamespace(a.UserDomain)
 	return a.ChildLocals(ns)
+}
+
+func (*evaluatorFunc) Apply(c a.Context, args a.Vector) a.Value {
+	return a.Eval(c, args[0])
 }

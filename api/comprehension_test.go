@@ -11,7 +11,7 @@ func TestMap(t *testing.T) {
 	as := assert.New(t)
 
 	l := a.NewList(s("first"), s("middle"), s("last"))
-	fn := a.NewExecFunction(func(_ a.Context, args a.Values) a.Value {
+	fn := a.NewExecFunction(func(_ a.Context, args a.Vector) a.Value {
 		return s("this is the " + string(args[0].(a.Str)))
 	})
 	w := a.Map(nil, l, fn)
@@ -41,14 +41,14 @@ func TestMap(t *testing.T) {
 func TestMapParallel(t *testing.T) {
 	as := assert.New(t)
 
-	add := a.NewExecFunction(func(_ a.Context, args a.Values) a.Value {
+	add := a.NewExecFunction(func(_ a.Context, args a.Vector) a.Value {
 		return args[0].(a.Number).Add(args[1].(a.Number))
 	})
 
 	s1 := a.NewList(f(1), f(2), f(3), f(4))
 	s2 := a.NewVector(f(5), f(10), f(15), f(20), f(30))
 
-	w := a.MapParallel(nil, a.Values{s1, s2}, add)
+	w := a.MapParallel(nil, a.Vector{s1, s2}, add)
 
 	as.Number(6, w.First())
 	as.Number(12, w.Rest().First())
@@ -63,7 +63,7 @@ func TestFilter(t *testing.T) {
 	as := assert.New(t)
 
 	l := a.NewList(s("first"), s("filtered out"), s("last"))
-	fn := a.NewExecFunction(func(_ a.Context, args a.Values) a.Value {
+	fn := a.NewExecFunction(func(_ a.Context, args a.Vector) a.Value {
 		if string(args[0].(a.Str)) != "filtered out" {
 			return a.True
 		}
@@ -91,7 +91,7 @@ func TestFilteredAndMapped(t *testing.T) {
 	as := assert.New(t)
 
 	l := a.NewList(s("first"), s("middle"), s("last"))
-	fn1 := a.NewExecFunction(func(_ a.Context, args a.Values) a.Value {
+	fn1 := a.NewExecFunction(func(_ a.Context, args a.Vector) a.Value {
 		if string(args[0].(a.Str)) != "middle" {
 			return a.True
 		}
@@ -99,7 +99,7 @@ func TestFilteredAndMapped(t *testing.T) {
 	})
 	w1 := a.Filter(nil, l, fn1)
 
-	fn2 := a.NewExecFunction(func(_ a.Context, args a.Values) a.Value {
+	fn2 := a.NewExecFunction(func(_ a.Context, args a.Vector) a.Value {
 		return s("this is the " + string(args[0].(a.Str)))
 	})
 	w2 := a.Map(nil, w1, fn2)
@@ -155,7 +155,7 @@ func TestConcat(t *testing.T) {
 func TestReduce(t *testing.T) {
 	as := assert.New(t)
 
-	add := a.NewExecFunction(func(_ a.Context, args a.Values) a.Value {
+	add := a.NewExecFunction(func(_ a.Context, args a.Vector) a.Value {
 		return args[0].(a.Number).Add(args[1].(a.Number))
 	})
 

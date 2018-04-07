@@ -3,8 +3,7 @@
 (defmacro go
   {:doc-asset "go"}
   [& body]
-  (list 'sputter:make-closure []
-    (cons 'sputter:go* body)))
+  (cons 'sputter:go* body))
 
 (defmacro generate
   {:doc-asset "generate"}

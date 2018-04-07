@@ -10,9 +10,9 @@ const IndexNotFound = "index not found: %s"
 
 type (
 	// Invoker is the standard signature for a function that can be invoked
-	Invoker func(Context, Values) Value
+	Invoker func(Context, Vector) Value
 
-	// Sequence interfaces expose a lazily resolved sequence of Values
+	// Sequence interfaces expose a lazily resolved sequence of Vector
 	Sequence interface {
 		Value
 		First() Value
@@ -40,6 +40,13 @@ type (
 		Counted
 	}
 
+	// IndexedAndCountedSequence Indexed and Counted Sequence interfaces
+	IndexedAndCountedSequence interface {
+		Sequence
+		Indexed
+		Counted
+	}
+
 	// MappedSequence is a Sequence that provides a Mapped interface
 	MappedSequence interface {
 		Sequence
@@ -48,7 +55,7 @@ type (
 )
 
 // IndexedApply provides 'nth' behavior for Indexed Sequences
-func IndexedApply(s Indexed, args Values) Value {
+func IndexedApply(s Indexed, args Vector) Value {
 	i := AssertArityRange(args, 1, 2)
 	idx := AssertInteger(args[0])
 	if r, ok := s.ElementAt(idx); ok {
@@ -81,4 +88,23 @@ func MakeSequenceStr(s Sequence) Str {
 // Count will return the Count from a Counted Sequence or explode
 func Count(v Value) int {
 	return v.(CountedSequence).Count()
+}
+
+// Last returns the final element of a Sequence, possibly by scanning
+func Last(s Sequence) (Value, bool) {
+	if !s.IsSequence() {
+		return Nil, false
+	}
+
+	if i, ok := s.(IndexedAndCountedSequence); ok {
+		return i.ElementAt(i.Count() - 1)
+	}
+
+	var res Value
+	var lok bool
+	for f, s, ok := s.Split(); ok; f, s, ok = s.Split() {
+		res = f
+		lok = ok
+	}
+	return res, lok
 }

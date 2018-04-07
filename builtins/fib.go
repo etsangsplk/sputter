@@ -29,11 +29,11 @@ func init() {
 		// (fib (- i 1))
 		vm.MakeInst(vm.One, vm.Vars+1),
 		vm.MakeInst(vm.Sub, vm.Vars+0, vm.Vars+1, vm.Vars+1),
-		vm.MakeInst(vm.Values, vm.Vars+1, vm.Vars+2, vm.Vars+1),
+		vm.MakeInst(vm.Vector, vm.Vars+1, vm.Vars+2, vm.Vars+1),
 		vm.MakeInst(vm.Apply, vm.Vars+1, vm.Vars+3, vm.Vars+1),
 		// (fib (- i 2))
 		vm.MakeInst(vm.Sub, vm.Vars+0, vm.Vars+2, vm.Vars+2),
-		vm.MakeInst(vm.Values, vm.Vars+2, vm.Vars+3, vm.Vars+2),
+		vm.MakeInst(vm.Vector, vm.Vars+2, vm.Vars+3, vm.Vars+2),
 		vm.MakeInst(vm.Apply, vm.Vars+2, vm.Vars+3, vm.Vars+2),
 		// (+ (fib (- i 1)) (fib (- i 2)))
 		vm.MakeInst(vm.Add, vm.Vars+1, vm.Vars+2, vm.Vars+2),
@@ -54,7 +54,7 @@ func init() {
 		Instructions: inst,
 	}
 
-	fib.Data = a.Values{
+	fib.Data = a.Vector{
 		fib,
 		a.NewFloat(2),
 	}

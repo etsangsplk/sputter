@@ -24,7 +24,7 @@ type (
 	// Do is a callback interface for performing some action
 	Do func(func())
 
-	// Emitter is an interface that is used to emit Values to a Channel
+	// Emitter is an interface that is used to emit Vector to a Channel
 	Emitter interface {
 		Writer
 		Closer
@@ -121,7 +121,7 @@ func NewChannel() (Emitter, Sequence) {
 	return NewChannelEmitter(ch), NewChannelSequence(ch)
 }
 
-// NewChannelEmitter produces an Emitter for sending Values to a Go chan
+// NewChannelEmitter produces an Emitter for sending Vector to a Go chan
 func NewChannelEmitter(ch *channelWrapper) Emitter {
 	r := &channelEmitter{
 		ch: ch,
@@ -167,7 +167,7 @@ func (e *channelEmitter) Str() Str {
 	return MakeDumpStr(e)
 }
 
-// NewChannelSequence produces a new Sequence whose Values come from a Go chan
+// NewChannelSequence produces a new Sequence whose Vector come from a Go chan
 func NewChannelSequence(ch *channelWrapper) Sequence {
 	r := &channelSequence{
 		once:   Once(),
@@ -243,7 +243,7 @@ func NewPromise() Promise {
 	}
 }
 
-func (p *promise) Apply(_ Context, args Values) Value {
+func (p *promise) Apply(_ Context, args Vector) Value {
 	if AssertArityRange(args, 0, 1) == 1 {
 		return p.Deliver(args[0])
 	}

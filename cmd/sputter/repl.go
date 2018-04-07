@@ -16,6 +16,7 @@ import (
 	a "github.com/kode4food/sputter/api"
 	d "github.com/kode4food/sputter/docstring"
 	e "github.com/kode4food/sputter/evaluator"
+	r "github.com/kode4food/sputter/reader"
 )
 
 const (
@@ -79,7 +80,7 @@ func (r *REPL) Run() {
 	defer r.rl.Close()
 
 	fmt.Println(a.Language, a.Version)
-	help(nil, a.EmptyValues)
+	help(nil, a.EmptyVector)
 	r.setInitialPrompt()
 
 	for {
@@ -107,7 +108,7 @@ func (r *REPL) Run() {
 
 		r.reset()
 	}
-	shutdown(nil, a.EmptyValues)
+	shutdown(nil, a.EmptyVector)
 }
 
 func (r *REPL) reset() {
@@ -245,12 +246,12 @@ func toError(i interface{}) error {
 
 func isRecoverable(err error) bool {
 	msg := err.Error()
-	return msg == e.ListNotClosed ||
-		msg == e.VectorNotClosed ||
-		msg == e.MapNotClosed
+	return msg == r.ListNotClosed ||
+		msg == r.VectorNotClosed ||
+		msg == r.MapNotClosed
 }
 
-func use(c a.Context, args a.Values) a.Value {
+func use(c a.Context, args a.Vector) a.Value {
 	a.AssertArity(args, 1)
 	n := args[0].(a.LocalSymbol).Name()
 	ns := a.GetNamespace(n)
@@ -259,7 +260,7 @@ func use(c a.Context, args a.Values) a.Value {
 	return ns
 }
 
-func shutdown(_ a.Context, args a.Values) a.Value {
+func shutdown(_ a.Context, args a.Vector) a.Value {
 	a.AssertArity(args, 0)
 	t := time.Now().UTC().UnixNano()
 	rs := rand.NewSource(t)
@@ -270,13 +271,13 @@ func shutdown(_ a.Context, args a.Values) a.Value {
 	return nothing
 }
 
-func debugInfo(_ a.Context, _ a.Values) a.Value {
+func debugInfo(_ a.Context, _ a.Vector) a.Value {
 	runtime.GC()
 	fmt.Println("Number of goroutines: ", runtime.NumGoroutine())
 	return nothing
 }
 
-func cls(_ a.Context, args a.Values) a.Value {
+func cls(_ a.Context, args a.Vector) a.Value {
 	a.AssertArity(args, 0)
 	fmt.Println(clear)
 	return nothing
@@ -298,14 +299,14 @@ func formatForREPL(s string) string {
 	return strings.Join(out, "\n")
 }
 
-func help(_ a.Context, args a.Values) a.Value {
+func help(_ a.Context, args a.Vector) a.Value {
 	a.AssertArity(args, 0)
 	md := string(d.Get("repl-help"))
 	fmt.Println(formatForREPL(md))
 	return nothing
 }
 
-func doc(c a.Context, args a.Values) a.Value {
+func doc(c a.Context, args a.Vector) a.Value {
 	a.AssertArity(args, 1)
 	sym := args[0].(a.LocalSymbol)
 	if v, ok := c.Get(sym.Name()); ok {
@@ -327,7 +328,7 @@ func getBuiltInsNamespace() a.Namespace {
 func registerBuiltIn(v a.AnnotatedValue) {
 	ns := getBuiltInsNamespace()
 	if _, ok := ns.Get(replBuiltIns); !ok {
-		ns.Put(replBuiltIns, a.Values{})
+		ns.Put(replBuiltIns, a.Vector{})
 	}
 	vec, _ := ns.Get(replBuiltIns)
 	bi := vec.(a.Vector).Conjoin(v)

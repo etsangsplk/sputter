@@ -88,8 +88,8 @@ func isBuiltInDomain(s a.Symbol) bool {
 	return s.Domain() == a.BuiltInDomain
 }
 
-func isBuiltInCall(n a.Name, v a.Value) (a.List, bool) {
-	if l, ok := v.(a.List); ok && l.Count() > 0 {
+func isBuiltInCall(n a.Name, v a.Value) (*a.List, bool) {
+	if l, ok := v.(*a.List); ok && l.Count() > 0 {
 		if s, ok := l.First().(a.Symbol); ok {
 			return l, isBuiltInDomain(s) && s.Name() == n
 		}
@@ -97,7 +97,7 @@ func isBuiltInCall(n a.Name, v a.Value) (a.List, bool) {
 	return nil, false
 }
 
-func defBuiltIn(c a.Context, args a.Values) a.Value {
+func defBuiltIn(c a.Context, args a.Vector) a.Value {
 	a.AssertMinimumArity(args, 1)
 	n := args[0].(a.LocalSymbol).Name()
 	if nf, ok := GetFunction(n); ok {

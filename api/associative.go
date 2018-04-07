@@ -10,35 +10,24 @@ const (
 	KeyNotFound = "key not found: %s"
 )
 
-type (
-	// Associative is a Mappable that is implemented atop an Values
-	Associative interface {
-		Conjoiner
-		Mapped
-		Counted
-		Applicable
-		Evaluable
-		AssociativeType()
-	}
+// Associative is a Mapped Value that is implemented atop an Vector
+type Associative []Vector
 
-	associative []Vector
-)
-
-var emptyAssociative = associative{}
+// EmptyAssociative represents an empty Associative
+var EmptyAssociative = Associative{}
 
 // NewAssociative instantiates a new Associative
 func NewAssociative(v ...Vector) Associative {
-	return associative(v)
+	return Associative(v)
 }
 
-func (associative) AssociativeType() {}
-
-func (a associative) Count() int {
+// Count returns the number of pairs in the Associative
+func (a Associative) Count() int {
 	return len(a)
 }
 
 // Get returns the Value corresponding to the key in the Associative
-func (a associative) Get(key Value) (Value, bool) {
+func (a Associative) Get(key Value) (Value, bool) {
 	l := len(a)
 	for i := 0; i < l; i++ {
 		mp := a[i]
@@ -51,13 +40,57 @@ func (a associative) Get(key Value) (Value, bool) {
 	return Nil, false
 }
 
-func (a associative) Apply(_ Context, args Values) Value {
+// First returns the first pair of the Associative
+func (a Associative) First() Value {
+	if len(a) > 0 {
+		return a[0]
+	}
+	return Nil
+}
+
+// Rest returns the pairs of the List that follow the first
+func (a Associative) Rest() Sequence {
+	if len(a) > 1 {
+		return a[1:]
+	}
+	return EmptyAssociative
+}
+
+// IsSequence returns whether or not this Associative has any pairs
+func (a Associative) IsSequence() bool {
+	return len(a) > 0
+}
+
+// Split breaks the Associative into its components (first, rest, isSequence)
+func (a Associative) Split() (Value, Sequence, bool) {
+	if len(a) > 0 {
+		return a[0], a[1:], true
+	}
+	return Nil, EmptyAssociative, false
+}
+
+// Prepend inserts a pair at the beginning of the Associative
+func (a Associative) Prepend(v Value) Sequence {
+	if mp, ok := v.(Vector); ok && mp.Count() == 2 {
+		return append(Associative{mp}, a...)
+	}
+	panic(ErrStr(ExpectedPair))
+}
+
+// Conjoin inserts a pair at the beginning of the Associative
+func (a Associative) Conjoin(v Value) Sequence {
+	return a.Prepend(v)
+}
+
+// Apply makes Associative Applicable
+func (a Associative) Apply(_ Context, args Vector) Value {
 	return MappedApply(a, args)
 }
 
-func (a associative) Eval(c Context) Value {
+// Eval evaluates its elements, returning a new Associative
+func (a Associative) Eval(c Context) Value {
 	l := len(a)
-	r := make(associative, l)
+	r := make(Associative, l)
 	for i := 0; i < l; i++ {
 		mp := a[i]
 		k, _ := mp.ElementAt(0)
@@ -67,43 +100,8 @@ func (a associative) Eval(c Context) Value {
 	return r
 }
 
-func (a associative) First() Value {
-	if len(a) > 0 {
-		return a[0]
-	}
-	return Nil
-}
-
-func (a associative) Rest() Sequence {
-	if len(a) > 1 {
-		return a[1:]
-	}
-	return emptyAssociative
-}
-
-func (a associative) Split() (Value, Sequence, bool) {
-	if len(a) > 0 {
-		return a[0], a[1:], true
-	}
-	return Nil, emptyAssociative, false
-}
-
-func (a associative) Prepend(v Value) Sequence {
-	if mp, ok := v.(Vector); ok && mp.Count() == 2 {
-		return append(associative{mp}, a...)
-	}
-	panic(ErrStr(ExpectedPair))
-}
-
-func (a associative) Conjoin(v Value) Sequence {
-	return a.Prepend(v)
-}
-
-func (a associative) IsSequence() bool {
-	return len(a) > 0
-}
-
-func (a associative) Str() Str {
+// Str converts this Associative to a Str
+func (a Associative) Str() Str {
 	var b bytes.Buffer
 	l := len(a)
 
@@ -123,8 +121,8 @@ func (a associative) Str() Str {
 	return Str(b.String())
 }
 
-// MappedApply provides 'get' behavior for Mapped Values
-func MappedApply(s Mapped, args Values) Value {
+// MappedApply provides 'get' behavior for Mapped Vector
+func MappedApply(s Mapped, args Vector) Value {
 	i := AssertArityRange(args, 1, 2)
 	key := args[0]
 	if r, ok := s.Get(key); ok {

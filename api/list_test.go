@@ -7,7 +7,7 @@ import (
 	"github.com/kode4food/sputter/assert"
 )
 
-var helloThere = a.NewExecFunction(func(_ a.Context, _ a.Values) a.Value {
+var helloThere = a.NewExecFunction(func(_ a.Context, _ a.Vector) a.Value {
 	return s("there")
 }).WithMetadata(a.Properties{
 	a.NameKey: a.Name("hello"),
@@ -31,7 +31,7 @@ func TestList(t *testing.T) {
 	as.False(l1.Rest().IsSequence())
 
 	n2 := f(20.5)
-	l2 := l1.Prepend(n2).(a.List)
+	l2 := l1.Prepend(n2).(*a.List)
 
 	as.String("()", a.EmptyList)
 	as.String("(20.5 12)", l2)
@@ -110,7 +110,7 @@ func TestNonFunction(t *testing.T) {
 	e := a.ErrStr(a.UnknownSymbol, "unknown")
 	sym := a.NewLocalSymbol("unknown")
 	seq := a.NewList(sym, s("foo"))
-	testBrokenEval(t, seq.(a.List), e)
+	testBrokenEval(t, seq, e)
 
 	e = cvtErr("*api.dec", "api.Applicable", "Apply")
 	testBrokenEval(t, a.NewList(f(99)), e)
@@ -123,9 +123,9 @@ func TestListExplosion(t *testing.T) {
 	idx := f(3)
 	err := a.ErrStr(a.IndexNotFound, idx)
 
-	v := seq.Apply(a.Variables{}, a.Values{idx, s("default")})
+	v := seq.Apply(a.Variables{}, a.Vector{idx, s("default")})
 	as.String("default", v)
 
 	defer as.ExpectError(err)
-	seq.Apply(a.Variables{}, a.Values{idx})
+	seq.Apply(a.Variables{}, a.Vector{idx})
 }

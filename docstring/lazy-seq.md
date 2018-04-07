@@ -3,7 +3,7 @@
 ## An Example:
 
   (defn fib-seq []
-    (let [fib (lambda [a b]
+    (let [fib (fn [a b]
                 (lazy-seq (cons a (fib b (+ a b)))))]
       (fib 0 1)))
 

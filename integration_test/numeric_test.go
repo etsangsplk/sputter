@@ -28,7 +28,7 @@ func TestNestedNumber(t *testing.T) {
 }
 
 func TestNonNumber(t *testing.T) {
-	e := cvtErr("api.Str", "api.Number", "Add")
+	e := intfErr("api.Str", "api.Number", "Add")
 	testBadCode(t, `(+ 99 "hello")`, e)
 	testBadCode(t, `(+ "hello")`, e)
 }
@@ -64,7 +64,7 @@ func TestCompare(t *testing.T) {
 }
 
 func TestBadCompare(t *testing.T) {
-	e := cvtErr("api.Str", "api.Number", "Add")
+	e := intfErr("api.Str", "api.Number", "Add")
 	testBadCode(t, `(< 99 "hello")`, e)
 	testBadCode(t, `(< "hello" "there")`, e)
 }

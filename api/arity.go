@@ -12,10 +12,10 @@ const (
 )
 
 // ArityChecker is a function that validates the arity of arguments
-type ArityChecker func(Values) (int, bool)
+type ArityChecker func(Vector) (int, bool)
 
 // AssertArity explodes if the arg count doesn't match provided arity
-func AssertArity(args Values, arity int) int {
+func AssertArity(args Vector, arity int) int {
 	c := len(args)
 	if c != arity {
 		panic(ErrStr(BadArity, arity, c))
@@ -24,7 +24,7 @@ func AssertArity(args Values, arity int) int {
 }
 
 // AssertMinimumArity explodes if the arg count isn't at least arity
-func AssertMinimumArity(args Values, arity int) int {
+func AssertMinimumArity(args Vector, arity int) int {
 	c := len(args)
 	if c < arity {
 		panic(ErrStr(BadMinimumArity, arity, c))
@@ -33,7 +33,7 @@ func AssertMinimumArity(args Values, arity int) int {
 }
 
 // AssertArityRange explodes if the arg count isn't in the arity range
-func AssertArityRange(args Values, min int, max int) int {
+func AssertArityRange(args Vector, min int, max int) int {
 	c := len(args)
 	if c < min || c > max {
 		panic(ErrStr(BadArityRange, min, max, c))
