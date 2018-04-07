@@ -11,7 +11,7 @@ welcome to.
 Make sure your `GOPATH` is set, then run `go get` to retrieve the package.
 
 ```bash
-go get github.com/kode4food/sputter
+go get github.com/kode4food/sputter/cmd/sputter
 ```
 
 ## How To Run A Source File
