@@ -42,6 +42,7 @@ change rapidly. The current built-in forms are:
   * Values: `def` `let` `if-let` `when-let` `put-ns` `ns` `with-ns`
   * Symbols and Keywords: `sym` `gensym` `sym?` `local?` `keyword?`
   * Functions: `defn` `fn` `apply` `partial` `apply?` `special-form?`
+  * Function Composition: `juxt` `comp`
   * Threading: `->` `->>` `some->` `some->>` `as->` `cond->` `cond->>`
   * Macros: `defmacro` `macroexpand1` `macroexpand` `macroexpand-all` `macro?`
   * Errors: `error` `raise` `panic` `try` `assert-args`
