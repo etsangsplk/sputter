@@ -1,10 +1,5 @@
 ;;;; sputter core: concurrency
 
-(defmacro go
-  {:doc-asset "go"}
-  [& body]
-  (cons 'sputter:go* body))
-
 (defmacro generate
   {:doc-asset "generate"}
   [& body]

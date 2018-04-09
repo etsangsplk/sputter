@@ -35,7 +35,7 @@ func TestMapAndFilter(t *testing.T) {
 func TestMapParallel(t *testing.T) {
 	testCode(t, `
 		(to-vector
-			(map + 
+			(map +
 				[1 2 3 4]
 				'(2 4 6 8)
 				(range 20 30)))
@@ -93,7 +93,7 @@ func TestLazySeq(t *testing.T) {
 func TestForEachLoop(t *testing.T) {
 	testCode(t, `
 		(let [ch (chan) emit (:emit ch) close (:close ch) seq (:seq ch)]
-			(go*
+			(go
 				(for-each [i (range* 1 5 1), j (range* 1 10 2)]
 					(emit (* i j)))
 				(close))

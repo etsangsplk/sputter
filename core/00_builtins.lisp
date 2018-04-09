@@ -2,7 +2,7 @@
 
 (def-builtin if    :doc-asset "if"  :special-form true)
 (def-builtin do    :doc-asset "do"  :special-form true)
-(def-builtin let*  :special-form true)
+(def-builtin let   :doc-asset "let" :special-form true)
 (def-builtin read  :doc-asset "read")
 (def-builtin eval  :doc-asset "eval")
 (def-builtin is-eq :doc-asset "is-eq")
@@ -94,7 +94,7 @@
 
 ;; functions
 
-(def-builtin fn           :doc-asset "fn"  :special-form true)
+(def-builtin fn           :doc-asset "fn" :special-form true)
 (def-builtin partial      :doc-asset "partial")
 (def-builtin is-special-form)
 
@@ -103,7 +103,7 @@
 
 ;; concurrency
 
-(def-builtin go*     :special-form true)
+(def-builtin go      :doc-asset "go" :special-form true)
 (def-builtin chan    :doc-asset "chan")
 (def-builtin promise :doc-asset "promise")
 (def-builtin is-promise)

@@ -6,7 +6,7 @@ const (
 	// ExpectedBindings is raised if a binding vector isn't an even number
 	ExpectedBindings = "expected bindings in the form: name value"
 
-	letName = "let*"
+	letName = "let"
 )
 
 type letFunction struct{ BaseBuiltIn }

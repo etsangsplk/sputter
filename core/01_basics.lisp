@@ -12,8 +12,3 @@
 (defmacro !eq
   [value & comps]
   `(not (is-eq ~value ~@comps)))
-
-(defmacro let
-  {:doc-asset "let"}
-  [bindings & forms]
-  `(let* ~bindings ~@forms))
