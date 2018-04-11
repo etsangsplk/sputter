@@ -19,17 +19,13 @@ func (*assocFunction) Apply(_ a.Context, args a.Vector) a.Value {
 }
 
 func (*isAssocFunction) Apply(_ a.Context, args a.Vector) a.Value {
-	if _, ok := args[0].(a.Associative); ok {
-		return a.True
-	}
-	return a.False
+	_, ok := args[0].(a.Associative)
+	return a.Bool(ok)
 }
 
 func (*isMappedFunction) Apply(_ a.Context, args a.Vector) a.Value {
-	if _, ok := args[0].(a.MappedSequence); ok {
-		return a.True
-	}
-	return a.False
+	_, ok := args[0].(a.MappedSequence)
+	return a.Bool(ok)
 }
 
 func init() {

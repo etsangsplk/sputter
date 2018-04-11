@@ -17,10 +17,8 @@ func (*vectorFunction) Apply(_ a.Context, args a.Vector) a.Value {
 }
 
 func (*isVectorFunction) Apply(_ a.Context, args a.Vector) a.Value {
-	if _, ok := args[0].(a.Vector); ok {
-		return a.True
-	}
-	return a.False
+	_, ok := args[0].(a.Vector)
+	return a.Bool(ok)
 }
 
 func init() {

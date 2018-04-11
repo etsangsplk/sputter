@@ -52,10 +52,8 @@ func (*promiseFunction) Apply(_ a.Context, args a.Vector) a.Value {
 }
 
 func (*isPromiseFunction) Apply(_ a.Context, args a.Vector) a.Value {
-	if _, ok := args[0].(a.Promise); ok {
-		return a.True
-	}
-	return a.False
+	_, ok := args[0].(a.Promise)
+	return a.Bool(ok)
 }
 
 func (*goFunction) Apply(c a.Context, args a.Vector) a.Value {

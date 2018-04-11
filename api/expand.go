@@ -1,5 +1,19 @@
 package api
 
+type (
+	specialForm struct {
+		*List
+		fn   Applicable
+		args Vector
+	}
+
+	evaluatingForm struct {
+		*List
+		fn   Applicable
+		args Vector
+	}
+)
+
 // MacroExpand1 performs a single macro expansion
 func MacroExpand1(c Context, v Value) (Value, bool) {
 	if l, ok := v.(*List); ok {
@@ -45,6 +59,9 @@ func expandSequence(c Context, s Sequence) Value {
 	}
 	if l, ok := s.(*List); ok {
 		ex := NewList(expandElements(c, l)...)
+		if f, ok := MakeForm(ex); ok {
+			return f
+		}
 		return ex
 	}
 	if v, ok := s.(Vector); ok {
@@ -76,4 +93,44 @@ func expandElements(c Context, s Sequence) Vector {
 		res = append(res, MacroExpandAll(c, f))
 	}
 	return res
+}
+
+// MakeForm attempts to convert a List into a directly applying form
+func MakeForm(l *List) (Value, bool) {
+	if f, _, ok := l.Split(); ok {
+		if s, ok := f.(Symbol); ok {
+			if d := s.Domain(); d != LocalDomain {
+				ns := GetNamespace(d)
+				if g, ok := ns.Get(s.Name()); ok {
+					if ap, ok := g.(Applicable); ok {
+						return makeFormObject(l, ap), true
+					}
+				}
+			}
+		}
+	}
+	return nil, false
+}
+
+func makeFormObject(l *List, a Applicable) Value {
+	if IsSpecialForm(a) {
+		return &specialForm{
+			List: l,
+			fn:   a,
+			args: SequenceToVector(l.Rest()),
+		}
+	}
+	return &evaluatingForm{
+		List: l,
+		fn:   a,
+		args: SequenceToVector(l.Rest()),
+	}
+}
+
+func (s *specialForm) Eval(c Context) Value {
+	return Apply(c, s.fn, s.args)
+}
+
+func (f *evaluatingForm) Eval(c Context) Value {
+	return Apply(c, f.fn, f.args.Eval(c).(Sequence))
 }

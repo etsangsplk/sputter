@@ -50,10 +50,8 @@ func (*getMetaFunction) Apply(_ a.Context, args a.Vector) a.Value {
 }
 
 func (*isMetaFunction) Apply(_ a.Context, args a.Vector) a.Value {
-	if _, ok := args[0].(a.Annotated); ok {
-		return a.True
-	}
-	return a.False
+	_, ok := args[0].(a.Annotated)
+	return a.Bool(ok)
 }
 
 func init() {

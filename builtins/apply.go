@@ -47,10 +47,8 @@ func (*partialFunction) Apply(_ a.Context, args a.Vector) a.Value {
 }
 
 func (*isApplyFunction) Apply(_ a.Context, args a.Vector) a.Value {
-	if _, ok := args[0].(a.Applicable); ok {
-		return a.True
-	}
-	return a.False
+	_, ok := args[0].(a.Applicable)
+	return a.Bool(ok)
 }
 
 func bindFunction(bound a.Applicable, args a.Vector) *boundFunction {

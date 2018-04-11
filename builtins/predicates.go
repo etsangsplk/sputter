@@ -28,24 +28,17 @@ func (*isIdenticalFunction) Apply(_ a.Context, args a.Vector) a.Value {
 }
 
 func (*isAtomFunction) Apply(_ a.Context, args a.Vector) a.Value {
-	if _, ok := args[0].(a.Evaluable); !ok {
-		return a.True
-	}
-	return a.False
+	_, ok := args[0].(a.Evaluable)
+	return a.Bool(!ok)
 }
 
 func (*isNilFunction) Apply(_ a.Context, args a.Vector) a.Value {
-	if args[0] == a.Nil {
-		return a.True
-	}
-	return a.False
+	return a.Bool(args[0] == a.Nil)
 }
 
 func (*isKeywordFunction) Apply(_ a.Context, args a.Vector) a.Value {
-	if _, ok := args[0].(a.Keyword); ok {
-		return a.True
-	}
-	return a.False
+	_, ok := args[0].(a.Keyword)
+	return a.Bool(ok)
 }
 
 func init() {

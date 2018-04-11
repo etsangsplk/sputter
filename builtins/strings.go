@@ -39,10 +39,8 @@ func (*readerStrFunction) Apply(_ a.Context, args a.Vector) a.Value {
 }
 
 func (*isStrFunction) Apply(_ a.Context, args a.Vector) a.Value {
-	if _, ok := args[0].(a.Str); ok {
-		return a.True
-	}
-	return a.False
+	_, ok := args[0].(a.Str)
+	return a.Bool(ok)
 }
 
 func init() {

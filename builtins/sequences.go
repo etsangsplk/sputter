@@ -98,24 +98,18 @@ func (*getFunction) Apply(_ a.Context, args a.Vector) a.Value {
 }
 
 func (*isSeqFunction) Apply(_ a.Context, args a.Vector) a.Value {
-	if s, ok := args[0].(a.Sequence); ok && s.IsSequence() {
-		return a.True
-	}
-	return a.False
+	s, ok := args[0].(a.Sequence)
+	return a.Bool(ok && s.IsSequence())
 }
 
 func (*isLenFunction) Apply(_ a.Context, args a.Vector) a.Value {
-	if _, ok := args[0].(a.CountedSequence); ok {
-		return a.True
-	}
-	return a.False
+	_, ok := args[0].(a.CountedSequence)
+	return a.Bool(ok)
 }
 
 func (*isIndexedFunction) Apply(_ a.Context, args a.Vector) a.Value {
-	if _, ok := args[0].(a.IndexedSequence); ok {
-		return a.True
-	}
-	return a.False
+	_, ok := args[0].(a.IndexedSequence)
+	return a.Bool(ok)
 }
 
 func init() {

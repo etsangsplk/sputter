@@ -24,16 +24,6 @@ func TestCreateReader(t *testing.T) {
 	as.NotNil(tr)
 }
 
-func TestReadInteger(t *testing.T) {
-	as := assert.New(t)
-	l := r.Scan("99")
-	tr := r.Read(l)
-	v := tr.First()
-	n, ok := v.(a.Number)
-	as.True(ok)
-	as.Equal(f(99), n)
-}
-
 func TestReadList(t *testing.T) {
 	as := assert.New(t)
 	l := r.Scan(`(99 "hello" 55.12)`)

@@ -17,10 +17,8 @@ func (*listFunction) Apply(_ a.Context, args a.Vector) a.Value {
 }
 
 func (*isListFunction) Apply(_ a.Context, args a.Vector) a.Value {
-	if _, ok := args[0].(*a.List); ok {
-		return a.True
-	}
-	return a.False
+	_, ok := args[0].(*a.List)
+	return a.Bool(ok)
 }
 
 func init() {

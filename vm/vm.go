@@ -17,8 +17,6 @@ type (
 	}
 )
 
-var negOne = a.Zero.Sub(a.One)
-
 // Apply makes Module applicable
 func (m *Module) Apply(c a.Context, args a.Vector) a.Value {
 	// Registers
@@ -73,7 +71,7 @@ main:
 		goto main
 
 	case NegOne:
-		VAL[i.Op1] = negOne
+		VAL[i.Op1] = a.NegOne
 		PC++
 		goto main
 
@@ -127,12 +125,8 @@ main:
 
 	case IsSeq:
 		v1 := VAL[i.Op1]
-		if s1, b1 := v1.(a.Sequence); b1 && s1.IsSequence() {
-			VAL[i.Op2] = a.True
-			PC++
-			goto main
-		}
-		VAL[i.Op2] = a.False
+		s1, b1 := v1.(a.Sequence)
+		VAL[i.Op2] = a.Bool(b1 && s1.IsSequence())
 		PC++
 		goto main
 
@@ -203,36 +197,21 @@ main:
 	case Eq:
 		n1 := VAL[i.Op1].(a.Number)
 		n2 := VAL[i.Op2].(a.Number)
-		if n1.Cmp(n2) == a.EqualTo {
-			VAL[i.Op3] = a.True
-			PC++
-			goto main
-		}
-		VAL[i.Op3] = a.False
+		VAL[i.Op3] = a.Bool(n1.Cmp(n2) == a.EqualTo)
 		PC++
 		goto main
 
 	case Neq:
 		n1 := VAL[i.Op1].(a.Number)
 		n2 := VAL[i.Op2].(a.Number)
-		if n1.Cmp(n2) != a.EqualTo {
-			VAL[i.Op3] = a.True
-			PC++
-			goto main
-		}
-		VAL[i.Op3] = a.False
+		VAL[i.Op3] = a.Bool(n1.Cmp(n2) != a.EqualTo)
 		PC++
 		goto main
 
 	case Gt:
 		n1 := VAL[i.Op1].(a.Number)
 		n2 := VAL[i.Op2].(a.Number)
-		if n1.Cmp(n2) == a.GreaterThan {
-			VAL[i.Op3] = a.True
-			PC++
-			goto main
-		}
-		VAL[i.Op3] = a.False
+		VAL[i.Op3] = a.Bool(n1.Cmp(n2) == a.GreaterThan)
 		PC++
 		goto main
 
@@ -240,24 +219,14 @@ main:
 		n1 := VAL[i.Op1].(a.Number)
 		n2 := VAL[i.Op2].(a.Number)
 		cmp := n1.Cmp(n2)
-		if cmp == a.GreaterThan || cmp == a.EqualTo {
-			VAL[i.Op3] = a.True
-			PC++
-			goto main
-		}
-		VAL[i.Op3] = a.False
+		VAL[i.Op3] = a.Bool(cmp == a.GreaterThan || cmp == a.EqualTo)
 		PC++
 		goto main
 
 	case Lt:
 		n1 := VAL[i.Op1].(a.Number)
 		n2 := VAL[i.Op2].(a.Number)
-		if n1.Cmp(n2) == a.LessThan {
-			VAL[i.Op3] = a.True
-			PC++
-			goto main
-		}
-		VAL[i.Op3] = a.False
+		VAL[i.Op3] = a.Bool(n1.Cmp(n2) == a.LessThan)
 		PC++
 		goto main
 
@@ -265,12 +234,7 @@ main:
 		n1 := VAL[i.Op1].(a.Number)
 		n2 := VAL[i.Op2].(a.Number)
 		cmp := n1.Cmp(n2)
-		if cmp == a.LessThan || cmp == a.EqualTo {
-			VAL[i.Op3] = a.True
-			PC++
-			goto main
-		}
-		VAL[i.Op3] = a.False
+		VAL[i.Op3] = a.Bool(cmp == a.LessThan || cmp == a.EqualTo)
 		PC++
 		goto main
 

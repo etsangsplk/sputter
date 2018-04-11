@@ -64,10 +64,7 @@ func TestFilter(t *testing.T) {
 
 	l := a.NewList(s("first"), s("filtered out"), s("last"))
 	fn := a.NewExecFunction(func(_ a.Context, args a.Vector) a.Value {
-		if string(args[0].(a.Str)) != "filtered out" {
-			return a.True
-		}
-		return a.False
+		return a.Bool(string(args[0].(a.Str)) != "filtered out")
 	})
 	w := a.Filter(nil, l, fn)
 
@@ -92,10 +89,7 @@ func TestFilteredAndMapped(t *testing.T) {
 
 	l := a.NewList(s("first"), s("middle"), s("last"))
 	fn1 := a.NewExecFunction(func(_ a.Context, args a.Vector) a.Value {
-		if string(args[0].(a.Str)) != "middle" {
-			return a.True
-		}
-		return a.False
+		return a.Bool(string(args[0].(a.Str)) != "middle")
 	})
 	w1 := a.Filter(nil, l, fn1)
 

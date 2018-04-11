@@ -49,12 +49,8 @@ func (*expandAllFunction) Apply(c a.Context, args a.Vector) a.Value {
 }
 
 func (*isMacroFunction) Apply(_ a.Context, args a.Vector) a.Value {
-	if ap, ok := args[0].(a.Applicable); ok {
-		if a.IsMacro(ap) {
-			return a.True
-		}
-	}
-	return a.False
+	ap, ok := args[0].(a.Applicable)
+	return a.Bool(ok && a.IsMacro(ap))
 }
 
 func init() {

@@ -9,7 +9,7 @@ import (
 
 func TestParseNumber(t *testing.T) {
 	as := assert.New(t)
-	n1 := a.ParseNumber("12.8")
+	n1 := a.ParseFloat("12.8")
 	n2 := f(12.8)
 	n3 := f(12.8)
 
@@ -17,7 +17,7 @@ func TestParseNumber(t *testing.T) {
 	as.Equal(n2, n3)
 
 	defer as.ExpectError(a.ErrStr(a.ExpectedNumber, s(`'splosion!`)))
-	a.ParseNumber("'splosion!")
+	a.ParseFloat("'splosion!")
 }
 
 func testExact(as *assert.Wrapper, n a.Number, expect float64) {
@@ -28,9 +28,9 @@ func testExact(as *assert.Wrapper, n a.Number, expect float64) {
 
 func TestConvertNumber(t *testing.T) {
 	as := assert.New(t)
-	n1 := a.ParseNumber("12.8")
+	n1 := a.ParseFloat("12.8")
 	n2 := f(12.9)
-	n3 := a.ParseNumber("50/2")
+	n3 := a.ParseRatio("50/2")
 	n4 := a.NewRatio(40, 2)
 	n5 := f(20)
 
@@ -43,9 +43,9 @@ func TestConvertNumber(t *testing.T) {
 
 func TestCompareNumbers(t *testing.T) {
 	as := assert.New(t)
-	n1 := a.ParseNumber("12.8")
+	n1 := a.ParseFloat("12.8")
 	n2 := f(12.9)
-	n3 := a.ParseNumber("50/2")
+	n3 := a.ParseRatio("50/2")
 	n4 := a.NewRatio(40, 2)
 	n5 := f(20)
 
@@ -59,9 +59,9 @@ func TestCompareNumbers(t *testing.T) {
 
 func TestStringifyNumbers(t *testing.T) {
 	as := assert.New(t)
-	n1 := a.ParseNumber("12.8")
+	n1 := a.ParseFloat("12.8")
 	n2 := f(12.9)
-	n3 := a.ParseNumber("50/2")
+	n3 := a.ParseRatio("50/2")
 	n4 := a.NewRatio(40, 2)
 	n5 := f(20)
 
@@ -73,7 +73,7 @@ func TestStringifyNumbers(t *testing.T) {
 }
 
 func testResult(as *assert.Wrapper, n a.Number, expect string) {
-	expectNum := a.ParseNumber(s(expect))
+	expectNum := a.ParseFloat(s(expect))
 	expectFloat, _ := expectNum.Float64()
 	testExact(as, n, expectFloat)
 	as.Equal(expectNum, n)
@@ -81,13 +81,13 @@ func testResult(as *assert.Wrapper, n a.Number, expect string) {
 
 func TestNumberMath(t *testing.T) {
 	as := assert.New(t)
-	n1 := a.ParseNumber("12.8")
+	n1 := a.ParseFloat("12.8")
 	n2 := f(13)
-	n3 := a.ParseNumber("50/2")
+	n3 := a.ParseRatio("50/2")
 	n4 := a.NewRatio(40, 2)
 	n5 := f(20)
-	n6 := a.ParseNumber("1/2")
-	n7 := a.ParseNumber("12.9")
+	n6 := a.ParseRatio("1/2")
+	n7 := a.ParseFloat("12.9")
 
 	testResult(as, n1.Add(n2), "25.8")
 	testResult(as, n5.Sub(n2), "7")

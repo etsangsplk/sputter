@@ -164,31 +164,18 @@ func (*lteFunction) Apply(c a.Context, args a.Vector) a.Value {
 }
 
 func (*isPosInfFunction) Apply(_ a.Context, args a.Vector) a.Value {
-	if n, ok := args[0].(a.Number); ok {
-		if a.PosInfinity.Cmp(n) == a.EqualTo {
-			return a.True
-		}
-	}
-	return a.False
+	n, ok := args[0].(a.Number)
+	return a.Bool(ok && a.PosInfinity.Cmp(n) == a.EqualTo)
 }
 
 func (*isNegInfFunction) Apply(_ a.Context, args a.Vector) a.Value {
-	if n, ok := args[0].(a.Number); ok {
-		if a.NegInfinity.Cmp(n) == a.EqualTo {
-			return a.True
-		}
-	}
-	return a.False
+	n, ok := args[0].(a.Number)
+	return a.Bool(ok && a.NegInfinity.Cmp(n) == a.EqualTo)
 }
 
 func (*isNaNFunction) Apply(_ a.Context, args a.Vector) a.Value {
-	if n, ok := args[0].(a.Number); ok {
-		if n.IsNaN() {
-			return a.True
-		}
-		return a.False
-	}
-	return a.True
+	n, ok := args[0].(a.Number)
+	return a.Bool(!ok || (ok && n.IsNaN()))
 }
 
 func init() {

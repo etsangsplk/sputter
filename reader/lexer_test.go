@@ -55,7 +55,7 @@ func TestEmptyList(t *testing.T) {
 
 func TestNumbers(t *testing.T) {
 	as := assert.New(t)
-	l := r.Scan(" 10 12.8 8E+10 99.598e+10 54e+12 1/2")
+	l := r.Scan(" 10 12.8 8E+10 99.598e+10 54e+12 1/2 -0xFF  071 0xf1e9d8c7")
 	assertTokenSequence(as, l, []*r.Token{
 		makeToken(r.Number, f(10)),
 		makeToken(r.Number, f(12.8)),
@@ -63,6 +63,9 @@ func TestNumbers(t *testing.T) {
 		makeToken(r.Number, f(99.598e+10)),
 		makeToken(r.Number, f(54e+12)),
 		makeToken(r.Ratio, a.NewRatio(1, 2)),
+		makeToken(r.Number, f(-255)),
+		makeToken(r.Number, f(57)),
+		makeToken(r.Number, f(4058634439)),
 	})
 }
 

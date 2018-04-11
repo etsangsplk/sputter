@@ -85,10 +85,7 @@ func Scan(src a.Str) a.Sequence {
 
 func (*notWhitespaceFunction) Apply(_ a.Context, args a.Vector) a.Value {
 	t := args[0].(*Token)
-	if t.Type != Whitespace && t.Type != Comment {
-		return a.True
-	}
-	return a.False
+	return a.Bool(t.Type != Whitespace && t.Type != Comment)
 }
 
 func matchToken(src string) (*Token, string) {
@@ -144,12 +141,17 @@ func stringState(r string) *Token {
 }
 
 func ratioState(s string) *Token {
-	v := a.ParseNumber(a.Str(s))
+	v := a.ParseRatio(a.Str(s))
 	return makeToken(Ratio, v)
 }
 
-func numberState(s string) *Token {
-	v := a.ParseNumber(a.Str(s))
+func floatState(s string) *Token {
+	v := a.ParseFloat(a.Str(s))
+	return makeToken(Number, v)
+}
+
+func integerState(s string) *Token {
+	v := a.ParseInteger(s)
 	return makeToken(Number, v)
 }
 
@@ -179,7 +181,11 @@ func init() {
 		pattern(`^"(\\\\|\\"|\\[^\\"]|[^"\\])*"`, stringState),
 
 		pattern(`^[+-]?[1-9]\d*/[1-9]\d*`, ratioState),
-		pattern(`^[+-]?((0|[1-9]\d*)(\.\d+)?([eE][+-]?\d+)?)`, numberState),
+		pattern(`^[+-]?(0|[1-9]\d*)\.\d+([eE][+-]?\d+)?`, floatState),
+		pattern(`^[+-]?(0|[1-9]\d*)(\.\d+)?[eE][+-]?\d+`, floatState),
+		pattern(`^[+-]?0[xX][\dA-Fa-f]+`, integerState),
+		pattern(`^[+-]?0\d*`, integerState),
+		pattern(`^[+-]?[1-9]\d*`, integerState),
 
 		pattern(`^[^(){}\[\]\s,'~@";]+`, tokenState(Identifier)),
 

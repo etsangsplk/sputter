@@ -31,17 +31,13 @@ func (*genSymFunction) Apply(c a.Context, args a.Vector) a.Value {
 }
 
 func (*isSymbolFunction) Apply(_ a.Context, args a.Vector) a.Value {
-	if _, ok := args[0].(a.Symbol); ok {
-		return a.True
-	}
-	return a.False
+	_, ok := args[0].(a.Symbol)
+	return a.Bool(ok)
 }
 
 func (*isLocalFunction) Apply(_ a.Context, args a.Vector) a.Value {
-	if _, ok := args[0].(a.LocalSymbol); ok {
-		return a.True
-	}
-	return a.False
+	_, ok := args[0].(a.LocalSymbol)
+	return a.Bool(ok)
 }
 
 func init() {

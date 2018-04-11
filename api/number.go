@@ -5,6 +5,7 @@ import (
 	"math/big"
 
 	"github.com/cockroachdb/apd"
+	"strings"
 )
 
 const (
@@ -13,6 +14,8 @@ const (
 
 	// ExpectedInteger is thrown when a Value is not an Integer
 	ExpectedInteger = "value is not an integer: %s"
+
+	digits = "0123456789abcdef"
 )
 
 type (
@@ -46,12 +49,24 @@ var (
 	// One is a convenience wrapper for the number 1
 	One = NewFloat(1)
 
+	// NegOne is a convenience wrapper for the number -1
+	NegOne = NewFloat(-1)
+
 	// PosInfinity is a convenience wrapper for positive infinity
 	PosInfinity = &dec{Form: apd.Infinite}
 
 	// NegInfinity is a convenience wrapper for negative infinity
 	NegInfinity = &dec{Form: apd.Infinite, Negative: true}
+
+	octal   = NewInteger(8)
+	decimal = NewInteger(10)
+	hex     = NewInteger(16)
 )
+
+// NewInteger generates a new Number from an int64 value
+func NewInteger(i int64) Number {
+	return (*dec)(new(apd.Decimal).SetInt64(i))
+}
 
 // NewFloat generates a new Number from a float64 value
 func NewFloat(f float64) Number {
@@ -66,12 +81,69 @@ func NewRatio(n int64, d int64) Number {
 	return (*rat)(new(big.Rat).SetFrac64(n, d))
 }
 
-// ParseNumber attempts to parse a string into a Number Value
-func ParseNumber(s Str) Number {
+// ParseInteger attempts to parse a string representing an int into a Number
+func ParseInteger(s string) Number {
+	base := decimal
+	d := digits[0:10]
+	neg := false
+
+	if s == "" {
+		panic(ErrStr("Empty string cannot be converted to int"))
+	}
+
+	switch s[0] {
+	case '+':
+		s = s[1:]
+	case '-':
+		neg = true
+		s = s[1:]
+	}
+
+	if len(s) >= 2 && s[0:2] == "0x" {
+		base = hex
+		d = digits
+		s = strings.ToLower(s[2:])
+	} else if len(s) >= 1 && s[0] == '0' {
+		base = octal
+		d = digits[0:8]
+		s = s[1:]
+	}
+
+	var mag Number
+	res := Zero
+	runes := []rune(s)
+	for i := len(runes) - 1; i >= 0; i-- {
+		c := runes[i]
+		v := int64(strings.IndexRune(d, c))
+		if v == -1 {
+			panic(ErrStr("Unexpected character '%c'", c))
+		}
+		if mag != nil {
+			res = res.Add(mag.Mul(NewInteger(v)))
+			mag = mag.Mul(base)
+		} else {
+			res = NewInteger(v)
+			mag = base
+		}
+	}
+	if neg {
+		return res.Mul(NegOne)
+	}
+	return res
+}
+
+// ParseFloat attempts to parse a string representing a float into a Number
+func ParseFloat(s Str) Number {
 	ns := string(s)
 	if f, _, err := defCtx.SetString(new(apd.Decimal), ns); err == nil {
 		return (*dec)(f)
 	}
+	panic(ErrStr(ExpectedNumber, s))
+}
+
+// ParseRatio attempts to parse a string representing a ratio into a Number
+func ParseRatio(s Str) Number {
+	ns := string(s)
 	if r, ok := new(big.Rat).SetString(ns); ok {
 		return (*rat)(r)
 	}
