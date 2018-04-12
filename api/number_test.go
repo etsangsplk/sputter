@@ -16,7 +16,7 @@ func TestParseNumber(t *testing.T) {
 	as.Equal(n1, n2)
 	as.Equal(n2, n3)
 
-	defer as.ExpectError(a.ErrStr(a.ExpectedNumber, s(`'splosion!`)))
+	defer as.ExpectError(a.ErrStr(a.ExpectedFloat, s(`'splosion!`)))
 	a.ParseFloat("'splosion!")
 }
 

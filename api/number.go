@@ -5,12 +5,11 @@ import (
 	"math/big"
 
 	"github.com/cockroachdb/apd"
-	"strings"
 )
 
 const (
-	// ExpectedNumber is thrown when a Value is not a Number
-	ExpectedNumber = "value is not a number: %s"
+	// ExpectedFloat is thrown when a Value is not a Float
+	ExpectedFloat = "value is not a float: %s"
 
 	// ExpectedInteger is thrown when a Value is not an Integer
 	ExpectedInteger = "value is not an integer: %s"
@@ -44,23 +43,19 @@ var (
 	divCtx = apd.BaseContext.WithPrecision(53)
 
 	// Zero is a convenience wrapper for the number 0
-	Zero = NewFloat(0)
+	Zero = NewInteger(0)
 
 	// One is a convenience wrapper for the number 1
-	One = NewFloat(1)
+	One = NewInteger(1)
 
 	// NegOne is a convenience wrapper for the number -1
-	NegOne = NewFloat(-1)
+	NegOne = NewInteger(-1)
 
 	// PosInfinity is a convenience wrapper for positive infinity
 	PosInfinity = &dec{Form: apd.Infinite}
 
 	// NegInfinity is a convenience wrapper for negative infinity
 	NegInfinity = &dec{Form: apd.Infinite, Negative: true}
-
-	octal   = NewInteger(8)
-	decimal = NewInteger(10)
-	hex     = NewInteger(16)
 )
 
 // NewInteger generates a new Number from an int64 value
@@ -73,7 +68,7 @@ func NewFloat(f float64) Number {
 	if res, err := new(apd.Decimal).SetFloat64(f); err == nil {
 		return (*dec)(res)
 	}
-	panic(ErrStr(ExpectedNumber, fmt.Sprintf("%f", f)))
+	panic(ErrStr(ExpectedFloat, fmt.Sprintf("%f", f)))
 }
 
 // NewRatio generates a new Number from a ratio
@@ -83,53 +78,17 @@ func NewRatio(n int64, d int64) Number {
 
 // ParseInteger attempts to parse a string representing an int into a Number
 func ParseInteger(s string) Number {
-	base := decimal
-	d := digits[0:10]
-	neg := false
-
-	if s == "" {
-		panic(ErrStr("Empty string cannot be converted to int"))
+	i, ok := new(big.Int).SetString(s, 0)
+	if !ok {
+		panic(ErrStr(ExpectedInteger, s))
 	}
-
-	switch s[0] {
-	case '+':
-		s = s[1:]
-	case '-':
-		neg = true
-		s = s[1:]
-	}
-
-	if len(s) >= 2 && s[0:2] == "0x" {
-		base = hex
-		d = digits
-		s = strings.ToLower(s[2:])
-	} else if len(s) >= 1 && s[0] == '0' {
-		base = octal
-		d = digits[0:8]
-		s = s[1:]
-	}
-
-	var mag Number
-	res := Zero
-	runes := []rune(s)
-	for i := len(runes) - 1; i >= 0; i-- {
-		c := runes[i]
-		v := int64(strings.IndexRune(d, c))
-		if v == -1 {
-			panic(ErrStr("Unexpected character '%c'", c))
-		}
-		if mag != nil {
-			res = res.Add(mag.Mul(NewInteger(v)))
-			mag = mag.Mul(base)
-		} else {
-			res = NewInteger(v)
-			mag = base
-		}
-	}
+	neg := i.Sign() == -1
 	if neg {
-		return res.Mul(NegOne)
+		i.Neg(i)
 	}
-	return res
+	res := apd.NewWithBigInt(i, 0)
+	res.Negative = neg
+	return (*dec)(res)
 }
 
 // ParseFloat attempts to parse a string representing a float into a Number
@@ -138,7 +97,7 @@ func ParseFloat(s Str) Number {
 	if f, _, err := defCtx.SetString(new(apd.Decimal), ns); err == nil {
 		return (*dec)(f)
 	}
-	panic(ErrStr(ExpectedNumber, s))
+	panic(ErrStr(ExpectedFloat, s))
 }
 
 // ParseRatio attempts to parse a string representing a ratio into a Number
@@ -147,7 +106,7 @@ func ParseRatio(s Str) Number {
 	if r, ok := new(big.Rat).SetString(ns); ok {
 		return (*rat)(r)
 	}
-	panic(ErrStr(ExpectedNumber, s))
+	panic(ErrStr(ExpectedFloat, s))
 }
 
 func (r *rat) toDecimal() *apd.Decimal {
@@ -156,7 +115,7 @@ func (r *rat) toDecimal() *apd.Decimal {
 	if res, err := new(apd.Decimal).SetFloat64(rf); err == nil {
 		return res
 	}
-	panic(ErrStr(ExpectedNumber, rr.String()))
+	panic(ErrStr(ExpectedFloat, rr.String()))
 }
 
 func (d *dec) Cmp(n Number) Comparison {

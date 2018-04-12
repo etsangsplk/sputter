@@ -158,37 +158,42 @@ func integerState(s string) *Token {
 func init() {
 	pattern := func(p string, s tokenizer) matchEntry {
 		return matchEntry{
-			pattern:  regexp.MustCompile(p),
+			pattern:  regexp.MustCompile("^" + p),
 			function: s,
 		}
 	}
 
+	idChar := `[^(){}\[\]\s,'~@";]`
+	id := idChar + "+"
+	numTail := idChar + "*"
+
 	matchers = matchEntries{
-		pattern(`^$`, endState(endOfFile)),
-		pattern(`^;[^\n]*([\n]|$)`, tokenState(Comment)),
-		pattern(`^[\s,]+`, tokenState(Whitespace)),
-		pattern(`^\(`, tokenState(ListStart)),
-		pattern(`^\[`, tokenState(VectorStart)),
-		pattern(`^{`, tokenState(MapStart)),
-		pattern(`^\)`, tokenState(ListEnd)),
-		pattern(`^]`, tokenState(VectorEnd)),
-		pattern(`^}`, tokenState(MapEnd)),
-		pattern(`^'`, tokenState(QuoteMarker)),
-		pattern("^`", tokenState(SyntaxMarker)),
-		pattern(`^~@`, tokenState(SpliceMarker)),
-		pattern(`^~`, tokenState(UnquoteMarker)),
+		pattern(`$`, endState(endOfFile)),
+		pattern(`;[^\n]*([\n]|$)`, tokenState(Comment)),
+		pattern(`[\s,]+`, tokenState(Whitespace)),
+		pattern(`\(`, tokenState(ListStart)),
+		pattern(`\[`, tokenState(VectorStart)),
+		pattern(`{`, tokenState(MapStart)),
+		pattern(`\)`, tokenState(ListEnd)),
+		pattern(`]`, tokenState(VectorEnd)),
+		pattern(`}`, tokenState(MapEnd)),
+		pattern(`'`, tokenState(QuoteMarker)),
+		pattern("`", tokenState(SyntaxMarker)),
+		pattern(`~@`, tokenState(SpliceMarker)),
+		pattern(`~`, tokenState(UnquoteMarker)),
 
-		pattern(`^"(\\\\|\\"|\\[^\\"]|[^"\\])*"`, stringState),
+		pattern(`"(\\\\|\\"|\\[^\\"]|[^"\\])*"`, stringState),
 
-		pattern(`^[+-]?[1-9]\d*/[1-9]\d*`, ratioState),
-		pattern(`^[+-]?(0|[1-9]\d*)\.\d+([eE][+-]?\d+)?`, floatState),
-		pattern(`^[+-]?(0|[1-9]\d*)(\.\d+)?[eE][+-]?\d+`, floatState),
-		pattern(`^[+-]?0[xX][\dA-Fa-f]+`, integerState),
-		pattern(`^[+-]?0\d*`, integerState),
-		pattern(`^[+-]?[1-9]\d*`, integerState),
+		pattern(`[+-]?[1-9]\d*/[1-9]\d*`+numTail, ratioState),
+		pattern(`[+-]?(0|[1-9]\d*)\.\d+([eE][+-]?\d+)?`+numTail, floatState),
+		pattern(`[+-]?(0|[1-9]\d*)(\.\d+)?[eE][+-]?\d+`+numTail, floatState),
+		pattern(`[+-]?0[bB]\d+`+numTail, integerState),
+		pattern(`[+-]?0[xX][\dA-Fa-f]+`+numTail, integerState),
+		pattern(`[+-]?0\d*`+numTail, integerState),
+		pattern(`[+-]?[1-9]\d*`+numTail, integerState),
 
-		pattern(`^[^(){}\[\]\s,'~@";]+`, tokenState(Identifier)),
+		pattern(id, tokenState(Identifier)),
 
-		pattern(`^.`, endState(Error)),
+		pattern(`.`, endState(Error)),
 	}
 }
