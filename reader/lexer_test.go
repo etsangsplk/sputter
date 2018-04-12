@@ -55,7 +55,9 @@ func TestEmptyList(t *testing.T) {
 
 func TestNumbers(t *testing.T) {
 	as := assert.New(t)
-	l := r.Scan(" 10 12.8 8E+10 99.598e+10 54e+12 1/2 -0xFF  071 0xf1e9d8c7")
+	l := r.Scan(` 10 12.8 8E+10
+				99.598e+10 54e+12 1/2 -0xFF
+				071 0xf1e9d8c7`)
 	assertTokenSequence(as, l, []*r.Token{
 		makeToken(r.Number, f(10)),
 		makeToken(r.Number, f(12.8)),
@@ -84,8 +86,8 @@ func TestStrings(t *testing.T) {
 func TestMultiLine(t *testing.T) {
 	as := assert.New(t)
 	l := r.Scan(` "hello there"
-  "how's life?"
-99`)
+  				"how's life?"
+				99`)
 
 	assertTokenSequence(as, l, []*r.Token{
 		makeToken(r.String, s(`hello there`)),
