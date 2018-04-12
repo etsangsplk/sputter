@@ -151,7 +151,7 @@ func floatState(s string) *Token {
 }
 
 func integerState(s string) *Token {
-	v := a.ParseInteger(s)
+	v := a.ParseInteger(a.Str(s))
 	return makeToken(Number, v)
 }
 

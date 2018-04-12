@@ -68,7 +68,7 @@ func TestNumbers(t *testing.T) {
 		makeToken(r.Number, f(4058634439)),
 	})
 
-	defer as.ExpectError(a.ErrStr(a.ExpectedInteger, "0xffj-k"))
+	defer as.ExpectError(a.ErrStr(a.ExpectedInteger, a.Str("0xffj-k")))
 	r.Scan("0xffj-k").First()
 }
 

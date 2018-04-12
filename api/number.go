@@ -8,11 +8,14 @@ import (
 )
 
 const (
+	// ExpectedInteger is thrown when a Value is not an Integer
+	ExpectedInteger = "value is not an integer: %s"
+
 	// ExpectedFloat is thrown when a Value is not a Float
 	ExpectedFloat = "value is not a float: %s"
 
-	// ExpectedInteger is thrown when a Value is not an Integer
-	ExpectedInteger = "value is not an integer: %s"
+	// ExpectedRatio is thrown when a Value is not a Ratio
+	ExpectedRatio = "value is not a ratio: %s"
 
 	digits = "0123456789abcdef"
 )
@@ -77,8 +80,9 @@ func NewRatio(n int64, d int64) Number {
 }
 
 // ParseInteger attempts to parse a string representing an int into a Number
-func ParseInteger(s string) Number {
-	i, ok := new(big.Int).SetString(s, 0)
+func ParseInteger(s Str) Number {
+	ns := string(s)
+	i, ok := new(big.Int).SetString(ns, 0)
 	if !ok {
 		panic(ErrStr(ExpectedInteger, s))
 	}
@@ -106,7 +110,7 @@ func ParseRatio(s Str) Number {
 	if r, ok := new(big.Rat).SetString(ns); ok {
 		return (*rat)(r)
 	}
-	panic(ErrStr(ExpectedFloat, s))
+	panic(ErrStr(ExpectedRatio, s))
 }
 
 func (r *rat) toDecimal() *apd.Decimal {

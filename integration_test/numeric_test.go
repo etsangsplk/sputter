@@ -33,6 +33,18 @@ func TestNonNumber(t *testing.T) {
 	testBadCode(t, `(+ "hello")`, e)
 }
 
+func TestBadNumbers(t *testing.T) {
+	testBadNumber := func(err string, ns string) {
+		testBadCode(t, ns, a.ErrStr(err, a.Str(ns)))
+	}
+
+	testBadNumber(a.ExpectedInteger, "0xfkk")
+	testBadNumber(a.ExpectedInteger, "0b01109")
+	testBadNumber(a.ExpectedInteger, "123j-k")
+	testBadNumber(a.ExpectedFloat, "1.2j-k")
+	testBadNumber(a.ExpectedRatio, "1/2p")
+}
+
 func TestCompare(t *testing.T) {
 	testCode(t, `(= 1 1)`, a.True)
 	testCode(t, `(= 1 1 1 1 '1 1 1)`, a.True)
