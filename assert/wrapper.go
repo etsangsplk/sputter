@@ -119,12 +119,12 @@ func (w *Wrapper) Fail(msg string) {
 	w.as.Fail(msg)
 }
 
-// Identical tests that two Vector are referentially identical
+// Identical tests that two values are referentially identical
 func (w *Wrapper) Identical(expect Any, expr Any) {
 	w.as.Equal(expect, expr)
 }
 
-// NotIdentical tests that two Vector are not referentially identical
+// NotIdentical tests that two values are not referentially identical
 func (w *Wrapper) NotIdentical(expect Any, expr Any) {
 	w.as.NotEqual(expect, expr)
 }

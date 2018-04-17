@@ -110,7 +110,7 @@
 
 ;; lazy sequences
 
-(def-builtin lazy-seq* :special-form true)
+(def-builtin lazy-seq  :special-form true)
 (def-builtin for-each  :special-form true)
 (def-builtin concat    :doc-asset "concat")
 (def-builtin filter    :doc-asset "filter")

@@ -30,7 +30,7 @@ type (
 	}
 )
 
-// EvalVectorAsBlock evaluates Vector as if they were a Block
+// EvalVectorAsBlock evaluates Vector as if it were a Block
 func EvalVectorAsBlock(c Context, v Vector) Value {
 	l := len(v)
 	switch l {

@@ -22,11 +22,6 @@
   ([min max]      `(range* ~min ~max 1))
   ([min max step] `(range* ~min ~max ~step)))
 
-(defmacro lazy-seq
-  {:doc-asset "lazy-seq"}
-  [& body]
-  (cons 'sputter:lazy-seq* body))
-
 (defn take-while
   [pred coll]
   (lazy-seq

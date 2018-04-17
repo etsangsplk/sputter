@@ -3,7 +3,7 @@
 (defmacro def
   {:doc-asset "def"}
   [name value]
-  `(ns-put (sputter:ns) ~name ~value))
+  `(ns-put (ns) ~name ~value))
 
 (defmacro eq
   [value & comps]

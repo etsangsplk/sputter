@@ -6,12 +6,12 @@ import (
 )
 
 type (
-	// Reader is used to retrieve Vector from a File
+	// Reader is used to retrieve values from a File
 	Reader interface {
 		Sequence
 	}
 
-	// Writer is used to emit Vector to a File
+	// Writer is used to emit values to a File
 	Writer interface {
 		Value
 		Write(Value)

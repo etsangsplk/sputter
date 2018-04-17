@@ -13,7 +13,7 @@ const BadConversionType = "can't convert between type: %s"
 
 var camelCase = regexp.MustCompile("[a-z][A-Z]")
 
-// New wraps a native wrapped using Go's reflection API
+// New wraps a native GoValue using Go's reflection API
 func New(i interface{}) a.Value {
 	v := reflect.ValueOf(i)
 	t := v.Type()

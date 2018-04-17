@@ -3,7 +3,7 @@ package builtins
 import a "github.com/kode4food/sputter/api"
 
 const (
-	lazySequenceName = "lazy-seq*"
+	lazySequenceName = "lazy-seq"
 	concatName       = "concat"
 	filterName       = "filter"
 	mapName          = "map"

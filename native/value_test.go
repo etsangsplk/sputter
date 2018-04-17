@@ -38,7 +38,7 @@ func (r *reflectStruct) Plural(s1 string, i int, s2 string) (int, int, int) {
 	return len(s1), i, len(s2)
 }
 
-func getTestReflectStruct() r.Wrapped {
+func getTestReflectStruct() *r.GoValue {
 	return r.New(&reflectStruct{
 		S: "hello",
 		B: true,
@@ -53,7 +53,7 @@ func getTestReflectStruct() r.Wrapped {
 		},
 		notExported: true,
 		IsCamelCase: "I was camelCase",
-	}).(r.Wrapped)
+	}).(*r.GoValue)
 }
 
 func TestReflect(t *testing.T) {
@@ -63,9 +63,9 @@ func TestReflect(t *testing.T) {
 	tk := a.NewKeyword("test")
 	n := r.New(w).(a.Annotated).WithMetadata(a.Properties{
 		tk: a.True,
-	}).(r.Wrapped)
+	}).(*r.GoValue)
 
-	as.String("*bytes.buffer", n.(a.Typed).Type())
+	as.String("*bytes.buffer", n.Type())
 	as.Contains(":type *bytes.buffer", n)
 	as.Identical(w, n.Wrapped())
 

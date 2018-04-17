@@ -8,15 +8,8 @@ import (
 )
 
 type (
-	// Wrapped is the interface for wrapped Go values
-	Wrapped interface {
-		a.Value
-		a.Annotated
-		a.Mapped
-		Wrapped() interface{}
-	}
-
-	wrapped struct {
+	// GoValue is the interface for wrapped Go values
+	GoValue struct {
 		value    reflect.Value
 		typeInfo *typeInfo
 		meta     a.Object
@@ -38,7 +31,7 @@ var types = u.NewCache()
 func Wrap(v reflect.Value) a.Value {
 	ti := getTypeInfo(v.Type())
 
-	return &wrapped{
+	return &GoValue{
 		value:    v,
 		typeInfo: ti,
 		meta:     ti.meta,
@@ -46,39 +39,42 @@ func Wrap(v reflect.Value) a.Value {
 }
 
 // Wrapped returns the wrapped Go value
-func (n *wrapped) Wrapped() interface{} {
-	return n.value.Interface()
+func (v *GoValue) Wrapped() interface{} {
+	return v.value.Interface()
 }
 
 // Metadata makes wrapped Annotated
-func (n *wrapped) Metadata() a.Object {
-	return n.meta
+func (v *GoValue) Metadata() a.Object {
+	return v.meta
 }
 
 // WithMetadata copies the wrapped with new Metadata
-func (n *wrapped) WithMetadata(md a.Object) a.AnnotatedValue {
-	return &wrapped{
-		value:    n.value,
-		typeInfo: n.typeInfo,
-		meta:     n.meta.Child(md.Flatten()),
+func (v *GoValue) WithMetadata(md a.Object) a.AnnotatedValue {
+	return &GoValue{
+		value:    v.value,
+		typeInfo: v.typeInfo,
+		meta:     v.meta.Child(md.Flatten()),
 	}
 }
 
-func (n *wrapped) Get(key a.Value) (a.Value, bool) {
+// Get returns a property by key from the wrapped Go value
+func (v *GoValue) Get(key a.Value) (a.Value, bool) {
 	name := string(key.Str())
-	if g, ok := n.typeInfo.getters[name]; ok {
-		return g(n.value), true
+	if g, ok := v.typeInfo.getters[name]; ok {
+		return g(v.value), true
 	}
 	return a.Nil, false
 }
 
-func (n *wrapped) Type() a.Name {
-	t, _ := n.meta.Get(a.TypeKey)
+// Type returns the name of the wrapped Go value's type
+func (v *GoValue) Type() a.Name {
+	t, _ := v.meta.Get(a.TypeKey)
 	return t.(a.Name)
 }
 
-func (n *wrapped) Str() a.Str {
-	return a.MakeDumpStr(n)
+// Str converts this Go value to a Str
+func (v *GoValue) Str() a.Str {
+	return a.MakeDumpStr(v)
 }
 
 func getTypeInfo(t reflect.Type) *typeInfo {

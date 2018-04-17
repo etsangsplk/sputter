@@ -60,7 +60,7 @@
   [sym]
   (fn [clause]
     (let [pred (nth clause 0), form (nth clause 1)]
-      `((sputter:fn [val] (if ~pred (~sym val ~form) val))))))
+      `((fn [val] (if ~pred (~sym val ~form) val))))))
 
 (defmacro cond->
   {:doc "conditionally threads through a set of forms as their first argument"}
