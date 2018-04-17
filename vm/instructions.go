@@ -105,6 +105,10 @@ func MakeInst(o OpCode, args ...uint) Instruction {
 		fallthrough
 	case 1:
 		i.Op1 = args[0]
+		fallthrough
+	case 0:
+		return i
+	default:
+		panic("error: call to MakeInst has too many operands")
 	}
-	return i
 }
