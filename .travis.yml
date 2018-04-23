@@ -2,7 +2,6 @@ language: go
 sudo: false
 
 go:
-  - 1.8.x
   - 1.9.x
   
 before_install:
@@ -15,5 +14,5 @@ install:
 script:
   - $GOPATH/bin/dep ensure
   - $GOPATH/bin/go-snapshot -pkg assets -out assets/assets.go docstring/*.md core/*.lisp -prefix="docstring/" docstring/*.md
-  - go test $($GOPATH/bin/glide novendor)
+  - go test ./...
   - $GOPATH/bin/goveralls -service=travis-ci -ignore=core/*.go,assets/assets.go

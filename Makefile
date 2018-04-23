@@ -4,9 +4,9 @@ install: build test
 	go install github.com/kode4food/sputter/cmd/sputter
 
 test: build dep-lint
-	golint `glide novendor`
-	go vet `glide novendor`
-	go test `glide novendor`
+	golint ./...
+	go vet ./...
+	go test ./...
 
 build: dependencies assets
 
