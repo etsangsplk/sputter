@@ -13,11 +13,11 @@ build: dependencies assets
 assets: dep-snapshot
 	go-snapshot -pkg assets -out assets/assets.go docstring/*.md core/*.lisp
 
-dependencies: dep-glide
-	glide install
+dependencies: dep-dep
+	dep ensure
 
-dep-glide:
-	go get github.com/Masterminds/glide
+dep-dep:
+	go get github.com/golang/dep/cmd/dep
 
 dep-snapshot:
 	go get github.com/kode4food/go-snapshot
@@ -26,6 +26,6 @@ dep-lint:
 	go get github.com/golang/lint/golint
 
 upgrade-deps:
-	go get -u github.com/Masterminds/glide
+	go get -u github.com/golang/dep/cmd/dep
 	go get -u github.com/kode4food/go-snapshot
 	go get -u github.com/golang/lint/golint
