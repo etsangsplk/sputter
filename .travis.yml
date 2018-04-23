@@ -9,11 +9,11 @@ before_install:
   - go get github.com/mattn/goveralls
 
 install:
-  - go get github.com/Masterminds/glide
+  - go get github.com/golang/dep/cmd/dep
   - go get github.com/kode4food/go-snapshot
 
 script:
-  - $GOPATH/bin/glide install
+  - $GOPATH/bin/dep ensure
   - $GOPATH/bin/go-snapshot -pkg assets -out assets/assets.go docstring/*.md core/*.lisp -prefix="docstring/" docstring/*.md
   - go test $($GOPATH/bin/glide novendor)
   - $GOPATH/bin/goveralls -service=travis-ci -ignore=core/*.go,assets/assets.go
